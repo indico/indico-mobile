@@ -1,0 +1,13 @@
+<div data-role="collapsible" data-inset="true">
+	<h3><%= startDate.time %>: <%= title %></h3>
+	<h4><% if(description!=''){print('Description')} else {print('No
+		description')}%></h4>
+	<p style="white-space: normal"><%= description %></p>
+	<h4>Location<% if(room!=''){print(' - Room')}%></h4>
+	<p style="white-space: normal"><%= location %><%
+		if(room!=''){print(' - '+room)}%></p>
+	<a data-role="button" data-inline="true" data-icon="delete"
+		id="removeFromAgenda" day="<%=startDate.date%>"
+		sessionId="<%=sessionId%>" contribId="<%= id %>" confId="<%=conferenceId%>">Remove from my
+		agenda</a>
+</div>
