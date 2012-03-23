@@ -1,24 +1,13 @@
 var ContributionView = Backbone.View.extend({
 
     initialize : function() {
-        var contribution;
         if ($('#myagenda').length!=0){
-            $.ajax({type: 'GET', url: '/agendaContribution', async:false, success: function(text){contribution = text;}});
+            this.template1 = _.template(getHTMLTemplate('/agendaContribution'));
         }
         else{
-            $.ajax({type: 'GET', url: '/contribution', async:false, success: function(text){ contribution = text; } });
+            this.template1 = _.template(getHTMLTemplate('/contribution'));
         }
-        this.template1 = _.template(contribution);
-        var contributionAgenda;
-        $.ajax({
-            type: 'GET',
-            url: '/contributionAgenda',
-            async:false,
-            success: function(text){
-                contributionAgenda = text;
-            }
-        });
-        this.template2 = _.template(contributionAgenda);
+        this.template2 = _.template(getHTMLTemplate('/contributionInAgenda'));
     },
     render : function() {
         var conference = this.options.collection,
@@ -62,6 +51,7 @@ var ContributionView = Backbone.View.extend({
 
 addContributionToView = function(conference, day, currentSlot, date, session, contribs, i, template1, template2){
     if (inAgenda){
+        var isInAgenda=false;
         var confInAgenda = inAgenda.find(function(conf){
             return conf.get('id')==conference.get('id');
         });
@@ -69,7 +59,6 @@ addContributionToView = function(conference, day, currentSlot, date, session, co
             var dayInAgenda = confInAgenda.get('days').find(function(day){
                 return day.get('date')==date;
             });
-            var isInAgenda=false;
             if (dayInAgenda){
                 var slotInAgenda = dayInAgenda.get('slots').find(function(slot){
                     return slot.get('id')==session;
@@ -85,7 +74,6 @@ addContributionToView = function(conference, day, currentSlot, date, session, co
                 }
             }
         }
-
         if (!isInAgenda){
             $('#' + currentSlot.get('id')).append(template1(contribs.at(i).toJSON()));
         }

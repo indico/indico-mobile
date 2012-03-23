@@ -26,11 +26,10 @@ loadAgendaFromServer = function(){
 				name:'claude'
 			},
 			success: function(resp){
-				console.log(resp)
 				agenda=resp['agenda'];
 			}
 	});
-	console.log(agenda)
+
 	if(agenda) {
 		var myAgenda = new Days(agenda);
 		myAgenda.each(function(conference){
@@ -43,7 +42,6 @@ loadAgendaFromServer = function(){
                 });
             });
         });
-		console.log(myAgenda);
 }
 return myAgenda;
 }

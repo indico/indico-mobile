@@ -6,16 +6,13 @@ var ConferencesListView = Backbone.View.extend({
         'data-inset': true
     },
     initialize : function() {
-        var confList;
-        $.ajax({
-            type: 'GET',
-            url: '/confList',
-            async:false,
-            success: function(text){
-                confList = text;
-            }
-        });
-        this.template = _.template(confList);
+
+        if ($('#myagenda').length!=0){
+            this.template = _.template(getHTMLTemplate('/agendaConfList'));
+        }
+        else{
+            this.template = _.template(getHTMLTemplate('/confList'));
+        }
     },
     render: function(){
         var container = this.options.viewContainer,
@@ -38,7 +35,6 @@ var ConferencesListView = Backbone.View.extend({
         conferences.each(function(conf){
             var isAlreadyIn = false;
             var completeDate = new Date(Date.parse(conf.get('date')));
-            console.log(completeDate);
             if (completeDate!='Invalid Date'){
                 for (var i=0; i<dates.length; i++){
                     if (month[completeDate.getMonth()]+' '+completeDate.getFullYear()==dates[i]){

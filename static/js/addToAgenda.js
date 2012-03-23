@@ -40,21 +40,8 @@ $('#addToAgenda').live('click', function(event) {
 
         localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
 
-        $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
+        saveAgendaToServer(myAgenda);
 
-        $(this).attr('style', 'display:none;');
-        $(this).parent().removeClass('ui-body-b').addClass('ui-body-f');
-        $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).removeClass('ui-btn-hover-b').addClass('ui-btn-hover-f');
-        $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
-        $($(this).parent().children()[$(this).parent().children().length - 1]).removeClass('ui-btn-hover-b').addClass('ui-btn-hover-f');
-        $($(this).parent().children()[$(this).parent().children().length - 1]).attr('style', 'display:block;').removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
     } else {
         myAgenda = loadAgenda();
         var confInAgenda = myAgenda.find(function(conf){
@@ -119,23 +106,19 @@ $('#addToAgenda').live('click', function(event) {
 
 
         localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-        $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
+        saveAgendaToServer(myAgenda);
 
-        $(this).attr('style', 'display:none;');
-        $(this).parent().removeClass('ui-body-b').addClass('ui-body-f');
-        $(this).parent().parent().attr('data-theme', 'f');
-        $(this).parent().parent().attr('data-content-theme', 'f');
-        $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
-        $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).attr('data-theme', 'f');
-        $($(this).parent().children()[$(this).parent().children().length - 1]).attr('style', 'display:block;').removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
-        $($(this).parent().children()[$(this).parent().children().length - 1]).attr('data-theme', 'f');
+
     }
+
+    //css changes
+    $(this).attr('style', 'display:none;');
+    $(this).parent().removeClass('ui-body-b').addClass('ui-body-f');
+    $(this).parent().parent().attr('data-theme', 'f');
+    $(this).parent().parent().attr('data-content-theme', 'f');
+    $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
+    $($($($($(this).parent().parent()[0]).children()[0])).children()[0]).attr('data-theme', 'f');
+    $($(this).parent().children()[$(this).parent().children().length - 1]).attr('style', 'display:block;').removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
+    $($(this).parent().children()[$(this).parent().children().length - 1]).attr('data-theme', 'f');
 
 });

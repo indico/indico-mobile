@@ -13,9 +13,9 @@ def index():
 def agenda():
     return render_template('agendaConference.html')
 
-@app.route('/conference')
+@app.route('/conferences')
 def conference():
-    return render_template('conference.html')
+    return render_template('conferences.html')
 
 @app.route('/map')
 def map():
@@ -25,44 +25,45 @@ def map():
 def contribution():
     return render_template('contribution.html')
 
-@app.route('/contributionAgenda')
-def contributionAgenda():
-    return render_template('contribution-agenda.html')
+@app.route('/contributionInAgenda')
+def contributionInAgenda():
+    return render_template('contributionInAgenda.html')
 
-@app.route('/agendaTemplate')
-def agendaTemplate():
-    return render_template('agenda-template.html')
-
-@app.route('/break')
-def breakTemplate():
-    return render_template('break.html')
+@app.route('/breakSession')
+def breakSession():
+    return render_template('breakSession.html')
 
 @app.route('/slotsList')
 def slotsList():
-    return render_template('slots-list.html')
+    return render_template('slotsList.html')
 
-@app.route('/daysPage')
-def daysPage():
-    return render_template('days-page.html')
+@app.route('/dayPage')
+def dayPage():
+    return render_template('dayPage.html')
 
 @app.route('/daysList')
 def daysList():
-    return render_template('days-list.html')
+    return render_template('daysList.html')
 
 @app.route('/confList')
 def confList():
     return render_template('conferenceList.html')
 
+@app.route('/agendaConfList')
+def agendaConfList():
+    return render_template('agendaConferenceList.html')
+
 @app.route('/selectedDay')
 def selectedDay():
-    return render_template('selected-day.html')
+    return render_template('selectedDay.html')
+
 @app.route('/agendaContribution')
 def agendaContribution():
     return render_template('agendaContribution.html')
 
 @app.route('/')
-def login():
-    return render_template('login.html')
+def root():
+    return render_template('root.html')
 
 @app.route('/getConferenceTT', methods=['GET'])
 def timetable():

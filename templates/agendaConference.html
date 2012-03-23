@@ -12,23 +12,27 @@
         <script src="{{url_for('static',filename='js/model/day.js')}}"></script>
         <script src="{{url_for('static',filename='js/model/conference.js')}}"></script>
         <script src="{{url_for('static',filename='js/model/contribution.js')}}"></script>
+        <script src="{{url_for('static',filename='js/TemplateManager.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/SlotsView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/DaysListView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/DaysDetailView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/ContributionView.js')}}"></script>
-        <script src="{{url_for('static',filename='js/view/AgendaListView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/ConferencesListView.js')}}"></script>
+        <script src="{{url_for('static',filename='js/moreContributions.js')}}"></script>
+        <script src="{{url_for('static',filename='js/linkToConference.js')}}"></script>
+        <script src="{{url_for('static',filename='js/showContributions.js')}}"></script>
+        <script src="{{url_for('static',filename='js/dayButton.js')}}"></script>
         <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
         <script src="{{url_for('static',filename='js/addToAgenda.js')}}"></script>
         <script src="{{url_for('static',filename='js/removeFromAgenda.js')}}"></script>
-        <script src="{{url_for('static',filename='js/agendaMain.js')}}"></script>
+        <script src="{{url_for('static',filename='js/agendaInit.js')}}"></script>
     </head>
     <body id="myagenda">
         <div data-role="page" id="newConf">
             <div data-role="header" data-theme="b" data-position="fixed">
             <a href="/home" data-icon="home" rel="external">Home</a>
                 <h1>My Agenda</h1>
-                <a href="/conference" rel="external">Conferences</a>
+                <a href="/conferences" rel="external">Conferences</a>
             </div>
             <div data-role="content" data-theme="b"  id="confList">
             </div>

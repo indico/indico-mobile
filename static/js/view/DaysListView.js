@@ -8,26 +8,8 @@ var DaysListView = Backbone.View.extend({
     },
 
     initialize : function() {
-        var daysList;
-        $.ajax({
-            type: 'GET',
-            url: '/daysList',
-            async:false,
-            success: function(text){
-                daysList = text;
-            }
-        });
-        this.template1 = _.template(daysList);
-        var selectedDay;
-        $.ajax({
-            type: 'GET',
-            url: '/selectedDay',
-            async:false,
-            success: function(text){
-                selectedDay = text;
-            }
-        });
-        this.template2 = _.template(selectedDay);
+        this.template1 = _.template(getHTMLTemplate('/daysList'));
+        this.template2 = _.template(getHTMLTemplate('/selectedDay'));
     },
     render : function() {
         var container = this.options.viewContainer,

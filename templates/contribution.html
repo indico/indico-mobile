@@ -1,4 +1,4 @@
-<div data-role="collapsible" data-inset="true" data-mini="true" >
+<div data-role="collapsible" data-inset="true" data-mini="true">
 	<h3><%= startDate.time %>: <%= title %></h3>
 	<h4><% if(description!=''){print('Description')} else {print('No
 		description')}%></h4>
@@ -8,11 +8,9 @@
 		if(room!=''){print(' - '+room)}%></p>
 	<a data-role="button" data-icon="star" id="addToAgenda"
 		day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-		contribId="<%= id %>" confId="<%=conferenceId%>">To my agenda
-	</a>
-	<a data-role="button"
-		data-icon="delete" id="removeFromAgenda1" day="<%=startDate.date%>"
-		sessionId="<%=sessionId%>" contribId="<%= id %>" confId="<%=conferenceId%>"
-		style="display: none;">Remove from my agenda
-	</a>
+		contribId="<%= id %>" confId="<%=conferenceId%>">To my agenda </a> <a
+		data-role="button" data-icon="delete" id="removeFromAgenda1"
+		day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+		contribId="<%= id %>" confId="<%=conferenceId%>"
+		style="display: none;">Remove from my agenda </a>
 </div>

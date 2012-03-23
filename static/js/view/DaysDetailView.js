@@ -1,15 +1,6 @@
 var DaysDetailView = Backbone.View.extend({
 	initialize : function() {
-	    var daysPage;
-	    $.ajax({
-            type: 'GET',
-            url: '/daysPage',
-            async:false,
-            success: function(text){
-                daysPage = text;
-            }
-        });
-		this.template1 = _.template(daysPage);
+		this.template1 = _.template(getHTMLTemplate('/dayPage'));
 	},
 	render : function() {
 		var  conference = this.collection, template1 = this.template1;
