@@ -1,0 +1,258 @@
+<script type="text/template" id="breakSession">
+<li data-role="list-divider"><h3><%= startDate.time %>:
+        <%=title %></h3></li>
+</script>
+
+<script type="text/template" id="slotDetails">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+
+        <%
+        if (description!=''){
+            print('<h4>Description</h4><p>'+description+'</p>');
+        }
+        %>
+<%
+    if (location!=''&&room!=''){
+       print('<h4>Location - room</h4>');
+       print('<p>'+location+' - '+room+'</p>');
+    }
+    else if (location!=''&&room==''){
+       print('<h4>Location</h4>');
+       print('<p>'+location+'</p>');
+    }
+    else if (location==''&&room!=''){
+       print('<h4>Room</h4>');
+       print('<p>'+room+'</p>');
+    }
+    %>
+        <%
+        if (typeof(presenters)!="undefined"){
+            if (presenters.length>0){
+                print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                for (var i=0; i<presenters.length;i++){
+                    print('<li>'+presenters[i].name+'</li>');
+                }
+                print('</ul>');
+            }
+        }
+        %>
+
+        <%
+        if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                print('<li data-icon=\"download\"><a href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+            }
+            print('</ul></div>');
+        }
+
+            print('</div>');
+        }
+        }
+        %>
+        <a data-role="button" data-icon="star" id="addSessionToAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>">To my agenda </a>
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>"
+        style="display: none;">Remove from my agenda </a>
+    </div>
+</li>
+</script>
+
+<script type="text/template" id="slotDetailsInAgenda">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" info="sessionCol" data-theme="g" data-content-theme="g" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+
+        <%
+        if (description!=''){
+            print('<h4>Description</h4><p>'+description+'</p>');
+        }
+        %>
+<%
+    if (location!=''&&room!=''){
+       print('<h4>Location - room</h4>');
+       print('<p>'+location+' - '+room+'</p>');
+    }
+    else if (location!=''&&room==''){
+       print('<h4>Location</h4>');
+       print('<p>'+location+'</p>');
+    }
+    else if (location==''&&room!=''){
+       print('<h4>Room</h4>');
+       print('<p>'+room+'</p>');
+    }
+    %>
+        <%
+        if (typeof(presenters)!="undefined"){
+            if (presenters.length>0){
+                print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                for (var i=0; i<presenters.length;i++){
+                    print('<li>'+presenters[i].name+'</li>');
+                }
+                print('</ul>');
+            }
+        }
+        %>
+
+        <%
+        if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                print('<li data-icon=\"download\"><a data-inline=\"true\" href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+            }
+            print('</ul></div>');
+        }
+
+            print('</div>');
+        }
+        }
+        %>
+        <a data-role="button" data-icon="star" id="addSessionToAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>"
+        style="display: none;">To my agenda </a>
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>">Remove from my agenda </a>
+    </div>
+</li>
+</script>
+
+<script type="text/template" id="slotsList">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+        <div data-role="collapsible-set" data-content-theme="b" data-theme="b"
+            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+        <a data-role="button" data-icon="star" id="addSessionToAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>">To my agenda </a>
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>"
+        style="display: none;">Remove from my agenda </a>
+    </div>
+</li>
+</script>
+
+<script type="text/template" id="slotsListInAgenda">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" data-theme="g" data-content-theme="g" info="sessionCol" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+        <div data-role="collapsible-set" data-content-theme="f" data-theme="f"
+            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+
+        <a data-role="button" data-icon="star" id="addSessionToAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>"
+        style="display: none;">To my agenda </a>
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>">Remove from my agenda </a>
+    </div>
+</li>
+</script>
+
+<script type="text/template" id="agendaSlotsList">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+        <div data-role="collapsible-set" data-content-theme="b" data-theme="b"
+            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>">Remove from my agenda </a>
+    </div>
+</li>
+</script>
+
+<script type="text/template" id="agendaSlotDetails">
+<li id="li-<%=id%>">
+    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+        day="<%= startDate.date %>">
+        <h2><%= startDate.time %>: <%= title %></h2>
+
+        <%
+        if (description!=''){
+            print('<h4>Description</h4><p>'+description+'</p>');
+        }
+        %>
+<%
+    if (location!=''&&room!=''){
+       print('<h4>Location - room</h4>');
+       print('<p>'+location+' - '+room+'</p>');
+    }
+    else if (location!=''&&room==''){
+       print('<h4>Location</h4>');
+       print('<p>'+location+'</p>');
+    }
+    else if (location==''&&room!=''){
+       print('<h4>Room</h4>');
+       print('<p>'+room+'</p>');
+    }
+    %>
+        <%
+        if (typeof(presenters)!="undefined"){
+            if (presenters.length>0){
+                print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                for (var i=0; i<presenters.length;i++){
+                    print('<li>'+presenters[i].name+'</li>');
+                }
+                print('</ul>');
+            }
+        }
+        %>
+
+        <%
+        if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                    print('<li data-icon=\"download\"><a href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+            }
+            print('</ul></div>');
+        }
+
+            print('</div>');
+        }
+        }
+        %>
+        <a
+        data-role="button" data-icon="delete" id="removeSessionFromAgenda"
+        day="<%=startDate.date%>" sessionId="<%=id%>"
+        eventId="<%=conferenceId%>">Remove from my agenda </a>
+    </div>
+</li>
+</script>

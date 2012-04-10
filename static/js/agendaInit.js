@@ -1,10 +1,13 @@
 $(document).live('pageinit', function(){
-    var conferencesContainer = $('#confList'),
-    conferencesView;
-    myConferences = loadAgendaFromServer();
-    conferencesView = new ConferencesListView({
-        collection : myConferences,
-        viewContainer : conferencesContainer
+    myEvents = loadAgenda();
+    visited=false;
+    inAgenda=null;
+    if (myEvents==null){
+        myEvents = new Days();
+    }
+    var eventsView = new EventsListView({
+        collection : myEvents,
+        viewContainer : eventsContainer = $('#eventList')
     });
-    conferencesView.render();
+    eventsView.render();
 });

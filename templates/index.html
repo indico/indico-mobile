@@ -13,66 +13,32 @@
 <body id="allpages">
 
 	<div data-role="page" id="listView">
-		<div data-role="header" data-theme="b" data-position="fixed">
+		<div data-role="header" data-theme="c" data-position="fixed">
 			<a href="/" data-role="button">Login</a>
 			<h1>Indico Mobile</h1>
-			<a href="#desktopView" data-role="button">Desktop</a>
+			<a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
 		</div>
 		<div data-role="content" data-theme="c">
 			<ul data-role="listview" data-inset="true">
 				<li><a href="/agenda" rel="external"> <img
 						src="{{url_for('static',filename='style/images/schedule.png')}}"
 						width="60" height="60" />
-						<h2>Agenda</h2>
+						<h2>Personal agenda</h2>
 				</a></li>
-				<li><a href="/conferences" rel="external"><img
+				<li><a href="/events" rel="external"><img
 						src="{{url_for('static',filename='style/images/conference.png')}}"
 						width="60" height="60" />
-						<h2>Conferences</h2> </a></li>
-				<li><a href="/map" rel="external"><img
-						src="{{url_for('static',filename='style/images/map.png')}}"
-						width="60" height="60" />
-						<h2>Map</h2> </a></li>
+						<h2>Events</h2> </a></li>
 				<li><a href="/agenda" rel="external"><img
-						src="{{url_for('static',filename='style/images/speaker.png')}}"
+						src="{{url_for('static',filename='style/images/new.png')}}"
 						width="60" height="60" />
-						<h2>Speakers</h2> </a></li>
+						<h2>What's going on?</h2> </a></li>
+				<li><a href="/history" rel="external"><img
+						src="{{url_for('static',filename='style/images/history.png')}}"
+						width="60" height="60" />
+						<h2>History</h2> </a></li>
 		</div>
-		<div data-role="footer" data-theme="b">Made by Me</div>
+		<div data-role="footer" data-theme="c">Made by Me</div>
 	</div>
-	<div data-role="page" id="desktopView">
-		<div data-role="header" data-theme="b" data-position="fixed">
-			<a href="/" data-role="button">Login</a>
-			<h1>Indico Mobile</h1>
-			<a href="#listView" data-role="button">List</a>
-		</div>
-		<div data-role="content" data-theme="b">
-			<div class="ui-grid-a">
-				<div class="ui-block-a" align="center">
-					<a href="/agenda" rel="external"><img
-						src="{{url_for('static',filename='style/images/schedule.png')}}"
-						width="60" height="60" /></a> <br />Agenda
-				</div>
-				<div class="ui-block-b" align="center">
-					<a href="/conferences" rel="external"><img
-						src="{{url_for('static',filename='style/images/conference.png')}}"
-						width="60" height="60" /></a> <br />Conferences
-				</div>
-				<div class="ui-block-a" align="center">
-					<a href="/map" rel="external"><img
-						src="{{url_for('static',filename='style/images/map.png')}}"
-						width="60" height="60" /></a> <br />Map
-				</div>
-				<div class="ui-block-b" align="center">
-					<a href="/agenda" rel="external"><img
-						src="{{url_for('static',filename='style/images/speaker.png')}}"
-						width="60" height="60" /></a> <br />Speakers
-				</div>
-
-			</div>
-		</div>
-		<div data-role="footer" data-theme="b">Made by Me</div>
-	</div>
-
 </body>
 </html>

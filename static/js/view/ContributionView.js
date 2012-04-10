@@ -1,23 +1,24 @@
 var ContributionView = Backbone.View.extend({
 
     initialize : function() {
+        var contributionTemplates = getHTMLTemplate('/contributionTemplates');
         if ($('#myagenda').length!=0){
-            this.template1 = _.template(getHTMLTemplate('/agendaContribution'));
+            this.template1 = _.template($(contributionTemplates).siblings('#agendaContribution').html());
         }
         else{
-            this.template1 = _.template(getHTMLTemplate('/contribution'));
+            this.template1 = _.template($(contributionTemplates).siblings('#contribution').html());
         }
-        this.template2 = _.template(getHTMLTemplate('/contributionInAgenda'));
+        this.template2 = _.template($(contributionTemplates).siblings('#contributionInAgenda').html());
     },
     render : function() {
-        var conference = this.options.collection,
+        var event = this.options.collection,
         date = this.options.date,
         session = this.options.session,
         part = this.options.part,
         template1 = this.template1,
         template2 = this.template2;
 
-        conference.get('days').each(function(day) {
+        event.get('days').each(function(day) {
             if(day.get('date') == date) {
                 var slots = day.get('slots');
                 var currentSlot;
@@ -26,37 +27,38 @@ var ContributionView = Backbone.View.extend({
                         currentSlot = slot;
                     }
                 });
+                if ($('#' + currentSlot.get('id')).html()==''||parseInt(part)>0){
                 var contribs = currentSlot.get('contributions');
-
                 if(contribs.size() > 15 * (parseInt(part) + 1)) {
                     for(var i = parseInt(part) * 15; i < 15 * (parseInt(part) + 1); i++) {
-                        addContributionToView(conference, day, currentSlot, date, session, contribs, i, template1, template2);
+                        addContributionToView(event, day, currentSlot, date, session, contribs, i, template1, template2);
                     }
                     $('#' + currentSlot.get('id')).append('<a data-role="button" id="more" day="'+date+'" sessionId="'+session+'" value="' + (parseInt(part) + 1) + '">More</a>');
 
                 } else {
                     for(var i = parseInt(part) * 15; i < contribs.size(); i++) {
-                        addContributionToView(conference, day, currentSlot,date, session, contribs, i, template1, template2);
+                        addContributionToView(event, day, currentSlot,date, session, contribs, i, template1, template2);
                     }
                 }
 
 
                 $('#' + currentSlot.get('id')).trigger('create');
+                }
+
             }
         });
-        $.mobile.hidePageLoadingMsg();
         return this;
     }
 });
 
-addContributionToView = function(conference, day, currentSlot, date, session, contribs, i, template1, template2){
+addContributionToView = function(event, day, currentSlot, date, session, contribs, i, template1, template2, template3){
     if (inAgenda){
         var isInAgenda=false;
-        var confInAgenda = inAgenda.find(function(conf){
-            return conf.get('id')==conference.get('id');
+        var eventInAgenda = inAgenda.find(function(agendaEvent){
+            return agendaEvent.get('id')==event.get('id');
         });
-        if (confInAgenda){
-            var dayInAgenda = confInAgenda.get('days').find(function(day){
+        if (eventInAgenda){
+            var dayInAgenda = eventInAgenda.get('days').find(function(day){
                 return day.get('date')==date;
             });
             if (dayInAgenda){
@@ -70,6 +72,7 @@ addContributionToView = function(conference, day, currentSlot, date, session, co
                     if (contribInAgenda){
                         isInAgenda=true;
                         $('#' + currentSlot.get('id')).append(template2(contribs.at(i).toJSON()));
+
                     }
                 }
             }

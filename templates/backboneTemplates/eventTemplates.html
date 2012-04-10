@@ -1,0 +1,25 @@
+<script type="text/template" id="eventList">
+<li>
+    <a href="#alldays" id="eventLinkFromEvents" eventId="<%=id%>">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext">Add to agenda</a>
+</li>
+</script>
+
+<script type="text/template" id="eventListInAgenda">
+<li data-theme="g">
+    <a data-theme="g" href="#alldays" id="eventLinkFromEvents" eventId="<%=id%>">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+    <a data-theme="g" data-icon="delete" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext">Remove from agenda</a>
+</li>
+</script>
+
+<script type="text/template" id="agendaEventList">
+<li>
+    <a href="#alldays" id="eventLinkFromAgenda" eventId="<%=id%>">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+</li>
+</script>

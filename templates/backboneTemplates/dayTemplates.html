@@ -1,0 +1,27 @@
+<script type="text/template" id="dayPage">
+<div data-role="page" id="<%= date %>" class="inDay">
+    <div data-role="header" data-theme="c" style="position: fixed; z-index: 999;">
+        <a href="#alldays" data-icon="back">Back</a>
+        <h3><%= date %></h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div data-role="content" data-theme="c">
+        <div class="leftSide" id="listInDay-<%= date %>" style="margin-top: 30px;">
+        </div>
+        <div class="rightSide" style="margin-top: 50px;" id="sessionInDay-<%=date%>"></div>
+    </div>
+
+</div>
+</script>
+
+<script type="text/template" id="daysList">
+<li id="li-<%= date %>">
+    <a href="#<%= date %>" id="dayButton" data-prefetch><%=date %></a>
+</li>
+</script>
+
+<<script type="text/template" id="selectedDay">
+<li id="sli-<%= date %>" data-theme="b">
+    <a href="#<%= date %>" id="dayButton" data-prefetch><%= date %></a>
+</li>
+</script>

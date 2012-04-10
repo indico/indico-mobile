@@ -1,53 +1,84 @@
-var Conference = Backbone.Model.extend({
+var Contribution = Backbone.Model.extend({
 
 });
-Conferences = Backbone.Collection.extend({
-    model : Conference
+
+var Contributions = Backbone.Collection.extend({
+    model: Contribution
 });
 
-initConf = function(options){
-    var conferenceInfo;
+var Day = Backbone.Model.extend({
+
+});
+
+Days = Backbone.Collection.extend({
+    model : Day
+});
+
+var Slot = Backbone.Model.extend({
+
+});
+
+Slots = Backbone.Collection.extend({
+    model : Slot
+});
+
+var Event = Backbone.Model.extend({
+
+});
+Events = Backbone.Collection.extend({
+    model : Event
+});
+
+initEvent = function(options){
+    var eventModel;
+    var eventInfo;
     $.ajax({
         type : "GET",
-        url : "/getConferenceInfo",
+        url : "/eventInfo",
         dataType : "json",
         async: false,
         data : {
-            confID: options,
+            eventID: options,
         },
         success: function(resp){
-            conferenceInfo=resp.results;
+            eventInfo=resp.results;
         }
     });
-    var confTitle='',
-    confDate='';
-    if (conferenceInfo[0]){
-        confTitle=conferenceInfo[0].title;
-        confDate=conferenceInfo[0].startDate.date;
+    var eventTitle='',
+    eventDate='';
+    if (eventInfo[0]){
+        eventTitle=eventInfo[0].title;
+        eventDate=eventInfo[0].startDate.date;
     }
-    var conference;
+    var event;
     $.ajax({
         type : "GET",
-        url : "/getConferenceTT",
+        url : "/eventTT",
         dataType : "json",
         async: false,
         data : {
-            confID: options,
-            confTitle: confTitle,
-            confDate: confDate
+            eventID: options,
+            eventTitle: eventTitle,
+            eventDate: eventDate
         },
         success: function(resp){
-            conference=resp;
+            event=resp;
         }
     });
 
-
-    conferenceModel = new Conference(conference);
+    console.log(event);
+    eventModel = new Event(event);
 
     var theseDays = new Days();
-    for(day in conferenceModel.get('days')) {
-        var currentDay = conferenceModel.get('days')[day];
-        theseDays.add(currentDay);
+    for(day in eventModel.get('days')) {
+        var currentDay = eventModel.get('days')[day];
+        var isOkToAdd = false;
+        for (attributes in currentDay){
+            isOkToAdd=true;
+        }
+        if (isOkToAdd){
+            theseDays.add(currentDay);
+        }
     }
 
     theseDays.each(function(day) {
@@ -89,5 +120,6 @@ initConf = function(options){
         return day.get('date');
     };
     theseDays.sort();
-    conferenceModel.set('days',theseDays);
+    eventModel.set('days',theseDays);
+    return eventModel;
 }

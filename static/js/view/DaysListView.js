@@ -8,40 +8,58 @@ var DaysListView = Backbone.View.extend({
     },
 
     initialize : function() {
-        this.template1 = _.template(getHTMLTemplate('/daysList'));
-        this.template2 = _.template(getHTMLTemplate('/selectedDay'));
+        var dayTemplates = getHTMLTemplate('/dayTemplates');
+        this.template1 = _.template($(dayTemplates).siblings('#daysList').html());
+        this.template2 = _.template($(dayTemplates).siblings('#selectedDay').html());
     },
     render : function() {
         var container = this.options.viewContainer,
         date = this.options.date,
-        conference = this.collection,
+        event = this.collection,
         template1 = this.template1,
         template2 = this.template2,
         listView = $(this.el);
-        if (conference.get('title')!=''){
-            $('#headerTitle').html(conference.get('title'));
+
+        if (event.get('title')!=''){
+            $('#headerTitle').html(event.get('title'));
         }
         else{
 
-            $('#headerTitle').html('Conference '+conference.get('id'));
+            $('#headerTitle').html('Event '+event.get('id'));
         }
-
         $(this.el).empty();
-        conference.get('days').each(function(day) {
+        var hasTimetable=false;
+        if (event.get('days').size()==0){
+            hasTimetable=false;
+        }
+        event.get('days').each(function(day) {
             if (day.get('date')){
                 if (day.get('date')==date){
                     listView.append(template2(day.toJSON()));
+                    hasTimetable=true;
                 }
                 else{
                     listView.append(template1(day.toJSON()));
+                    hasTimetable=true;
                 }
             }
         });
-        container.html($(this.el));
-        if (container.attr('id')=='list'){
-            container.trigger('refresh');
-        }else{
-            container.trigger('create');
+        if (!hasTimetable){
+            container.html('<h4>No timetable available for this event.</h4>');
+        }
+        else{
+
+            container.html($(this.el));
+            if (visited){
+                container.trigger('create');
+            }
+            else if (container.attr('id')=='list'){
+                container.trigger('refresh');
+            }
+
+            else{
+                container.trigger('create');
+            }
         }
         return this;
     }
