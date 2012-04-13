@@ -18,6 +18,7 @@ getDay = function(eventId, dayDate){
 }
 
 getEvent = function(eventId){
+    console.log(eventId)
     var event;
     $.ajax({
         type : "GET",
@@ -428,11 +429,11 @@ $('#removeContributionFromAgenda').live('click', function(event) {
 
     if (eventRemoved){
         $.mobile.changePage('/agenda');
-        $(document).trigger('pageinit');
+        $('#agendaHome').trigger('pageinit');
     }
     else if (dayRemoved){
-        $('#li-'+contributionDay).remove();
-        $('#sli-'+contributionDay).remove();
+        $('#li-'+eventId+'-'+contributionDay).remove();
+        $('#sli-'+eventId+'-'+contributionDay).remove();
         $.mobile.changePage('#alldays');
     }
 });
@@ -666,16 +667,16 @@ $('#removeSessionFromAgenda').live('click', function(event) {
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
     if (eventRemoved){
-        $(document).trigger('pageinit');
         $.mobile.changePage('/agenda');
+        $('#agendaHome').trigger('pageinit');
     }
     else{
 
         $('#li-' + sessionId).remove();
 
         if(dayRemoved) {
-            $('#li-'+sessionDay).remove();
-            $('#sli-'+sessionDay).remove();
+            $('#li-'+eventId+'-'+sessionDay).remove();
+            $('#sli-'+eventId+'-'+sessionDay).remove();
             $.mobile.changePage('#alldays');
         }
     }

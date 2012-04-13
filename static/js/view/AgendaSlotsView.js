@@ -48,10 +48,10 @@ var AgendaSlotsView = Backbone.View.extend({
                 }
             }
         });
-        $('#sessionInDay-'+date).html(listView);
-        if (visited){ $('#sessionInDay-'+date).trigger('create');}
+        $('#sessionInDay-'+eventId+'-'+date).html(listView);
+        if (visited){ $('#sessionInDay-'+eventId+'-'+date).trigger('create');}
         else{
-            $('#sessionInDay-'+date).trigger('refresh');
+            $('#sessionInDay-'+eventId+'-'+date).trigger('refresh');
         }
         return this;
     }

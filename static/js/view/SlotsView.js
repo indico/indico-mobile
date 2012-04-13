@@ -24,6 +24,9 @@ var SlotsView = Backbone.View.extend({
         date = this.options.date,
         eventId = this.options.eventId,
         listView = $(this.el);
+
+        console.log('inSlotView')
+
         listView.empty();
         var slots = sessions;
         slots.comparator = function(slot){
@@ -58,10 +61,11 @@ var SlotsView = Backbone.View.extend({
                 }
             }
         });
-        $('#sessionInDay-'+date).html(listView);
-        if (visited){ $('#sessionInDay-'+date).trigger('create');}
+        console.log($('#sessionInDay-'+eventId+'-'+date));
+        $('#sessionInDay-'+eventId+'-'+date).html(listView);
+        if (visited){ $('#sessionInDay-'+eventId+'-'+date).trigger('create');}
         else{
-            $('#sessionInDay-'+date).trigger('refresh');
+            $('#sessionInDay-'+eventId+'-'+date).trigger('refresh');
         }
         return this;
     }

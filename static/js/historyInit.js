@@ -1,9 +1,8 @@
-$(document).live('pageinit', function(){
-    history = loadHistory();
+$('#historyHome').live('pageinit', function(){
+    myHistory = loadHistory();
     visited=false;
-    inAgenda=loadAgenda;
     var eventsView = new HistoryListView({
-        collection : history,
+        collection : myHistory,
         viewContainer : eventsContainer = $('#eventList')
     });
     eventsView.render();

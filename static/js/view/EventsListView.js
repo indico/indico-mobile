@@ -75,22 +75,6 @@ var EventsListView = Backbone.View.extend({
     }
 });
 
-getEventInfo = function(eventId){
-    var event;
-    $.ajax({
-        type : "GET",
-        url : "/eventInfo",
-        dataType : "json",
-        async: false,
-        data : {
-            eventID: eventId
-        },
-        success: function(resp){
-            event=resp;
-        }
-    });
-    return new Event(event);
-}
 
 isEventInAgenda = function(eventId){
     var myAgendaContributions = loadAgendaContributions();
@@ -104,7 +88,7 @@ isEventInAgenda = function(eventId){
         return session.get('eventId')==eventId;
     });
 
-    var event = getEventInfo(eventId);
+    var event = getEvent(eventId);
 
     if (contribInAgenda.length == event.get('numContributions') &&
             sessionsInAgenda.length == event.get('numSessions')){

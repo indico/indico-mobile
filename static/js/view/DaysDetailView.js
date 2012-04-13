@@ -4,6 +4,7 @@ var DaysDetailView = Backbone.View.extend({
 	},
 	render : function() {
 		var  event = this.collection, template1 = this.template1;
+		console.log(event)
 		event.each(function(day){
 			if (day.get('date')){
 			    $('#allpages').append(template1(day.toJSON()));

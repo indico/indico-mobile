@@ -49,19 +49,9 @@ loadAgendaEvents = function(){
 }
 
 loadHistory = function(){
-    var myHistory = null;
+    var myHistory = new Events();
     if(localStorage.getItem('history')) {
-        myHistory = new Days(JSON.parse(localStorage.getItem('history')));
-        myHistory.each(function(event){
-            event.set('days', new Days(event.get('days')));
-            event.get('days').each(function(day) {
-                day.set('slots', new Slots(day.get('slots')));
-                day.get('slots').each(function(slot) {
-                    var tempContribs = new Contributions();
-                    slot.set('contributions', new Contributions(slot.get('contributions')));
-                });
-            });
-        });
+        myHistory = new Events(JSON.parse(localStorage.getItem('history')));
     }
     return myHistory;
 }
