@@ -51,8 +51,8 @@
     %>
     <a data-role="button" data-icon="delete"
         id="removeContributionFromAgenda" day="<%=startDate.date%>"
-        sessionId="<%=sessionId%>" contribId="<%= id %>"
-        eventId="<%=conferenceId%>">Remove from my agenda</a>
+        sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
+        eventId="<%=eventId%>">Remove from my agenda</a>
 </div>
 </script>
 
@@ -109,10 +109,10 @@ if (typeof(material)!="undefined"){
 %>
 <a data-role="button" data-icon="star" id="addContributionToAgenda"
     day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= id %>" eventId="<%=conferenceId%>">To my agenda </a> <a
+    contribId="<%= contributionId %>" eventId="<%=eventId%>">To my agenda </a> <a
     data-role="button" data-icon="delete" id="removeContributionFromAgenda1"
     day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= id %>" eventId="<%=conferenceId%>"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>"
     style="display: none;">Remove from my agenda </a>
 </div>
 </script>
@@ -171,10 +171,10 @@ if (typeof(material)!="undefined"){
     %>
     <a data-role="button" data-icon="star" id="addContributionToAgenda"
         day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-        contribId="<%= id %>" eventId="<%=conferenceId%>"
+        contribId="<%= contributionId %>" eventId="<%=eventId%>"
         style="display: none;">To my agenda </a> <a data-role="button"
         data-icon="delete" id="removeContributionFromAgenda1" day="<%=startDate.date%>"
-        sessionId="<%=sessionId%>" contribId="<%= id %>"
-        eventId="<%=conferenceId%>">Remove from my agenda </a>
+        sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
+        eventId="<%=eventId%>">Remove from my agenda </a>
 </div>
 </script>

@@ -63,22 +63,10 @@ var RecentEventsView = Backbone.View.extend({
                 }
 
                 var isInAgenda = false;
-                if (myAgenda){
-                    var eventInAgenda = myAgenda.find(function(agendaEvent){
-                        return agendaEvent.get('id')==event.get('id');
-                    });
-
-                    if (eventInAgenda){
-                        var eventModel = initEvent(event.get('id'));
-                        if (compareEvents(eventInAgenda,eventModel)){
-                            listView.append(template2(event));
-                            isInAgenda = true;
-                        }
-
-                    }
+                if (isEventInAgenda(event.get('id'))){
+                    listView.append(template2(event));
                 }
-
-                if (!isInAgenda){
+                else{
                     listView.append(template1(event));
                 }
 
@@ -91,35 +79,30 @@ var RecentEventsView = Backbone.View.extend({
     }
 });
 
-compareEvents = function(event1, event2){
-    var identical=true;
-    var days1 = event1.get('days');
-    var days2 = event2.get('days');
-    if(days1.size()==days2.size()){
-        for (var i=0; i<days1.size(); i++){
-            var slots1 = days1.at(i).get('slots');
-            var slots2 = days2.find(function(day){
-                return day.get('date')==days1.at(i).get('date');
-            }).get('slots');
-            if (slots1.size()==slots2.size()){
-                for(var j=0; j<slots1.size(); j++){
-                    var contribs1 = slots1.at(j).get('contributions');
-                    var contribs2 = slots2.find(function(slot){
-                        return slot.get('id')==slots1.at(j).get('id');
-                    }).get('contributions');
-                    if(contribs1.size()!=contribs2.size()){
-                        identical=false;
-                    }
-                }
-            }
-            else{
-                identical=false;
-            }
+isEventInAgenda = function(eventId){
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+
+    var contribInAgenda = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId;
+    });
+
+    var sessionsInAgenda = myAgendaSessions.filter(function(session){
+        return session.get('eventId')==eventId;
+    });
+
+    var event = getEventInfo(eventId);
+
+    if (contribInAgenda.length == event.get('numContributions') &&
+            sessionsInAgenda.length == event.get('numSessions')){
+        if (contribInAgenda.length == 0 && sessionsInAgenda.length==0){
+            return false;
+        }
+        else{
+            return true;
         }
     }
     else{
-        identical=false;
+        return false;
     }
-
-    return identical;
-}
+};

@@ -1,11 +1,8 @@
-$(document).live('pageinit', function(){
-    myEvents = loadAgenda();
+$('#agendaHome').live('pageinit', function(){
+    myEvents = loadAgendaEvents();
     visited=false;
-    inAgenda=null;
-    if (myEvents==null){
-        myEvents = new Days();
-    }
-    var eventsView = new EventsListView({
+
+    var eventsView = new AgendaEventsListView({
         collection : myEvents,
         viewContainer : eventsContainer = $('#eventList')
     });

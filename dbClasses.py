@@ -12,11 +12,6 @@ class EventIdQuery(BaseQuery):
     def getEventById(self, eventID):
         return self.filter(self.type.id == eventID)
 
-class Date(db.Document):
-    date = db.StringField()
-    tz = db.StringField()
-    time = db.StringField()
-
 class Presenter(db.Document):
     _fossil = db.StringField()
     affiliation = db.StringField()
@@ -57,8 +52,9 @@ class Contribution(db.Document):
     _fossil = db.StringField()
     sessionCode = db.StringField()
     uniqueId = db.StringField(default='')
-    id = db.StringField()
     room = db.StringField()
+    eventId = db.AnythingField()
+    dayDate = db.StringField()
 
 class Session(db.Document):
     startDate = db.DateTimeField()
@@ -68,7 +64,7 @@ class Session(db.Document):
     color = db.StringField(default='')
     conferenceId = db.StringField()
     inheritLoc = db.BoolField(default=False)
-    id = db.StringField()
+    sessionId = db.StringField()
     inheritRoom = db.BoolField(default=False)
     title = db.StringField()
     location = db.StringField()
@@ -88,7 +84,9 @@ class Session(db.Document):
     isPoster = db.BoolField(default=False)
     sessionId = db.AnythingField()
     slotTitle = db.StringField(default='')
-    contributions = db.ListField(db.DocumentField('Contribution'))
+    eventId = db.AnythingField()
+    dayDate = db.StringField()
+    numContributions = db.IntField()
 
 class Chair(db.Document):
     _type = db.StringField()
@@ -97,11 +95,12 @@ class Chair(db.Document):
     _fossil = db.StringField()
     fullName = db.StringField()
     email = db.StringField()
+    eventId = db.AnythingField()
 
 class Day(db.Document):
     query_class = EventIdQuery
     date = db.StringField()
-    sessions = db.ListField(db.DocumentField('Session'))
+    eventId = db.AnythingField()
 
 class Event(db.Document):
     query_class = EventIdQuery
@@ -121,4 +120,5 @@ class Event(db.Document):
     room = db.AnythingField()
     category = db.StringField()
     categoryId = db.StringField()
-    days = db.ListField(db.DocumentField('Day'))
+    numContributions = db.IntField()
+    numSessions = db.IntField()

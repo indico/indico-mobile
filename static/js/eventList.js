@@ -1,6 +1,7 @@
 
-$(document).live('pageinit', function(){
+$('#eventHome').live('pagecreate', function(){
     visited=false;
+    console.log('pagecreate')
     var futureEvents;
     $.ajax({
         type : "GET",
@@ -16,6 +17,7 @@ $(document).live('pageinit', function(){
     });
 
     var futureEventsCollection = new Events(futureEvents.results);
+    console.log(futureEventsCollection);
 
     if (futureEvents==''){
         futureEventsCollection = null;

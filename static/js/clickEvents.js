@@ -1,10 +1,107 @@
+getDays = function(eventId){
+    var days;
+    $.ajax({
+        type : "GET",
+        url : "/eventDays",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+        },
+        success: function(resp){
+            days=resp;
+        }
+    });
+    return new Days(days);
+
+}
+
+getDaySessions = function(eventId, day){
+    var sessions;
+    $.ajax({
+        type : "GET",
+        url : "/daySessions",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+            day: day
+        },
+        success: function(resp){
+            sessions=resp;
+        }
+    });
+    return new Slots(sessions);
+}
+
+getSessionContributions = function(eventId, day, sessionId){
+    var contributions;
+    $.ajax({
+        type : "GET",
+        url : "/sessionContributions",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+            day: day,
+            sessionId: sessionId
+        },
+        success: function(resp){
+            contributions=resp;
+        }
+    });
+    return new Contributions(contributions);
+
+}
+
+getEventContributions = function(eventId){
+    var contributions;
+    $.ajax({
+        type : "GET",
+        url : "/eventContributions",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId
+        },
+        success: function(resp){
+            contributions=resp;
+        }
+    });
+    return new Contributions(contributions);
+
+}
+
+getEventSessions = function(eventId){
+    var sessions;
+    $.ajax({
+        type : "GET",
+        url : "/eventSessions",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId
+        },
+        success: function(resp){
+            sessions=resp;
+        }
+    });
+    return new Slots(sessions);
+
+}
+
 $('a[id="dayButton"]').live('click', function(event) {
 
+    var eventId = $(this).attr('eventId');
+    var daysCollection = getDays(eventId);
+
     var date = $(this).html();
+    var sessionsCollection = getDaySessions(eventId, date);
     if ($('#sessionInDay-'+date).html()==''){
     var slotsView = new SlotsView({
-        collection : currentEvent,
-        date : date
+        collection : sessionsCollection,
+        date : date,
+        eventId: eventId
     });
     slotsView.render();
     }
@@ -14,7 +111,45 @@ $('a[id="dayButton"]').live('click', function(event) {
         reverse : true
     });
         var daysListView = new DaysListView({
-            collection : currentEvent,
+            collection : daysCollection,
+            viewContainer : $('#listInDay-' + date),
+            date : date
+        });
+        daysListView.render();
+
+});
+
+$('a[id="agendaDayButton"]').live('click', function(event) {
+
+    var eventId = $(this).attr('eventId');
+    var days = loadAgendaDays();
+    var daysCollection = new Days(days.filter(function(day){
+        return day.get('eventId')==eventId;
+    }));
+
+    var date = $(this).html();
+
+
+    var sessions = loadAgendaSessions();
+    var sessionsCollection = new Slots(sessions.filter(function(session){
+        return session.get('eventId')==eventId && session.get('dayDate')==date;
+    }));
+
+    if ($('#sessionInDay-'+date).html()==''){
+    var slotsView = new AgendaSlotsView({
+        collection : sessionsCollection,
+        date : date,
+        eventId: eventId
+    });
+    slotsView.render();
+    }
+
+    $.mobile.changePage($(this).attr('href'), {
+        transition : 'fade',
+        reverse : true
+    });
+        var daysListView = new AgendaDaysListView({
+            collection : daysCollection,
             viewContainer : $('#listInDay-' + date),
             date : date
         });
@@ -24,63 +159,23 @@ $('a[id="dayButton"]').live('click', function(event) {
 
 $('#eventLinkFromAgenda').live('click', function(event) {
 
-    var currentContrib = $(this).attr('eventId');
-    currentEvent = myEvents.find(function(event){
-        return event.get('id')==currentContrib;
-    });
-    var history;
-    if(!localStorage.getItem('history')){
-        history = new Events();
-        var toAdd = currentEvent.clone().set('days','');
-        toAdd.set('viewedAt',new Date().getTime());
-        history.add(toAdd);
-        localStorage.setItem('history', JSON.stringify(history.toJSON()));
-    }else{
-        history = loadHistory();
-        var isInHistory = history.find(function(event){
-            return event.get('id')==currentEvent.get('id');
-        });
-        if (!isInHistory){
+    var eventId = $(this).attr('eventId');
+    var eventInfo = getEvent(eventId);
+    $('#headerTitle').html(eventInfo.get('title'));
+    var days = loadAgendaDays();
+    var daysCollection = new Days(days.filter(function(day){
+        return day.get('eventId')==eventId;
+    }));
 
-            if (history.size()<10){
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-            }else{
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-                history.remove(history.at(0));
-            }
-            localStorage.setItem('history', JSON.stringify(history.toJSON()));
-        }
-        else{
-            history.remove(isInHistory);
-            if (history.size()<10){
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-            }else{
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-                history.remove(history.at(0));
-            }
-            localStorage.setItem('history', JSON.stringify(history.toJSON()));
-        }
-    }
-    allDays = currentEvent.get('days')
-    inAgenda = null;
-
-    var daysListView = new DaysListView({
-        collection : currentEvent,
+    var daysListView = new AgendaDaysListView({
+        collection : daysCollection,
         viewContainer : $('#list'),
         date : ''
     });
     daysListView.render();
 
-    var daysDetailView = new DaysDetailView({
-        collection : currentEvent
+    var daysDetailView = new AgendaDaysDetailView({
+        collection : daysCollection
     });
     daysDetailView.render();
 });
@@ -90,60 +185,21 @@ $('#alldays').live('pageshow', function(event,ui){
 });
 
 $('#eventLinkFromEvents').live('click', function(event) {
-    currentEvent = initEvent($(this).attr('eventId'));
-    var history;
-    if(!localStorage.getItem('history')){
-        history = new Events();
-        var toAdd = currentEvent.clone().set('days','');
-        toAdd.set('viewedAt',new Date().getTime());
-        history.add(toAdd);
-        localStorage.setItem('history', JSON.stringify(history.toJSON()));
-    }else{
-        history = loadHistory();
-        var isInHistory = history.find(function(event){
-            return event.get('id')==currentEvent.get('id');
-        });
-        if (!isInHistory){
 
-            if (history.size()<10){
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-            }else{
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-                history.remove(history.at(0));
-            }
-            localStorage.setItem('history', JSON.stringify(history.toJSON()));
-        }
-        else{
-            history.remove(isInHistory);
-            if (history.size()<10){
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-            }else{
-                var toAdd = currentEvent.clone().set('days','');
-                toAdd.set('viewedAt',new Date().getTime());
-                history.add(toAdd);
-                history.remove(history.at(0));
-            }
-            localStorage.setItem('history', JSON.stringify(history.toJSON()));
-        }
-    }
-    allDays = currentEvent.get('days')
-    inAgenda = loadAgenda();
+    var eventId = $(this).attr('eventId');
+    var eventInfo = getEvent(eventId);
+    $('#headerTitle').html($(this).html());
+    var daysCollection = getDays(eventId);
 
     var daysListView = new DaysListView({
-        collection : currentEvent,
+        collection : daysCollection,
         viewContainer : $('#list'),
         date : ''
     });
     daysListView.render();
 
     var daysDetailView = new DaysDetailView({
-        collection : currentEvent
+        collection : daysCollection
     });
     daysDetailView.render();
 
@@ -152,52 +208,117 @@ $('#eventLinkFromEvents').live('click', function(event) {
 
 $('a[id="more"]').live('click', function(event) {
 
+    var eventId = $(this).attr('eventId');
+    var sessionId = $(this).attr('sessionId');
+    var day = $(this).attr('day');
+    var part = $(this).attr('value');
+    var contributionsCollection = getSessionContributions(eventId,day, sessionId);
+
     $(this).hide();
 
     var contributionsView = new ContributionView({
-        collection : currentEvent,
-        date : $(this).attr('day'),
-        session : $(this).attr('sessionId'),
-        part : $(this).attr('value')
+        collection : contributionsCollection,
+        date : day,
+        event : eventId,
+        session : sessionId,
+        part : part
     });
     contributionsView.render();
 
 });
 
-$('#searchHome').live('pageshow', function(){
-    $('.inDay').remove();
+$('a[id="agendaMore"]').live('click', function(event) {
+
+    var eventId = $(this).attr('eventId');
+    var sessionId = $(this).attr('sessionId');
+    var day = $(this).attr('day');
+    var part = $(this).attr('value');
+
+    var contributions = loadAgendaContributions();
+    var contributionsCollection = new Contributions(contributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==day && contrib.get('sessionId')==sessionId;
+    }));
+
+    $(this).hide();
+
+    var contributionsView = new AgendaContributionView({
+        collection : contributionsCollection,
+        date : day,
+        event : eventId,
+        session : sessionId,
+        part : part
+    });
+    contributionsView.render();
+
 });
 
-$('#futureEventHome').live('pageshow', function(){
-    $('.inDay').remove();
+$('#eventHome').live('pageshow', function(){
+    if ($('.inDay').length>15){
+        $('.inDay').remove();
+    }
 });
 
 $('#agendaHome').live('pageshow', function(){
-    $('.inDay').remove();
+    if ($('.inDay').length>15){
+        $('.inDay').remove();
+    }
 });
 
 $('#historyHome').live('pageshow', function(){
-    $('.inDay').remove();
+    if ($('.inDay').length>15){
+        $('.inDay').remove();
+    }
 });
 
 $('#addEvent').live('keyup', function(event){
     if (event.keyCode==13){
-        currentEvent = initEvent($(this).val());
+        getDays($(this).val());
     }
 
 });
 
 
 
-$('div[info="sessionCol"]').live('click', function() {
+$('div[info="sessionCollapsible"]').live('click', function() {
 
+    var eventId = $(this).attr('eventId');
+    var sessionId = $(this).attr('sessionId')
+    var day = $(this).attr('day')
+    var contributionsCollection = getSessionContributions(eventId,day, sessionId);
 
-
+    if (contributionsCollection.size()>0){
         var contributionsView = new ContributionView({
-            collection : currentEvent,
-            date : $(this).attr('day'),
-            session : $(this).attr('sessionId'),
+            collection : contributionsCollection,
+            date : day,
+            session : sessionId,
+            event : eventId,
             part : 0
         });
         contributionsView.render();
+    }
+});
+
+$('div[info="agendaSessionCollapsible"]').live('click', function() {
+
+    var eventId = $(this).attr('eventId');
+    var sessionId = $(this).attr('sessionId');
+    var day = $(this).attr('day');
+
+    var contributions = loadAgendaContributions();
+    var contributionsCollection = new Contributions(contributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==day && contrib.get('sessionId')==sessionId;
+    }));
+
+    console.log(contributionsCollection);
+
+    if (contributionsCollection.size()>0){
+        var contributionsView = new AgendaContributionView({
+            collection : contributionsCollection,
+            date : day,
+            session : sessionId,
+            event : eventId,
+            part : 0
+        });
+        contributionsView.render();
+    }
 });

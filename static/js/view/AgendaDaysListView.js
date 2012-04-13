@@ -1,4 +1,4 @@
-var DaysListView = Backbone.View.extend({
+var AgendaDaysListView = Backbone.View.extend({
     tagName : 'ul',
     attributes : {
         'data-role' : 'listview',
@@ -9,8 +9,8 @@ var DaysListView = Backbone.View.extend({
 
     initialize : function() {
         var dayTemplates = getHTMLTemplate('/dayTemplates');
-        this.template1 = _.template($(dayTemplates).siblings('#daysList').html());
-        this.template2 = _.template($(dayTemplates).siblings('#selectedDay').html());
+        this.template1 = _.template($(dayTemplates).siblings('#agendaDaysList').html());
+        this.template2 = _.template($(dayTemplates).siblings('#agendaSelectedDay').html());
     },
     render : function() {
         var container = this.options.viewContainer,
@@ -20,6 +20,13 @@ var DaysListView = Backbone.View.extend({
         template2 = this.template2,
         listView = $(this.el);
 
+        if (days.get('title')!=''){
+            $('#headerTitle').html(days.get('title'));
+        }
+        else{
+
+            $('#headerTitle').html('No title');
+        }
         $(this.el).empty();
         var hasTimetable=false;
         if (days.size()==0){

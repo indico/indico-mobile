@@ -4,8 +4,8 @@
 </script>
 
 <script type="text/template" id="slotDetails">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" info="sessionCollapsible" sessionId="<%=sessionId%>"
         day="<%= startDate.date %>">
         <h2><%= startDate.time %>: <%= title %></h2>
 
@@ -61,19 +61,19 @@
         }
         %>
         <a data-role="button" data-icon="star" id="addSessionToAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>">To my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>" eventId="<%=eventId%>">To my agenda </a>
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>"
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>"
         style="display: none;">Remove from my agenda </a>
     </div>
 </li>
 </script>
 
 <script type="text/template" id="slotDetailsInAgenda">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" info="sessionCol" data-theme="g" data-content-theme="g" sessionId="<%=id%>"
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" info="sessionCollapsible" data-theme="g" data-content-theme="g" sessionId="<%=sessionId%>"
         day="<%= startDate.date %>">
         <h2><%= startDate.time %>: <%= title %></h2>
 
@@ -129,73 +129,73 @@
         }
         %>
         <a data-role="button" data-icon="star" id="addSessionToAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>"
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>" eventId="<%=eventId%>"
         style="display: none;">To my agenda </a>
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>">Remove from my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>">Remove from my agenda </a>
     </div>
 </li>
 </script>
 
 <script type="text/template" id="slotsList">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" info="sessionCollapsible" sessionId="<%=sessionId%>" eventId="<%=eventId%>"
         day="<%= startDate.date %>">
         <h2><%= startDate.time %>: <%= title %></h2>
         <div data-role="collapsible-set" data-content-theme="b" data-theme="b"
-            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+            id="<%=sessionId%>" day="<%= startDate.date %>" eventId="<%=eventId%>" data-inset="true"></div>
         <a data-role="button" data-icon="star" id="addSessionToAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>">To my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>" eventId="<%=eventId%>">To my agenda </a>
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>"
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>"
         style="display: none;">Remove from my agenda </a>
     </div>
 </li>
 </script>
 
 <script type="text/template" id="slotsListInAgenda">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" data-theme="g" data-content-theme="g" info="sessionCol" sessionId="<%=id%>"
-        day="<%= startDate.date %>">
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" data-theme="g" data-content-theme="g" info="sessionCollapsible" sessionId="<%=sessionId%>"
+        day="<%= startDate.date %>" eventId="<%=eventId%>">
         <h2><%= startDate.time %>: <%= title %></h2>
         <div data-role="collapsible-set" data-content-theme="f" data-theme="f"
-            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+            id="<%=sessionId%>" day="<%= startDate.date %>" eventId="<%=eventId%>" data-inset="true"></div>
 
         <a data-role="button" data-icon="star" id="addSessionToAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>" eventId="<%=conferenceId%>"
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>" eventId="<%=eventId%>"
         style="display: none;">To my agenda </a>
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda1"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>">Remove from my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>">Remove from my agenda </a>
     </div>
 </li>
 </script>
 
 <script type="text/template" id="agendaSlotsList">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
-        day="<%= startDate.date %>">
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" info="agendaSessionCollapsible" sessionId="<%=sessionId%>"
+        day="<%= startDate.date %>" eventId="<%=eventId%>">
         <h2><%= startDate.time %>: <%= title %></h2>
         <div data-role="collapsible-set" data-content-theme="b" data-theme="b"
-            id="<%=id%>" day="<%= startDate.date %>" eventId="<%=conferenceId%>" data-inset="true"></div>
+            id="<%=sessionId%>" day="<%= startDate.date %>" eventId="<%=eventId%>" data-inset="true"></div>
 
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>">Remove from my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>">Remove from my agenda </a>
     </div>
 </li>
 </script>
 
 <script type="text/template" id="agendaSlotDetails">
-<li id="li-<%=id%>">
-    <div data-role="collapsible" info="sessionCol" sessionId="<%=id%>"
-        day="<%= startDate.date %>">
+<li id="li-<%=sessionId%>">
+    <div data-role="collapsible" info="agendaSessionCollapsible" sessionId="<%=sessionId%>"
+        day="<%= startDate.date %>" eventId="<%=eventId%>">
         <h2><%= startDate.time %>: <%= title %></h2>
 
         <%
@@ -251,8 +251,8 @@
         %>
         <a
         data-role="button" data-icon="delete" id="removeSessionFromAgenda"
-        day="<%=startDate.date%>" sessionId="<%=id%>"
-        eventId="<%=conferenceId%>">Remove from my agenda </a>
+        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+        eventId="<%=eventId%>">Remove from my agenda </a>
     </div>
 </li>
 </script>

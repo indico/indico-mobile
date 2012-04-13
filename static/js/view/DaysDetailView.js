@@ -4,18 +4,11 @@ var DaysDetailView = Backbone.View.extend({
 	},
 	render : function() {
 		var  event = this.collection, template1 = this.template1;
-		event.get('days').each(function(day){
+		event.each(function(day){
 			if (day.get('date')){
-			    if ($('#allpages').length!=0){
-			        $('#allpages').append(template1(day.toJSON()));
-			    }
-			    else if ($('#myagenda').length!=0){
-			        $('#myagenda').append(template1(day.toJSON()));
-			    }
-		}
+			    $('#allpages').append(template1(day.toJSON()));
+			}
 		});
-
-
 		return this;
 	}
 });

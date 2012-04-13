@@ -1,180 +1,162 @@
+getDay = function(eventId, dayDate){
+    var day;
+    $.ajax({
+        type : "GET",
+        url : "/eventDay",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+            dayDate: dayDate
+        },
+        success: function(resp){
+            day=resp;
+        }
+    });
+    return new Day(day);
+
+}
+
+getEvent = function(eventId){
+    var event;
+    $.ajax({
+        type : "GET",
+        url : "/eventInfo",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+        },
+        success: function(resp){
+            event=resp;
+        }
+    });
+    return new Event(event);
+
+}
+
+getSession = function(eventId, dayDate, sessionId){
+    var session;
+    $.ajax({
+        type : "GET",
+        url : "/eventSession",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+            dayDate: dayDate,
+            sessionId: sessionId
+        },
+        success: function(resp){
+            session=resp;
+        }
+    });
+    return new Slot(session);
+
+}
+
+getContribution = function(eventId, dayDate, sessionId, contributionId){
+    var contribution;
+    $.ajax({
+        type : "GET",
+        url : "/eventContribution",
+        dataType : "json",
+        async: false,
+        data : {
+            eventID: eventId,
+            dayDate: dayDate,
+            sessionId: sessionId,
+            contributionId: contributionId
+        },
+        success: function(resp){
+            contribution=resp;
+        }
+    });
+    return new Contribution(contribution);
+
+}
+
 $('#addContributionToAgenda').live('click', function(event) {
     if(!window.localStorage) {
         alert('Your browser is not compatible');
     }
 
-    var myAgenda;
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
     var eventId = $(this).attr('eventId');
+    var dayDate = $(this).attr('day');
     var sessionId = $(this).attr('sessionId');
-    var date = $(this).attr('day');
-    var contribId = $(this).attr('contribId');
+    var contributionId = $(this).attr('contribId');
+    var event = getEvent(eventId);
+    var day = getDay(eventId, dayDate);
+    var session = getSession(eventId, dayDate, sessionId);
+    console.log(session);
+    var contribution = getContribution(eventId, dayDate, sessionId, contributionId);
 
-    var thisDay = currentEvent.get('days').find(function(day) {
-        return day.get('date') == date;
+    myAgendaContributions.add(contribution);
+
+    var dayInAgenda = myAgendaDays.find(function(day){
+        return day.get('date')==dayDate && day.get('eventId')==eventId;
     });
-    var thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('sessionId') == sessionId;
+    if (!dayInAgenda){
+        myAgendaDays.add(new Day({'date':dayDate, 'eventId':eventId}));
+        localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    }
+
+    var eventInAgenda = myAgendaEvents.find(function(event){
+        return event.get('id')==eventId;
     });
-    var thisContrib;
-    var newSlot;
-    var allContributions = false;
-    var slotNumber;
-    for(slots in thisSlot) {
-        if(thisSlot[slots].get('contributions').find(function(contrib) {
-            return contrib.get('id') == contribId
-        })) {
-            newSlot = thisSlot[slots].clone();
-            slotNumber = slots;
-            thisContrib = newSlot.get('contributions').find(function(contrib) {
-                return contrib.get('id') == contribId
-            });
-            break;
+    if (!eventInAgenda){
+        myAgendaEvents.add(event);
+        localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    }
+
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+
+    var numberContributionsInDay = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==dayDate;
+    }).length;
+
+    var numberSessionsInDay = myAgendaSessions.filter(function(currentSession){
+        return currentSession.get('eventId')==eventId && currentSession.get('dayDate')==dayDate;
+    }).length;
+
+    if (numberContributionsInDay==1 && numberSessionsInDay==0){
+        var breakSession = getEventSessions(eventId, dayDate).filter(function(currentSession){
+            return currentSession.get('_type')== 'BreakTimeSchEntry';
+        });
+
+        for (var i=0; i<breakSession.length; i++){
+            myAgendaSessions.add(breakSession[i]);
         }
     }
 
-    if(!localStorage.getItem('agenda')) {
-
-        myAgenda = new Events();
-        myAgenda.add(currentEvent);
-        newSlot.set('contributions', new Contributions(thisContrib));
-        var slots = new Slots();
-        newSlot.unset('entries');
-        slots.add(newSlot);
-        var breakSlots = thisDay.get('slots').filter(function(slot){
-            return slot.get('_type') == 'BreakTimeSchEntry';
-        });
-        if(breakSlots){
-            slots.add(breakSlots);
-        }
-
-        slots.comparator = function(slot){
-            return slot.get('startDate').time;
-        }
-        slots.sort();
-        myAgenda.at(0).set('days',new Days({
-            date : date,
-            slots : slots
-        }));
-        if (thisSlot[slotNumber].get('contributions').size()==newSlot.get('contributions').size()){
-            allContributions = true;
-        }
-
-        localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-
-        saveAgendaToServer(myAgenda);
-
-    } else {
-
-        myAgenda = loadAgenda();
-        var eventInAgenda = myAgenda.find(function(event){
-            return event.get('id')==eventId;
-        });
-
-        if (eventInAgenda){
-
-            var dayInAgenda = eventInAgenda.get('days').find(function(day) {
-                return day.get('date') == date;
-            });
-
-            if(dayInAgenda) {
-                var slotInAgenda = dayInAgenda.get('slots').find(function(slot) {
-                    return slot.get('id') == newSlot.get('id');
-                });
-                if(slotInAgenda) {
-                    if(slotInAgenda.get('contributions').find(function(contrib) {
-                        return contrib.get('id') == contribId;
-                    })) {
-                    } else {
-                        slotInAgenda.get('contributions').add(thisContrib);
-                        slotInAgenda.get('contributions').comparator = function(contrib) {
-                            return contrib.get('startDate').time;
-                        };
-                        slotInAgenda.get('contributions').sort();
-                        if (thisSlot[slotNumber].get('contributions').size()==slotInAgenda.get('contributions').size()){
-                            allContributions = true;
-                        }
-                    }
-                } else {
-                    newSlot.unset('entries');
-                    newSlot.set('contributions', new Contributions(thisContrib));
-                    dayInAgenda.get('slots').add(newSlot);
-                    dayInAgenda.get('slots').comparator = function(slot) {
-                        return slot.get('startDate').time;
-                    };
-                    dayInAgenda.get('slots').sort();
-
-                    if (thisSlot[slotNumber].get('contributions').size()==newSlot.get('contributions').size()){
-                        allContributions = true;
-                    }
-                }
-            } else {
-                var slots = newSlots();
-                newSlot.unset('entries');
-                newSlot.set('contributions', new Contributions(thisContrib));
-                slots.add(newSlot);
-                var breakSlots = thisDay.get('slots').filter(function(slot){
-                    return slot.get('_type') == 'BreakTimeSchEntry';
-                });
-
-                if(breakSlots){
-                    slots.add(breakSlots);
-                }
-                slots.comparator = function(slot){
-                    return slot.get('startDate').time;
-                }
-                slots.sort();
-                eventInAgenda.get('days').add({
-                    date : date,
-                    slots : new Slots(newSlot)
-                });
-
-                eventInAgenda.get('days').comparator = function(day) {
-                    return day.get('date');
-                };
-                eventInAgenda.get('days').sort();
-                if (thisSlot[slotNumber].get('contributions').size()==newSlot.get('contributions').size()){
-                    allContributions = true;
-                }
-            }
-        } else {
-            var currEvent = currentEvent.clone();
-            newSlot.set('contributions', new Contributions(thisContrib));
-            var slots = new Slots();
-            newSlot.unset('entries');
-            slots.add(newSlot);
-
-            var breakSlots = thisDay.get('slots').filter(function(slot){
-                return slot.get('_type') == 'BreakTimeSchEntry';
-            });
-
-            if(breakSlots){
-                slots.add(breakSlots);
-            }
-            slots.comparator = function(slot){
-                return slot.get('startDate').time;
-            }
-            slots.sort();
-            currEvent.set('days',new Days({
-                date : date,
-                slots : slots
-            }));
-            if (thisSlot[slotNumber].get('contributions').size()==newSlot.get('contributions').size()){
-                allContributions = true;
-            }
-
-            myAgenda.add(currEvent);
-        }
-
-
-        localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-        saveAgendaToServer(myAgenda);
-
-
+    var sessionInAgenda = myAgendaSessions.find(function(currentSession){
+        return currentSession.get('sessionId')==sessionId && currentSession.get('dayDate')==dayDate && currentSession.get('eventId')==eventId;
+    });
+    if (!sessionInAgenda){
+        myAgendaSessions.add(session);
     }
+
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+
+    var numberContributionsInSession = myAgendaContributions.filter(function(contrib){
+        return contrib.get('sessionId')==sessionId && contrib.get('dayDate')==dayDate && contrib.get('eventId')==eventId;
+    }).length;
+
+    var numberContributionsInEvent = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId;
+    }).length;
+
+    var numberSessionsInEvent = myAgendaSessions.filter(function(session){
+        return session.get('eventId')==eventId;
+    }).length;
 
     //css changes
-    if (allContributions){
-        $('#li-'+thisSlot[slotNumber].get('id')).find('#addSessionToAgenda').trigger('click');
+    if (numberContributionsInSession==session.get('numContributions')){
+        $('#li-'+sessionId).find('#addSessionToAgenda').trigger('click');
     }
     else{
         var contribution = $(this).parent().parent();
@@ -185,34 +167,74 @@ $('#addContributionToAgenda').live('click', function(event) {
         contribution.find('#addContributionToAgenda').attr('style','display:none;');
         contribution.find('#removeContributionFromAgenda1').attr('style','display:block;');
     }
+    if (numberContributionsInEvent==event.get('numContributions') && numberSessionsInEvent==event.get('numSessions')){
+        $('a[eventid="'+eventId+'"][id="addEventToAgenda"]').trigger('click');
+    }
 
 
 });
 
 $('#addEventToAgenda').live('click', function(){
 
-    myAgenda = loadAgenda();
+    if(!window.localStorage) {
+        alert('Your browser is not compatible');
+    }
+
+    var myAgendaEvents = loadAgendaEvents();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
     var eventId = $(this).attr('eventId');
-    var eventModel = initEvent(eventId);
-    if (myAgenda!=null){
-        console.log(myAgenda);
-        var eventInAgenda = myAgenda.find(function(event){
-            return event.get('id')==eventId;
+    var event = getEvent(eventId);
+
+    var eventInAgenda = myAgendaEvents.find(function(event){
+        return event.get('id')==eventId;
+    });
+    if (!eventInAgenda){
+        myAgendaEvents.add(event);
+    }
+
+    var allContributions = getEventContributions(eventId);
+    allContributions.each(function(contrib1){
+        var contribInAgenda = myAgendaContributions.find(function(contrib2){
+            return contrib2.get('eventId')==eventId &&
+            contrib1.get('contributionId')==contrib2.get('contributionId') &&
+            contrib1.get('sessionId')==contrib2.get('sessionId') &&
+            contrib1.get('dayDate')==contrib2.get('dayDate');
         });
-        if (eventInAgenda){
-            console.log('already in');
-            myAgenda.remove(eventInAgenda);
-            myAgenda.add(eventModel);
+        if (!contribInAgenda){
+            console.log('contrib added');
+            myAgendaContributions.add(contrib1);
         }
-        else{
-            myAgenda.add(eventModel);
+    });
+    var allSessions = getEventSessions(eventId);
+    allSessions.each(function(session1){
+        var sessionInAgenda = myAgendaSessions.find(function(session2){
+            return session2.get('eventId')==eventId &&
+            session1.get('sessionId')==session2.get('sessionId') &&
+            session1.get('dayDate')==session2.get('dayDate');
+        });
+        if (!sessionInAgenda){
+            console.log('session added');
+            myAgendaSessions.add(session1);
         }
-    }
-    else{
-        myAgenda = new Events();
-        myAgenda.add(eventModel);
-    }
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
+    });
+    var allDays = getDays(eventId);
+    allDays.each(function(day1){
+        var dayInAgenda = myAgendaDays.find(function(day2){
+            return day2.get('eventId')==eventId &&
+            day1.get('date')==day2.get('date');
+        });
+        if (!dayInAgenda){
+            console.log('day added');
+            myAgendaDays.add(day1);
+        }
+    });
+
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
 
     //css changes
     $(this).attr('id','removeEventFromAgenda');
@@ -232,107 +254,85 @@ $('#addSessionToAgenda').live('click', function(event) {
         alert('Your browser is not compatible');
     }
 
-    var myAgenda;
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
     var eventId = $(this).attr('eventId');
+    var dayDate = $(this).attr('day');
     var sessionId = $(this).attr('sessionId');
-    var date = $(this).attr('day');
-    var thisDay = currentEvent.get('days').find(function(day) {
-        return day.get('date') == date;
+    var event = getEvent(eventId);
+    var day = getDay(eventId, dayDate);
+    var session = getSession(eventId, dayDate, sessionId);
+
+    var sessionInAgenda = myAgendaSessions.find(function(currentSession){
+        return currentSession.get('sessionId')==sessionId && currentSession.get('dayDate')==dayDate && currentSession.get('eventId')==eventId;
     });
-
-    var thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('id') == sessionId;
-    });
-    var allContributions = false;
-    if(!localStorage.getItem('agenda')) {
-        myAgenda = new Events();
-        myAgenda.add(currentEvent);
-        var slots = new Slots();
-        slots.add(thisSlot);
-        var breakSlots = thisDay.get('slots').filter(function(slot){
-            return slot.get('_type') == 'BreakTimeSchEntry';
-        });
-
-        if(breakSlots){
-            slots.add(breakSlots);
-        }
-        slots.comparator = function(slot){
-            return slot.get('startDate').time;
-        }
-        slots.sort();
-        myAgenda.at(0).set('days',new Days({
-            date : date,
-            slots : slots
-        }));
-
-        localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-
-        saveAgendaToServer(myAgenda);
-
-    } else {
-        myAgenda = loadAgenda();
-        var eventInAgenda = myAgenda.find(function(event){
-            return event.get('id')==eventId;
-        });
-
-        if (eventInAgenda){
-
-            var dayInAgenda = eventInAgenda.get('days').find(function(day) {
-                return day.get('date') == date;
-            });
-
-            if(dayInAgenda) {
-                var slotInAgenda = dayInAgenda.get('slots').find(function(slot){
-                   return slot.get('id') == sessionId;
-                });
-                if(slotInAgenda){
-                    dayInAgenda.get('slots').remove(slotInAgenda);
-                }
-                dayInAgenda.get('slots').add(thisSlot);
-            } else {
-                var slots = new Slots(thisSlot);
-                var breakSlots = thisDay.get('slots').filter(function(slot){
-                    return slot.get('_type') == 'BreakTimeSchEntry';
-                });
-
-                if(breakSlots){
-                    slots.add(breakSlots);
-                }
-                slots.comparator = function(slot){
-                    return slot.get('startDate').time;
-                }
-                slots.sort();
-                var currDay = new Day({date:date, slots: slots});
-                eventInAgenda.get('days').add(currDay);
-            }
-        } else {
-            var currEvent = currentEvent.clone();
-            var slots = new Slots(thisSlot);
-            var breakSlots = thisDay.get('slots').filter(function(slot){
-                return slot.get('_type') == 'BreakTimeSchEntry';
-            });
-
-            if(breakSlots){
-                slots.add(breakSlots);
-            }
-            slots.comparator = function(slot){
-                return slot.get('startDate').time;
-            }
-            slots.sort();
-            currEvent.set('days',new Days({
-                date : date,
-                slots : slots
-            }));
-
-            console.log(currEvent);
-
-            myAgenda.add(currEvent);
-        }
-
-
-        localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-        saveAgendaToServer(myAgenda);
+    if (!sessionInAgenda){
+        myAgendaSessions.add(session);
     }
+    var eventInAgenda = myAgendaEvents.find(function(event){
+        return event.get('id')==eventId;
+    });
+    if (!eventInAgenda){
+        myAgendaEvents.add(event);
+    }
+
+    var dayInAgenda = myAgendaDays.find(function(day){
+        return day.get('date')==dayDate && day.get('eventId')==eventId;
+    });
+    if (!dayInAgenda){
+        myAgendaDays.add(new Day({'date':dayDate, 'eventId':eventId}));
+        localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    }
+
+    var numberSessionsInDay = myAgendaSessions.filter(function(session){
+        return session.get('eventId')==eventId && session.get('dayDate')==dayDate;
+    }).length;
+
+    var numberContributionsInDay = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==dayDate;
+    }).length;
+
+    console.log(numberSessionsInDay+' - '+numberContributionsInDay)
+
+    if (numberSessionsInDay==1 && numberContributionsInDay==0){
+        console.log('add breaks');
+        var breakSession = getEventSessions(eventId, dayDate).filter(function(session){
+            return session.get('_type')== 'BreakTimeSchEntry';
+        });
+
+        for (var i=0; i<breakSession.length; i++){
+            myAgendaSessions.add(breakSession[i]);
+        }
+    }
+
+    var allContributions = getSessionContributions(eventId,dayDate,sessionId);
+    allContributions.each(function(contrib1){
+        var contribInAgenda = myAgendaContributions.find(function(contrib2){
+            return contrib2.get('eventId')==eventId &&
+            contrib1.get('contributionId')==contrib2.get('contributionId') &&
+            contrib1.get('sessionId')==contrib2.get('sessionId') &&
+            contrib1.get('dayDate')==contrib2.get('dayDate');
+        });
+        if (!contribInAgenda){
+            console.log('contrib added');
+            myAgendaContributions.add(contrib1);
+        }
+    });
+
+    var numberSessionsInEvent = myAgendaSessions.filter(function(session){
+        return session.get('eventId')==eventId;
+    }).length;
+
+    if (numberSessionsInEvent==event.get('numSessions')){
+        $('a[eventid="'+eventId+'"][id="addEventToAgenda"]').trigger('click');
+    }
+
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
     //css changes
     var session = $('#li-'+sessionId);
@@ -354,75 +354,76 @@ $('#addSessionToAgenda').live('click', function(event) {
 
 $('#removeContributionFromAgenda').live('click', function(event) {
 
-    var myAgenda = loadAgenda();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
 
     var eventId = $(this).attr('eventId');
-    thisEvent = myAgenda.find(function(event){
-        return event.get('id') == eventId;
-    });
 
     var contributionDay = $(this).attr('day');
-    thisDay = thisEvent.get('days').find(function(day) {
-        return day.get('date') == contributionDay;
-    });
 
-    var breakSlots = thisDay.get('slots').filter(function(slot){
-        return slot.get('_type') == 'BreakTimeSchEntry';
+    var breakSlots = myAgendaSessions.filter(function(slot){
+        return slot.get('_type') == 'BreakTimeSchEntry' && slot.get('eventId')==eventId && slot.get('dayDate')==contributionDay;
     });
     var numberOfBreaks = breakSlots.length;
     var sessionId = $(this).attr('sessionId');
-    thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('sessionId') == sessionId;
-    });
 
-    var thisContrib;
     var contributionId = $(this).attr('contribId');
-    var sessionRemoved = false;
-    for(slot in thisSlot) {
-        if(thisSlot[slot].get('contributions').find(function(contrib) {
-            return contrib.get('id') == contributionId;
-        })) {
-            slotId = thisSlot[slot].get('id');
-            thisSlot[slot].get('contributions').remove(thisSlot[slot].get('contributions').find(function(contrib) {
-                return contrib.get('id') == contributionId;
-            }));
-            $($(this).parent().parent()[0]).remove();
-            if(thisSlot[slot].get('contributions').size() == 0) {
-                thisDay.get('slots').remove(thisSlot[slot]);
-                $($(this).parent().parent()[0]).remove();
-                $('#li-' + slotId).remove();
-            }
-        }
 
+    myAgendaContributions.remove(
+            myAgendaContributions.find(function(contrib){
+                return contrib.get('eventId')==eventId && contrib.get('sessionId')==sessionId && contrib.get('dayDate')==contributionDay;
+            })
+    );
+
+    $($(this).parent().parent()[0]).remove();
+
+    var numberContributionsInSession = myAgendaContributions.filter(function(contrib){
+        return contrib.get('sessionId')==sessionId && contrib.get('dayDate')==contributionDay && contrib.get('eventId')==eventId;
+    }).length;
+
+    if(numberContributionsInSession==0){
+        myAgendaSessions.remove(
+                myAgendaSessions.find(function(session){
+                    return session.get('eventId')==eventId && session.get('sessionId')==sessionId && session.get('dayDate')==contributionDay;
+                })
+        );
+        $('#li-' + sessionId).remove();
     }
 
     var dayRemoved = false;
-    console.log(thisDay.get('slots').size());
-    console.log(numberOfBreaks);
-    if(thisDay.get('slots').size() == numberOfBreaks) {
-        eventDay = currentEvent.get('days').find(function(day){
-            return day.get('date')==contributionDay;
-        });
-        currentEvent.get('days').remove(eventDay);
-        thisEvent.get('days').remove(thisDay);
+
+    var numberSessionInDay = myAgendaSessions.filter(function(session){
+        return session.get('dayDate')==contributionDay && session.get('eventId')==eventId;
+    }).length;
+    if(numberSessionInDay == numberOfBreaks) {
+        myAgendaDays.remove(
+                myAgendaDays.find(function(day){
+                    return day.get('eventId')==eventId && day.get('date')==contributionDay;
+                })
+        );
         dayRemoved = true;
     }
 
     var eventRemoved = false;
-    if(thisEvent.get('days').size() == 0) {
-        myAgenda.remove(thisEvent);
+
+    var numberDayInEvent = myAgendaDays.filter(function(day){
+        return day.get('eventId')==eventId;
+    }).length;
+    if(numberDayInEvent==0) {
+        myAgendaEvents.remove(
+                myAgendaEvents.find(function(event){
+                    return event.get('id')==eventId;
+                })
+        );
         eventRemoved = true;
     }
 
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-    $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
 
     if (eventRemoved){
@@ -438,82 +439,94 @@ $('#removeContributionFromAgenda').live('click', function(event) {
 
 $('#removeContributionFromAgenda1').live('click', function(event) {
 
-    var myAgenda = loadAgenda();
-
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
     var eventId = $(this).attr('eventId');
-    thisEvent = myAgenda.find(function(event){
-        return event.get('id') == eventId;
-    });
+    var dayDate = $(this).attr('day');
+    var sessionId = $(this).attr('sessionId');
+    var contributionId = $(this).attr('contribId');
+    var event = getEvent(eventId);
+    var day = getDay(eventId, dayDate);
+    var session = getSession(eventId, dayDate, sessionId);
+    var contribution = getContribution(eventId, dayDate, sessionId, contributionId);
 
-    var contributionDay = $(this).attr('day');
-    thisDay = thisEvent.get('days').find(function(day) {
-        return day.get('date') == contributionDay;
-    });
-    var breakSlots = thisDay.get('slots').filter(function(slot){
-        return slot.get('_type') == 'BreakTimeSchEntry';
+    var breakSlots = myAgendaSessions.filter(function(slot){
+        return slot.get('_type') == 'BreakTimeSchEntry' && slot.get('eventId')==eventId && slot.get('dayDate')==dayDate;
     });
     var numberOfBreaks = breakSlots.length;
 
-    thisCurrentDay = currentEvent.get('days').find(function(day) {
-        return day.get('date') == contributionDay;
-    });
 
-    var sessionId = $(this).attr('sessionId');
-    thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('sessionId') == sessionId;
-    });
+    var numberContributionsInEvent = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId')==eventId;
+    }).length;
 
-    thisCurrentSlot = thisCurrentDay.get('slots').filter(function(slot) {
-        return slot.get('sessionId') == sessionId;
-    });
-
-    var thisContrib;
-    var contributionId = $(this).attr('contribId');
-    var thisCurrentSlotSize;
-    for (slot in thisCurrentSlot){
-        if(thisCurrentSlot[slot].get('contributions').find(function(contrib) {
-            return contrib.get('id') == contributionId;
-        })) {
-            thisCurrentSlotSize = thisCurrentSlot[slot].get('contributions').size();
-        }
-    }
-    var wasComplete=false;
-    for(slot in thisSlot) {
-        if(thisSlot[slot].get('contributions').find(function(contrib) {
-            return contrib.get('id') == contributionId;
-        })) {
-            slotId = thisSlot[slot].get('id');
-            if(thisSlot[slot].get('contributions').size()==thisCurrentSlotSize){
-                wasComplete=true;
-            }
-            thisSlot[slot].get('contributions').remove(thisSlot[slot].get('contributions').find(function(contrib) {
-                return contrib.get('id') == contributionId;
-            }));
-            if(thisSlot[slot].get('contributions').size() == 0) {
-                thisDay.get('slots').remove(thisSlot[slot]);
-            }
-        }
-
-    }
-    console.log(thisDay.get('slots').size());
-    console.log(numberOfBreaks);
-    if(thisDay.get('slots').size() == numberOfBreaks) {
-        thisEvent.get('days').remove(thisDay);
-    }
-    if(thisEvent.get('days').size() == 0) {
-        myAgenda.remove(thisEvent);
+    if(numberContributionsInEvent == event.get('numContributions')){
+        var eventDiv = $('a[eventid="'+eventId+'"][id="removeEventFromAgenda"]');
+        console.log(eventDiv);
+        eventDiv.attr('id','addEventToAgenda');
+        eventDiv.parent().attr('data-theme','c');
+        eventDiv.parent().find('[data-theme="g"]').attr('data-theme','c');
+        eventDiv.parent().removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+        eventDiv.parent().find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+        eventDiv.parent().removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
+        eventDiv.parent().find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
+        eventDiv.parent().find('.ui-icon-delete').removeClass('ui-icon-delete').addClass('ui-icon-star');
+        localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
     }
 
+    var numberContributionsInSession = myAgendaContributions.filter(function(contrib){
+        return contrib.get('sessionId')==sessionId && contrib.get('dayDate')==dayDate && contrib.get('eventId')==eventId;
+    }).length;
 
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-    $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
+    if(session.get('numContributions')==numberContributionsInSession){
+        var sessionDiv = $(this).parent().parent().parent().parent().parent();
+        sessionDiv.find('[data-theme="g"]').attr('data-theme', 'c');
+        sessionDiv.find('[data-content-theme="g"]').attr('data-content-theme', 'c');
+        sessionDiv.find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+        sessionDiv.find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
+        sessionDiv.find('.ui-body-g').removeClass('ui-body-g');
+        sessionDiv.find('#removeSessionFromAgenda1').attr('style','display:none;');
+        sessionDiv.find('#addSessionToAgenda').attr('style','display:block;');
+        localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    }
+
+    if(numberContributionsInSession==1){
+        myAgendaSessions.remove(
+            myAgendaSessions.find(function(session){
+                return session.get('eventId')==eventId && session.get('sessionId')==sessionId && session.get('dayDate')==dayDate;
+            })
+        );
+    }
+
+    var numberSessionInDay = myAgendaSessions.filter(function(session){
+        return session.get('dayDate')==dayDate && session.get('eventId')==eventId;
+    }).length;
+    if(numberSessionInDay == numberOfBreaks) {
+        myAgendaDays.remove(
+                myAgendaDays.find(function(day){
+                    return day.get('eventId')==eventId && day.get('date')==dayDate;
+                })
+        );
+    }
+
+    var numberDayInEvent = myAgendaDays.filter(function(day){
+        return day.get('eventId')==eventId;
+    }).length;
+    if(numberDayInEvent==0) {
+        myAgendaEvents.remove(
+                myAgendaEvents.find(function(event){
+                    return event.get('id')==eventId;
+                })
+        );
+    }
+
+    myAgendaContributions.remove(myAgendaContributions.find(function(contrib){
+        return contrib.get('contributionId')==contributionId && contrib.get('eventId')==eventId && contrib.get('dayDate')==dayDate && contrib.get('sessionId')==sessionId;
+    }));
+
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
 
 
     var contribution = $(this).parent().parent();
@@ -523,25 +536,60 @@ $('#removeContributionFromAgenda1').live('click', function(event) {
     contribution.find('.ui-body-f').removeClass('ui-body-f').addClass('ui-body-b');
     contribution.find('#addContributionToAgenda').attr('style','display:block;');
     contribution.find('#removeContributionFromAgenda1').attr('style','display:none;');
-    if(wasComplete){
-        var session = contribution.parent().parent().parent();
-        session.find('[data-theme="g"]').attr('data-theme', 'c');
-        session.find('[data-content-theme="g"]').attr('data-content-theme', 'c');
-        session.find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
-        session.find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
-        session.find('.ui-body-g').removeClass('ui-body-g');
-        session.find('#removeSessionFromAgenda1').attr('style','display:none;');
-        session.find('#addSessionToAgenda').attr('style','display:block;');
 
-    }
 });
 
 
 $('#removeEventFromAgenda').live('click', function(){
-    var myAgenda = loadAgenda();
-    var eventModel = initEvent($(this).attr('eventId'));
-    myAgenda.remove(eventModel);
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
+
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
+
+    var eventId = $(this).attr('eventId');
+
+    while (myAgendaContributions.find(function(contrib){
+        return contrib.get('eventId')==eventId;
+    })){
+        myAgendaContributions.remove(
+                myAgendaContributions.find(function(contrib){
+                    return contrib.get('eventId');
+                })
+        );
+    }
+
+    while (myAgendaSessions.find(function(session){
+        return session.get('eventId')==eventId;
+    })){
+        myAgendaSessions.remove(
+                myAgendaSessions.find(function(session){
+                    return session.get('eventId');
+                })
+        );
+    }
+
+    while (myAgendaDays.find(function(day){
+        return day.get('eventId')==eventId;
+    })){
+        myAgendaDays.remove(
+                myAgendaDays.find(function(day){
+                    return day.get('eventId');
+                })
+        );
+    }
+
+    myAgendaEvents.remove(
+            myAgendaEvents.find(function(event){
+                return event.get('id');
+            })
+    );
+
+
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
     //css changes
     $(this).attr('id','addEventToAgenda');
@@ -556,56 +604,66 @@ $('#removeEventFromAgenda').live('click', function(){
 
 $('#removeSessionFromAgenda').live('click', function(event) {
 
-    var myAgenda = loadAgenda();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
 
     var eventId = $(this).attr('eventId');
-    thisEvent = myAgenda.find(function(event){
-        return event.get('id') == eventId;
-    });
-
     var sessionDay = $(this).attr('day');
-    thisDay = thisEvent.get('days').find(function(day) {
-        return day.get('date') == sessionDay;
-    });
-    var breakSlots = thisDay.get('slots').filter(function(slot){
-        return slot.get('_type') == 'BreakTimeSchEntry';
+    var breakSlots = myAgendaSessions.filter(function(slot){
+        return slot.get('_type') == 'BreakTimeSchEntry' && slot.get('eventId')==eventId && slot.get('dayDate')==sessionDay;
     });
     var numberOfBreaks = breakSlots.length;
 
     var sessionId = $(this).attr('sessionId');
-    thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('id') == sessionId;
-    });
 
-    thisDay.get('slots').remove(thisSlot);
+    myAgendaSessions.remove(
+            myAgendaSessions.find(function(session){
+                return session.get('eventId')==eventId && session.get('sessionId')==sessionId && session.get('dayDate')==sessionDay;
+            })
+    );
+
+    while (myAgendaContributions.find(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==sessionDay && contrib.get('sessionId')==sessionId;
+    })){
+        myAgendaContributions.remove(
+                myAgendaContributions.find(function(contrib){
+                    return contrib.get('eventId')==eventId && contrib.get('dayDate')==sessionDay && contrib.get('sessionId')==sessionId;
+                })
+        );
+    }
 
     var dayRemoved = false;
-    if(thisDay.get('slots').size() == numberOfBreaks) {
-        eventDay = currentEvent.get('days').find(function(day){
-            return day.get('date')==sessionDay;
-        });
-        currentEvent.get('days').remove(eventDay);
-        thisEvent.get('days').remove(thisDay);
+    var numberSessionInDay = myAgendaSessions.filter(function(session){
+        return session.get('dayDate')==sessionDay && session.get('eventId')==eventId;
+    }).length;
+    if(numberSessionInDay == numberOfBreaks) {
+        myAgendaDays.remove(
+                myAgendaDays.find(function(day){
+                    return day.get('eventId')==eventId && day.get('date')==sessionDay;
+                })
+        );
         dayRemoved = true;
     }
 
     var eventRemoved = false;
-    if(thisEvent.get('days').size() == 0) {
-        myAgenda.remove(thisEvent);
+    var numberDayInEvent = myAgendaDays.filter(function(day){
+        return day.get('eventId')==eventId;
+    }).length;
+    if(numberDayInEvent==0) {
+        myAgendaEvents.remove(
+                myAgendaEvents.find(function(event){
+                    return event.get('id')==eventId;
+                })
+        );
         eventRemoved = true;
     }
 
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-    $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
-
-
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
     if (eventRemoved){
         $(document).trigger('pageinit');
@@ -625,48 +683,64 @@ $('#removeSessionFromAgenda').live('click', function(event) {
 });
 $('#removeSessionFromAgenda1').live('click', function(event) {
 
-    var myAgenda = loadAgenda();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = loadAgendaEvents();
 
     var eventId = $(this).attr('eventId');
-    thisEvent = myAgenda.find(function(event){
-        return event.get('id') == eventId;
-    });
-
     var sessionDay = $(this).attr('day');
-    thisDay = thisEvent.get('days').find(function(day) {
-        return day.get('date') == sessionDay;
-    });
-    var breakSlots = thisDay.get('slots').filter(function(slot){
-        return slot.get('_type') == 'BreakTimeSchEntry';
+    var breakSlots = myAgendaSessions.filter(function(slot){
+        return slot.get('_type') == 'BreakTimeSchEntry' && slot.get('eventId')==eventId && slot.get('dayDate')==sessionDay;
     });
     var numberOfBreaks = breakSlots.length;
 
     var sessionId = $(this).attr('sessionId');
-    thisSlot = thisDay.get('slots').filter(function(slot) {
-        return slot.get('id') == sessionId;
-    });
 
-    thisDay.get('slots').remove(thisSlot);
+    myAgendaSessions.remove(
+            myAgendaSessions.find(function(session){
+                return session.get('eventId')==eventId && session.get('sessionId')==sessionId && session.get('dayDate')==sessionDay;
+            })
+    );
 
-    if(thisDay.get('slots').size() == numberOfBreaks) {
-        thisEvent.get('days').remove(thisDay);
+    while (myAgendaContributions.find(function(contrib){
+        return contrib.get('eventId')==eventId && contrib.get('dayDate')==sessionDay && contrib.get('sessionId')==sessionId;
+    })){
+        myAgendaContributions.remove(
+                myAgendaContributions.find(function(contrib){
+                    return contrib.get('eventId')==eventId && contrib.get('dayDate')==sessionDay && contrib.get('sessionId')==sessionId;
+                })
+        );
     }
-    if(thisEvent.get('days').size() == 0) {
-        myAgenda.remove(thisEvent);
+
+    var numberSessionInDay = myAgendaSessions.filter(function(session){
+        return session.get('dayDate')==sessionDay && session.get('eventId')==eventId;
+    }).length;
+    if(numberSessionInDay == numberOfBreaks) {
+        myAgendaDays.remove(
+                myAgendaDays.find(function(day){
+                    return day.get('eventId')==eventId && day.get('date')==sessionDay;
+                })
+        );
     }
 
+    var numberDayInEvent = myAgendaDays.filter(function(day){
+        return day.get('eventId')==eventId;
+    }).length;
+    if(numberDayInEvent==0) {
+        myAgendaEvents.remove(
+                myAgendaEvents.find(function(event){
+                    return event.get('id')==eventId;
+                })
+        );
+    }
 
-    localStorage.setItem('agenda', JSON.stringify(myAgenda.toJSON()));
-    $.ajax({
-            type : "POST",
-            url : "/save",
-            dataType : "json",
-            data : {
-                agenda:JSON.stringify(myAgenda.toJSON())
-            }
-        });
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
-  //css changes
+    //css changes
     var session = $('#li-'+sessionId);
     session.find('[data-theme="f"]').attr('data-theme','b');
     session.find('[data-content-theme="f"]').attr('data-content-theme','b');
