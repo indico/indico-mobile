@@ -19,8 +19,7 @@ var RecentEventsView = Backbone.View.extend({
         template1 = this.template1,
         template2 = this.template2,
         part = this.options.part,
-        listView = $(this.el),
-        myAgenda=loadAgenda();
+        listView = $(this.el);
 
         if (events==null){
             container.html('<h3>No future events for the moment.</h3>');
@@ -78,31 +77,3 @@ var RecentEventsView = Backbone.View.extend({
         return this;
     }
 });
-
-isEventInAgenda = function(eventId){
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId')==eventId;
-    });
-
-    var sessionsInAgenda = myAgendaSessions.filter(function(session){
-        return session.get('eventId')==eventId;
-    });
-
-    var event = getEvent(eventId);
-
-    if (contribInAgenda.length == event.get('numContributions') &&
-            sessionsInAgenda.length == event.get('numSessions')){
-        if (contribInAgenda.length == 0 && sessionsInAgenda.length==0){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-    else{
-        return false;
-    }
-};

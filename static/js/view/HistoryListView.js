@@ -24,47 +24,24 @@ var HistoryListView = Backbone.View.extend({
         };
         events.sort();
         var dates = [];
-        events.each(function(event){
-            var date = new Date(parseInt(event.get('viewedAt')));
-            listView.append('<li data-role="list-divider">'+date+'</li>');
+        if (events.size()>0){
+            events.each(function(event){
+                var date = new Date(parseInt(event.get('viewedAt')));
+                listView.append('<li data-role="list-divider">'+date+'</li>');
 
-            if (isEventInAgenda(event.get('id'))){
-                listView.append(template2(event));
-            }
-            else{
-                listView.append(template1(event));
-            }
-        });
-        container.html(listView);
+                if (isEventInAgenda(event.get('id'))){
+                    listView.append(template2(event));
+                }
+                else{
+                    listView.append(template1(event));
+                }
+            });
+            container.html(listView);
+        }
+        else{
+            container.html('<h4>No history yet.</h4>');
+        }
         container.trigger('create');
         return this;
     }
 });
-
-isEventInAgenda = function(eventId){
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId')==eventId;
-    });
-
-    var sessionsInAgenda = myAgendaSessions.filter(function(session){
-        return session.get('eventId')==eventId;
-    });
-
-    var event = getEvent(eventId);
-
-    if (contribInAgenda.length == event.get('numContributions') &&
-            sessionsInAgenda.length == event.get('numSessions')){
-        if (contribInAgenda.length == 0 && sessionsInAgenda.length==0){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-    else{
-        return false;
-    }
-};

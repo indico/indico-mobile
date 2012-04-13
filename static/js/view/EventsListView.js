@@ -74,32 +74,3 @@ var EventsListView = Backbone.View.extend({
 
     }
 });
-
-
-isEventInAgenda = function(eventId){
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId')==eventId;
-    });
-
-    var sessionsInAgenda = myAgendaSessions.filter(function(session){
-        return session.get('eventId')==eventId;
-    });
-
-    var event = getEvent(eventId);
-
-    if (contribInAgenda.length == event.get('numContributions') &&
-            sessionsInAgenda.length == event.get('numSessions')){
-        if (contribInAgenda.length == 0 && sessionsInAgenda.length==0){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-    else{
-        return false;
-    }
-};

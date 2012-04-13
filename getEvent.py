@@ -16,7 +16,6 @@ def eventDays():
     event_id = request.args.get('eventID')
     isEventInDB = query_session.query(Event).filter(Event.id==event_id)
     if isEventInDB.count()==0:
-        print 'addEvent'
         addEventToDB(event_id)
     days = []
     for day in query_session.query(Day).filter(Day.eventId == event_id):
@@ -30,7 +29,6 @@ def eventDay():
     day_date = request.args.get('dayDate')
     day = query_session.query(Day).filter(Day.eventId==event_id, Day.date==day_date)[0]
     day._field_values.pop('mongo_id')
-    print day._field_values
     return json.dumps(day._field_values)
 
 @getEvent.route('/eventSession', methods=['GET'])
@@ -61,7 +59,6 @@ def eventSession():
     end_date = session._field_values.pop('endDate')
     session._field_values['endDate'] = {'date':end_date.strftime('%Y-%m-%d') , 'time':end_date.strftime('%H:%M:%S')}
     session._field_values.pop('mongo_id')
-    print session._field_values
     return json.dumps(session._field_values)
 
 @getEvent.route('/eventContribution', methods=['GET'])
@@ -94,7 +91,6 @@ def eventContribution():
     end_date = contribution._field_values.pop('endDate')
     contribution._field_values['endDate'] = {'date':end_date.strftime('%Y-%m-%d') , 'time':end_date.strftime('%H:%M:%S')}
     contribution._field_values.pop('mongo_id')
-    print contribution._field_values
     return json.dumps(contribution._field_values)
 
 @getEvent.route('/daySessions', methods=['GET'])
@@ -348,7 +344,6 @@ def eventInfo():
     isEventInDB = query_session.query(Event).filter(Event.id==event_id)
     if isEventInDB.count()>0:
         event = isEventInDB[0]
-        print event
         chairs = []
         for chair in event._field_values['chairs']:
             chair._field_values.pop('mongo_id')
@@ -361,7 +356,6 @@ def eventInfo():
         event._field_values.pop('mongo_id')
         return json.dumps(event._field_values)
     else:
-        print 'else'
         req = urllib2.Request('http://'+current_app.config['SERVER_URL']+'/indico/export/event/'+event_id+'.json?ak='+current_app.config['API_KEY'])
         opener = urllib2.build_opener()
         f = opener.open(req)
@@ -382,7 +376,6 @@ def searchEvent():
         events = query_session.db.Event.find({'title': {'$regex':search, '$options':'i'}},{'_id':0,'id':1,'title':1,'startDate':1})
         results = []
         for event in events:
-            print event
             start_date = event.pop('startDate')
             event['startDate'] = {'date':start_date.strftime('%Y-%m-%d') , 'time':start_date.strftime('%H:%M:%S')}
             results.append(event)

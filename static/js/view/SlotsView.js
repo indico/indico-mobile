@@ -70,25 +70,3 @@ var SlotsView = Backbone.View.extend({
         return this;
     }
 });
-
-isSessionInAgenda = function(sessionId, eventId, dayDate){
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId')==eventId && contrib.get('sessionId')==sessionId && contrib.get('dayDate') == dayDate;
-    });
-
-    var sessionInAgenda = myAgendaSessions.find(function(session){
-        return session.get('sessionId')==sessionId && session.get('eventId')==eventId && session.get('dayDate')==dayDate;
-    });
-
-    var session = getSession(eventId, dayDate, sessionId);
-
-    if (contribInAgenda.length == session.get('numContributions') && sessionInAgenda){
-        return true;
-    }
-    else{
-        return false;
-    }
-};
