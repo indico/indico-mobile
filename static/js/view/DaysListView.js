@@ -1,18 +1,20 @@
 var DaysListView = Backbone.View.extend({
-    tagName : 'ul',
-    attributes : {
+
+    tagName: 'ul',
+
+    attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
         'data-inset': true,
         'data-position': 'fixed'
     },
 
-    initialize : function() {
+    initialize: function() {
         var dayTemplates = getHTMLTemplate('/dayTemplates');
         this.template1 = _.template($(dayTemplates).siblings('#daysList').html());
         this.template2 = _.template($(dayTemplates).siblings('#selectedDay').html());
     },
-    render : function() {
+    render: function() {
         var container = this.options.viewContainer,
         date = this.options.date,
         days = this.collection,
@@ -21,43 +23,45 @@ var DaysListView = Backbone.View.extend({
         listView = $(this.el);
 
         $(this.el).empty();
-        var hasTimetable=false;
-        if (days.size()==0){
-            hasTimetable=false;
+
+        var hasTimetable = false;
+        if (days.size() === 0){
+            hasTimetable = false;
         }
         days.comparator = function(day){
             return day.get('date');
         };
         days.sort();
+
         days.each(function(day) {
             if (day.get('date')){
-                if (day.get('date')==date){
+                if (day.get('date') == date){
                     listView.append(template2(day.toJSON()));
-                    hasTimetable=true;
+                    hasTimetable = true;
                 }
                 else{
                     listView.append(template1(day.toJSON()));
-                    hasTimetable=true;
+                    hasTimetable = true;
                 }
             }
         });
+
         if (!hasTimetable){
             container.html('<h4>No timetable available for this event.</h4>');
         }
         else{
-
             container.html($(this.el));
             if (visited){
                 container.trigger('create');
             }
-            else if (container.attr('id')=='list'){
+            else if (container.attr('id') == 'list'){
                 container.trigger('refresh');
             }
-
             else{
                 container.trigger('create');
             }
         }
         return this;
     }
+
 });

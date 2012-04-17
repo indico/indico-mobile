@@ -1,4 +1,3 @@
-import logging
 from flask import Flask
 from templatesRoute import templatesRoute
 from getEvent import getEvent
@@ -9,7 +8,6 @@ app = Flask(__name__)
 app.register_blueprint(templatesRoute)
 app.register_blueprint(getEvent)
 app.register_blueprint(agendaActions)
-mongo = PyMongo(app)
 
 app.config.from_pyfile('default_settings.cfg')
 app.config['MONGOALCHEMY_DATABASE'] = 'library'

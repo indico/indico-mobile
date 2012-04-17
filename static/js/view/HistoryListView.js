@@ -1,15 +1,19 @@
 var HistoryListView = Backbone.View.extend({
-    tagName : 'ul',
-    attributes : {
+
+    tagName: 'ul',
+
+    attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
         'data-inset': true
     },
-    initialize : function() {
+
+    initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
         this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
         this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
+
     render: function(){
         var container = this.options.viewContainer,
         events = this.collection,
@@ -20,15 +24,17 @@ var HistoryListView = Backbone.View.extend({
 
         listView.empty();
         events.comparator = function(event){
-            return -parseInt(event.get('viewedAt'));
+            return -parseInt(event.get('viewedAt'), 10);
         };
         events.sort();
-        var dates = [];
-        if (events.size()>0){
-            events.each(function(event){
-                var date = new Date(parseInt(event.get('viewedAt')));
-                listView.append('<li data-role="list-divider">'+date+'</li>');
 
+        var dates = [];
+        if (events.size() > 0){
+            events.each(function(event){
+                var eventInDB = getEvent(event.get('id'));
+                event.set('title', eventInDB.get('title'));
+                var date = new Date(parseInt(event.get('viewedAt'), 10));
+                listView.append('<li data-role="list-divider">' + date + '</li>');
                 if (isEventInAgenda(event.get('id'))){
                     listView.append(template2(event));
                 }
@@ -44,4 +50,5 @@ var HistoryListView = Backbone.View.extend({
         container.trigger('create');
         return this;
     }
+
 });

@@ -1,13 +1,14 @@
-
 var RecentEventsView = Backbone.View.extend({
-    tagName : 'ul',
-    attributes : {
+
+    tagName: 'ul',
+
+    attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
         'data-inset': true
     },
 
-    initialize : function() {
+    initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
         this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
         this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
@@ -18,10 +19,10 @@ var RecentEventsView = Backbone.View.extend({
         events = this.collection,
         template1 = this.template1,
         template2 = this.template2,
-        part = this.options.part,
+        part = parseInt(this.options.part, 10),
         listView = $(this.el);
 
-        if (events==null){
+        if (events === null){
             container.html('<h3>No future events for the moment.</h3>');
         }
         else {
@@ -42,18 +43,18 @@ var RecentEventsView = Backbone.View.extend({
                 var date = event.get('startDate').date;
 
                 var isAlreadyIn = false;
-                var dateYear = filterDate(date)['month']+' '+filterDate(date)['year'];
+                var dateYear = filterDate(date).month + ' ' + filterDate(date).year;
 
-                for (var i=0; i<dates.length; i++){
-                    if (dateYear==dates[i]){
-                        isAlreadyIn=true;
+                for (var i = 0; i < dates.length; i++){
+                    if (dateYear == dates[i]){
+                        isAlreadyIn = true;
                     }
                 }
 
                 if (!isAlreadyIn){
-                    if (event.get('date')!=''){
-                        dates[dates.length]=dateYear;
-                        listView.append('<li data-role="list-divider">'+dateYear+'</li>');
+                    if (event.get('date') !== ''){
+                        dates[dates.length] = dateYear;
+                        listView.append('<li data-role="list-divider">' + dateYear + '</li>');
                     }
                     else{
                         listView.append('<li data-role="list-divider">Date Unknown</li>');
@@ -71,9 +72,10 @@ var RecentEventsView = Backbone.View.extend({
 
             });
             container.html(listView);
-            container.append('<a data-role="button" id="moreFutureEvents2" part="'+(parseInt(part)+10)+'">more</a>');
+            container.append('<a data-role="button" id="moreFutureEvents2" part="' + (part + 10) + '">more</a>');
         }
         container.trigger('create');
         return this;
     }
+
 });

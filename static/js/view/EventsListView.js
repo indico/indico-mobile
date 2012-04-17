@@ -1,19 +1,23 @@
 var EventsListView = Backbone.View.extend({
-    tagName : 'ul',
-    attributes : {
+
+    tagName: 'ul',
+
+    attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
         'data-inset': true
     },
-    initialize : function() {
+
+    initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
-        if ($('#myagenda').length!=0){
+        if ($('#myagenda').length !== 0){
             this.template1 = _.template($(eventTemplates).siblings('#agendaEventList').html());
         }else{
             this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
         }
         this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
+
     render: function(){
         var container = this.options.viewContainer,
         events = this.collection,
@@ -21,10 +25,12 @@ var EventsListView = Backbone.View.extend({
         template2 = this.template2,
         part = this.options.part,
         listView = $(this.el);
-        if (events.size()>0){
+
+        if (events.size() > 0){
 
             listView.empty();
             events.comparator = function(event){
+                console.log(event);
                 return String.fromCharCode.apply(String,
                         _.map(event.get('startDate').date.split(""), function (c) {
                             return 0xffff - c.charCodeAt();
@@ -32,45 +38,49 @@ var EventsListView = Backbone.View.extend({
                 );
             };
             events.sort();
+
             var dates = [];
             events.each(function(event){
                 var isAlreadyIn = false;
-                var dateYear = filterDate(event.get('startDate').date)['month']+' '+filterDate(event.get('startDate').date)['year'];
-                for (var i=0; i<dates.length; i++){
-                    if (dateYear==dates[i]){
-                        isAlreadyIn=true;
+                var dateYear = filterDate(event.get('startDate').date).month +
+                ' ' + filterDate(event.get('startDate').date).year;
+
+                for (var i = 0; i < dates.length; i++){
+                    if (dateYear == dates[i]){
+                        isAlreadyIn = true;
                     }
                 }
+
                 if (!isAlreadyIn){
-                    if (event.get('startDate').date!=''){
-                        dates[dates.length]=dateYear;
-                        listView.append('<li data-role="list-divider">'+dateYear+'</li>');
+                    if (event.get('startDate').date !== ''){
+                        dates[dates.length] = dateYear;
+                        listView.append('<li data-role="list-divider">' + dateYear + '</li>');
                     }
                     else{
                         listView.append('<li data-role="list-divider">Date Unknown</li>');
                     }
 
                 }
+
                 if (isEventInAgenda(event.get('id'))){
                     listView.append(template2(event));
                 }else{
                     listView.append(template1(event));
                 }
-
             });
             listView.trigger('refresh');
             container.html(listView);
             container.trigger('create');
         }
         else{
-            if ($('#myagenda').length!=0){
+            if ($('#myagenda').length !== 0){
                 container.html('<h4>There is nothing in your agenda</h4>');
             }
-            else if ($('#searchHome').length!=0){
+            else if ($('#searchHome').length !== 0){
                 container.html('<h4>Nothing found</h4>');
             }
         }
         return this;
-
     }
+
 });

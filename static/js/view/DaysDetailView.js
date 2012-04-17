@@ -1,10 +1,13 @@
 var DaysDetailView = Backbone.View.extend({
-	initialize : function() {
+
+	initialize: function() {
 		this.template1 = _.template($(getHTMLTemplate('/dayTemplates')).siblings('#dayPage').html());
 	},
-	render : function() {
-		var  event = this.collection, template1 = this.template1;
-		console.log(event)
+
+	render: function() {
+		var  event = this.collection,
+		template1 = this.template1;
+
 		event.each(function(day){
 			if (day.get('date')){
 			    $('#allpages').append(template1(day.toJSON()));
@@ -12,4 +15,5 @@ var DaysDetailView = Backbone.View.extend({
 		});
 		return this;
 	}
+
 });

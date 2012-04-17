@@ -7,31 +7,42 @@ app.config['MONGOALCHEMY_DATABASE'] = 'library'
 
 db = MongoAlchemy(app)
 
+
+class DBClasse(db.Document):
+    def fields(self):
+        self._field_values.pop('mongo_id')
+        return self._field_values
+
+
 class EventIdQuery(BaseQuery):
 
     def getEventById(self, eventID):
         return self.filter(self.type.id == eventID)
 
-class Presenter(db.Document):
+
+class Presenter(DBClasse):
     _fossil = db.StringField()
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
 
-class Resource(db.Document):
+
+class Resource(DBClasse):
     url = db.StringField()
     _fossil = db.StringField()
     _type = db.StringField()
     name = db.StringField()
 
-class Material(db.Document):
+
+class Material(DBClasse):
     _fossil = db.StringField()
     _type = db.StringField()
     id = db.StringField()
     title = db.StringField()
     resources = db.ListField(db.DocumentField('Resource'))
 
-class Contribution(db.Document):
+
+class Contribution(DBClasse):
     _type = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.StringField()
@@ -56,7 +67,8 @@ class Contribution(db.Document):
     eventId = db.AnythingField()
     dayDate = db.StringField()
 
-class Session(db.Document):
+
+class Session(DBClasse):
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
     contributionId = db.AnythingField(default='')
@@ -88,7 +100,8 @@ class Session(db.Document):
     dayDate = db.StringField()
     numContributions = db.IntField()
 
-class Chair(db.Document):
+
+class Chair(DBClasse):
     _type = db.StringField()
     id = db.AnythingField()
     affiliation = db.StringField()
@@ -97,12 +110,14 @@ class Chair(db.Document):
     email = db.StringField()
     eventId = db.AnythingField()
 
-class Day(db.Document):
+
+class Day(DBClasse):
     query_class = EventIdQuery
     date = db.StringField()
     eventId = db.AnythingField()
 
-class Event(db.Document):
+
+class Event(DBClasse):
     query_class = EventIdQuery
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()

@@ -1,9 +1,11 @@
 $('#historyHome').live('pageinit', function(){
+
     myHistory = loadHistory();
-    visited=false;
+    visited = false;
     var eventsView = new HistoryListView({
-        collection : myHistory,
-        viewContainer : eventsContainer = $('#eventList')
+        collection: myHistory,
+        viewContainer: eventsContainer = $('#eventList')
     });
     eventsView.render();
+
 });
