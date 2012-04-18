@@ -72,7 +72,7 @@ var RecentEventsView = Backbone.View.extend({
 
             });
             container.html(listView);
-            container.append('<a data-role="button" id="moreFutureEvents2" part="' + (part + 10) + '">more</a>');
+            container.append('<a data-role="button" id="moreFutureEvents" part="' + (part + 10) + '">more</a>');
         }
         container.trigger('create');
         return this;

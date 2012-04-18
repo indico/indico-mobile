@@ -131,7 +131,7 @@ function getContribution(eventId, dayDate, sessionId, contributionId){
     var contribution;
     $.ajax({
         type: "GET",
-        url: "/event" + eventId + "/day/" + dayDate + "/session/" +
+        url: "/event/" + eventId + "/day/" + dayDate + "/session/" +
         sessionId + "/contrib/" + contributionId,
         dataType: "json",
         async: false,
@@ -141,6 +141,21 @@ function getContribution(eventId, dayDate, sessionId, contributionId){
     });
     return new Contribution(contribution);
 
+};
+
+function getFutureEvents(part){
+
+    var futureEvents;
+    $.ajax({
+        type: "GET",
+        url: "/futureEvents/"+part,
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            futureEvents = resp;
+        }
+    });
+    return futureEvents;
 };
 
 function isSessionInAgenda(sessionId, eventId, dayDate){

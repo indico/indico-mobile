@@ -309,49 +309,12 @@ def searchEvent():
         return json.dumps({})
 
 
-@getEvent.route('/futureEvents', methods=['GET'])
-def getFutureEvents():
-    part = request.args.get('part')
-    req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
-                          '/indico/export/categ/0.json?ak=' +
-                          current_app.config['API_KEY'] +
-                          '&from=today&pretty=yes&limit=10&offset=' + part)
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    return json.dumps(simplejson.load(f))
-
-
-@getEvent.route('/pastEvents', methods=['GET'])
-def getPastEvent():
-    part = request.args.get('part')
-    req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
-                          '/indico/export/categ/0.json?ak=' +
-                          current_app.config['API_KEY'] +
-                          '&from=-30d&to=today&pretty=yes&limit=10&offset=' + part)
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    return json.dumps(simplejson.load(f))
-
-
-@getEvent.route('/futureEvent2', methods=['GET'])
-def getFutureEvent2():
-    part = request.args.get('part')
+@getEvent.route('/futureEvents/<part>', methods=['GET'])
+def getFutureEvents(part):
     req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
                           '/indico/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
                           '&from=today&pretty=yes&limit=' + part)
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    return json.dumps(simplejson.load(f))
-
-
-@getEvent.route('/pastEvent2', methods=['GET'])
-def getPastEvent2():
-    part = request.args.get('part')
-    req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
-                          '/indico/export/categ/0.json?ak=' +
-                          current_app.config['API_KEY'] +
-                          '&from=-30d&to=today&pretty=yes&limit=' + part)
     opener = urllib2.build_opener()
     f = opener.open(req)
     return json.dumps(simplejson.load(f))

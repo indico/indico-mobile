@@ -37,7 +37,7 @@
                 print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
                 for (var j=0; j<material[i].resources.length; j++){
                     var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
-                        print('<li data-icon=\"download\"><a data-inline=\"true\" href=\"'+
+                        print('<li data-icon=\"download\" data-theme="a"><a data-inline=\"true\" href=\"'+
                         material[i].resources[j].url+
                         '\" target=\"_blank\" >'+material[i].resources[j].name+
                         '</a></li>');
@@ -57,7 +57,7 @@
 </script>
 
 <script type="text/template" id="contribution">
-<div data-role="collapsible" data-inset="true" data-mini="true">
+<div data-role="collapsible" style="position: relative;">
 <h3><%= startDate.time %>: <%= title %></h3>
 <h4><% if(description!=''){print('Description')} else {print('No
     description')}%></h4>
@@ -95,7 +95,7 @@ if (typeof(material)!="undefined"){
                 print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
                 for (var j=0; j<material[i].resources.length; j++){
                     var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
-                        print('<li data-icon=\"download\"><a data-inline=\"true\" href=\"'+
+                        print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
                         material[i].resources[j].url+
                         '\" target=\"_blank\" >'+material[i].resources[j].name+
                         '</a></li>');
@@ -107,19 +107,14 @@ if (typeof(material)!="undefined"){
         }
     }
 %>
-<a data-role="button" data-icon="star" id="addContributionToAgenda"
-    day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= contributionId %>" eventId="<%=eventId%>">To my agenda </a> <a
-    data-role="button" data-icon="delete" id="removeContributionFromAgenda1"
-    day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= contributionId %>" eventId="<%=eventId%>"
-    style="display: none;">Remove from my agenda </a>
+    <a data-role="button" data-icon="star" id="addContributionToAgenda"
+    day="<%=startDate.date%>" sessionId="<%=sessionId%>" data-iconpos="notext"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>">To my agenda </a>
 </div>
 </script>
 
 <script type="text/template" id="contributionInAgenda">
-<div data-role="collapsible" data-inset="true" data-theme="f"
-    data-content-theme="f">
+<div data-role="collapsible" data-theme="f" data-content-theme="f">
     <h3><%= startDate.time %>: <%= title %></h3>
     <h4><% if(description!=''){print('Description')} else {print('No
         description')}%></h4>
@@ -169,12 +164,9 @@ if (typeof(material)!="undefined"){
         }
     }
     %>
-    <a data-role="button" data-icon="star" id="addContributionToAgenda"
-        day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-        contribId="<%= contributionId %>" eventId="<%=eventId%>"
-        style="display: none;">To my agenda </a> <a data-role="button"
+    <a data-role="button"
         data-icon="delete" id="removeContributionFromAgenda1" day="<%=startDate.date%>"
-        sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
+        sessionId="<%=sessionId%>" data-iconpos="notext" contribId="<%= contributionId %>"
         eventId="<%=eventId%>">Remove from my agenda </a>
 </div>
 </script>

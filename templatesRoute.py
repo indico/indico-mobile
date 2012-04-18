@@ -52,4 +52,4 @@ def eventTemplates():
 
 @templatesRoute.route('/')
 def root():
-    return render_template('root.html')
+    return render_template('index.html')

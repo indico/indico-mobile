@@ -91,8 +91,9 @@ $('#addContributionToAgenda').live('click', function() {
         contributionDiv.find('[data-content-theme="b"]').attr('data-content-theme','f');
         contributionDiv.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
         contributionDiv.find('.ui-body-b').removeClass('ui-body-b').addClass('ui-body-f');
-        contributionDiv.find('#addContributionToAgenda').attr('style','display:none;');
-        contributionDiv.find('#removeContributionFromAgenda1').attr('style','display:block;');
+        contributionDiv.find('.ui-icon-star').removeClass('ui-icon-star').addClass('ui-icon-delete');
+        contributionDiv.find('#addContributionToAgenda').attr('id', 'removeContributionFromAgenda1');
+        contributionDiv.find('#addContributionToAgenda').find('.ui-btn-text').html('Remove from my agenda');
     }
     if (numberContributionsInEvent == event.get('numContributions') &&
         numberSessionsInEvent == event.get('numSessions')){
@@ -270,13 +271,16 @@ $('#addSessionToAgenda').live('click', function() {
     sessionDiv.find('[data-theme="c"]').attr('data-theme','g');
     sessionDiv.find('[data-content-theme="c"]').attr('data-content-theme','g');
     sessionDiv.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-f');
+    sessionDiv.find('.ui-btn-hover-b').removeClass('ui-btn-hover-b').addClass('ui-btn-hover-f');
     sessionDiv.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+    sessionDiv.find('.ui-btn-hover-c').removeClass('ui-btn-hover-c').addClass('ui-btn-hover-g');
     sessionDiv.find('.ui-body-b').removeClass('ui-body-b').addClass('ui-body-f');
     sessionDiv.find('.ui-body-c').removeClass('ui-body-c').addClass('ui-body-g');
-    sessionDiv.find('#addContributionToAgenda').attr('style','display:none;');
-    sessionDiv.find('#addSessionToAgenda').attr('style','display:none;');
-    sessionDiv.find('#removeContributionFromAgenda1').attr('style','display:block;');
-    sessionDiv.find('#removeSessionFromAgenda1').attr('style','display:block;');
+    sessionDiv.find('.ui-icon-star').removeClass('ui-icon-star').addClass('ui-icon-delete');
+    sessionDiv.find('#addSessionToAgenda').attr('id', 'removeSessionFromAgenda1');
+    sessionDiv.find('#removeSessionFromAgenda1').find('.ui-btn-text').html('Remove from my agendas');
+    sessionDiv.find('#addContributionToAgenda').attr('id', 'removeContributionFromAgenda1');
+    sessionDiv.find('#removeContributionFromAgenda1').find('.ui-btn-text').html('Remove from my agenda');
 
 });
 
@@ -428,8 +432,9 @@ $('#removeContributionFromAgenda1').live('click', function() {
         sessionDiv.find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
         sessionDiv.find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
         sessionDiv.find('.ui-body-g').removeClass('ui-body-g');
-        sessionDiv.find('#removeSessionFromAgenda1').attr('style','display:none;');
-        sessionDiv.find('#addSessionToAgenda').attr('style','display:block;');
+        sessionDiv.find('#removeSessionFromAgenda1').find('.ui-icon-delete').removeClass('ui-icon-delete').addClass('ui-icon-star');
+        sessionDiv.find('#removeSessionFromAgenda1').attr('id','addSessionToAgenda');
+        sessionDiv.find('#addSessionToAgenda').find('.ui-btn-text').html('Add to my agenda');
         localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     }
 
@@ -481,9 +486,11 @@ $('#removeContributionFromAgenda1').live('click', function() {
     contributionDiv.find('[data-theme="f"]').attr('data-theme','b');
     contributionDiv.find('[data-content-theme="f"]').attr('data-content-theme','b');
     contributionDiv.find('.ui-btn-up-f').removeClass('ui-btn-up-f').addClass('ui-btn-up-b');
+    contributionDiv.find('.ui-btn-hover-f').removeClass('ui-btn-hover-f').addClass('ui-btn-hover-b');
     contributionDiv.find('.ui-body-f').removeClass('ui-body-f').addClass('ui-body-b');
-    contributionDiv.find('#addContributionToAgenda').attr('style','display:block;');
-    contributionDiv.find('#removeContributionFromAgenda1').attr('style','display:none;');
+    contributionDiv.find('.ui-icon-delete').removeClass('ui-icon-delete').addClass('ui-icon-star');
+    contributionDiv.find('#removeContributionFromAgenda1').attr('id', 'addContributionToAgenda');
+    contributionDiv.find('#addContributionToAgenda').find('.ui-btn-text').html('Add to my agenda');
 
 });
 
@@ -709,18 +716,21 @@ $('#removeSessionFromAgenda1').live('click', function(event) {
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
     //css changes
-    var session = $('#li-' + sessionId);
-    session.find('[data-theme="f"]').attr('data-theme','b');
-    session.find('[data-content-theme="f"]').attr('data-content-theme','b');
-    session.find('[data-theme="g"]').attr('data-theme','c');
-    session.find('[data-content-theme="g"]').attr('data-content-theme','c');
-    session.find('.ui-btn-up-f').removeClass('ui-btn-up-f').addClass('ui-btn-up-b');
-    session.find('.ui-body-f').removeClass('ui-body-f').addClass('ui-body-b');
-    session.find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
-    session.find('.ui-body-g').removeClass('ui-body-g');
-    session.find('#addContributionToAgenda').attr('style','display:block;');
-    session.find('#removeContributionFromAgenda1').attr('style','display:none;');
-    session.find('#removeSessionFromAgenda1').attr('style','display:none;');
-    session.find('#addSessionToAgenda').attr('style','display:block;');
+    var sessionDiv = $('#li-' + sessionId);
+    sessionDiv.find('[data-theme="f"]').attr('data-theme','b');
+    sessionDiv.find('[data-content-theme="f"]').attr('data-content-theme','b');
+    sessionDiv.find('[data-theme="g"]').attr('data-theme','c');
+    sessionDiv.find('[data-content-theme="g"]').attr('data-content-theme','c');
+    sessionDiv.find('.ui-btn-up-f').removeClass('ui-btn-up-f').addClass('ui-btn-up-b');
+    sessionDiv.find('.ui-btn-hover-f').removeClass('ui-btn-hover-f').addClass('ui-btn-hover-b');
+    sessionDiv.find('.ui-body-f').removeClass('ui-body-f').addClass('ui-body-b');
+    sessionDiv.find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+    sessionDiv.find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
+    sessionDiv.find('.ui-body-g').removeClass('ui-body-g');
+    sessionDiv.find('.ui-icon-delete').removeClass('ui-icon-delete').addClass('ui-icon-star');
+    sessionDiv.find('#removeContributionFromAgenda1').attr('id', 'addContributionToAgenda');
+    sessionDiv.find('#addContributionToAgenda').find('.ui-btn-text').html('Add to my agenda');
+    sessionDiv.find('#removeSessionFromAgenda1').attr('id', 'addSessionToAgenda');
+    sessionDiv.find('#addSessionToAgenda').find('.ui-btn-text').html('Add to my agenda');
 
 });
