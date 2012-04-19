@@ -10,11 +10,7 @@ var EventsListView = Backbone.View.extend({
 
     initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
-        if ($('#myagenda').length !== 0){
-            this.template1 = _.template($(eventTemplates).siblings('#agendaEventList').html());
-        }else{
-            this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
-        }
+        this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
         this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
 
@@ -30,7 +26,6 @@ var EventsListView = Backbone.View.extend({
 
             listView.empty();
             events.comparator = function(event){
-                console.log(event);
                 return String.fromCharCode.apply(String,
                         _.map(event.get('startDate').date.split(""), function (c) {
                             return 0xffff - c.charCodeAt();
@@ -73,12 +68,8 @@ var EventsListView = Backbone.View.extend({
             container.trigger('create');
         }
         else{
-            if ($('#myagenda').length !== 0){
-                container.html('<h4>There is nothing in your agenda</h4>');
-            }
-            else if ($('#searchHome').length !== 0){
-                container.html('<h4>Nothing found</h4>');
-            }
+            container.html('<h4>Nothing found</h4>');
+            container.trigger('create');
         }
         return this;
     }

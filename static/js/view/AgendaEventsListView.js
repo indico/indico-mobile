@@ -19,7 +19,7 @@ var AgendaEventsListView = Backbone.View.extend({
         template1 = this.template1,
         template2 = this.template2,
         listView = $(this.el);
-
+        console.log(events);
         if (events.size()>0){
             listView.empty();
 

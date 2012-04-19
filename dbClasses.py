@@ -1,3 +1,4 @@
+import copy
 from flask import Flask, Blueprint
 from flaskext.mongoalchemy import MongoAlchemy, BaseQuery
 
@@ -8,10 +9,26 @@ app.config['MONGOALCHEMY_DATABASE'] = 'library'
 db = MongoAlchemy(app)
 
 
-class DBClasse(db.Document):
+class DBClass(db.Document):
+
+    def get_list(self, field):
+        res = []
+        for e in self._field_values[field]:
+            fields = e.fields()
+            for k, v in fields.iteritems():
+                if isinstance(v, list):
+                    fields[k] = e.get_list(k)
+            res.append(fields)
+        return res
+
     def fields(self):
-        self._field_values.pop('mongo_id')
-        return self._field_values
+        field_values = copy.copy(self._field_values)
+        field_values.pop('mongo_id')
+        if 'presenters' in field_values:
+            field_values['presenters'] = self.get_list('presenters')
+        if 'material' in field_values:
+            field_values['material'] = self.get_list('material')
+        return field_values
 
 
 class EventIdQuery(BaseQuery):
@@ -20,21 +37,21 @@ class EventIdQuery(BaseQuery):
         return self.filter(self.type.id == eventID)
 
 
-class Presenter(DBClasse):
+class Presenter(DBClass):
     _fossil = db.StringField()
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
 
 
-class Resource(DBClasse):
+class Resource(DBClass):
     url = db.StringField()
     _fossil = db.StringField()
     _type = db.StringField()
     name = db.StringField()
 
 
-class Material(DBClasse):
+class Material(DBClass):
     _fossil = db.StringField()
     _type = db.StringField()
     id = db.StringField()
@@ -42,7 +59,7 @@ class Material(DBClasse):
     resources = db.ListField(db.DocumentField('Resource'))
 
 
-class Contribution(DBClasse):
+class Contribution(DBClass):
     _type = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.StringField()
@@ -68,7 +85,7 @@ class Contribution(DBClasse):
     dayDate = db.StringField()
 
 
-class Session(DBClasse):
+class Session(DBClass):
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
     contributionId = db.AnythingField(default='')
@@ -101,7 +118,7 @@ class Session(DBClasse):
     numContributions = db.IntField()
 
 
-class Chair(DBClasse):
+class Chair(DBClass):
     _type = db.StringField()
     id = db.AnythingField()
     affiliation = db.StringField()
@@ -111,13 +128,13 @@ class Chair(DBClasse):
     eventId = db.AnythingField()
 
 
-class Day(DBClasse):
+class Day(DBClass):
     query_class = EventIdQuery
     date = db.StringField()
     eventId = db.AnythingField()
 
 
-class Event(DBClasse):
+class Event(DBClass):
     query_class = EventIdQuery
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()

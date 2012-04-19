@@ -1,4 +1,5 @@
 @media all and (min-width: 600px){
+
 	.leftSide {
 		float: left !important;
 		width: 33% !important;
@@ -15,18 +16,6 @@
 	.leftSide{
 		display: none;
 	}
-}
-
-.ui-icon-powerpoint{
-    background-image: url('images/powerpoint.png');
-}
-
-.ui-icon-pdf{
-    background-image: url('images/pdf_small.png');
-}
-
-.ui-icon-file{
-    background-image: url('images/file_small.png');
 }
 
 .ui-icon-download{
@@ -127,4 +116,11 @@
 .ui-btn-down-g {
 	font-family: Helvetica, Arial, sans-serif;
 	text-decoration: none;
+}
+
+.ui-collapsible-favorite-contrib .ui-icon-star,
+.ui-collapsible-favorite-contrib .ui-icon-delete,
+.ui-collapsible-favorite-session .ui-icon-star,
+.ui-collapsible-favorite-session .ui-icon-delete {
+    z-index: 3;
 }

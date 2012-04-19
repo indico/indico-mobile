@@ -50,7 +50,6 @@ var SlotsView = Backbone.View.extend({
                         listView.append(template5(slot.toJSON()));
                     }
                     else{
-                        console.log(slot.toJSON());
                         listView.append(template1(slot.toJSON()));
                     }
                 }

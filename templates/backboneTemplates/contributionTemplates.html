@@ -50,14 +50,15 @@
     }
     %>
     <a data-role="button" data-icon="delete"
-        id="removeContributionFromAgenda" day="<%=startDate.date%>"
-        sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
-        eventId="<%=eventId%>">Remove from my agenda</a>
+    id="removeContributionFromAgenda" day="<%=startDate.date%>"
+    sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
+    eventId="<%=eventId%>">Remove from my agenda</a>
 </div>
 </script>
 
 <script type="text/template" id="contribution">
-<div data-role="collapsible" style="position: relative;">
+<div data-role="collapsible_favorite_contrib" data-theme="b" data-oldtheme="f" day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>">
 <h3><%= startDate.time %>: <%= title %></h3>
 <h4><% if(description!=''){print('Description')} else {print('No
     description')}%></h4>
@@ -107,14 +108,12 @@ if (typeof(material)!="undefined"){
         }
     }
 %>
-    <a data-role="button" data-icon="star" id="addContributionToAgenda"
-    day="<%=startDate.date%>" sessionId="<%=sessionId%>" data-iconpos="notext"
-    contribId="<%= contributionId %>" eventId="<%=eventId%>">To my agenda </a>
 </div>
 </script>
 
 <script type="text/template" id="contributionInAgenda">
-<div data-role="collapsible" data-theme="f" data-content-theme="f">
+<div data-role="collapsible_favorite_contrib" data-theme="f" data-isfavorite-contrib="true" day="<%=startDate.date%>"
+sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="b">
     <h3><%= startDate.time %>: <%= title %></h3>
     <h4><% if(description!=''){print('Description')} else {print('No
         description')}%></h4>
@@ -164,9 +163,5 @@ if (typeof(material)!="undefined"){
         }
     }
     %>
-    <a data-role="button"
-        data-icon="delete" id="removeContributionFromAgenda1" day="<%=startDate.date%>"
-        sessionId="<%=sessionId%>" data-iconpos="notext" contribId="<%= contributionId %>"
-        eventId="<%=eventId%>">Remove from my agenda </a>
 </div>
 </script>

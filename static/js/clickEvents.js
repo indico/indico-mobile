@@ -133,9 +133,11 @@ $('#eventLinkFromEvents').live('click', function(event) {
     var eventInfo = getEvent(eventId);
     $('#headerTitle').html($(this).html());
 
-    addToHistory(eventId);
+    //addToHistory(eventId);
 
     var daysCollection = getDays(eventId);
+
+    console.log(daysCollection)
 
     var daysListView = new DaysListView({
         collection: daysCollection,

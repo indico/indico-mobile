@@ -61,6 +61,7 @@ var DaysListView = Backbone.View.extend({
                 container.trigger('create');
             }
         }
+        console.log('end DaysListView')
         return this;
     }
 

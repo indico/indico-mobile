@@ -21,7 +21,23 @@ function searchInDB(regex){
         dataType: "json",
         data: {
             search: regex
-            },
+        },
+        async: false,
+        success: function(resp){
+            results = resp;
+        }
+    });
+    return results;
+
+};
+
+function newSearchInDB(regex){
+
+    var results;
+    $.ajax({
+        type: "GET",
+        url: "/newSearchEvent/" + regex,
+        dataType: "json",
         async: false,
         success: function(resp){
             results = resp;
@@ -57,7 +73,6 @@ function searchEvent(){
 
         results = searchInDB(regex);
     }
-
     var resultEvents = new Events(results);
     var resultEventsView = new EventsListView({
         collection : resultEvents,

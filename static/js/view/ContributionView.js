@@ -31,13 +31,10 @@ var ContributionView = Backbone.View.extend({
             if(contributions.size() > 15 * (part + 1)) {
                 for(var i = part * 15; i < 15 * (part + 1); i++) {
                     if (isContributionInAgenda(contributions.at(i).get('contributionId'), session, event)){
-                        console.log(i);
                         console.log(contributions.at(i).get('title'));
                         $('#' + session).append(template2(contributions.at(i).toJSON()));
                     }
                     else{
-                        console.log(i);
-                        console.log(contributions.at(i).get('title'));
                         $('#' + session).append(template1(contributions.at(i).toJSON()));
                     }
                 }
@@ -47,13 +44,10 @@ var ContributionView = Backbone.View.extend({
             } else {
                 for(var j = part * 15; j < contributions.size(); j++) {
                     if (isContributionInAgenda(contributions.at(j).get('contributionId'), session, event)){
-                        console.log(j);
-                        console.log(contributions.at(j).toJSON());
+                        console.log(contributions.at(j).get('title'));
                         $('#' + session).append(template2(contributions.at(j).toJSON()));
                     }
                     else{
-                        console.log(j);
-                        console.log(contributions.at(j).toJSON());
                         $('#' + session).append(template1(contributions.at(j).toJSON()));
                     }
                 }

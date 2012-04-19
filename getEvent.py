@@ -15,29 +15,6 @@ dthandler = lambda obj: {'date': obj.strftime('%Y-%m-%d'),
                          'time': obj.strftime('%H:%M:%S')} if isinstance(obj, datetime) else None
 
 
-def presentersToJSON(dictionary):
-    new_presenters = []
-    if 'presenters' in dictionary:
-        for presenter in dictionary['presenters']:
-            presenter.fields()
-            new_presenters.append(presenter._field_values)
-    dictionary['presenters'] = new_presenters
-
-
-def materialsToJSON(dictionary):
-    new_materials = []
-    if 'material' in dictionary:
-        for material in dictionary['material']:
-            material.fields()
-            resources = []
-            for resource in material._field_values['resources']:
-                resource.fields()
-                resources.append(resource._field_values)
-            material._field_values['resources'] = resources
-            new_materials.append(material._field_values)
-    dictionary['material'] = new_materials
-
-
 @getEvent.route('/event/<event_id>/days', methods=['GET'])
 def eventDays(event_id):
     is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
@@ -62,9 +39,6 @@ def eventSession(event_id, day_date, session_id):
                                                   Session.dayDate == day_date,
                                                   Session.sessionId ==
                                                   session_id)[0]
-    session_values = session._field_values
-    presentersToJSON(session_values)
-    materialsToJSON(session_values)
     return json.dumps(session.fields(), default=dthandler)
 
 
@@ -75,9 +49,6 @@ def eventContribution(event_id, day_date, session_id, contrib_id):
                                         Contribution.dayDate == day_date,
                                         Contribution.sessionId == session_id,
                                         Contribution.contributionId == contrib_id)[0]
-    contrib_values = contribution._field_values
-    presentersToJSON(contrib_values)
-    materialsToJSON(contrib_values)
     return json.dumps(contribution.fields(), default=dthandler)
 
 
@@ -88,9 +59,6 @@ def daySessions(event_id, day_date):
                                                       Session.dayDate == day_date)
     sessions_DB = first_query
     for session in sessions_DB:
-        session_values = session._field_values
-        presentersToJSON(session_values)
-        materialsToJSON(session_values)
         sessions.append(session.fields())
     return json.dumps(sessions, default=dthandler)
 
@@ -101,9 +69,6 @@ def eventSessions(event_id):
     first_query = query_session.query(Session).filter(Session.eventId == event_id)
     sessions_DB = first_query
     for session in sessions_DB:
-        session_values = session._field_values
-        presentersToJSON(session_values)
-        materialsToJSON(session_values)
         sessions.append(session.fields())
     return json.dumps(sessions, default=dthandler)
 
@@ -117,9 +82,6 @@ def sessionContributions(event_id, day_date, session_id):
                                        Contribution.sessionId == session_id)
     contributions_DB = first_query
     for contribution in contributions_DB:
-        contrib_values = contribution._field_values
-        presentersToJSON(contrib_values)
-        materialsToJSON(contrib_values)
         contributions.append(contribution.fields())
     return json.dumps(contributions, default=dthandler)
 
@@ -131,22 +93,20 @@ def eventContributions(event_id):
     contributions_DB = contrib_query.filter(Contribution.eventId == event_id)
     print contributions_DB.count()
     for contribution in contributions_DB:
-        contrib_values = contribution._field_values
-        presentersToJSON(contrib_values)
-        materialsToJSON(contrib_values)
         contributions.append(contribution.fields())
     return json.dumps(contributions, default=dthandler)
 
 
 def addEventToDB(event_id):
-    event_req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
+    event_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
+                                '://' + current_app.config['SERVER_URL'] +
                                 '/indico/export/event/' + event_id +
                                 '.json?ak=' + current_app.config['API_KEY'])
     event_opener = urllib2.build_opener()
     f1 = event_opener.open(event_req)
     event_info = simplejson.load(f1)
-    timetable_req = urllib2.Request('http://' +
-                                    current_app.config['SERVER_URL'] +
+    timetable_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
+                                    '://' + current_app.config['SERVER_URL'] +
                                     '/indico/export/timetable/' + event_id +
                                     '.json?ak=' +
                                     current_app.config['API_KEY'])
@@ -161,6 +121,7 @@ def manage_event(event, event_tt, event_id):
     number_contributions = 0
     number_sessions = 0
     for day in event_tt['results'][event_id]:
+        print day
         current_day = event_tt['results'][event_id][day]
         if current_day:
             day_date = ''
@@ -249,7 +210,8 @@ def manage_material(dictionary):
 def manage_resource(dictionary):
     if 'resources' in dictionary:
         resources = []
-        for resource in dict['resources']:
+        for resource in dictionary['resources']:
+            print resource
             a_resource = Resource(**resource)
             a_resource.save()
             resources.append(a_resource)
@@ -286,7 +248,8 @@ def eventInfo(event_id):
         event.fields()
         return json.dumps(event._field_values, default=dthandler)
     else:
-        req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
+        req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
+                              '://' + current_app.config['SERVER_URL'] +
                               '/indico/export/event/' + event_id +
                               '.json?ak=' +
                               current_app.config['API_KEY'])
@@ -304,15 +267,17 @@ def searchEvent():
         results = []
         for event in search_result:
             results.append(event)
+        print results
         return json.dumps(results, default=dthandler)
     else:
-        return json.dumps({})
+        return json.dumps(None)
 
 
 @getEvent.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
-    req = urllib2.Request('http://' + current_app.config['SERVER_URL'] +
-                          '/indico/export/categ/0.json?ak=' +
+    req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
+                          '://' + current_app.config['SERVER_URL'] +
+                          '/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
                           '&from=today&pretty=yes&limit=' + part)
     opener = urllib2.build_opener()
