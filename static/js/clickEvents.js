@@ -118,30 +118,6 @@ function addToHistory(eventId){
 
 };
 
-$('#eventLinkFromEvents').live('click', function(event) {
-
-    var eventId = $(this).attr('eventId');
-    var eventInfo = getEvent(eventId);
-    $('#headerTitle').html($(this).html());
-
-    addToHistory(eventId);
-
-    var daysCollection = getDays(eventId);
-
-    var daysListView = new DaysListView({
-        collection: daysCollection,
-        viewContainer: $('#list'),
-        date: ''
-    });
-    daysListView.render();
-
-    var daysDetailView = new DaysDetailView({
-        collection: daysCollection
-    });
-    daysDetailView.render();
-
-});
-
 
 $('a[id="more"]').live('click', function(event) {
 

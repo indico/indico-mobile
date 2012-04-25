@@ -1,39 +1,50 @@
 <script type="text/template" id="dayPage">
-<div data-role="page" id="<%=eventId%>-<%= date %>" class="inDay">
+<div data-role="page" id="<%=eventId%>_<%= date %>" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="#alldays" data-icon="back">Back</a>
+        <a href="#event_<%=eventId%>" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <div class="leftSide" id="listInDay-<%=eventId%>-<%= date %>">
+        <div class="leftSide" id="listInDay_<%=eventId%>-<%= date %>">
         </div>
-        <div class="rightSide" id="sessionInDay-<%=eventId%>-<%= date %>"></div>
+        <div class="rightSide" id="sessionInDay_<%=eventId%>_<%= date %>"></div>
     </div>
 
 </div>
 </script>
 
+<script type="text/template" id="eventPage">
+<div data-role="page" id="event_<%=id%>">
+    <div data-role="header" data-theme="c">
+                <a href="#eventHome" data-icon="back">Back</a>
+                <h1 id="headerTitle"><%=title%></h1>
+            </div>
+            <div data-role="content" data-theme="c" id="event_days_<%=id%>"></div>
+            <div data-role="footer" data-theme="c">Made by Me</div>
+</div>
+</script>
+
 <script type="text/template" id="daysList">
-<li id="li-<%=eventId%>-<%= date %>">
-    <a href="#<%=eventId%>-<%= date %>" id="dayButton" eventId="<%=eventId%>" data-prefetch><%=date %></a>
+<li id="li_<%=eventId%>_<%= date %>">
+    <a href="#day_<%=eventId%>_<%= date %>" eventId="<%=eventId%>" data-prefetch><%=date %></a>
 </li>
 </script>
 
 <script type="text/template" id="agendaDaysList">
-<li id="li-<%=eventId%>-<%= date %>">
-    <a href="#<%=eventId%>-<%= date %>" id="agendaDayButton" eventId="<%=eventId%>" data-prefetch><%=date %></a>
+<li id="li_<%=eventId%>_<%= date %>">
+    <a href="#day_<%=eventId%>_<%= date %>" eventId="<%=eventId%>" data-prefetch><%=date %></a>
 </li>
 </script>
 
 <script type="text/template" id="selectedDay">
-<li id="sli-<%=eventId%>-<%= date %>" data-theme="b">
-    <a href="#<%=eventId%>-<%= date %>" id="dayButton" eventId="<%=eventId%>" data-prefetch><%= date %></a>
+<li id="sli_<%=eventId%>_<%= date %>" data-theme="b">
+    <a href="#day_<%=eventId%>_<%= date %>" eventId="<%=eventId%>" data-prefetch><%= date %></a>
 </li>
 </script>
 
 <script type="text/template" id="agendaSelectedDay">
-<li id="sli-<%=eventId%>-<%= date %>" data-theme="b">
-    <a href="#<%=eventId%>-<%= date %>" id="agendaDayButton" eventId="<%=eventId%>" data-prefetch><%= date %></a>
+<li id="sli_<%=eventId%>_<%= date %>" data-theme="b">
+    <a href="#day_<%=eventId%>_<%= date %>" eventId="<%=eventId%>" data-prefetch><%= date %></a>
 </li>
 </script>

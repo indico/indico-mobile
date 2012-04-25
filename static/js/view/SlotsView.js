@@ -69,7 +69,7 @@ var SlotsView = Backbone.View.extend({
             sessionDiv.trigger('create');
         }
         else{
-            sessionDiv.trigger('refresh');
+            sessionDiv.trigger('create');
         }
         return this;
     }
