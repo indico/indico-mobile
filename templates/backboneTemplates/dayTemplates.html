@@ -1,14 +1,14 @@
 <script type="text/template" id="dayPage">
 <div data-role="page" id="<%=eventId%>-<%= date %>" class="inDay">
-    <div data-role="header" data-theme="c" style="position: fixed; z-index: 999;">
+    <div data-role="header" data-theme="c">
         <a href="#alldays" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <div class="leftSide" id="listInDay-<%=eventId%>-<%= date %>" style="margin-top: 20px;">
+        <div class="leftSide" id="listInDay-<%=eventId%>-<%= date %>">
         </div>
-        <div class="rightSide" style="margin-top: 20px;" id="sessionInDay-<%=eventId%>-<%= date %>"></div>
+        <div class="rightSide" id="sessionInDay-<%=eventId%>-<%= date %>"></div>
     </div>
 
 </div>

@@ -1,14 +1,24 @@
-$('#searchButton').live('click', function(){
+$('#searchEvent').live('keyup', function(event){
 
-    searchEvent();
+    visited = false;
+    if (event.keyCode == 13){
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.loadingMessage = "Searching... Please wait.";
+        $.mobile.showPageLoadingMsg();
+        searchInDB($(this).val());
+    }
 
 });
 
-$('#searchEvent').live('keyup', function(event){
+$('#moreResults').live('click', function(event){
 
-    if (event.keyCode == 13){
-        searchEvent();
-    }
+    var part = $(this).attr('part');
+    var resultEventsView = new EventsListView({
+        collection : resultEvents,
+        viewContainer : $('#searchResults'),
+        part: part
+    });
+    resultEventsView.render();
 
 });
 
@@ -22,63 +32,19 @@ function searchInDB(regex){
         data: {
             search: regex
         },
-        async: false,
+        async: true,
         success: function(resp){
             results = resp;
+            resultEvents = new Events(results);
+            var resultEventsView = new EventsListView({
+                collection : resultEvents,
+                viewContainer : $('#searchResults'),
+                part: 0
+            });
+            resultEventsView.render();
+
+            $.mobile.hidePageLoadingMsg();
         }
     });
-    return results;
-
-};
-
-function newSearchInDB(regex){
-
-    var results;
-    $.ajax({
-        type: "GET",
-        url: "/newSearchEvent/" + regex,
-        dataType: "json",
-        async: false,
-        success: function(resp){
-            results = resp;
-        }
-    });
-    return results;
-
-};
-
-function searchEvent(){
-
-    var regex = '',
-    splittedSearch = $('#searchEvent').val().split(' ');
-
-    for (var i = 0; i < splittedSearch.length; i++){
-        regex = regex + '(?=.*' + splittedSearch[i] + ')';
-    }
-
-    var results = searchInDB(regex);
-
-    if (results === ''){
-        regex = '';
-        splittedSearch = $('#searchEvent').val().split(' ');
-
-        for (var j = 0; j < splittedSearch.length; j++){
-            if (regex === ''){
-                regex = splittedSearch[j];
-            }
-            else{
-                regex = regex + '|' + splittedSearch[j];
-            }
-        }
-
-        results = searchInDB(regex);
-    }
-    var resultEvents = new Events(results);
-    var resultEventsView = new EventsListView({
-        collection : resultEvents,
-        viewContainer : $('#searchResults'),
-        part: 'all'
-    });
-    resultEventsView.render();
 
 };

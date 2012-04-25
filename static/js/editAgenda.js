@@ -83,6 +83,7 @@ function addContributionToAgenda(eventId, dayDate, sessionId, contributionId) {
         }).length;
 
         if (numberContributionsInSession == session.get('numContributions')){
+            $('#li-' + sessionId).find('[data-theme="g"]').data('oldtheme','c').attr('data-oldtheme','c');
             $('#li-' + sessionId).find('[data-oldtheme="c"]').data('oldtheme','g').attr('data-oldtheme','g');
             $($('#li-' + sessionId).find('.ui-icon-star')[0]).trigger('click');
         }
@@ -95,7 +96,7 @@ function addContributionToAgenda(eventId, dayDate, sessionId, contributionId) {
 
 };
 
-$('.ui-collapsible-favorite-contrib').live('favoritecontrib', function() {
+$('.ui-collapsible-favorite').live('favoritecontrib', function() {
 
     if(!window.localStorage) {
         alert('Your browser is not compatible');
@@ -109,18 +110,15 @@ $('.ui-collapsible-favorite-contrib').live('favoritecontrib', function() {
     if (!eventId && !dayDate && !sessionId && !contributionId){
         return;
     }
-    console.log($(this).attr('data-theme'));
     if ($(this).attr('data-theme') == 'f'){
-        console.log('add');
         addContributionToAgenda(eventId, dayDate, sessionId, contributionId);
     }
-    else{
-        console.log('remove');
+    else if ($(this).attr('data-theme') == 'b'){
         removeContributionFromAgenda(eventId, dayDate, sessionId, contributionId);
     }
 });
 
-$('.ui-collapsible-favorite-session').live('favoritesession', function() {
+$('.ui-collapsible-favorite').live('favoritesession', function() {
 
     if(!window.localStorage) {
         alert('Your browser is not compatible');
@@ -133,13 +131,10 @@ $('.ui-collapsible-favorite-session').live('favoritesession', function() {
     if (!eventId && !dayDate && !sessionId){
         return;
     }
-    console.log($(this))
     if ($(this).attr('data-theme') == 'g'){
-        console.log('add');
         addSessionToAgenda(eventId, dayDate, sessionId);
     }
-    else{
-        console.log('remove');
+    else if ($(this).attr('data-theme') == 'c'){
         removeSessionFromAgenda(eventId, dayDate, sessionId);
     }
 });
@@ -165,7 +160,6 @@ $('#addEventToAgenda').live('click', function(){
     }
 
     var allContributions = getEventContributions(eventId);
-    console.log(allContributions.size());
     allContributions.each(function(contrib1){
         var contribInAgenda = myAgendaContributions.find(function(contrib2){
             return contrib2.get('eventId') == eventId &&
@@ -174,7 +168,6 @@ $('#addEventToAgenda').live('click', function(){
             contrib1.get('dayDate') == contrib2.get('dayDate');
         });
         if (!contribInAgenda){
-            console.log('contrib added');
             myAgendaContributions.add(contrib1);
         }
     });
@@ -186,7 +179,6 @@ $('#addEventToAgenda').live('click', function(){
             session1.get('dayDate') == session2.get('dayDate');
         });
         if (!sessionInAgenda){
-            console.log('session added');
             myAgendaSessions.add(session1);
         }
     });
@@ -197,7 +189,6 @@ $('#addEventToAgenda').live('click', function(){
             day1.get('date') == day2.get('date');
         });
         if (!dayInAgenda){
-            console.log('day added');
             myAgendaDays.add(day1);
         }
     });
@@ -265,7 +256,6 @@ function addSessionToAgenda(eventId, dayDate, sessionId) {
     }).length;
 
     if (numberSessionsInDay == 1 && numberContributionsInDay === 0){
-        console.log('add breaks');
         var breakSession = getEventSessions(eventId, dayDate).filter(function(session){
             return session.get('_type') == 'BreakTimeSchEntry';
         });
@@ -284,7 +274,6 @@ function addSessionToAgenda(eventId, dayDate, sessionId) {
             contrib1.get('dayDate')==contrib2.get('dayDate');
         });
         if (!contribInAgenda){
-            console.log('contrib added');
             myAgendaContributions.add(contrib1);
         }
     });
@@ -449,13 +438,13 @@ function removeContributionFromAgenda(eventId, dayDate, sessionId, contributionI
         sessionDiv.find('.ui-btn-hover-g').removeClass('ui-btn-hover-g').addClass('ui-btn-hover-c');
         sessionDiv.find('.ui-body-g').removeClass('ui-body-g');
         $(sessionDiv.find('.ui-icon-delete')[0]).removeClass('ui-icon-delete').addClass('ui-icon-star');
+        $(sessionDiv.find('.ui-favorite-icon-delete')[0]).removeClass('ui-favorite-icon-delete').addClass('ui-favorite-icon-star');
         sessionDiv.find('#removeSessionFromAgenda1').attr('id','addSessionToAgenda');
         sessionDiv.find('#addSessionToAgenda').find('.ui-btn-text').html('Add to my agenda');
         localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     }
 
     if(numberContributionsInSession == 1){
-        console.log('in session');
         myAgendaSessions.remove(
             myAgendaSessions.find(function(session){
                 return session.get('eventId') == eventId &&
@@ -470,7 +459,6 @@ function removeContributionFromAgenda(eventId, dayDate, sessionId, contributionI
         session.get('eventId') == eventId;
     }).length;
     if(numberSessionInDay == numberOfBreaks) {
-        console.log('in day');
         myAgendaDays.remove(
                 myAgendaDays.find(function(day){
                     return day.get('eventId') == eventId &&
@@ -483,7 +471,6 @@ function removeContributionFromAgenda(eventId, dayDate, sessionId, contributionI
         return day.get('eventId') == eventId;
     }).length;
     if(numberDayInEvent === 0) {
-        console.log('in event');
         myAgendaEvents.remove(
                 myAgendaEvents.find(function(event){
                     return event.get('id') == eventId;
@@ -499,7 +486,6 @@ function removeContributionFromAgenda(eventId, dayDate, sessionId, contributionI
     }));
 
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
-    console.log('2');
 
 };
 

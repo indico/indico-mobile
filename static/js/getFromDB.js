@@ -176,7 +176,6 @@ function isSessionInAgenda(sessionId, eventId, dayDate){
     });
 
     var session = getSession(eventId, dayDate, sessionId);
-    console.log(contribInAgenda.length + ' - ' + session.get('numContributions'))
     if (contribInAgenda.length == session.get('numContributions') && sessionInAgenda){
         return true;
     }

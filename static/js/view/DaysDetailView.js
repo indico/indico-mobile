@@ -8,14 +8,11 @@ var DaysDetailView = Backbone.View.extend({
 		var  event = this.collection,
 		template1 = this.template1;
 
-		console.log(event);
-
 		event.each(function(day){
 			if (day.get('date')){
 			    $('#allpages').append(template1(day.toJSON()));
 			}
 		});
-		console.log('end daysdetailview')
 		return this;
 	}
 

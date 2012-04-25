@@ -19,11 +19,10 @@ var EventsListView = Backbone.View.extend({
         events = this.collection,
         template1 = this.template1,
         template2 = this.template2,
-        part = this.options.part,
+        part = parseInt(this.options.part, 10),
         listView = $(this.el);
-
+        console.log(events.size())
         if (events.size() > 0){
-
             listView.empty();
             events.comparator = function(event){
                 return String.fromCharCode.apply(String,
@@ -35,19 +34,19 @@ var EventsListView = Backbone.View.extend({
             events.sort();
 
             var dates = [];
-            events.each(function(event){
+            for (var i = part; i < (part + 15) && i < events.size() ; i++){
                 var isAlreadyIn = false;
-                var dateYear = filterDate(event.get('startDate').date).month +
-                ' ' + filterDate(event.get('startDate').date).year;
+                var dateYear = filterDate(events.at(i).get('startDate').date).month +
+                ' ' + filterDate(events.at(i).get('startDate').date).year;
 
-                for (var i = 0; i < dates.length; i++){
-                    if (dateYear == dates[i]){
+                for (var j = 0; j < dates.length; j++){
+                    if (dateYear == dates[j]){
                         isAlreadyIn = true;
                     }
                 }
 
                 if (!isAlreadyIn){
-                    if (event.get('startDate').date !== ''){
+                    if (events.at(i).get('startDate').date !== ''){
                         dates[dates.length] = dateYear;
                         listView.append('<li data-role="list-divider">' + dateYear + '</li>');
                     }
@@ -57,14 +56,27 @@ var EventsListView = Backbone.View.extend({
 
                 }
 
-                if (isEventInAgenda(event.get('id'))){
-                    listView.append(template2(event));
+                if (isEventInAgenda(events.at(i).get('id'))){
+                    listView.append(template2(events.at(i)));
                 }else{
-                    listView.append(template1(event));
+                    listView.append(template1(events.at(i)));
                 }
-            });
+            }
             listView.trigger('refresh');
             container.html(listView);
+            if (i < events.size()){
+                if (part > 0){
+                    container.append('<div data-role="navbar"><ul>'+
+                            '<li><a data-role="button" id="moreResults" part="' + (part - 15) + '">Previous</a></li>'+
+                            '<li><a data-role="button" id="moreResults" part="' + (part + 15) + '">Next</a></li></ul></div>');
+                }
+                else{
+                    container.append('<div data-role="navbar"><ul><li><a data-role="button" id="moreResults" part="' + (part + 20) + '">Next</a></li></ul></div>');
+                }
+            }
+            else if (events.size()>15){
+                container.append('<div data-role="navbar"><ul><li><a data-role="button" id="moreResults" part="' + (part - 20) + '">Previous</a></li></ul></div>');
+            }
             container.trigger('create');
         }
         else{

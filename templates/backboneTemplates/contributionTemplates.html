@@ -57,8 +57,8 @@
 </script>
 
 <script type="text/template" id="contribution">
-<div data-role="collapsible_favorite_contrib" data-theme="b" data-oldtheme="f" day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= contributionId %>" eventId="<%=eventId%>">
+<div data-role="collapsible_favorite" data-theme="b" data-oldtheme="f" day="<%=startDate.date%>" sessionId="<%=sessionId%>"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>" data-theme-content="b">
 <h3><%= startDate.time %>: <%= title %></h3>
 <h4><% if(description!=''){print('Description')} else {print('No
     description')}%></h4>
@@ -93,7 +93,7 @@ if (typeof(material)!="undefined"){
         if (material.length>0){
             print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
             for (var i=0; i<material.length; i++){
-                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
                 for (var j=0; j<material[i].resources.length; j++){
                     var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
                         print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
@@ -112,8 +112,8 @@ if (typeof(material)!="undefined"){
 </script>
 
 <script type="text/template" id="contributionInAgenda">
-<div data-role="collapsible_favorite_contrib" data-theme="f" data-isfavorite-contrib="true" day="<%=startDate.date%>"
-sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="b">
+<div data-role="collapsible_favorite" data-theme="b" data-theme-content="b" data-isfavorite="true" day="<%=startDate.date%>"
+sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="f">
     <h3><%= startDate.time %>: <%= title %></h3>
     <h4><% if(description!=''){print('Description')} else {print('No
         description')}%></h4>
@@ -148,7 +148,7 @@ sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId
         if (material.length>0){
             print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
             for (var i=0; i<material.length; i++){
-                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
                 for (var j=0; j<material[i].resources.length; j++){
                 var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
                 print('<li data-icon=\"download\"><a data-inline=\"true\" href=\"'+

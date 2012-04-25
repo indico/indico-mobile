@@ -22,6 +22,38 @@
     background-image: url('images/download.png');
 }
 
+.ui-icon-test{
+    background-image: url('images/drawing.png');
+}
+
+.ui-favorite-icon-delete{
+    z-index: 3;
+    margin-top: -12px !important;
+    border-radius:12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ECEDED;
+    box-shadow: 0 0 6px rgba(0,0,0,.7);
+    -moz-box-shadow: 0 0 6px rgba(0,0,0,.7);
+    -webkit-box-shadow: 0 0 6px rgba(0,0,0,.7);
+}
+
+.ui-favorite-icon-star{
+    z-index: 3;
+    margin-top: -12px !important;
+    border-radius:12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ECEDED;
+    box-shadow: 0 0 6px rgba(0,0,0,.7);
+    -moz-box-shadow: 0 0 6px rgba(0,0,0,.7);
+    -webkit-box-shadow: 0 0 6px rgba(0,0,0,.7);
+}
+
 //green theme taken from jquerymobile.com
 .ui-bar-f .ui-bar-g{
 	border-top: 1px solid 	#56A00E;

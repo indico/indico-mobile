@@ -5,7 +5,7 @@
 
 <script type="text/template" id="slotDetails">
 <li id="li-<%=sessionId%>">
-    <div data-role="collapsible_favorite_session" data-theme="c" info="sessionCollapsible"
+    <div data-role="collapsible_favorite" data-theme="c" info="sessionCollapsible"
     sessionId="<%=sessionId%>" day="<%= startDate.date %>" eventId="<%=eventId%>" data-oldtheme="g">
         <h2><%= startDate.time %>: <%= title %></h2>
 
@@ -66,8 +66,8 @@
 
 <script type="text/template" id="slotDetailsInAgenda">
 <li id="li-<%=sessionId%>">
-    <div data-role="collapsible_favorite_session" info="sessionCollapsible" data-theme="g" sessionId="<%=sessionId%>"
-        day="<%= startDate.date %>" eventId="<%=eventId%>" data-isfavorite-session="true" data-oldtheme="c">
+    <div data-role="collapsible_favorite" info="sessionCollapsible" data-theme="c" sessionId="<%=sessionId%>"
+        day="<%= startDate.date %>" eventId="<%=eventId%>" data-isfavorite="true" data-oldtheme="g">
         <h2><%= startDate.time %>: <%= title %></h2>
 
         <%
@@ -127,7 +127,7 @@
 
 <script type="text/template" id="slotsList">
 <li id="li-<%=sessionId%>">
-    <div data-role="collapsible_favorite_session" data-theme="c" info="sessionCollapsible"
+    <div data-role="collapsible_favorite" data-theme="c" info="sessionCollapsible"
     sessionId="<%=sessionId%>"day="<%= startDate.date %>" eventId="<%=eventId%>" data-oldtheme="g">
         <h2><%= startDate.time %>: <%= title %></h2>
         <div data-role="collapsible-set"
@@ -138,8 +138,8 @@
 
 <script type="text/template" id="slotsListInAgenda">
 <li id="li-<%=sessionId%>">
-    <div data-role="collapsible_favorite_session" data-theme="g" info="sessionCollapsible" sessionId="<%=sessionId%>"
-        day="<%= startDate.date %>" eventId="<%=eventId%>" data-isfavorite-session="true" data-oldtheme="c">
+    <div data-role="collapsible_favorite" data-theme="c" info="sessionCollapsible" sessionId="<%=sessionId%>"
+        day="<%= startDate.date %>" eventId="<%=eventId%>" data-isfavorite="true" data-oldtheme="g">
         <h2><%= startDate.time %>: <%= title %></h2>
         <div data-role="collapsible-set"
         id="<%=sessionId%>" day="<%= startDate.date %>" eventId="<%=eventId%>" data-inset="true"></div>

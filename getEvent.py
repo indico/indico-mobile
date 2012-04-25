@@ -1,6 +1,8 @@
 import urllib2
+import urllib
 import simplejson
 from datetime import datetime
+from pytz import timezone
 from flask import request, json, current_app
 from dbClasses import *
 from flask.ext.pymongo import PyMongo
@@ -12,7 +14,8 @@ query_session = MongoSession.connect('library')
 
 """ allow datetime to be serialized to JSON """
 dthandler = lambda obj: {'date': obj.strftime('%Y-%m-%d'),
-                         'time': obj.strftime('%H:%M:%S')} if isinstance(obj, datetime) else None
+                         'time': obj.strftime('%H:%M:%S'),
+                         'tz': obj.strftime('%Z')} if isinstance(obj, datetime) else None
 
 
 @getEvent.route('/event/<event_id>/days', methods=['GET'])
@@ -91,7 +94,6 @@ def eventContributions(event_id):
     contributions = []
     contrib_query = query_session.query(Contribution)
     contributions_DB = contrib_query.filter(Contribution.eventId == event_id)
-    print contributions_DB.count()
     for contribution in contributions_DB:
         contributions.append(contribution.fields())
     return json.dumps(contributions, default=dthandler)
@@ -100,14 +102,14 @@ def eventContributions(event_id):
 def addEventToDB(event_id):
     event_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
                                 '://' + current_app.config['SERVER_URL'] +
-                                '/indico/export/event/' + event_id +
+                                '/export/event/' + event_id +
                                 '.json?ak=' + current_app.config['API_KEY'])
     event_opener = urllib2.build_opener()
     f1 = event_opener.open(event_req)
     event_info = simplejson.load(f1)
     timetable_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
                                     '://' + current_app.config['SERVER_URL'] +
-                                    '/indico/export/timetable/' + event_id +
+                                    '/export/timetable/' + event_id +
                                     '.json?ak=' +
                                     current_app.config['API_KEY'])
     timetable_opener = urllib2.build_opener()
@@ -121,7 +123,6 @@ def manage_event(event, event_tt, event_id):
     number_contributions = 0
     number_sessions = 0
     for day in event_tt['results'][event_id]:
-        print day
         current_day = event_tt['results'][event_id][day]
         if current_day:
             day_date = ''
@@ -211,7 +212,6 @@ def manage_resource(dictionary):
     if 'resources' in dictionary:
         resources = []
         for resource in dictionary['resources']:
-            print resource
             a_resource = Resource(**resource)
             a_resource.save()
             resources.append(a_resource)
@@ -230,9 +230,9 @@ def convert_dates(dictionary):
 
 
 def convert_date(date):
-    string_date = date['date'] + "T" + date['time']
-    new_date = datetime.now()
-    return new_date.strptime(string_date, '%Y-%m-%dT%H:%M:%S')
+    d = datetime.combine(datetime.strptime(date['date'], "%Y-%m-%d"),
+                         datetime.strptime(date['time'], "%H:%M:%S").time())
+    return timezone(date['tz']).localize(d)
 
 
 @getEvent.route('/event/<event_id>', methods=['GET'])
@@ -250,7 +250,7 @@ def eventInfo(event_id):
     else:
         req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
                               '://' + current_app.config['SERVER_URL'] +
-                              '/indico/export/event/' + event_id +
+                              '/export/event/' + event_id +
                               '.json?ak=' +
                               current_app.config['API_KEY'])
         opener = urllib2.build_opener()
@@ -259,18 +259,19 @@ def eventInfo(event_id):
 
 
 @getEvent.route('/searchEvent', methods=['GET'])
-def searchEvent():
-    search = request.args.get('search')
-    search_result = query_session.db.Event.find({'title': {'$regex': search, '$options': 'i'}},
-                                                {'_id': 0, 'id': 1, 'title': 1, 'startDate': 1})
-    if search_result.count() > 0:
-        results = []
-        for event in search_result:
-            results.append(event)
-        print results
-        return json.dumps(results, default=dthandler)
-    else:
-        return json.dumps(None)
+def search_event():
+    search = urllib.quote(request.args.get('search'))
+    url = current_app.config['PROTOCOL_SPECIFIER'] + \
+          '://' + current_app.config['SERVER_URL'] + \
+          '/export/event/search/' + search + \
+          '.json?ak=' + \
+          current_app.config['API_KEY']
+    print search
+    print url
+    req = urllib2.Request(url)
+    opener = urllib2.build_opener()
+    f = opener.open(req)
+    return json.dumps(simplejson.load(f)['results'])
 
 
 @getEvent.route('/futureEvents/<part>', methods=['GET'])

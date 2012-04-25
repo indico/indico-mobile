@@ -5,8 +5,7 @@ var AgendaDaysListView = Backbone.View.extend({
     attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
-        'data-inset': true,
-        'data-position': 'fixed'
+        'data-inset': true
     },
 
     initialize: function() {

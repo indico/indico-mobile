@@ -14,10 +14,6 @@ $('a[id="dayButton"]').live('click', function(event) {
     slotsView.render();
     }
 
-    $.mobile.changePage($(this).attr('href'), {
-        transition: 'fade',
-        reverse: true
-    });
     var daysListView = new DaysListView({
         collection: daysCollection,
         viewContainer: $('#listInDay-' + eventId + '-' + date),
@@ -51,11 +47,6 @@ $('a[id="agendaDayButton"]').live('click', function(event) {
     });
     slotsView.render();
     }
-
-    $.mobile.changePage($(this).attr('href'), {
-        transition: 'fade',
-        reverse : true
-    });
     var daysListView = new AgendaDaysListView({
         collection: daysCollection,
         viewContainer: $('#listInDay-' + eventId + '-' + date),
@@ -133,11 +124,9 @@ $('#eventLinkFromEvents').live('click', function(event) {
     var eventInfo = getEvent(eventId);
     $('#headerTitle').html($(this).html());
 
-    //addToHistory(eventId);
+    addToHistory(eventId);
 
     var daysCollection = getDays(eventId);
-
-    console.log(daysCollection)
 
     var daysListView = new DaysListView({
         collection: daysCollection,

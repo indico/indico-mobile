@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.0.1.min.css')}}" />
+            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}" />
             <link rel="stylesheet" href="{{url_for('static',filename='style/myStyle.css')}}" />
             <script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
             <script src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.js')}}"></script>
@@ -21,18 +21,16 @@
             <script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
             <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
             <script src="{{url_for('static',filename='js/editAgenda.js')}}"></script>
-            <script src="{{url_for('static',filename='js/eventList.js')}}"></script>
             <script src="{{url_for('static',filename='js/filterDate.js')}}"></script>
             <script src="{{url_for('static',filename='js/searchEvents.js')}}"></script>
     </head>
     <body id="allpages">
         <div data-role="page" id="eventHome">
-            <div data-role="header" data-theme="c"
-                style="position: fixed; z-index: 999;">
+            <div data-role="header" data-theme="c">
                 <a href="/home" rel="external" data-icon="home">Home</a>
                 <h1>Search</h1>
             </div>
-            <div data-role="content" data-theme="c" style="margin-top: 40px;">
+            <div data-role="content" data-theme="c">
             <input type="text" data-type="search" id="searchEvent">
                 <div id="searchResults"></div>
             </div>

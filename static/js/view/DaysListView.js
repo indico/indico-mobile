@@ -5,8 +5,7 @@ var DaysListView = Backbone.View.extend({
     attributes: {
         'data-role' : 'listview',
         'data-theme': 'c',
-        'data-inset': true,
-        'data-position': 'fixed'
+        'data-inset': true
     },
 
     initialize: function() {
@@ -61,7 +60,6 @@ var DaysListView = Backbone.View.extend({
                 container.trigger('create');
             }
         }
-        console.log('end DaysListView')
         return this;
     }
 
