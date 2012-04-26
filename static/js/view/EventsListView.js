@@ -10,18 +10,18 @@ var EventsListView = Backbone.View.extend({
 
     initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
-        this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
-        this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
+        this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
+        this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
 
     render: function(){
         var container = this.options.viewContainer,
         events = this.collection,
-        template1 = this.template1,
-        template2 = this.template2,
+        eventListTemplate = this.eventListTemplate,
+        eventListInAgendaTemplate = this.eventListInAgendaTemplate,
         part = parseInt(this.options.part, 10),
         listView = $(this.el);
-        console.log(events.size())
+
         if (events.size() > 0){
             listView.empty();
             events.comparator = function(event){
@@ -57,9 +57,9 @@ var EventsListView = Backbone.View.extend({
                 }
 
                 if (isEventInAgenda(events.at(i).get('id'))){
-                    listView.append(template2(events.at(i)));
+                    listView.append(eventListInAgendaTemplate(events.at(i)));
                 }else{
-                    listView.append(template1(events.at(i)));
+                    listView.append(eventListTemplate(events.at(i)));
                 }
             }
             listView.trigger('refresh');
@@ -77,12 +77,11 @@ var EventsListView = Backbone.View.extend({
             else if (events.size()>15){
                 container.append('<div data-role="navbar"><ul><li><a data-role="button" id="moreResults" part="' + (part - 20) + '">Previous</a></li></ul></div>');
             }
-            container.trigger('create');
         }
         else{
             container.html('<h4>Nothing found</h4>');
-            container.trigger('create');
         }
+        container.trigger('create');
         return this;
     }
 

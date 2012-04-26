@@ -11,4 +11,4 @@ function getHTMLTemplate(link) {
         });
     return template;
 
-};
+}

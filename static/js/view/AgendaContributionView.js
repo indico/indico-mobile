@@ -2,7 +2,7 @@ var AgendaContributionView = Backbone.View.extend({
 
     initialize: function() {
         var contributionTemplates = getHTMLTemplate('/contributionTemplates');
-        this.template1 = _.template($(contributionTemplates).siblings('#agendaContribution').html());
+        this.agendaContributionTemplate = _.template($(contributionTemplates).siblings('#agendaContribution').html());
     },
 
     render: function() {
@@ -11,8 +11,7 @@ var AgendaContributionView = Backbone.View.extend({
         event = this.options.event,
         session = this.options.session,
         part = parseInt(this.options.part, 10),
-        template1 = this.template1,
-        template2 = this.template2;
+        agendaContributionTemplate = this.agendaContributionTemplate;
 
         if ($('#'+session).html() === '' || part > 0){
             contributions.comparator = function(contrib){
@@ -26,7 +25,7 @@ var AgendaContributionView = Backbone.View.extend({
 
             if(contributions.size() > 15 * (part + 1)) {
                 for(var i = part * 15; i < 15 * (part + 1); i++) {
-                    $('#' + session).append(template1(contributions.at(i).toJSON()));
+                    $('#' + session).append(agendaContributionTemplate(contributions.at(i).toJSON()));
                 }
                 $('#' + session).append('<a data-role="button" id="agendaMore" day="' +
                         date + '" sessionId="' + session + '" eventId="' + event + '" value="' +
@@ -34,7 +33,7 @@ var AgendaContributionView = Backbone.View.extend({
 
             } else {
                 for(var j = part * 15; j < contributions.size(); j++) {
-                    $('#' + session).append(template1(contributions.at(j).toJSON()));
+                    $('#' + session).append(agendaContributionTemplate(contributions.at(j).toJSON()));
                 }
             }
 

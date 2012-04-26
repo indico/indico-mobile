@@ -9,22 +9,29 @@ var SlotsView = Backbone.View.extend({
 
     initialize: function() {
         var sessionTemplates = getHTMLTemplate('/sessionTemplates');
-        this.template1 = _.template($(sessionTemplates).siblings('#slotsList').html());
-        this.template2 = _.template($(sessionTemplates).siblings('#breakSession').html());
-        this.template3 = _.template($(sessionTemplates).siblings('#slotDetails').html());
-        this.template4 = _.template($(sessionTemplates).siblings('#slotDetailsInAgenda').html());
-        this.template5 = _.template($(sessionTemplates).siblings('#slotsListInAgenda').html());
+        this.breakSessionTemplate = _.template($(sessionTemplates).siblings('#breakSession').html());
+        this.slotsListTemplate = _.template($(sessionTemplates).siblings('#slotsList').html());
+        this.slotDetailsTemplate = _.template($(sessionTemplates).siblings('#slotDetails').html());
+        this.slotDetailsInAgendaTemplate = _.template($(sessionTemplates).siblings('#slotDetailsInAgenda').html());
+        this.slotsListInAgendaTemplate = _.template($(sessionTemplates).siblings('#slotsListInAgenda').html());
+        this.agendaSlotsListTemplate = _.template($(sessionTemplates).siblings('#agendaSlotsList').html());
+        this.agendaSlotDetailsTemplate = _.template($(sessionTemplates).siblings('#agendaSlotDetails').html());
     },
 
     render: function() {
         var sessions = this.options.collection,
-        template1 = this.template1,
-        template2 = this.template2,
-        template3 = this.template3,
-        template4 = this.template4,
-        template5 = this.template5,
+        container = this.options.container,
+        breakSessionTemplate = this.breakSessionTemplate,
+        slotsListTemplate = this.slotsListTemplate,
+        slotDetailsTemplate = this.slotDetailsTemplate,
+        slotDetailsInAgendaTemplate = this.slotDetailsInAgendaTemplate,
+        slotsListInAgendaTemplate = this.slotsListInAgendaTemplate,
+        agendaSlotsListTemplate = this.agendaSlotsListTemplate,
+        agendaSlotDetailsTemplate = this.agendaSlotDetailsTemplate,
         date = this.options.date,
+        create = this.options.create,
         eventId = this.options.eventId,
+        agenda = this.options.agenda,
         listView = $(this.el);
 
         listView.empty();
@@ -41,35 +48,40 @@ var SlotsView = Backbone.View.extend({
 
         slots.each(function(slot) {
             if (slot.get('_type') == 'BreakTimeSchEntry') {
-                listView.append(
-                        template2(slot.toJSON()));
+                listView.append(breakSessionTemplate(slot.toJSON()));
             } else {
                 var contributionsCollection = getSessionContributions(eventId, date, slot.get('sessionId'));
                 if (contributionsCollection.size() > 0){
-                    if (isSessionInAgenda(slot.get('sessionId'), eventId, date)){
-                        listView.append(template5(slot.toJSON()));
+                    if (agenda){
+                        listView.append(agendaSlotsListTemplate(slot.toJSON()));
+                    }
+                    else if (isSessionInAgenda(slot.get('sessionId'), eventId, date)){
+                        listView.append(slotsListInAgendaTemplate(slot.toJSON()));
                     }
                     else{
-                        listView.append(template1(slot.toJSON()));
+                        listView.append(slotsListTemplate(slot.toJSON()));
                     }
                 }
                 else{
-                    if (isSessionInAgenda(slot.get('sessionId'), eventId, date)){
-                        listView.append(template4(slot.toJSON()));
+                    if (agenda){
+                        listView.append(agendaSlotDetailsTemplate(slot.toJSON()));
+                    }
+                    else if (isSessionInAgenda(slot.get('sessionId'), eventId, date)){
+                        listView.append(slotDetailsInAgendaTemplate(slot.toJSON()));
                     }
                     else{
-                        listView.append(template3(slot.toJSON()));
+                        listView.append(slotDetailsTemplate(slot.toJSON()));
                     }
                 }
             }
         });
-        var sessionDiv = $('#sessionInDay-'+eventId+'-'+date);
-        sessionDiv.html(listView);
-        if (visited){
-            sessionDiv.trigger('create');
+        container.html(listView);
+        if (create){
+            container.trigger('create');
         }
         else{
-            sessionDiv.trigger('create');
+            container.trigger('refresh');
+            container.find('div[data-role="collapsible_favorite"]').collapsible({theme:'c', refresh: true});
         }
         return this;
     }

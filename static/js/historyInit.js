@@ -1,4 +1,4 @@
-$('#historyHome').live('pageinit', function(){
+$('#eventHome').live('pageinit', function(){
 
     myHistory = loadHistory();
     visited = false;

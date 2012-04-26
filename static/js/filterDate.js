@@ -10,4 +10,4 @@ function filterDate(date){
     newFormat.day = dates[2];
     return newFormat;
 
-};
+}

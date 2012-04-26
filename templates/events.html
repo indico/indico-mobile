@@ -16,6 +16,7 @@
 			<script src="{{url_for('static',filename='js/view/DaysDetailView.js')}}"></script>
 			<script src="{{url_for('static',filename='js/view/ContributionView.js')}}"></script>
 			<script src="{{url_for('static',filename='js/view/EventsListView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
             <script src="{{url_for('static',filename='js/view/RecentEventsView.js')}}"></script>
             <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
 			<script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
@@ -39,14 +40,6 @@
 			</div>
 			<div data-role="footer" data-theme="c">Made by Me</div>
 		</div>
-		<div data-role="page" id="alldays">
-			<div data-role="header" data-theme="c">
-				<a href="/events" data-icon="back">Back</a>
-				<h1 id="headerTitle">Event</h1>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-			</div>
-			<div data-role="content" data-theme="c" id="list"></div>
-			<div data-role="footer" data-theme="c">Made by Me</div>
-		</div>
+        <script src="{{url_for('static',filename='js/routes.js')}}"></script>
 	</body>
 </html>

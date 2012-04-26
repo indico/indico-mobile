@@ -6,7 +6,7 @@ function loadAgendaContributions(){
     }
     return myAgendaContributions;
 
-};
+}
 
 function loadAgendaSessions(){
 
@@ -16,7 +16,7 @@ function loadAgendaSessions(){
     }
     return myAgendaSessions;
 
-};
+}
 
 function loadAgendaDays(){
 
@@ -26,7 +26,7 @@ function loadAgendaDays(){
     }
     return myAgendaDays;
 
-};
+}
 
 function loadAgendaEvents(){
 
@@ -36,7 +36,7 @@ function loadAgendaEvents(){
     }
     return myAgendaEvents;
 
-};
+}
 
 function loadHistory(){
 
@@ -46,4 +46,4 @@ function loadHistory(){
     }
     return myHistory;
 
-};
+}

@@ -10,13 +10,16 @@ var EventDaysView = Backbone.View.extend({
 
     initialize: function() {
         var dayTemplates = getHTMLTemplate('/dayTemplates');
-        this.template1 = _.template($(dayTemplates).siblings('#daysList').html());
+        this.daysListTemplate = _.template($(dayTemplates).siblings('#daysList').html());
+        this.agendaDaysListTemplate = _.template($(dayTemplates).siblings('#agendaDaysList').html());
     },
     render: function() {
         var container = this.options.viewContainer,
         days = this.collection,
         create = this.options.create,
-        template1 = this.template1,
+        daysListTemplate = this.daysListTemplate,
+        agendaDaysListTemplate = this.agendaDaysListTemplate,
+        agenda = this.options.agenda,
         listView = $(this.el);
 
         $(this.el).empty();
@@ -30,7 +33,12 @@ var EventDaysView = Backbone.View.extend({
 
         days.each(function(day) {
             if (day.get('date')){
-                listView.append(template1(day.toJSON()));
+                if(agenda){
+                    listView.append(agendaDaysListTemplate(day.toJSON()));
+                }
+                else{
+                    listView.append(daysListTemplate(day.toJSON()));
+                }
                 hasTimetable = true;
             }
         });
@@ -65,16 +73,21 @@ var SideDaysView = Backbone.View.extend({
 
     initialize: function() {
         var dayTemplates = getHTMLTemplate('/dayTemplates');
-        this.template1 = _.template($(dayTemplates).siblings('#daysList').html());
-        this.template2 = _.template($(dayTemplates).siblings('#selectedDay').html());
+        this.daysListTemplate = _.template($(dayTemplates).siblings('#daysList').html());
+        this.selectedDayTemplate = _.template($(dayTemplates).siblings('#selectedDay').html());
+        this.agendaDaysListTemplate = _.template($(dayTemplates).siblings('#agendaDaysList').html());
+        this.agendaSelectedDayTemplate = _.template($(dayTemplates).siblings('#agendaSelectedDay').html());
     },
     render: function() {
         var container = this.options.viewContainer,
         date = this.options.date,
         days = this.collection,
         create = this.options.create,
-        template1 = this.template1,
-        template2 = this.template2,
+        agenda = this.options.agenda,
+        daysListTemplate = this.daysListTemplate,
+        selectedDayTemplate = this.selectedDayTemplate,
+        agendaDaysListTemplate = this.agendaDaysListTemplate,
+        agendaSelectedDayTemplate = this.agendaSelectedDayTemplate,
         listView = $(this.el);
 
         $(this.el).empty();
@@ -86,10 +99,20 @@ var SideDaysView = Backbone.View.extend({
 
         days.each(function(day) {
             if (day.get('date') == date){
-                listView.append(template2(day.toJSON()));
+                if (agenda){
+                    listView.append(agendaSelectedDayTemplate(day.toJSON()));
+                }
+                else{
+                    listView.append(selectedDayTemplate(day.toJSON()));
+                }
             }
             else{
-                listView.append(template1(day.toJSON()));
+                if (agenda){
+                    listView.append(agendaDaysListTemplate(day.toJSON()));
+                }
+                else{
+                    listView.append(daysListTemplate(day.toJSON()));
+                }
             }
         });
 

@@ -10,15 +10,15 @@ var RecentEventsView = Backbone.View.extend({
 
     initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
-        this.template1 = _.template($(eventTemplates).siblings('#eventList').html());
-        this.template2 = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
+        this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
+        this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
 
     render: function(){
         var container = this.options.viewContainer,
         events = this.collection,
-        template1 = this.template1,
-        template2 = this.template2,
+        eventListTemplate = this.eventListTemplate,
+        eventListInAgendaTemplate = this.eventListInAgendaTemplate,
         part = parseInt(this.options.part, 10),
         listView = $(this.el);
 
@@ -64,10 +64,10 @@ var RecentEventsView = Backbone.View.extend({
 
                 var isInAgenda = false;
                 if (isEventInAgenda(event.get('id'))){
-                    listView.append(template2(event));
+                    listView.append(eventListInAgendaTemplate(event));
                 }
                 else{
-                    listView.append(template1(event));
+                    listView.append(eventListTemplate(event));
                 }
 
             });

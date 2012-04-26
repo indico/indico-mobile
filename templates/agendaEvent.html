@@ -11,11 +11,12 @@
         <script src="{{url_for('static',filename='js/lib/backbone.js')}}"></script>
         <script src="{{url_for('static',filename='js/model/modelsForEvents.js')}}"></script>
         <script src="{{url_for('static',filename='js/TemplateManager.js')}}"></script>
-        <script src="{{url_for('static',filename='js/view/AgendaSlotsView.js')}}"></script>
-        <script src="{{url_for('static',filename='js/view/AgendaDaysListView.js')}}"></script>
-        <script src="{{url_for('static',filename='js/view/AgendaDaysDetailView.js')}}"></script>
+        <script src="{{url_for('static',filename='js/view/SlotsView.js')}}"></script>
+        <script src="{{url_for('static',filename='js/view/DaysListView.js')}}"></script>
+        <script src="{{url_for('static',filename='js/view/DaysDetailView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/AgendaContributionView.js')}}"></script>
         <script src="{{url_for('static',filename='js/view/AgendaEventsListView.js')}}"></script>
+        <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
         <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
         <script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
         <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
@@ -43,5 +44,7 @@
             <div data-role="content" data-theme="c" id="list"></div>
             <div data-role="footer" data-theme="c">Made by Me</div>
         </div>
+
+        <script src="{{url_for('static',filename='js/routes.js')}}"></script>
     </body>
 </html>

@@ -1,91 +1,3 @@
-$('a[id="dayButton"]').live('click', function(event) {
-
-    var eventId = $(this).attr('eventId');
-    var daysCollection = getDays(eventId);
-
-    var date = $(this).html();
-    var sessionsCollection = getDaySessions(eventId, date);
-    if ($('#sessionInDay-' + eventId + '-' + date).html() === ''){
-    var slotsView = new SlotsView({
-        collection: sessionsCollection,
-        date: date,
-        eventId: eventId
-    });
-    slotsView.render();
-    }
-
-    var daysListView = new DaysListView({
-        collection: daysCollection,
-        viewContainer: $('#listInDay-' + eventId + '-' + date),
-        date: date
-    });
-    daysListView.render();
-
-});
-
-$('a[id="agendaDayButton"]').live('click', function(event) {
-
-    var eventId = $(this).attr('eventId');
-    var days = loadAgendaDays();
-    var daysCollection = new Days(days.filter(function(day){
-        return day.get('eventId') == eventId;
-    }));
-
-    var date = $(this).html();
-
-
-    var sessions = loadAgendaSessions();
-    var sessionsCollection = new Slots(sessions.filter(function(session){
-        return session.get('eventId') == eventId && session.get('dayDate') == date;
-    }));
-
-    if ($('#sessionInDay-'+eventId+'-'+date).html() === ''){
-    var slotsView = new AgendaSlotsView({
-        collection: sessionsCollection,
-        date: date,
-        eventId: eventId
-    });
-    slotsView.render();
-    }
-    var daysListView = new AgendaDaysListView({
-        collection: daysCollection,
-        viewContainer: $('#listInDay-' + eventId + '-' + date),
-        date: date
-    });
-    daysListView.render();
-
-});
-
-$('#eventLinkFromAgenda').live('click', function(event) {
-
-    var eventId = $(this).attr('eventId');
-    var eventInfo = getEvent(eventId);
-    $('#headerTitle').html(eventInfo.get('title'));
-    var days = loadAgendaDays();
-    var daysCollection = new Days(days.filter(function(day){
-        return day.get('eventId') == eventId;
-    }));
-
-    var daysListView = new AgendaDaysListView({
-        collection: daysCollection,
-        viewContainer: $('#list'),
-        date: ''
-    });
-    daysListView.render();
-
-    var daysDetailView = new AgendaDaysDetailView({
-        collection: daysCollection
-    });
-    daysDetailView.render();
-
-});
-
-$('#alldays').live('pageshow', function(event,ui){
-
-    visited = true;
-
-});
-
 function addToHistory(eventId){
 
   var myHistory = loadHistory();
@@ -116,7 +28,7 @@ function addToHistory(eventId){
   }
   localStorage.setItem('myHistory', JSON.stringify(myHistory.toJSON()));
 
-};
+}
 
 
 $('a[id="more"]').live('click', function(event) {

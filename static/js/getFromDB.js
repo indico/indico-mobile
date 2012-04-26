@@ -12,7 +12,7 @@ function getDays(eventId){
     });
     return new Days(days);
 
-};
+}
 
 function getDaySessions(eventId, day){
 
@@ -28,7 +28,7 @@ function getDaySessions(eventId, day){
     });
     return new Slots(sessions);
 
-};
+}
 
 function getSessionContributions(eventId, day, sessionId){
 
@@ -44,7 +44,7 @@ function getSessionContributions(eventId, day, sessionId){
     });
     return new Contributions(contributions);
 
-};
+}
 
 function getEventContributions(eventId){
 
@@ -60,7 +60,7 @@ function getEventContributions(eventId){
     });
     return new Contributions(contributions);
 
-};
+}
 
 function getEventSessions(eventId){
 
@@ -76,7 +76,7 @@ function getEventSessions(eventId){
     });
     return new Slots(sessions);
 
-};
+}
 
 function getDay(eventId, dayDate){
 
@@ -92,7 +92,7 @@ function getDay(eventId, dayDate){
     });
     return new Day(day);
 
-};
+}
 
 function getEvent(eventId){
 
@@ -108,7 +108,7 @@ function getEvent(eventId){
     });
     return new Event(event);
 
-};
+}
 
 function getSession(eventId, dayDate, sessionId){
 
@@ -124,7 +124,7 @@ function getSession(eventId, dayDate, sessionId){
     });
     return new Slot(session);
 
-};
+}
 
 function getContribution(eventId, dayDate, sessionId, contributionId){
 
@@ -141,7 +141,7 @@ function getContribution(eventId, dayDate, sessionId, contributionId){
     });
     return new Contribution(contribution);
 
-};
+}
 
 function getFutureEvents(part){
 
@@ -156,7 +156,24 @@ function getFutureEvents(part){
         }
     });
     return futureEvents;
-};
+}
+
+function isContributionInAgenda(contribId, sessionId, eventId){
+
+    var myAgendaContributions = loadAgendaContributions();
+
+    var contribInAgenda = myAgendaContributions.find(function(contrib){
+        return contrib.get('contributionId') == contribId &&
+        contrib.get('sessionId') == sessionId &&
+        contrib.get('eventId') == eventId;
+    });
+    if (contribInAgenda){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 function isSessionInAgenda(sessionId, eventId, dayDate){
 
@@ -183,7 +200,7 @@ function isSessionInAgenda(sessionId, eventId, dayDate){
         return false;
     }
 
-};
+}
 
 function isEventInAgenda(eventId){
 
@@ -213,4 +230,4 @@ function isEventInAgenda(eventId){
         return false;
     }
 
-};
+}

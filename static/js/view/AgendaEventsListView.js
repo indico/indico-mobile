@@ -10,14 +10,13 @@ var AgendaEventsListView = Backbone.View.extend({
 
     initialize: function() {
         var eventTemplates = getHTMLTemplate('/eventTemplates');
-        this.template1 = _.template($(eventTemplates).siblings('#agendaEventList').html());
+        this.agendaEventListTemplate = _.template($(eventTemplates).siblings('#agendaEventList').html());
     },
 
     render: function(){
         var container = this.options.viewContainer,
         events = this.collection,
-        template1 = this.template1,
-        template2 = this.template2,
+        agendaEventListTemplate = this.agendaEventListTemplate,
         listView = $(this.el);
         if (events.size()>0){
             listView.empty();
@@ -51,7 +50,7 @@ var AgendaEventsListView = Backbone.View.extend({
                     }
 
                 }
-                listView.append(template1(event));
+                listView.append(agendaEventListTemplate(event));
 
             });
 
