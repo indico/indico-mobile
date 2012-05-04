@@ -1,48 +1,83 @@
-function getDays(eventId){
+function getSpeakers(eventId){
 
-    var days;
+    var speakers;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/days",
+        url: "/event/" + eventId + "/speakers",
         dataType: "json",
         async: false,
         success: function(resp){
-            days = resp;
+            speakers = resp;
         }
     });
-    return new Days(days);
+    return new Speakers(speakers);
 
 }
 
-function getDaySessions(eventId, day){
+function getSpeaker(eventId, speakerId){
 
-    var sessions;
+    var speaker;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/day/" + day + "/sessions",
+        url: "/event/" + eventId + "/speaker/" + speakerId,
         dataType: "json",
         async: false,
         success: function(resp){
-            sessions = resp;
+            speaker = resp;
         }
     });
-    return new Slots(sessions);
+    return new Speaker(speaker);
 
 }
 
-function getSessionContributions(eventId, day, sessionId){
+function getSpeakerContributions(eventId, speakerId){
+
+    var contribs;
+    $.ajax({
+        type: "GET",
+        url: "/event/" + eventId + "/speaker/" + speakerId + "/contributions",
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            contribs = resp;
+        }
+    });
+    return new Contributions(contribs);
+
+}
+
+function getDayContributions(eventId, day){
+
+    var contribs;
+    $.ajax({
+        type: "GET",
+        url: "/event/" + eventId + "/day/" + day + "/contributions",
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            contribs = resp;
+        }
+    });
+    return new Contributions(contribs);
+
+}
+
+function getSessionContributions(eventId, sessionId){
 
     var contributions;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/day/" + day + "/session/" + sessionId  + "/contribs",
+        url: "/event/" + eventId + "/session/" + sessionId  + "/contribs",
         dataType: "json",
         async: false,
         success: function(resp){
-            contributions = resp;
+            console.log(resp)
+            contributions = new Contributions(resp);
+            console.log(contributions)
+
         }
     });
-    return new Contributions(contributions);
+    return contributions;
 
 }
 
@@ -110,12 +145,12 @@ function getEvent(eventId){
 
 }
 
-function getSession(eventId, dayDate, sessionId){
+function getSession(eventId, sessionId){
 
     var session;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/day/" + dayDate + "/session/" + sessionId,
+        url: "/event/" + eventId + "/session/" + sessionId,
         dataType: "json",
         async: false,
         success: function(resp){
@@ -126,12 +161,29 @@ function getSession(eventId, dayDate, sessionId){
 
 }
 
-function getContribution(eventId, dayDate, sessionId, contributionId){
+
+function getEventSameSessions(eventId, sessionId){
+
+    var sessions;
+    $.ajax({
+        type: "GET",
+        url: "/event/" + eventId + "/sessions/" + sessionId,
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            sessions = resp;
+        }
+    });
+    return new Slots(sessions);
+
+}
+
+function getContribution(eventId, sessionId, contributionId){
 
     var contribution;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/day/" + dayDate + "/session/" +
+        url: "/event/" + eventId + "/session/" +
         sessionId + "/contrib/" + contributionId,
         dataType: "json",
         async: false,
@@ -158,73 +210,18 @@ function getFutureEvents(part){
     return futureEvents;
 }
 
-function isContributionInAgenda(contribId, sessionId, eventId){
-
-    var myAgendaContributions = loadAgendaContributions();
-
-    var contribInAgenda = myAgendaContributions.find(function(contrib){
-        return contrib.get('contributionId') == contribId &&
-        contrib.get('sessionId') == sessionId &&
-        contrib.get('eventId') == eventId;
-    });
-    if (contribInAgenda){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-function isSessionInAgenda(sessionId, eventId, dayDate){
-
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId') == eventId &&
-        contrib.get('sessionId') == sessionId &&
-        contrib.get('dayDate') == dayDate;
-    });
-
-    var sessionInAgenda = myAgendaSessions.find(function(session){
-        return session.get('sessionId') == sessionId &&
-        session.get('eventId') == eventId &&
-        session.get('dayDate') == dayDate;
-    });
-
-    var session = getSession(eventId, dayDate, sessionId);
-    if (contribInAgenda.length == session.get('numContributions') && sessionInAgenda){
-        return true;
-    }
-    else{
-        return false;
-    }
-
-}
-
 function isEventInAgenda(eventId){
 
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-
-    var contribInAgenda = myAgendaContributions.filter(function(contrib){
-        return contrib.get('eventId') == eventId;
-    });
-
-    var sessionsInAgenda = myAgendaSessions.filter(function(session){
+    var myAgendaSessionsNumber = loadAgendaCompleteSessions().filter(function(session){
         return session.get('eventId') == eventId;
-    });
+    }).length;
 
     var event = getEvent(eventId);
 
-    if (contribInAgenda.length == event.get('numContributions') &&
-            sessionsInAgenda.length == event.get('numSessions')){
-        if (contribInAgenda.length === 0 && sessionsInAgenda.length === 0){
-            return false;
-        }
-        else{
-            return true;
-        }
+    console.log(myAgendaSessionsNumber)
+
+    if (myAgendaSessionsNumber == event.get('numSessions')){
+        return true;
     }
     else{
         return false;

@@ -10,20 +10,16 @@
 			<script src="{{url_for('static',filename='js/lib/underscore.js')}}"></script>
 			<script src="{{url_for('static',filename='js/lib/backbone.js')}}"></script>
 			<script src="{{url_for('static',filename='js/model/modelsForEvents.js')}}"></script>
-			<script src="{{url_for('static',filename='js/TemplateManager.js')}}"></script>
-			<script src="{{url_for('static',filename='js/view/SlotsView.js')}}"></script>
-			<script src="{{url_for('static',filename='js/view/DaysListView.js')}}"></script>
-			<script src="{{url_for('static',filename='js/view/DaysDetailView.js')}}"></script>
-			<script src="{{url_for('static',filename='js/view/ContributionView.js')}}"></script>
-			<script src="{{url_for('static',filename='js/view/EventsListView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/RecentEventsView.js')}}"></script>
+			<script src="{{url_for('static',filename='js/utils.js')}}"></script>
+			<script src="{{url_for('static',filename='js/view/SessionsView.js')}}"></script>
+			<script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/SpeakersView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/TimetableView.js')}}"></script>
             <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
 			<script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
 			<script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
             <script src="{{url_for('static',filename='js/editAgenda.js')}}"></script>
 			<script src="{{url_for('static',filename='js/eventList.js')}}"></script>
-            <script src="{{url_for('static',filename='js/filterDate.js')}}"></script>
 	</head>
 	<body id="allpages">
 		<div data-role="page" id="eventHome">
@@ -33,7 +29,6 @@
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
 			</div>
 			<div data-role="content" data-theme="c">
-			<input type="text" id="addEvent">
 			    <h2>Future Events</h2>
 				<div id="futureEventList" class="futureEvents">
 				</div>

@@ -28,3 +28,11 @@ var Event = Backbone.Model.extend({
 Events = Backbone.Collection.extend({
     model : Event
 });
+
+var Speaker = Backbone.Model.extend({
+
+});
+
+var Speakers = Backbone.Collection.extend({
+    model: Speaker
+});

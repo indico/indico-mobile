@@ -50,6 +50,11 @@ def eventTemplates():
     return render_template('backboneTemplates/eventTemplates.html')
 
 
+@templatesRoute.route('/speakersTemplates')
+def speakersTemplates():
+    return render_template('backboneTemplates/speakersTemplates.html')
+
+
 @templatesRoute.route('/')
 def root():
     return render_template('index.html')

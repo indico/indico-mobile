@@ -1,77 +1,108 @@
 <script type="text/template" id="dayPage">
-<div data-role="page" id="day_<%=eventId%>_<%= date %>" class="inDay">
+<div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="#event_<%=eventId%>" rel="external" data-icon="back">Back</a>
+        <a href="#timetable_<%=eventId%>" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <div class="leftSide" id="listInDay_<%=eventId%>_<%= date %>">
-        </div>
-        <div class="rightSide" id="sessionInDay_<%=eventId%>_<%= date %>"></div>
+        <ul data-role="listview" id="day_list_<%=eventId%>_<%= date %>"></ul>
+        <h4 id="loading_<%=eventId%>_<%= date %>" style="text-align: center;">Loading Page...</h4>
     </div>
 
 </div>
 </script>
 
 <script type="text/template" id="agendaDayPage">
-<div data-role="page" id="day_<%=eventId%>_<%= date %>_agenda" class="inDay">
+<div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="#event_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
+        <a href="#timetable_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <div class="leftSide" id="listInDay_<%=eventId%>_<%= date %>_agenda">
-        </div>
-        <div class="rightSide" id="sessionInDay_<%=eventId%>_<%= date %>_agenda"></div>
+        <ul data-role="listview" id="day_list_<%=eventId%>_<%= date %>_agenda"></ul>
     </div>
 
 </div>
 </script>
 
-<script type="text/template" id="eventPage">
-<div data-role="page" id="event_<%=id%>">
+<script type="text/template" id="sessionDay">
+<div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" class="inDay">
     <div data-role="header" data-theme="c">
-                <a href="#eventHome" data-icon="back">Back</a>
-                <h1 id="headerTitle"><%=title%></h1>
-            </div>
-            <div data-role="content" data-theme="c" id="event_days_<%=id%>"></div>
-            <div data-role="footer" data-theme="c">Made by Me</div>
+        <a href="#session_<%=eventId%>_<%= sessionId %>" rel="external" data-icon="back">Back</a>
+        <h3><%= dayDate %></h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div data-role="content" data-theme="c">
+        <ul data-role="listview" id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></ul>
+    </div>
+
 </div>
 </script>
 
-<script type="text/template" id="agendaEventPage">
-<div data-role="page" id="event_<%=id%>_agenda">
+<script type="text/template" id="agendaSessionDay">
+<div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
-                <a href="#agendaHome" data-icon="back">Back</a>
-                <h1 id="headerTitle"><%=title%></h1>
-            </div>
-            <div data-role="content" data-theme="c" id="event_days_<%=id%>_agenda"></div>
-            <div data-role="footer" data-theme="c">Made by Me</div>
+        <a href="#session_<%=eventId%>_<%= sessionId %>_agenda" rel="external" data-icon="back">Back</a>
+        <h3><%= dayDate %></h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div data-role="content" data-theme="c">
+        <ul data-role="listview" id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda"></ul>
+    </div>
+
 </div>
 </script>
 
-<script type="text/template" id="daysList">
-<li id="li_<%=eventId%>_<%= date %>">
-    <a href="#day_<%=eventId%>_<%= date %>" rel="external"><%=date %></a>
+
+<script type="text/template" id="timetableDays">
+<div data-role="page" id="timetable_<%= id %>">
+    <div data-role="header" data-theme="c">
+        <a href="#event_<%=id%>" rel="external" data-icon="back">Back</a>
+        <h3><%= title %></h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div data-role="content" data-theme="c">
+        <ul data-role="listview" data-inset="true" id="timetable_days_<%=id%>"></ul>
+    </div>
+</div>
+</script>
+
+
+<script type="text/template" id="agendaTimetableDays">
+<div data-role="page" id="timetable_<%= id %>_agenda">
+    <div data-role="header" data-theme="c">
+        <a href="#event_<%=id%>_agenda" rel="external" data-icon="back">Back</a>
+        <h3><%= title %></h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div data-role="content" data-theme="c">
+        <ul data-role="listview" data-inset="true" id="timetable_days_<%=id%>_agenda"></ul>
+    </div>
+</div>
+</script>
+
+<script type="text/template" id="timetableDaysList">
+<li id="li_<%=eventId%>_<%= dayDate %>">
+    <a href="#timetableDay_<%=eventId%>_<%= dayDate %>" rel="external"><%=dayDate %></a>
 </li>
 </script>
 
-<script type="text/template" id="agendaDaysList">
-<li id="li_<%=eventId%>_<%= date %>">
-    <a href="#day_<%=eventId%>_<%= date %>_agenda" rel="external"><%=date %></a>
+<script type="text/template" id="agendaTimetableDaysList">
+<li id="li_<%=eventId%>_<%= dayDate %>">
+    <a href="#timetableDay_<%=eventId%>_<%= dayDate %>_agenda" rel="external"><%=dayDate %></a>
 </li>
 </script>
 
-<script type="text/template" id="selectedDay">
-<li id="sli_<%=eventId%>_<%= date %>" data-theme="b">
-    <a href="" eventId="<%=eventId%>" rel="external"><%= date %></a>
+<script type="text/template" id="sessionDaysList">
+<li>
+    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" rel="external"><%=dayDate %></a>
 </li>
 </script>
 
-<script type="text/template" id="agendaSelectedDay">
-<li id="sli_<%=eventId%>_<%= date %>" data-theme="b">
-    <a href="#day_<%=eventId%>_<%= date %>_agenda" rel="external"><%= date %></a>
+<script type="text/template" id="agendaSessionDaysList">
+<li>
+    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" rel="external"><%=dayDate %></a>
 </li>
 </script>

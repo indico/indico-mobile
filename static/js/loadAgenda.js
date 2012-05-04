@@ -18,13 +18,13 @@ function loadAgendaSessions(){
 
 }
 
-function loadAgendaDays(){
+function loadAgendaCompleteSessions(){
 
-    var myAgendaDays = new Days();
-    if(localStorage.getItem('days')) {
-        myAgendaDays = new Days(JSON.parse(localStorage.getItem('days')));
+    var myAgendaCompleteSessions = new Slots();
+    if(localStorage.getItem('complete_sessions')) {
+        myAgendaCompleteSessions = new Slots(JSON.parse(localStorage.getItem('complete_sessions')));
     }
-    return myAgendaDays;
+    return myAgendaCompleteSessions;
 
 }
 

@@ -1,4 +1,4 @@
-$('#agendaHome').live('pageinit', function(){
+$('#eventHome').live('pageinit', function(){
 
     var myEvents = loadAgendaEvents();
     visited = false;

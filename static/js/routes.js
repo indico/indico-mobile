@@ -2,7 +2,13 @@ var Router = Backbone.Router.extend({
 
     routes: {
         "event_:info": "getEventView",
-        "day_:info": "getDayView"
+        "sessions_:info": "getSessionsView",
+        "session_:info": "getSessionView",
+        "sessionDay_:info": "getSessionDay",
+        "timetable_:info": "getTimetableView",
+        "timetableDay_:info": "getTimetableDayView",
+        "speakers_:info": "getSpeakersView",
+        "speaker_:info": "getSpeakerView"
     },
 
     getEventView: function(info){
@@ -12,125 +18,423 @@ var Router = Backbone.Router.extend({
         if (infoSplitted.length > 1){
             agenda = true;
         }
-        var id = infoSplitted[0];
+        var eventId = infoSplitted[0];
 
-        if ($('#event_' + info).length === 0){
+        var event = getEvent(eventId);
 
-            var eventInfo = getEvent(id);
-            $('#headerTitle').html($(this).html());
+        console.log(eventId);
 
-            addToHistory(id);
+        var eventView = new EventView({
+            event: event,
+            agenda: agenda
+        });
+        eventView.render();
 
-            var eventView = new EventView({
-                event: eventInfo,
+        var create = false;
+        if (typeof $.mobile.activePage !== "undefined"){
+            $.mobile.changePage('#event_' + info);
+            create = true;
+        }
+
+    },
+
+    getSessionsView: function(info){
+
+        var infoSplitted = info.split('_');
+        var agenda = false;
+        if (infoSplitted.length > 1){
+            agenda = true;
+        }
+        var eventId = infoSplitted[0];
+
+        if ($('#sessions_' + info).length === 0){
+            var event = getEvent(eventId);
+
+            var pageContainer = $('body');
+            var sessionsPageView = new SessionsPageView({
+                event: event,
+                container: pageContainer,
                 agenda: agenda
             });
-            eventView.render();
+            sessionsPageView.render();
 
-            var create = false;
-            if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#event_' + info);
-                create = true;
-            }
-
-            var daysCollection;
+            var sessions;
             if (agenda){
-                daysCollection = new Days(loadAgendaDays().filter(function(day){
-                    return day.get('eventId') == id;
+                sessions = new Slots(loadAgendaSessions().filter(function(session){
+                    return session.get('eventId') == eventId;
                 }));
             }
             else{
-                daysCollection = getDays(id);
+                sessions = getEventSessions(eventId);
             }
-
-            var eventDaysView = new EventDaysView({
-                collection: daysCollection,
-                viewContainer: $('#event_days_' + info),
-                create: create,
-                eventId: id,
+            console.log(sessions);
+            var listContainer = $('#sessions_list_' + info);
+            var sessionsListView = new SessionsListView({
+                sessions: sessions,
+                container: listContainer,
                 agenda: agenda
             });
-            eventDaysView.render();
+            sessionsListView.render();
+
+            var create = false;
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#sessions_' + info);
+                create = true;
+            }
         }
         else{
-            $.mobile.changePage('#event_' + info);
+            $.mobile.changePage('#sessions_' + info);
+        }
+
+    },
+
+    getSessionView: function(info){
+
+        var infoSplitted = info.split('_');
+        var agenda = false;
+        if (infoSplitted.length > 2){
+            agenda = true;
+        }
+        var eventId = infoSplitted[0];
+        var sessionId = infoSplitted[1];
+
+        if ($('#session_' + info).length === 0){
+            var pageContainer = $('body');
+            var sessions;
+            if (agenda){
+                sessions = new Slots(loadAgendaSessions().filter(function(session){
+                    return session.get('eventId') == eventId &&
+                    session.get('sessionId') == sessionId;
+                }));
+            }
+            else {
+                sessions = getEventSameSessions(eventId, sessionId);
+            }
+            var sessionView = new SessionView({
+                session: sessions.at(0),
+                container: pageContainer,
+                agenda: agenda
+            });
+            sessionView.render();
+
+            var create = true;
+
+            var listContainer = $('#session_days_' + info);
+            var sessionDaysView = new SessionDaysView({
+                sessions: sessions,
+                container: listContainer,
+                agenda: agenda,
+                create: create
+            });
+            sessionDaysView.render();
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#session_' + info);
+            }
+        }
+        else{
+            $.mobile.changePage('#session_' + info);
+        }
+
+    },
+
+    getSessionDay: function(info){
+
+        var infoSplitted = info.split('_');
+        var agenda = false;
+        if (infoSplitted.length > 3){
+            agenda = true;
+        }
+        var eventId = infoSplitted[0];
+        var sessionId = infoSplitted[1];
+        var day = infoSplitted[2];
+
+        if ($('#sessionDay_' + info).length === 0){
+            var pageContainer = $('body');
+            var contributions;
+            if (agenda){
+                contributions = new Contributions(loadAgendaContributions().filter(function(contrib){
+                    return contrib.get('sessionId') == sessionId &&
+                    contrib.get('eventId') == eventId &&
+                    contrib.get('dayDate') == day;
+                }));
+            }
+            else{
+                contributions = new Contributions(getSessionContributions(eventId, sessionId).filter(function(contrib){
+                    return contrib.get('dayDate') == day;
+                }));
+            }
+            var contribution = new Contribution({'eventId': eventId, 'sessionId': sessionId, 'dayDate': day});
+            console.log(contributions);
+            var sessionDayView = new SessionDayView({
+                contribution: contribution,
+                container: pageContainer,
+                agenda: agenda
+            });
+            sessionDayView.render();
+            var contributionsView = new SessionDayContributions({
+                contributions: contributions,
+                container: $('#sessionDay_list_' + info),
+                agenda: agenda,
+                create: create
+            });
+            contributionsView.render();
+
+            var create = false;
+            if (typeof $.mobile.activePage !== "undefined"){
+                create = true;
+            }
+
+            if (create){
+                $.mobile.changePage('#sessionDay_' + info);
+            }
+        }
+        else{
+            $.mobile.changePage('#sessionDay_' + info);
+        }
+
+    },
+
+
+    getTimetableView: function(info){
+        var infoSplitted = info.split('_');
+        var agenda = false;
+        if (infoSplitted.length > 1){
+            agenda = true;
+        }
+        var eventId = infoSplitted[0];
+
+        if ($('#timetable_' + info).length === 0){
+            var event = getEvent(eventId);
+
+            var pageContainer = $('body');
+            var timetableDaysView = new TimetableDaysView({
+                event: event,
+                container: pageContainer,
+                agenda: agenda
+            });
+            timetableDaysView.render();
+
+            var sessions;
+            if (agenda){
+                sessions = loadAgendaSessions();
+            }
+            else{
+                sessions = getEventSessions(eventId);
+            }
+            var listContainer = $('#timetable_days_' + info);
+            console.log(listContainer)
+            var timetableDaysListView = new TimetableDaysListView({
+                sessions: sessions,
+                container: listContainer,
+                agenda: agenda
+            });
+            timetableDaysListView.render();
+
+            var create = false;
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#timetable_' + info);
+                create = true;
+            }
+        }
+        else{
+            $.mobile.changePage('#timetable_' + info);
         }
     },
 
-    getDayView: function(info){
+    getTimetableDayView: function(info){
 
+        $.mobile.showPageLoadingMsg();
         var infoSplitted = info.split('_');
-        var id = infoSplitted[0];
-        var date = infoSplitted[1];
+        var agenda = false;
+        if (infoSplitted.length > 2){
+            agenda = true;
+        }
+        var eventId = infoSplitted[0];
+        var dayDate = infoSplitted[1];
+        if ($('#timetableDay_' + info).length === 0){
+
+            var create = true;
+            var day = getDay(eventId, dayDate);
+            var pageContainer = $('body');
+            var timetableDayView = new TimetableDayView({
+                day: day,
+                container: pageContainer,
+                agenda: agenda
+            });
+            timetableDayView.render();
+
+            if(agenda){
+                contributions = new Contributions(loadAgendaContributions().filter(function(contrib){
+                    return contrib.get('eventId') == eventId &&
+                    contrib.get('dayDate') == dayDate;
+                }));
+            }
+            else{
+                contributions = getDayContributions(eventId, dayDate);
+            }
+            var container = $('#day_list_' + info);
+            container.data('part', 0);
+            container.data('lastTime', '');
+            var timetableDayContributionsView = new TimetableDayContributionsView({
+                contributions: contributions,
+                container: container,
+                create: create,
+                agenda: agenda
+            });
+            timetableDayContributionsView.render();
+
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#timetableDay_' + info);
+            }
+        }
+        else {
+            $.mobile.changePage('#timetableDay_' + info);
+        }
+
+        $(window).scroll(function() {
+            if(($(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-50 ||
+                    $(window).scrollTop() + $(window).height() > $('#timetableDay_' + info).height()) &&
+                    $('#day_list_' + info).data('part') != -1) {
+                if(agenda){
+                    contributions = new Contributions(loadAgendaContributions().filter(function(contrib){
+                        return contrib.get('eventId') == eventId &&
+                        contrib.get('dayDate') == dayDate;
+                    }));
+                }
+                else{
+                    contributions = getDayContributions(eventId, dayDate);
+                }
+                var timetableDayContributionsView = new TimetableDayContributionsView({
+                    contributions: contributions,
+                    container: $('#day_list_' + info),
+                    create: false,
+                    agenda: agenda
+                });
+                timetableDayContributionsView.render();
+            }
+        });
+
+    },
+
+    getSpeakersView: function(info){
+        var infoSplitted = info.split('_');
+
+        var agenda = false;
+        if (infoSplitted.length > 1){
+            agenda = true;
+        }
+
+        var create = true;
+        if ($('#speakers_' + info).length === 0){
+            var eventId = infoSplitted[0];
+            var speakers;
+            if (agenda){
+                var myEventContributions = new Contributions(
+                        loadAgendaContributions().filter(function(contrib){
+                            return contrib.get('eventId') == eventId;
+                        })
+                     );
+                speakers = new Speakers();
+                myEventContributions.each(function(contrib){
+                    var currentSpeakers = contrib.get('presenters');
+                    for (var i = 0; i < currentSpeakers.length; i++){
+                        speakers.add(currentSpeakers[i]);
+                    }
+                });
+            }
+            else{
+                speakers = getSpeakers(eventId);
+            }
+
+
+            var event = getEvent(eventId);
+
+            var speakersPageView = new SpeakersPageView({
+                event: event,
+                agenda: agenda
+            });
+            speakersPageView.render();
+
+            var container = $('#speakers_list_' + info);
+            container.data('part', 0);
+            container.data('firstLetter', '');
+            container.data('speakers', speakers);
+            var speakersListView = new SpeakersListView({
+                speakers: speakers,
+                agenda: agenda,
+                create: create,
+                container: $('#speakers_list_' + info)
+            });
+            speakersListView.render();
+
+            $(window).scroll(function() {
+                if(($(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-50 ||
+                        $(window).scrollTop() + $(window).height() > $('#speakers_' + info).height()) &&
+                        $('#speakers_list_' + info).data('part') != -1) {
+                    var speakersListView = new SpeakersListView({
+                        speakers: container.data('speakers'),
+                        container: $('#speakers_list_' + info),
+                        agenda: agenda,
+                        create: false
+                    });
+                    speakersListView.render();
+                }
+            });
+
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#speakers_' + info);
+            }
+        }
+        else{
+            $.mobile.changePage('#speakers_' + info);
+        }
+
+    },
+
+    getSpeakerView: function(info){
+        var infoSplitted = info.split('_');
+
         var agenda = false;
         if (infoSplitted.length > 2){
             agenda = true;
         }
 
-        if ($('#day_' + info).length === 0){
+        var create = true;
+        if ($('#speaker_' + info).length === 0){
+            var eventId = infoSplitted[0];
+            var speakerId = infoSplitted[1];
 
-            var daysCollection;
-            if (agenda){
-                daysCollection = new Days(loadAgendaDays().filter(function(day){
-                    return day.get('eventId') == id;
-                }));
-            }
-            else{
-                daysCollection = getDays(id);
-            }
+            var speaker = getSpeaker(eventId, speakerId);
 
-            var day = getDay(id, date);
-
-            var dayDetailView = new DayDetailView({
-                day: day,
+            var speakerPageView = new SpeakerPageView({
+                speaker: speaker,
                 agenda: agenda
             });
-            dayDetailView.render();
+            speakerPageView.render();
 
-            var create = false;
+            var contributions = getSpeakerContributions(eventId, speakerId);
+
+            var speakerContributionsView = new SpeakerContributionsView({
+                container: $('#speaker_contribs_' + info),
+                contributions: contributions,
+                agenda: agenda,
+                create: create
+            });
+            speakerContributionsView.render();
+
+
             if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#day_' + info);
-                create = true;
-            }
-
-            var daysListView = new SideDaysView({
-                collection: daysCollection,
-                viewContainer: $('#listInDay_' + info),
-                date: date,
-                create: create,
-                agenda: agenda
-            });
-            daysListView.render();
-
-
-            var sessionsCollection;
-            if (agenda){
-                sessionsCollection = new Slots(loadAgendaSessions().filter(function(session){
-                    return session.get('eventId') == id;
-                }));
-            }
-            else{
-                sessionsCollection = getDaySessions(id, date);
-            }
-            if ($('#sessionInDay_' + info).html() === ''){
-            var slotsView = new SlotsView({
-                container: $('#sessionInDay_' + info),
-                collection: sessionsCollection,
-                date: date,
-                eventId: id,
-                create: create,
-                agenda: agenda
-            });
-            slotsView.render();
+                $.mobile.changePage('#speaker_' + info);
             }
         }
         else{
-            $.mobile.changePage('#day_' + info);
+            $.mobile.changePage('#speaker_' + info);
         }
     }
 
 });
 
+$.mobile.defaultPageTransition = 'none';
 var router = new Router();
 Backbone.emulateHTTP = true;
 Backbone.emulateJSON = true;

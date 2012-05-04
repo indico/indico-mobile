@@ -1,3 +1,39 @@
+<script type="text/template" id="eventPage">
+<div data-role="page" id="event_<%=id%>">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back">Back</a>
+        <h1 id="headerTitle"><%=title%></h1>
+    </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#sessions_<%= id %>" rel="external">Sessions</a></li>
+                <li><a href="#timetable_<%= id %>" rel="external">Timetable</a></li>
+                <li><a href="#speakers_<%= id %>" rel="external">Speakers</a></li>
+            </ul>
+        <div id="event_days_<%=id%>"></div>
+    </div>
+    <div data-role="footer" data-theme="c">Made by Me</div>
+</div>
+</script>
+
+<script type="text/template" id="agendaEventPage">
+<div data-role="page" id="event_<%=id%>_agenda">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back">Back</a>
+        <h1 id="headerTitle"><%=title%></h1>
+    </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#sessions_<%= id %>_agenda" rel="external">Sessions</a></li>
+                <li><a href="#timetable_<%= id %>_agenda" rel="external">Timetable</a></li>
+                <li><a href="#speakers_<%= id %>_agenda" rel="external">Speakers</a></li>
+            </ul>
+        <div id="event_days_<%=id%>_agenda"></div>
+    </div>
+    <div data-role="footer" data-theme="c">Made by Me</div>
+</div>
+</script>
+
 <script type="text/template" id="eventList">
 <li>
     <a href="#event_<%=id%>" rel="external">

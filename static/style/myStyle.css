@@ -3,7 +3,6 @@
 	.leftSide {
 		float: left !important;
 		width: 33% !important;
-		position: fixed;
 	}
 	.rightSide {
 		float: right;
@@ -11,6 +10,7 @@
 	}
 
 }
+
 
 @media all and (max-width: 600px){
 	.leftSide{

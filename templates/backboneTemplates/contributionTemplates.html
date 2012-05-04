@@ -1,6 +1,6 @@
 <script type="text/template" id="agendaContribution">
 <div data-role="collapsible" data-inset="true">
-    <h3><%= startDate.time %>: <%= title %></h3>
+    <h3><%= title %></h3>
     <h4><% if(description!=''){print('Description')} else {print('No
         description')}%></h4>
     <p style="white-space: normal"><%= description %></p>
@@ -23,7 +23,7 @@
             if (presenters.length>0){
                 print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
                 for (var i=0; i<presenters.length;i++){
-                    print('<li>'+presenters[i].name+'</li>');
+                    print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>_agenda" rel="external">'+presenters[i].name+'</a></li>');
                 }
                 print('</ul>');
             }
@@ -49,17 +49,20 @@
         }
     }
     %>
+    <!--
     <a data-role="button" data-icon="delete"
     id="removeContributionFromAgenda" day="<%=startDate.date%>"
     sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
     eventId="<%=eventId%>">Remove from my agenda</a>
+    -->
 </div>
 </script>
 
 <script type="text/template" id="contribution">
-<div data-role="collapsible_favorite" data-theme="b" data-oldtheme="f" day="<%=startDate.date%>" sessionId="<%=sessionId%>"
-    contribId="<%= contributionId %>" eventId="<%=eventId%>" data-theme-content="b">
-<h3><%= startDate.time %>: <%= title %></h3>
+
+<div data-role="collapsible_favorite" data-theme="c" data-oldtheme="g" day="<%=startDate.date%>" sessionId="<%=sessionUniqueId%>"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>" data-theme-content="c">
+<h3><%= title %></h3>
 <h4><% if(description!=''){print('Description')} else {print('No
     description')}%></h4>
 <p style="white-space: normal"><%= description %></p>
@@ -82,7 +85,7 @@ else if (location==''&&room!=''){
         if (presenters.length>0){
             print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
             for (var i=0; i<presenters.length;i++){
-                print('<li>'+presenters[i].name+'</li>');
+                print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>" rel="external">'+presenters[i].name+'</a></li>');
             }
             print('</ul>');
         }
@@ -112,9 +115,9 @@ if (typeof(material)!="undefined"){
 </script>
 
 <script type="text/template" id="contributionInAgenda">
-<div data-role="collapsible_favorite" data-theme="b" data-theme-content="b" data-isfavorite="true" day="<%=startDate.date%>"
-sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="f">
-    <h3><%= startDate.time %>: <%= title %></h3>
+<div data-role="collapsible_favorite" data-theme="c" data-theme-content="c" data-isfavorite="true" day="<%=startDate.date%>"
+sessionId="<%=sessionUniqueId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="g">
+    <h3><%= title %></h3>
     <h4><% if(description!=''){print('Description')} else {print('No
         description')}%></h4>
     <p style="white-space: normal"><%= description %></p>
@@ -137,7 +140,7 @@ sessionId="<%=sessionId%>" contribId="<%= contributionId %>" eventId="<%=eventId
             if (presenters.length>0){
                 print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
                 for (var i=0; i<presenters.length;i++){
-                    print('<li>'+presenters[i].name+'</li>');
+                    print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>" rel="external">'+presenters[i].name+'</a></li>');
                 }
                 print('</ul>');
             }

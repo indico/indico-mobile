@@ -81,18 +81,16 @@
                                 css({'right': '15px', 'left': 'auto'}).click(
                                     function() {
                                         self.switch_theme();
-                                        if (theme == 'c' || theme == 'g'){
-                                            $el.trigger('favoritesession');
-                                        }
-                                        else{
-                                            $el.trigger('favoritecontrib');
-                                        }
+                                        $el.trigger('favoritecontrib');
                                         return false;
                                     }));
 
                  }
              });
 
+     $(document).on('refresh', '.inDay', function(e) {
+         return $(":jqmData(role='collapsible_favorite')", e.target).collapsible_favorite();
+     });
      $(document).on('create', '.inDay', function(e) {
          return $(":jqmData(role='collapsible_favorite')", e.target).collapsible_favorite();
      });
