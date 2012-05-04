@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	        <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}" />
+	        <link rel="stylesheet" href="{{url_for('static',filename='style/myStyle.css')}}"/>
+	        <script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.js')}}"></script>
+            <script src="{{url_for('static',filename='js/lib/jquery.mobile.extension.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/lib/underscore.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/lib/backbone.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/model/modelsForEvents.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/utils.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/view/SessionsView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/SpeakersView.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/TimetableView.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/editAgenda.js')}}"></script>
+	        <script src="{{url_for('static',filename='js/historyInit.js')}}"></script>
+    </head>
+    <body id="allpages">
+        <div data-role="page" id="eventHome">
+            <div data-role="header" data-theme="c">
+            <a href="/home" data-icon="home" rel="external">Home</a>
+                <h1>History</h1>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+            </div>
+            <div data-role="content" data-theme="c"  id="eventList">
+            </div>
+            <div data-role="footer" data-theme="c">Made by Me</div>
+        </div>
+        <script src="{{url_for('static',filename='js/routes.js')}}"></script>
+    </body>
+</html>

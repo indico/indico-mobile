@@ -1,0 +1,61 @@
+<script type="text/template" id="eventPage">
+<div data-role="page" id="event_<%=id%>">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back">Back</a>
+        <h1 id="headerTitle"><%=title%></h1>
+    </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#sessions_<%= id %>" rel="external">Sessions</a></li>
+                <li><a href="#timetable_<%= id %>" rel="external">Timetable</a></li>
+                <li><a href="#speakers_<%= id %>" rel="external">Speakers</a></li>
+            </ul>
+        <div id="event_days_<%=id%>"></div>
+    </div>
+    <div data-role="footer" data-theme="c">Made by Me</div>
+</div>
+</script>
+
+<script type="text/template" id="agendaEventPage">
+<div data-role="page" id="event_<%=id%>_agenda">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back">Back</a>
+        <h1 id="headerTitle"><%=title%></h1>
+    </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#sessions_<%= id %>_agenda" rel="external">Sessions</a></li>
+                <li><a href="#timetable_<%= id %>_agenda" rel="external">Timetable</a></li>
+                <li><a href="#speakers_<%= id %>_agenda" rel="external">Speakers</a></li>
+            </ul>
+        <div id="event_days_<%=id%>_agenda"></div>
+    </div>
+    <div data-role="footer" data-theme="c">Made by Me</div>
+</div>
+</script>
+
+<script type="text/template" id="eventList">
+<li>
+    <a href="#event_<%=id%>" rel="external">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext">Add to agenda</a>
+</li>
+</script>
+
+<script type="text/template" id="eventListInAgenda">
+<li data-theme="g">
+    <a data-theme="g" href="#event_<%=id%>" rel="external">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+    <a data-theme="g" data-icon="delete" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext">Remove from agenda</a>
+</li>
+</script>
+
+<script type="text/template" id="agendaEventList">
+<li>
+    <a href="#event_<%=id%>_agenda" rel="external">
+        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    </a>
+</li>
+</script>

@@ -1,0 +1,170 @@
+<script type="text/template" id="agendaContribution">
+<div data-role="collapsible" data-inset="true">
+    <h3><%= title %></h3>
+    <h4><% if(description!=''){print('Description')} else {print('No
+        description')}%></h4>
+    <p style="white-space: normal"><%= description %></p>
+    <%
+    if (location!=''&&room!=''){
+       print('<h4>Location - room</h4>');
+       print('<p>'+location+' - '+room+'</p>');
+    }
+    else if (location!=''&&room==''){
+       print('<h4>Location</h4>');
+       print('<p>'+location+'</p>');
+    }
+    else if (location==''&&room!=''){
+       print('<h4>Room</h4>');
+       print('<p>'+room+'</p>');
+    }
+    %>
+        <%
+        if (typeof(presenters)!="undefined"){
+            if (presenters.length>0){
+                print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                for (var i=0; i<presenters.length;i++){
+                    print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>_agenda" rel="external">'+presenters[i].name+'</a></li>');
+                }
+                print('</ul>');
+            }
+        }
+        %>
+    <%
+    if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                    var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                        print('<li data-icon=\"download\" data-theme="a"><a data-inline=\"true\" href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+                }
+                print('</ul></div>');
+            }
+
+            print('</div>');
+        }
+    }
+    %>
+    <!--
+    <a data-role="button" data-icon="delete"
+    id="removeContributionFromAgenda" day="<%=startDate.date%>"
+    sessionId="<%=sessionId%>" contribId="<%= contributionId %>"
+    eventId="<%=eventId%>">Remove from my agenda</a>
+    -->
+</div>
+</script>
+
+<script type="text/template" id="contribution">
+
+<div data-role="collapsible_favorite" data-theme="c" data-oldtheme="g" day="<%=startDate.date%>" sessionId="<%=sessionUniqueId%>"
+    contribId="<%= contributionId %>" eventId="<%=eventId%>" data-theme-content="c">
+<h3><%= title %></h3>
+<h4><% if(description!=''){print('Description')} else {print('No
+    description')}%></h4>
+<p style="white-space: normal"><%= description %></p>
+<%
+if (location!=''&&room!=''){
+   print('<h4>Location - room</h4>');
+   print('<p>'+location+' - '+room+'</p>');
+}
+else if (location!=''&&room==''){
+   print('<h4>Location</h4>');
+   print('<p>'+location+'</p>');
+}
+else if (location==''&&room!=''){
+   print('<h4>Room</h4>');
+   print('<p>'+room+'</p>');
+}
+%>
+<%
+    if (typeof(presenters)!="undefined"){
+        if (presenters.length>0){
+            print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+            for (var i=0; i<presenters.length;i++){
+                print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>" rel="external">'+presenters[i].name+'</a></li>');
+            }
+            print('</ul>');
+        }
+    }
+    %>
+<%
+if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                    var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                        print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+                }
+                print('</ul></div>');
+            }
+
+            print('</div>');
+        }
+    }
+%>
+</div>
+</script>
+
+<script type="text/template" id="contributionInAgenda">
+<div data-role="collapsible_favorite" data-theme="c" data-theme-content="c" data-isfavorite="true" day="<%=startDate.date%>"
+sessionId="<%=sessionUniqueId%>" contribId="<%= contributionId %>" eventId="<%=eventId%>" data-oldtheme="g">
+    <h3><%= title %></h3>
+    <h4><% if(description!=''){print('Description')} else {print('No
+        description')}%></h4>
+    <p style="white-space: normal"><%= description %></p>
+    <%
+    if (location!=''&&room!=''){
+       print('<h4>Location - room</h4>');
+       print('<p>'+location+' - '+room+'</p>');
+    }
+    else if (location!=''&&room==''){
+       print('<h4>Location</h4>');
+       print('<p>'+location+'</p>');
+    }
+    else if (location==''&&room!=''){
+       print('<h4>Room</h4>');
+       print('<p>'+room+'</p>');
+    }
+    %>
+        <%
+        if (typeof(presenters)!="undefined"){
+            if (presenters.length>0){
+                print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                for (var i=0; i<presenters.length;i++){
+                    print('<li><a href="#speaker_<%=eventId%>_<%=presenters[i].id%>" rel="external">'+presenters[i].name+'</a></li>');
+                }
+                print('</ul>');
+            }
+        }
+        %>
+    <%
+    if (typeof(material)!="undefined"){
+        if (material.length>0){
+            print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+            for (var i=0; i<material.length; i++){
+                print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                for (var j=0; j<material[i].resources.length; j++){
+                var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                print('<li data-icon=\"download\"><a data-inline=\"true\" href=\"'+
+                        material[i].resources[j].url+
+                        '\" target=\"_blank\" >'+material[i].resources[j].name+
+                        '</a></li>');
+            }
+            print('</ul></div>');
+        }
+
+            print('</div>');
+        }
+    }
+    %>
+</div>
+</script>

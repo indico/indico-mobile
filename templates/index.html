@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}" />
+<link rel="stylesheet"
+	href="{{url_for('static',filename='style/myStyle.css')}}" />
+<script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
+<script
+	src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.js')}}"></script>
+</head>
+<body id="allpages">
+
+	<div data-role="page" id="listView">
+		<div data-role="header" data-theme="c">
+			<a href="/" data-role="button">Login</a>
+			<h1>Indico Mobile</h1>
+			<a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+		</div>
+		<div data-role="content" data-theme="c">
+			<ul data-role="listview" data-inset="true">
+				<li><a href="/agenda" rel="external"> <img
+						src="{{url_for('static',filename='style/images/schedule.png')}}"
+						width="60" height="60" />
+						<h2>Personal agenda</h2>
+				</a></li>
+				<li><a href="/events" rel="external"><img
+						src="{{url_for('static',filename='style/images/conference.png')}}"
+						width="60" height="60" />
+						<h2>Events</h2> </a></li>
+				<li><a href="/agenda" rel="external"><img
+						src="{{url_for('static',filename='style/images/new.png')}}"
+						width="60" height="60" />
+						<h2>What's going on?</h2> </a></li>
+				<li><a href="/history" rel="external"><img
+						src="{{url_for('static',filename='style/images/history.png')}}"
+						width="60" height="60" />
+						<h2>History</h2> </a></li>
+		</div>
+		<div data-role="footer" data-theme="c">Made by Me</div>
+	</div>
+</body>
+</html>

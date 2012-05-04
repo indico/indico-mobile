@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}"/>
+		<link rel="stylesheet" href="{{url_for('static',filename='style/myStyle.css')}}"/>
+		<script src="{{url_for('static',filename='js/lib/jquery-1.7.2.min.js')}}"></script>
+		<script src="{{url_for('static',filename='js/lib/jquery.mobile-1..1.0.js')}}"></script>
+	</head>
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-theme="c">
+				<h1>Indico Mobile</h1>
+			</div>
+			<div data-role="content" data-theme="c">
+					<ul data-role="listview" data-inset="true">
+						<li><a href="">Login</a></li>
+						<li><a href="/home" rel="external">Public</a></li>
+					</ul>
+
+				</div>
+			</div>
+			<div data-role="footer" data-theme="c">Made by Me</div>
+		</div>
+	</body>
+</html>
