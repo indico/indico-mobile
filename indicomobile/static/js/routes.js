@@ -20,6 +20,8 @@ var Router = Backbone.Router.extend({
         }
         var eventId = infoSplitted[0];
 
+        addToHistory(eventId);
+
         var event = getEvent(eventId);
 
         var eventView = new EventView({

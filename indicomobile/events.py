@@ -147,13 +147,15 @@ def eventSpeaker(event_id, speaker_id):
 
 
 def addEventToDB(event_id):
-    event_req = urllib2.Request(current_app.config['SERVER_URL'] +
+    event_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
+                                current_app.config['SERVER_URL'] +
                                 '/export/event/' + event_id +
                                 '.json?ak=' + current_app.config['API_KEY'])
     event_opener = urllib2.build_opener()
     f1 = event_opener.open(event_req)
     event_info = json.load(f1)
-    timetable_req = urllib2.Request(current_app.config['SERVER_URL'] +
+    timetable_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
+                                    current_app.config['SERVER_URL'] +
                                     '/export/timetable/' + event_id +
                                     '.json?ak=' +
                                     current_app.config['API_KEY'])
@@ -308,7 +310,8 @@ def eventInfo(event_id):
         event = is_event_in_DB[0]
         return json.dumps(event.fields(), default=dthandler)
     else:
-        req = urllib2.Request(current_app.config['SERVER_URL'] +
+        req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
+                              current_app.config['SERVER_URL'] +
                               '/export/event/' + event_id +
                               '.json?ak=' +
                               current_app.config['API_KEY'])
@@ -320,7 +323,8 @@ def eventInfo(event_id):
 @events.route('/searchEvent', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
-    url = current_app.config['SERVER_URL'] + \
+    url = current_app.config['PROTOCOL_SPECIFIER'] +'://' + \
+          current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
           '.json?ak=' + \
           current_app.config['API_KEY']
@@ -347,7 +351,8 @@ def search_speaker(event_id):
 
 @events.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
-    req = urllib2.Request(current_app.config['SERVER_URL'] +
+    req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
+                          current_app.config['SERVER_URL'] +
                           '/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
                           '&from=today&pretty=yes&limit=' + part)
