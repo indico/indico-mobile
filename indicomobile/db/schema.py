@@ -5,10 +5,23 @@ from flaskext.mongoalchemy import MongoAlchemy, BaseQuery
 from indicomobile.db.base import DBClass, db
 
 
+
+
 class EventIdQuery(BaseQuery):
 
     def getEventById(self, eventID):
         return self.filter(self.type.id == eventID)
+
+
+class Presenter_id():
+
+    def __init__(self):
+        self._counter = 0
+
+    def __call__(self):
+        val = self._counter
+        self._counter += 1
+        return val
 
 
 class Presenter(DBClass):
@@ -16,6 +29,9 @@ class Presenter(DBClass):
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
+    contributionId = db.ListField(db.AnythingField())
+    eventId = db.AnythingField()
+    id = db.AnythingField()
 
 
 class Resource(DBClass):
@@ -41,6 +57,7 @@ class Contribution(DBClass):
     endDate = db.DateTimeField()
     description = db.StringField()
     title = db.StringField()
+    sessionTitle = db.StringField()
     material = db.ListField(db.DocumentField('Material'))
     conferenceId = db.StringField()
     entryType = db.StringField()
@@ -49,6 +66,7 @@ class Contribution(DBClass):
     duration = db.IntField(default=0)
     presenters = db.ListField(db.DocumentField('Presenter'))
     sessionId = db.StringField()
+    sessionUniqueId = db.StringField()
     location = db.StringField()
     uniqueId = db.StringField()
     _fossil = db.StringField()
@@ -60,6 +78,7 @@ class Contribution(DBClass):
 
 
 class Session(DBClass):
+    id = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
     contributionId = db.AnythingField(default='')
@@ -128,3 +147,4 @@ class Event(DBClass):
     categoryId = db.StringField()
     numContributions = db.IntField()
     numSessions = db.IntField()
+

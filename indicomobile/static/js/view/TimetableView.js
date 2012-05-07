@@ -1,7 +1,7 @@
 var TimetableDaysView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/dayTemplates');
+        var dayTemplates = getHTMLTemplate('days.html');
         this.timetableDaysTemplate = _.template($(dayTemplates).siblings('#timetableDays').html());
         this.agendaTimetableDaysTemplate = _.template($(dayTemplates).siblings('#agendaTimetableDays').html());
     },
@@ -31,7 +31,7 @@ var TimetableDaysView = Backbone.View.extend({
 var TimetableDaysListView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/dayTemplates');
+        var dayTemplates = getHTMLTemplate('days.html');
         this.timetableDaysListTemplate = _.template($(dayTemplates).siblings('#timetableDaysList').html());
         this.agendaTimetableDaysListTemplate = _.template($(dayTemplates).siblings('#agendaTimetableDaysList').html());
     },
@@ -73,8 +73,8 @@ var TimetableDaysListView = Backbone.View.extend({
 var TimetableDayView = Backbone.View.extend({
 
     initialize: function() {
-        this.dayPageTemplate = _.template($(getHTMLTemplate('/dayTemplates')).siblings('#dayPage').html());
-        this.agendaDayPageTemplate = _.template($(getHTMLTemplate('/dayTemplates')).siblings('#agendaDayPage').html());
+        this.dayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#dayPage').html());
+        this.agendaDayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#agendaDayPage').html());
     },
 
     render: function() {
@@ -98,7 +98,7 @@ var TimetableDayView = Backbone.View.extend({
 var TimetableDayContributionsView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/contributionTemplates');
+        var dayTemplates = getHTMLTemplate('contributions.html');
         this.contributionTemplate = _.template($(dayTemplates).siblings('#contribution').html());
         this.contributionInAgendaTemplate = _.template($(dayTemplates).siblings('#contributionInAgenda').html());
         this.agendaContributionTemplate = _.template($(dayTemplates).siblings('#agendaContribution').html());

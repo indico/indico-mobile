@@ -1,7 +1,7 @@
 var EventView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/eventTemplates');
+        var dayTemplates = getHTMLTemplate('events.html');
         this.eventPageTemplate = _.template($(dayTemplates).siblings('#eventPage').html());
         this.agendaEventPageTemplate = _.template($(dayTemplates).siblings('#agendaEventPage').html());
     },
@@ -37,7 +37,7 @@ var AgendaEventsListView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var eventTemplates = getHTMLTemplate('/eventTemplates');
+        var eventTemplates = getHTMLTemplate('events.html');
         this.agendaEventListTemplate = _.template($(eventTemplates).siblings('#agendaEventList').html());
     },
 
@@ -105,7 +105,7 @@ var EventsListView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var eventTemplates = getHTMLTemplate('/eventTemplates');
+        var eventTemplates = getHTMLTemplate('events.html');
         this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
         this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
@@ -194,7 +194,7 @@ var HistoryListView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var eventTemplates = getHTMLTemplate('/eventTemplates');
+        var eventTemplates = getHTMLTemplate('events.html');
         this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
         this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },
@@ -250,7 +250,7 @@ var RecentEventsView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var eventTemplates = getHTMLTemplate('/eventTemplates');
+        var eventTemplates = getHTMLTemplate('events.html');
         this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
         this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
     },

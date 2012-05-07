@@ -1,15 +1,13 @@
 import urllib2
 import urllib
-import simplejson
+
 from datetime import datetime
 from pytz import timezone
 from flask import request, json, current_app
-from dbClasses import *
-from flask.ext.pymongo import PyMongo
+from indicomobile.db.schema import *
 from mongoalchemy.session import Session as MongoSession
 
-getEvent = Blueprint('getEvent', __name__, template_folder='templates')
-mongo = PyMongo(app)
+events = Blueprint('events', __name__, template_folder='templates')
 query_session = MongoSession.connect('library')
 
 """ allow datetime to be serialized to JSON """
@@ -125,7 +123,7 @@ def speakerContributions(event_id, speaker_id):
     return json.dumps(contributions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/speakers', methods=['GET'])
+@events.route('/event/<event_id>/speakers', methods=['GET'])
 def eventSpeakers(event_id):
     speakers = []
     speaker_query = query_session.query(Presenter)
@@ -144,21 +142,19 @@ def eventSpeaker(event_id, speaker_id):
 
 
 def addEventToDB(event_id):
-    event_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
-                                '://' + current_app.config['SERVER_URL'] +
+    event_req = urllib2.Request(current_app.config['SERVER_URL'] +
                                 '/export/event/' + event_id +
                                 '.json?ak=' + current_app.config['API_KEY'])
     event_opener = urllib2.build_opener()
     f1 = event_opener.open(event_req)
-    event_info = simplejson.load(f1)
-    timetable_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
-                                    '://' + current_app.config['SERVER_URL'] +
+    event_info = json.load(f1)
+    timetable_req = urllib2.Request(current_app.config['SERVER_URL'] +
                                     '/export/timetable/' + event_id +
                                     '.json?ak=' +
                                     current_app.config['API_KEY'])
     timetable_opener = urllib2.build_opener()
     f2 = timetable_opener.open(timetable_req)
-    event_tt = simplejson.load(f2)
+    event_tt = json.load(f2)
     current_event = event_info['results'][0]
     manage_event(current_event, event_tt, event_id)
 
@@ -309,21 +305,19 @@ def eventInfo(event_id):
         event = is_event_in_DB[0]
         return json.dumps(event.fields(), default=dthandler)
     else:
-        req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
-                              '://' + current_app.config['SERVER_URL'] +
+        req = urllib2.Request(current_app.config['SERVER_URL'] +
                               '/export/event/' + event_id +
                               '.json?ak=' +
                               current_app.config['API_KEY'])
         opener = urllib2.build_opener()
         f = opener.open(req)
-        return json.dumps(simplejson.load(f)['results'])
+        return json.dumps(json.load(f)['results'])
 
 
 @events.route('/searchEvent', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
-    url = current_app.config['PROTOCOL_SPECIFIER'] + \
-          '://' + current_app.config['SERVER_URL'] + \
+    url = current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
           '.json?ak=' + \
           current_app.config['API_KEY']
@@ -332,7 +326,7 @@ def search_event():
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
-    return json.dumps(simplejson.load(f)['results'])
+    return json.dumps(json.load(f)['results'])
 
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
@@ -352,11 +346,10 @@ def search_speaker(event_id):
 
 @events.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
-    req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
-                          '://' + current_app.config['SERVER_URL'] +
+    req = urllib2.Request(current_app.config['SERVER_URL'] +
                           '/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
                           '&from=today&pretty=yes&limit=' + part)
     opener = urllib2.build_opener()
     f = opener.open(req)
-    return json.dumps(simplejson.load(f))
+    return json.dumps(json.load(f))

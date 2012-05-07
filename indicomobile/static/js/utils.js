@@ -17,7 +17,7 @@ function getHTMLTemplate(link) {
     var template;
         $.ajax({
             type: 'GET',
-            url: link,
+            url: '/static/tpls/' + link,
             async: false,
             success: function(text){
                 template = text;

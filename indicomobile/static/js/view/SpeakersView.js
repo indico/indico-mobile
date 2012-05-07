@@ -7,8 +7,8 @@ var SpeakersPageView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.speakersPageTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#speakersPage').html());
-        this.agendaSpeakersPageTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#agendaSpeakersPage').html());
+        this.speakersPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersPage').html());
+        this.agendaSpeakersPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersPage').html());
     },
 
     render: function() {
@@ -103,10 +103,10 @@ var SpeakersListView = Backbone.View.extend({
 
     initialize: function(){
         if (this.options.agenda){
-            this.speakersListTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#agendaSpeakersList').html());
+            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersList').html());
         }
         else{
-            this.speakersListTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#speakersList').html());
+            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersList').html());
         }
     },
 
@@ -183,8 +183,8 @@ var SpeakerPageView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.speakerPageTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#speakerPage').html());
-        this.agendaSpeakerPageTemplate = _.template($(getHTMLTemplate('/speakersTemplates')).siblings('#agendaSpeakerPage').html());
+        this.speakerPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakerPage').html());
+        this.agendaSpeakerPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakerPage').html());
     },
 
     render: function() {
@@ -218,9 +218,9 @@ var SpeakerPageView = Backbone.View.extend({
 var SpeakerContributionsView = Backbone.View.extend({
 
     initialize: function(){
-        this.contributionTemplate = _.template($(getHTMLTemplate('/contributionTemplates')).siblings('#contribution').html());
-        this.agendaContributionTemplate = _.template($(getHTMLTemplate('/contributionTemplates')).siblings('#agendaContribution').html());
-        this.contributionInAgendaTemplate = _.template($(getHTMLTemplate('/contributionTemplates')).siblings('#contributionInAgenda').html());
+        this.contributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#contribution').html());
+        this.agendaContributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#agendaContribution').html());
+        this.contributionInAgendaTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#contributionInAgenda').html());
     },
 
     render: function(){

@@ -1,7 +1,7 @@
 var SessionsPageView = Backbone.View.extend({
 
     initialize: function() {
-        var sessionTemplates = getHTMLTemplate('/sessionTemplates');
+        var sessionTemplates = getHTMLTemplate('sessions.html');
         this.sessionsPageTemplate = _.template($(sessionTemplates).siblings('#sessionsPage').html());
         this.agendaSessionsPageTemplate = _.template($(sessionTemplates).siblings('#agendaSessionsPage').html());
     },
@@ -39,7 +39,7 @@ var SessionsListView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var sessionTemplates = getHTMLTemplate('/sessionTemplates');
+        var sessionTemplates = getHTMLTemplate('sessions.html');
         this.sessionsListTemplate = _.template($(sessionTemplates).siblings('#sessionsList').html());
         this.sessionsListInAgendaTemplate = _.template($(sessionTemplates).siblings('#sessionsListInAgenda').html());
         this.agendaSessionsListTemplate = _.template($(sessionTemplates).siblings('#agendaSessionsList').html());
@@ -133,7 +133,7 @@ var SessionsListView = Backbone.View.extend({
 var SessionView = Backbone.View.extend({
 
     initialize: function() {
-        var sessionTemplates = getHTMLTemplate('/sessionTemplates');
+        var sessionTemplates = getHTMLTemplate('sessions.html');
         this.sessionPageTemplate = _.template($(sessionTemplates).siblings('#sessionPage').html());
         this.agendaSessionPageTemplate = _.template($(sessionTemplates).siblings('#agendaSessionPage').html());
     },
@@ -163,7 +163,7 @@ var SessionView = Backbone.View.extend({
 var SessionDaysView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/dayTemplates');
+        var dayTemplates = getHTMLTemplate('days.html');
         this.sessionDaysListTemplate = _.template($(dayTemplates).siblings('#sessionDaysList').html());
         this.agendasessionDaysListTemplate = _.template($(dayTemplates).siblings('#agendaSessionDaysList').html());
     },
@@ -203,7 +203,7 @@ var SessionDaysView = Backbone.View.extend({
 var SessionDayView = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/dayTemplates');
+        var dayTemplates = getHTMLTemplate('days.html');
         this.sessionDayTemplate = _.template($(dayTemplates).siblings('#sessionDay').html());
         this.agendaSessionDayTemplate = _.template($(dayTemplates).siblings('#agendaSessionDay').html());
     },
@@ -234,7 +234,7 @@ var SessionDayView = Backbone.View.extend({
 var SessionDayContributions = Backbone.View.extend({
 
     initialize: function() {
-        var dayTemplates = getHTMLTemplate('/contributionTemplates');
+        var dayTemplates = getHTMLTemplate('contributions.html');
         this.contributionTemplate = _.template($(dayTemplates).siblings('#contribution').html());
         this.contributionInAgendaTemplate = _.template($(dayTemplates).siblings('#contributionInAgenda').html());
         this.agendaContributionTemplate = _.template($(dayTemplates).siblings('#agendaContribution').html());

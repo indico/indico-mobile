@@ -13,7 +13,7 @@
         <div id="event_days_<%=id%>"></div>
     </div>
     <div data-role="footer" data-theme="c">Made by Me</div>
-</div>
+  </div>
 </script>
 
 <script type="text/template" id="agendaEventPage">
@@ -31,13 +31,13 @@
         <div id="event_days_<%=id%>_agenda"></div>
     </div>
     <div data-role="footer" data-theme="c">Made by Me</div>
-</div>
+  </div>
 </script>
 
 <script type="text/template" id="eventList">
 <li>
     <a href="#event_<%=id%>" rel="external">
-        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+        <%if (attributes.title!='') { print(attributes.title); } else { print('Event'+id); }%>
     </a>
     <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext">Add to agenda</a>
 </li>
