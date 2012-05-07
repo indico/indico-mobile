@@ -78,6 +78,9 @@ def dayContributions(event_id, day_date):
 @events.route('/event/<event_id>/sessions', methods=['GET'])
 def eventSessions(event_id):
     sessions = []
+    is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
+    if is_event_in_DB.count() == 0:
+        addEventToDB(event_id)
     first_query = query_session.query(Session).filter(Session.eventId == event_id)
     sessions_DB = first_query
     for session in sessions_DB:
@@ -85,12 +88,12 @@ def eventSessions(event_id):
     return json.dumps(sessions, default=dthandler)
 
 
-@events.route('/event/<event_id>/day/<day_date>/session/<session_id>/contribs', methods=['GET'])
-def sessionContributions(event_id, day_date, session_id):
+
+@events.route('/event/<event_id>/session/<session_id>/contribs', methods=['GET'])
+def sessionContributions(event_id, session_id):
     contributions = []
     contrib_query = query_session.query(Contribution)
     first_query = contrib_query.filter(Contribution.eventId == event_id,
-                                       Contribution.dayDate == day_date,
                                        Contribution.sessionId == session_id)
     contributions_DB = first_query
     for contribution in contributions_DB:
@@ -118,7 +121,6 @@ def speakerContributions(event_id, speaker_id):
         contrib_query = query_session.query(Contribution)
         contrib_DB = contrib_query.filter(Contribution.eventId == event_id,
                                        Contribution.contributionId == contrib)[0]
-        print contrib_DB
         contributions.append(contrib_DB.fields())
     return json.dumps(contributions, default=dthandler)
 
@@ -196,7 +198,6 @@ def manage_event(event, event_tt, event_id):
                 manage_material(current_session)
                 manage_presenters(current_session, current_session['eventId'], current_session['id'], presenter_id)
                 current_session['conveners'] = ''
-                current_session['sessionId'] = current_session.pop('id')
                 db_session = Session(**current_session)
                 db_session.save()
                 number_sessions = number_sessions + 1
@@ -215,7 +216,6 @@ def manage_event(event, event_tt, event_id):
 def session_contribs_number(event_id):
     sessions = query_session.query(Session).filter({'eventId': event_id})
     for session in sessions:
-        print session.sessionId
         contribs = query_session.query(Contribution).filter({'sessionId': session.sessionId,
                                                              'eventId': event_id}).count()
         query_session.query(Session).filter({'eventId': event_id, 'sessionId': session.sessionId}).set(Session.numContributions, contribs).multi().execute()
@@ -321,8 +321,6 @@ def search_event():
           '/export/event/search/' + search + \
           '.json?ak=' + \
           current_app.config['API_KEY']
-    print search
-    print url
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
