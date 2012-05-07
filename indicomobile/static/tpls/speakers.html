@@ -7,7 +7,7 @@
     <div data-role="content" data-theme="c">
         <input type="text" data-type="search" id="searchSpeaker_<%=id%>">
         <ul data-role="listview" data-inset="true" id="speakers_list_<%=id%>"></ul>
-        <h4 id="loadingSpeakers_<%=id%>" style="text-align: center;">Loading Page...</h4>
+        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="{{url_for('static',filename='style/images/loading.gif')}}"></img>
     </div>
 </script>
 
@@ -19,7 +19,7 @@
     </div>
     <div data-role="content" data-theme="c">
         <ul data-role="listview" data-inset="true" id="speakers_list_<%=id%>_agenda" data-filter="true"></ul>
-        <h4 id="loadingSpeakers_<%=id%>" style="text-align: center;">Loading Page...</h4>
+        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="{{url_for('static',filename='style/images/loading.gif')}}"></img>
     </div>
 </script>
 

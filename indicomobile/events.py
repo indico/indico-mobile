@@ -70,7 +70,7 @@ def dayContributions(event_id, day_date):
                                                       Contribution.dayDate == day_date)
     contribs_DB = first_query
     for contrib in contribs_DB:
-        if contrib.sessionTitle != 'Poster session':
+        if contrib.sessionCode != 'Poster':
             contributions.append(contrib.fields())
     return json.dumps(contributions, default=dthandler)
 
@@ -128,6 +128,9 @@ def speakerContributions(event_id, speaker_id):
 @events.route('/event/<event_id>/speakers', methods=['GET'])
 def eventSpeakers(event_id):
     speakers = []
+    is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
+    if is_event_in_DB.count() == 0:
+        addEventToDB(event_id)
     speaker_query = query_session.query(Presenter)
     speakers_DB = speaker_query.filter(Presenter.eventId == event_id)
     for speaker in speakers_DB:

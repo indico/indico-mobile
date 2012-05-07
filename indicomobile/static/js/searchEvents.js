@@ -11,15 +11,25 @@ function searchInDB(term){
         async: true,
         success: function(resp){
             results = resp;
-            resultEvents = new Events(results);
+            $('#searchResults').data('resultEvents', new Events(results));
+            $('#searchResults').data('part', 0);
+            $('#loadingEvents').show();
             var resultEventsView = new EventsListView({
-                collection : resultEvents,
+                collection : $('#searchResults').data('resultEvents'),
                 viewContainer : $('#searchResults'),
-                part: 0
+                part: $('#searchResults').data('part')
             });
             resultEventsView.render();
 
             $.mobile.hidePageLoadingMsg();
+
+            $(window).scroll(function() {
+                if($(window).scrollTop() + $(window).height() > $('#searchResults').height()-150 &&
+                        $('#searchResults').data('part') != -1) {
+                    resultEventsView.options.create = false;
+                    resultEventsView.render();
+                }
+            });
         }
     });
 
@@ -34,17 +44,5 @@ $('#searchEvent').live('keyup', function(event){
         $.mobile.showPageLoadingMsg();
         searchInDB($(this).val());
     }
-
-});
-
-$('#moreResults').live('click', function(event){
-
-    var part = $(this).attr('part');
-    var resultEventsView = new EventsListView({
-        collection : resultEvents,
-        viewContainer : $('#searchResults'),
-        part: part
-    });
-    resultEventsView.render();
 
 });

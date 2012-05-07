@@ -56,13 +56,11 @@ var TimetableDaysListView = Backbone.View.extend({
                     container.append(agendaTimetableDaysListTemplate(session.toJSON()));
                 }
                 else{
-                    console.log('append')
                     container.append(timetableDaysListTemplate(session.toJSON()));
                 }
             }
         });
 
-        console.log(container);
         container.trigger('create');
         return this;
     }
@@ -113,34 +111,32 @@ var TimetableDayContributionsView = Backbone.View.extend({
         agenda = this.options.agenda,
         myAgenda = loadAgendaContributions(),
         listView = $(this.el),
-        part = container.data('part'),
-        padding;
+        part = container.data('part');
 
         contributions.comparator = function(contribution){
             return contribution.get('startDate').time;
         };
         contributions.sort();
+
         var html = "";
         var end = false;
+        if (part === 0){
+            container.empty();
+        }
         for (var i = part; i < contributions.size() && !end; i++) {
-            if (container.data('lastTime') === ""){
-                container.data('lastTime', contributions.at(i).get('startDate').time);
-                splittedTime = container.data('lastTime').split(':');
-                html = html + '<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>';
-                html = html + '<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
-                              '<div data-role="collapsible-set">';
-            }
-            else if(container.data('lastTime') != contributions.at(i).get('startDate').time){
-                container.data('lastTime', contributions.at(i).get('startDate').time);
-                splittedTime = container.data('lastTime').split(':');
-                html = html + '</div></li>';
-                html = html + '<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>';
-                html = html + '<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
-                              '<div data-role="collapsible-set">';
-            }
-            if (i < part + 10){
+            if (i < part + screen.height/50){
+                if (container.data('lastTime') === "" ||
+                    container.data('lastTime') != contributions.at(i).get('startDate').time){
+                        container.data('lastTime', contributions.at(i).get('startDate').time);
+                        splittedTime = container.data('lastTime').split(':');
+                        container.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
+                        container.append('<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
+                                         '<div data-role="collapsible-set" class="hourSet"></div></li>');
+                }
+                var hourSets = container.find('.hourSet');
+
                 if(agenda){
-                    html = html + agendaContributionTemplate(contributions.at(i).toJSON());
+                    $(hourSets[hourSets.length-1]).append(agendaContributionTemplate(contributions.at(i).toJSON()));
                 }
                 else{
                     var contribInAgenda = myAgenda.find(function(contrib){
@@ -148,10 +144,10 @@ var TimetableDayContributionsView = Backbone.View.extend({
                         contrib.get('contributionId') == contributions.at(i).get('contributionId');
                     });
                     if (contribInAgenda){
-                        html = html + contributionInAgendaTemplate(contributions.at(i).toJSON());
+                        $(hourSets[hourSets.length-1]).append(contributionInAgendaTemplate(contributions.at(i).toJSON()));
                     }
                     else{
-                        html = html + contributionTemplate(contributions.at(i).toJSON());
+                        $(hourSets[hourSets.length-1]).append(contributionTemplate(contributions.at(i).toJSON()));
                     }
                 }
             }
@@ -165,7 +161,6 @@ var TimetableDayContributionsView = Backbone.View.extend({
             container.data('part', -1);
             $('#loading_' + contributions.at(0).get('eventId') + '_' + contributions.at(0).get('dayDate')).hide();
         }
-        container.append(html);
         if (create){
             container.trigger('refresh');
         }

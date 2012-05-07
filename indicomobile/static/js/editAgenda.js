@@ -41,7 +41,6 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
         var numContributionsInSession = myAgendaContributions.filter(function(contrib){
             return contrib.get('sessionId') == session.get('sessionId');
         }).length;
-        console.log(numContributionsInSession + '/' + session.get('numContributions'));
         if (numContributionsInSession == session.get('numContributions')){
             myAgendaCompleteSessions.add({'eventId': eventId, 'sessionId': session.get('sessionId')});
             localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
@@ -95,6 +94,9 @@ function addSessionToAgenda(eventId, sessionId) {
         }
     });
 
+    $('div[id*="sessionDay_' + eventId + '_' + sessionId + '"]').data('reload', true);
+    $('div[id*="timetableDay_' + eventId + '"]').data('reload', true);
+
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
@@ -111,8 +113,6 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
     var contribution = getContribution(eventId, sessionId, contributionId);
-
-    console.log('remove')
 
     myAgendaContributions.remove(
             myAgendaContributions.find(function(contrib){
@@ -144,11 +144,9 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
         return contrib.get('eventId') == eventId;
     });
     if (!contribInEvent){
-        console.log('remove Event')
         var eventInAgenda = myAgendaEvents.find(function(agendaEvent){
             return agendaEvent.get('id') == eventId;
         });
-        console.log(eventInAgenda)
         myAgendaEvents.remove(eventInAgenda);
     }
 
@@ -201,6 +199,9 @@ function removeSessionFromAgenda(eventId, sessionId) {
                 })
         );
     }
+
+    $('div[id*="sessionDay_' + eventId + '_' + sessionId + '"]').data('reload', true);
+    $('div[id*="timetableDay_' + eventId + '"]').data('reload', true);
 
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));

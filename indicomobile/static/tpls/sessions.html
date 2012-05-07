@@ -1,7 +1,7 @@
 <script type="text/template" id="sessionsPage">
 <div data-role="page" id="sessions_<%= id %>">
     <div data-role="header" data-theme="c">
-        <a href="#event_<%= id %>" rel="external" data-icon="back">Back</a>
+        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
         <h3>Sessions</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -14,7 +14,7 @@
 <script type="text/template" id="agendaSessionsPage">
 <div data-role="page" id="sessions_<%= id %>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="#event_<%= id %>_agenda" rel="external" data-icon="back">Back</a>
+        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
         <h3>Sessions</h3>
             <a href="/agenda" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -28,7 +28,7 @@
 <script type="text/template" id="sessionPage">
 <div data-role="page" id="session_<%=eventId%>_<%= sessionId %>">
     <div data-role="header" data-theme="c">
-        <a href="#sessions_<%=eventId%>" rel="external" data-icon="back">Back</a>
+        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -42,7 +42,7 @@
 <script type="text/template" id="agendaSessionPage">
 <div data-role="page" id="session_<%=eventId%>_<%= sessionId %>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="#sessions_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
+        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>

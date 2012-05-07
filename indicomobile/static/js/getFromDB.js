@@ -71,9 +71,7 @@ function getSessionContributions(eventId, sessionId){
         dataType: "json",
         async: false,
         success: function(resp){
-            console.log(resp)
             contributions = new Contributions(resp);
-            console.log(contributions)
 
         }
     });
@@ -218,9 +216,7 @@ function isEventInAgenda(eventId){
 
     var event = getEvent(eventId);
 
-    console.log(myAgendaSessionsNumber)
-
-    if (myAgendaSessionsNumber == event.get('numSessions')){
+    if (myAgendaSessionsNumber == event.get('numSessions') && event.get('numSessions') !== 0){
         return true;
     }
     else{

@@ -96,14 +96,6 @@ var AgendaEventsListView = Backbone.View.extend({
 
 var EventsListView = Backbone.View.extend({
 
-    tagName: 'ul',
-
-    attributes: {
-        'data-role' : 'listview',
-        'data-theme': 'c',
-        'data-inset': true
-    },
-
     initialize: function() {
         var eventTemplates = getHTMLTemplate('events.html');
         this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
@@ -115,11 +107,9 @@ var EventsListView = Backbone.View.extend({
         events = this.collection,
         eventListTemplate = this.eventListTemplate,
         eventListInAgendaTemplate = this.eventListInAgendaTemplate,
-        part = parseInt(this.options.part, 10),
-        listView = $(this.el);
+        part = container.data('part');
 
         if (events.size() > 0){
-            listView.empty();
             events.comparator = function(event){
                 return String.fromCharCode.apply(String,
                         _.map(event.get('startDate').date.split(""), function (c) {
@@ -130,54 +120,63 @@ var EventsListView = Backbone.View.extend({
             events.sort();
 
             var dates = [];
-            for (var i = part; i < (part + 15) && i < events.size() ; i++){
-                var isAlreadyIn = false;
-                var dateYear = filterDate(events.at(i).get('startDate').date).month +
-                ' ' + filterDate(events.at(i).get('startDate').date).year;
+            var end = false;
+            for (var i = part; !end && i < events.size() ; i++){
+                if (i < container.data('part') + screen.height/50){
+                    var isAlreadyIn = false;
+                    var dateYear = filterDate(events.at(i).get('startDate').date).month +
+                    ' ' + filterDate(events.at(i).get('startDate').date).year;
 
-                for (var j = 0; j < dates.length; j++){
-                    if (dateYear == dates[j]){
-                        isAlreadyIn = true;
-                    }
-                }
-
-                if (!isAlreadyIn){
-                    if (events.at(i).get('startDate').date !== ''){
-                        dates[dates.length] = dateYear;
-                        listView.append('<li data-role="list-divider">' + dateYear + '</li>');
-                    }
-                    else{
-                        listView.append('<li data-role="list-divider">Date Unknown</li>');
+                    for (var j = 0; j < dates.length; j++){
+                        if (dateYear == dates[j]){
+                            isAlreadyIn = true;
+                        }
                     }
 
-                }
+                    if (!isAlreadyIn){
+                        if (events.at(i).get('startDate').date !== ''){
+                            dates[dates.length] = dateYear;
+                            container.append('<li data-role="list-divider">' + dateYear + '</li>');
+                        }
+                        else{
+                            container.append('<li data-role="list-divider">Date Unknown</li>');
+                        }
 
-                if (isEventInAgenda(events.at(i).get('id'))){
-                    listView.append(eventListInAgendaTemplate(events.at(i)));
-                }else{
-                    listView.append(eventListTemplate(events.at(i)));
-                }
-            }
-            listView.trigger('refresh');
-            container.html(listView);
-            if (i < events.size()){
-                if (part > 0){
-                    container.append('<div data-role="navbar"><ul>'+
-                            '<li><a data-role="button" id="moreResults" part="' + (part - 15) + '">Previous</a></li>'+
-                            '<li><a data-role="button" id="moreResults" part="' + (part + 15) + '">Next</a></li></ul></div>');
+                    }
+
+                    if (isEventInAgenda(events.at(i).get('id'))){
+                        container.append(eventListInAgendaTemplate(events.at(i)));
+                    }else{
+                        container.append(eventListTemplate(events.at(i)));
+                    }
                 }
                 else{
-                    container.append('<div data-role="navbar"><ul><li><a data-role="button" id="moreResults" part="' + (part + 20) + '">Next</a></li></ul></div>');
+                    container.data('part', i);
+                    end = true;
                 }
             }
-            else if (events.size()>15){
-                container.append('<div data-role="navbar"><ul><li><a data-role="button" id="moreResults" part="' + (part - 20) + '">Previous</a></li></ul></div>');
+            if (!end){
+                container.data('part', -1);
+                $('#loadingEvents').hide();
+                container.parent().find('h4').hide();
             }
+            else{
+                $('#loadingEvents').attr('style', 'display: block; margin: 0 auto; margin-top: 20px; width: 5%;');
+                container.parent().find('h4').hide();
+            }
+
         }
         else{
             container.html('<h4>Nothing found</h4>');
         }
-        container.trigger('create');
+        if (part === 0){
+            container.trigger('create');
+            container.listview('refresh');
+        }
+        else{
+            container.listview('refresh');
+        }
+        container.trigger('refresh');
         return this;
     }
 

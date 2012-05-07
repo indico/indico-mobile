@@ -22,8 +22,6 @@ var Router = Backbone.Router.extend({
 
         var event = getEvent(eventId);
 
-        console.log(eventId);
-
         var eventView = new EventView({
             event: event,
             agenda: agenda
@@ -67,7 +65,7 @@ var Router = Backbone.Router.extend({
             else{
                 sessions = getEventSessions(eventId);
             }
-            console.log(sessions);
+
             var listContainer = $('#sessions_list_' + info);
             var sessionsListView = new SessionsListView({
                 sessions: sessions,
@@ -148,7 +146,15 @@ var Router = Backbone.Router.extend({
         var sessionId = infoSplitted[1];
         var day = infoSplitted[2];
 
-        if ($('#sessionDay_' + info).length === 0){
+        if ($('#sessionDay_' + info).length === 0 || $('#sessionDay_' + info).data('reload') == true){
+            var create;
+            if ($('#sessionDay_' + info).data('reload') == true){
+                create = false;
+                $('#sessionDay_' + info).data('reload', false);
+            }
+            else{
+                create = true;
+            }
             var pageContainer = $('body');
             var contributions;
             if (agenda){
@@ -164,27 +170,32 @@ var Router = Backbone.Router.extend({
                 }));
             }
             var contribution = new Contribution({'eventId': eventId, 'sessionId': sessionId, 'dayDate': day});
-            console.log(contributions);
             var sessionDayView = new SessionDayView({
                 contribution: contribution,
                 container: pageContainer,
                 agenda: agenda
             });
             sessionDayView.render();
+            var container = $('#sessionDay_list_' + info);
+            container.data('contributions', contributions);
+            container.data('part', 0);
+            container.data('lastTime', '');
             var contributionsView = new SessionDayContributions({
-                contributions: contributions,
-                container: $('#sessionDay_list_' + info),
+                contributions: container.data('contributions'),
+                container: container,
                 agenda: agenda,
                 create: create
             });
             contributionsView.render();
+            $(window).scroll(function() {
+                if($(window).scrollTop() + $(window).height() > container.height()-150 &&
+                        container.data('part') != -1) {
+                    contributionsView.options.create = false;
+                    contributionsView.render();
+                }
+            });
 
-            var create = false;
             if (typeof $.mobile.activePage !== "undefined"){
-                create = true;
-            }
-
-            if (create){
                 $.mobile.changePage('#sessionDay_' + info);
             }
         }
@@ -216,13 +227,15 @@ var Router = Backbone.Router.extend({
 
             var sessions;
             if (agenda){
-                sessions = loadAgendaSessions();
+                sessions = new Slots(loadAgendaSessions().filter(function(session){
+                    return session.get('eventId') == eventId &&
+                    session.get('isPoster') != true;
+                }));
             }
             else{
                 sessions = getEventSessions(eventId);
             }
             var listContainer = $('#timetable_days_' + info);
-            console.log(listContainer)
             var timetableDaysListView = new TimetableDaysListView({
                 sessions: sessions,
                 container: listContainer,
@@ -243,7 +256,6 @@ var Router = Backbone.Router.extend({
 
     getTimetableDayView: function(info){
 
-        $.mobile.showPageLoadingMsg();
         var infoSplitted = info.split('_');
         var agenda = false;
         if (infoSplitted.length > 2){
@@ -251,9 +263,15 @@ var Router = Backbone.Router.extend({
         }
         var eventId = infoSplitted[0];
         var dayDate = infoSplitted[1];
-        if ($('#timetableDay_' + info).length === 0){
+        if ($('#timetableDay_' + info).length === 0 || $('#timetableDay_' + info).data('reload')){
 
-            var create = true;
+            var create;
+            if ($('#timetableDay_' + info).data('reload')){
+                create = false;
+            }
+            else{
+                create = true;
+            }
             var day = getDay(eventId, dayDate);
             var pageContainer = $('body');
             var timetableDayView = new TimetableDayView({
@@ -266,7 +284,8 @@ var Router = Backbone.Router.extend({
             if(agenda){
                 contributions = new Contributions(loadAgendaContributions().filter(function(contrib){
                     return contrib.get('eventId') == eventId &&
-                    contrib.get('dayDate') == dayDate;
+                    contrib.get('dayDate') == dayDate &&
+                    contrib.get('sessionCode') != 'Poster';
                 }));
             }
             else{
@@ -292,8 +311,7 @@ var Router = Backbone.Router.extend({
         }
 
         $(window).scroll(function() {
-            if(($(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-50 ||
-                    $(window).scrollTop() + $(window).height() > $('#timetableDay_' + info).height()) &&
+            if($(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150  &&
                     $('#day_list_' + info).data('part') != -1) {
                 if(agenda){
                     contributions = new Contributions(loadAgendaContributions().filter(function(contrib){
@@ -304,12 +322,7 @@ var Router = Backbone.Router.extend({
                 else{
                     contributions = getDayContributions(eventId, dayDate);
                 }
-                var timetableDayContributionsView = new TimetableDayContributionsView({
-                    contributions: contributions,
-                    container: $('#day_list_' + info),
-                    create: false,
-                    agenda: agenda
-                });
+                timetableDayContributionsView.options.create = false;
                 timetableDayContributionsView.render();
             }
         });
@@ -338,7 +351,12 @@ var Router = Backbone.Router.extend({
                 myEventContributions.each(function(contrib){
                     var currentSpeakers = contrib.get('presenters');
                     for (var i = 0; i < currentSpeakers.length; i++){
-                        speakers.add(currentSpeakers[i]);
+                        var speakerAlreadyIn = speakers.find(function(speaker){
+                            return speaker.get('id') == currentSpeakers[i].id;
+                        })
+                        if (!speakerAlreadyIn){
+                            speakers.add(currentSpeakers[i]);
+                        }
                     }
                 });
             }
@@ -360,23 +378,17 @@ var Router = Backbone.Router.extend({
             container.data('firstLetter', '');
             container.data('speakers', speakers);
             var speakersListView = new SpeakersListView({
-                speakers: speakers,
+                collection: speakers,
                 agenda: agenda,
                 create: create,
-                container: $('#speakers_list_' + info)
+                container: container
             });
             speakersListView.render();
 
             $(window).scroll(function() {
-                if(($(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-50 ||
-                        $(window).scrollTop() + $(window).height() > $('#speakers_' + info).height()) &&
-                        $('#speakers_list_' + info).data('part') != -1) {
-                    var speakersListView = new SpeakersListView({
-                        speakers: container.data('speakers'),
-                        container: $('#speakers_list_' + info),
-                        agenda: agenda,
-                        create: false
-                    });
+                if(container.data('part') != -1 &&
+                        $(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-150) {
+                    speakersListView.options.create = false;
                     speakersListView.render();
                 }
             });
