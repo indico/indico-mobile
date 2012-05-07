@@ -1,0 +1,2 @@
+recursive-include indicomobile/static *.png *.js *.css
+recursive-include indicomobile/templates *.html

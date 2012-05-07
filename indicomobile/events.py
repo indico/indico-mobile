@@ -18,22 +18,34 @@ dthandler = lambda obj: {'date': obj.strftime('%Y-%m-%d'),
                          'tz': obj.strftime('%Z')} if isinstance(obj, datetime) else None
 
 
-@getEvent.route('/event/<event_id>/day/<day_date>', methods=['GET'])
+@events.route('/event/<event_id>/days', methods=['GET'])
+def eventDays(event_id):
+    is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
+    if is_event_in_DB.count() == 0:
+        addEventToDB(event_id)
+    days = []
+    for day in query_session.query(Day).filter(Day.eventId == event_id):
+        days.append(day.fields())
+    return json.dumps(days)
+
+
+@events.route('/event/<event_id>/day/<day_date>', methods=['GET'])
 def eventDay(event_id, day_date):
     day = query_session.query(Day).filter(Day.eventId == event_id,
                                           Day.date == day_date)[0]
     return json.dumps(day.fields())
 
 
-@getEvent.route('/event/<event_id>/session/<session_id>', methods=['GET'])
-def eventSession(event_id, session_id):
+@events.route('/event/<event_id>/day/<day_date>/session/<session_id>', methods=['GET'])
+def eventSession(event_id, day_date, session_id):
     session = query_session.query(Session).filter(Session.eventId == event_id,
-                                                  Session.id ==
+                                                  Session.dayDate == day_date,
+                                                  Session.sessionId ==
                                                   session_id)[0]
     return json.dumps(session.fields(), default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/sessions/<session_id>', methods=['GET'])
+@events.route('/event/<event_id>/sessions/<session_id>', methods=['GET'])
 def eventSameSessions(event_id, session_id):
     sessionsDB = query_session.query(Session).filter(Session.eventId == event_id,
                                                      Session.sessionId == session_id)
@@ -43,16 +55,17 @@ def eventSameSessions(event_id, session_id):
     return json.dumps(sessions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/session/<session_id>/contrib/<contrib_id>', methods=['GET'])
+@events.route('/event/<event_id>/session/<session_id>/contrib/<contrib_id>', methods=['GET'])
 def eventContribution(event_id, session_id, contrib_id):
     contrib_query = query_session.query(Contribution)
     contribution = contrib_query.filter(Contribution.eventId == event_id,
-                                        Contribution.sessionUniqueId == session_id,
+                                        Contribution.dayDate == day_date,
+                                        Contribution.sessionId == session_id,
                                         Contribution.contributionId == contrib_id)[0]
     return json.dumps(contribution.fields(), default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/day/<day_date>/contributions', methods=['GET'])
+@events.route('/event/<event_id>/day/<day_date>/contributions', methods=['GET'])
 def dayContributions(event_id, day_date):
     contributions = []
     first_query = query_session.query(Contribution).filter(Contribution.eventId == event_id,
@@ -64,12 +77,9 @@ def dayContributions(event_id, day_date):
     return json.dumps(contributions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/sessions', methods=['GET'])
+@events.route('/event/<event_id>/sessions', methods=['GET'])
 def eventSessions(event_id):
     sessions = []
-    is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
-    if is_event_in_DB.count() == 0:
-        addEventToDB(event_id)
     first_query = query_session.query(Session).filter(Session.eventId == event_id)
     sessions_DB = first_query
     for session in sessions_DB:
@@ -77,20 +87,20 @@ def eventSessions(event_id):
     return json.dumps(sessions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/session/<session_id>/contribs', methods=['GET'])
-def sessionContributions(event_id, session_id):
+@events.route('/event/<event_id>/day/<day_date>/session/<session_id>/contribs', methods=['GET'])
+def sessionContributions(event_id, day_date, session_id):
     contributions = []
     contrib_query = query_session.query(Contribution)
     first_query = contrib_query.filter(Contribution.eventId == event_id,
+                                       Contribution.dayDate == day_date,
                                        Contribution.sessionId == session_id)
     contributions_DB = first_query
     for contribution in contributions_DB:
-        print contribution.fields()
         contributions.append(contribution.fields())
     return json.dumps(contributions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/contribs', methods=['GET'])
+@events.route('/event/<event_id>/contribs', methods=['GET'])
 def eventContributions(event_id):
     contributions = []
     contrib_query = query_session.query(Contribution)
@@ -100,7 +110,7 @@ def eventContributions(event_id):
     return json.dumps(contributions, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/speaker/<speaker_id>/contributions', methods=['GET'])
+@events.route('/event/<event_id>/speaker/<speaker_id>/contributions', methods=['GET'])
 def speakerContributions(event_id, speaker_id):
     contributions = []
     speaker_query = query_session.query(Presenter)
@@ -125,7 +135,7 @@ def eventSpeakers(event_id):
     return json.dumps(speakers, default=dthandler)
 
 
-@getEvent.route('/event/<event_id>/speaker/<speaker_id>', methods=['GET'])
+@events.route('/event/<event_id>/speaker/<speaker_id>', methods=['GET'])
 def eventSpeaker(event_id, speaker_id):
     speaker_query = query_session.query(Presenter)
     speaker = speaker_query.filter(Presenter.eventId == event_id,
@@ -190,6 +200,7 @@ def manage_event(event, event_tt, event_id):
                 manage_material(current_session)
                 manage_presenters(current_session, current_session['eventId'], current_session['id'], presenter_id)
                 current_session['conveners'] = ''
+                current_session['sessionId'] = current_session.pop('id')
                 db_session = Session(**current_session)
                 db_session.save()
                 number_sessions = number_sessions + 1
@@ -291,7 +302,7 @@ def convert_date(date):
     return timezone(date['tz']).localize(d)
 
 
-@getEvent.route('/event/<event_id>', methods=['GET'])
+@events.route('/event/<event_id>', methods=['GET'])
 def eventInfo(event_id):
     is_event_in_DB = query_session.query(Event).filter(Event.id == event_id)
     if is_event_in_DB.count() > 0:
@@ -308,7 +319,7 @@ def eventInfo(event_id):
         return json.dumps(simplejson.load(f)['results'])
 
 
-@getEvent.route('/searchEvent', methods=['GET'])
+@events.route('/searchEvent', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
     url = current_app.config['PROTOCOL_SPECIFIER'] + \
@@ -316,12 +327,14 @@ def search_event():
           '/export/event/search/' + search + \
           '.json?ak=' + \
           current_app.config['API_KEY']
+    print search
+    print url
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
     return json.dumps(simplejson.load(f)['results'])
 
-@getEvent.route('/searchSpeaker/<event_id>', methods=['GET'])
+@events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
     search = urllib.quote(request.args.get('search'))
     if query_session.db.Presenter.find({'name': {'$regex': search, '$options': 'i'},
@@ -337,8 +350,7 @@ def search_speaker(event_id):
     else:
         return json.dumps({})
 
-
-@getEvent.route('/futureEvents/<part>', methods=['GET'])
+@events.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
     req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +
                           '://' + current_app.config['SERVER_URL'] +

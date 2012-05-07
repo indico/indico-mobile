@@ -2,37 +2,7 @@ import copy
 from flask import Flask, Blueprint
 from flaskext.mongoalchemy import MongoAlchemy, BaseQuery
 
-db_classes = Blueprint('db_classes', __name__, template_folder='templates')
-app = Flask(__name__)
-app.config['MONGOALCHEMY_DATABASE'] = 'library'
-
-db = MongoAlchemy(app)
-
-
-class DBClass(db.Document):
-
-    def get_list(self, field):
-        res = []
-        for e in self._field_values[field]:
-            if (type(e) != type(unicode())):
-                fields = e.fields()
-                for k, v in fields.iteritems():
-                    if isinstance(v, list):
-                        fields[k] = e.get_list(k)
-                res.append(fields)
-            else:
-                res.append(e)
-        return res
-
-    def fields(self):
-        field_values = copy.copy(self._field_values)
-        if 'mongo_id' in field_values:
-            field_values.pop('mongo_id')
-        if 'presenters' in field_values:
-            field_values['presenters'] = self.get_list('presenters')
-        if 'material' in field_values:
-            field_values['material'] = self.get_list('material')
-        return field_values
+from indicomobile.db.base import DBClass, db
 
 
 class EventIdQuery(BaseQuery):
@@ -41,25 +11,11 @@ class EventIdQuery(BaseQuery):
         return self.filter(self.type.id == eventID)
 
 
-class Presenter_id():
-
-    def __init__(self):
-        self._counter = 0
-
-    def __call__(self):
-        val = self._counter
-        self._counter += 1
-        return val
-
-
 class Presenter(DBClass):
     _fossil = db.StringField()
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
-    contributionId = db.ListField(db.AnythingField())
-    eventId = db.AnythingField()
-    id = db.AnythingField()
 
 
 class Resource(DBClass):
@@ -85,7 +41,6 @@ class Contribution(DBClass):
     endDate = db.DateTimeField()
     description = db.StringField()
     title = db.StringField()
-    sessionTitle = db.StringField()
     material = db.ListField(db.DocumentField('Material'))
     conferenceId = db.StringField()
     entryType = db.StringField()
@@ -94,7 +49,6 @@ class Contribution(DBClass):
     duration = db.IntField(default=0)
     presenters = db.ListField(db.DocumentField('Presenter'))
     sessionId = db.StringField()
-    sessionUniqueId = db.StringField()
     location = db.StringField()
     uniqueId = db.StringField()
     _fossil = db.StringField()
@@ -106,7 +60,6 @@ class Contribution(DBClass):
 
 
 class Session(DBClass):
-    id = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
     contributionId = db.AnythingField(default='')
