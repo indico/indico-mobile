@@ -34,12 +34,10 @@ def eventDay(event_id, day_date):
     return json.dumps(day.fields())
 
 
-@events.route('/event/<event_id>/day/<day_date>/session/<session_id>', methods=['GET'])
-def eventSession(event_id, day_date, session_id):
+@events.route('/event/<event_id>/session/<session_id>', methods=['GET'])
+def eventSession(event_id, session_id):
     session = query_session.query(Session).filter(Session.eventId == event_id,
-                                                  Session.dayDate == day_date,
-                                                  Session.sessionId ==
-                                                  session_id)[0]
+                                                  Session.id == session_id)[0]
     return json.dumps(session.fields(), default=dthandler)
 
 
@@ -53,12 +51,10 @@ def eventSameSessions(event_id, session_id):
     return json.dumps(sessions, default=dthandler)
 
 
-@events.route('/event/<event_id>/session/<session_id>/contrib/<contrib_id>', methods=['GET'])
-def eventContribution(event_id, session_id, contrib_id):
+@events.route('/event/<event_id>/contrib/<contrib_id>', methods=['GET'])
+def eventContribution(event_id, contrib_id):
     contrib_query = query_session.query(Contribution)
     contribution = contrib_query.filter(Contribution.eventId == event_id,
-                                        Contribution.dayDate == day_date,
-                                        Contribution.sessionId == session_id,
                                         Contribution.contributionId == contrib_id)[0]
     return json.dumps(contribution.fields(), default=dthandler)
 
@@ -70,8 +66,7 @@ def dayContributions(event_id, day_date):
                                                       Contribution.dayDate == day_date)
     contribs_DB = first_query
     for contrib in contribs_DB:
-        if contrib.sessionCode != 'Poster':
-            contributions.append(contrib.fields())
+        contributions.append(contrib.fields())
     return json.dumps(contributions, default=dthandler)
 
 
@@ -86,7 +81,6 @@ def eventSessions(event_id):
     for session in sessions_DB:
         sessions.append(session.fields())
     return json.dumps(sessions, default=dthandler)
-
 
 
 @events.route('/event/<event_id>/session/<session_id>/contribs', methods=['GET'])
@@ -147,15 +141,13 @@ def eventSpeaker(event_id, speaker_id):
 
 
 def addEventToDB(event_id):
-    event_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
-                                current_app.config['SERVER_URL'] +
+    event_req = urllib2.Request(current_app.config['SERVER_URL'] +
                                 '/export/event/' + event_id +
                                 '.json?ak=' + current_app.config['API_KEY'])
     event_opener = urllib2.build_opener()
     f1 = event_opener.open(event_req)
     event_info = json.load(f1)
-    timetable_req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
-                                    current_app.config['SERVER_URL'] +
+    timetable_req = urllib2.Request(current_app.config['SERVER_URL'] +
                                     '/export/timetable/' + event_id +
                                     '.json?ak=' +
                                     current_app.config['API_KEY'])
@@ -192,20 +184,23 @@ def manage_event(event, event_tt, event_id):
                         current_contribution['contributionId'] = current_contribution.pop('id')
                         current_contribution['eventId'] = current_session['eventId']
                         current_contribution['dayDate'] = day_date
+                        current_contribution['isPoster'] = current_session['isPoster']
+                        current_contribution['color'] = current_session['color']
                         db_contribution = Contribution(**current_contribution)
                         db_contribution.save()
                         contributions = contributions + 1
                         number_contributions = number_contributions + 1
                     current_session.pop('entries')
-                current_session['numContributions'] = contributions
-                current_session['dayDate'] = day_date
-                convert_dates(current_session)
-                manage_material(current_session)
-                manage_presenters(current_session, current_session['eventId'], current_session['id'], presenter_id)
-                current_session['conveners'] = ''
-                db_session = Session(**current_session)
-                db_session.save()
-                number_sessions = number_sessions + 1
+                if contributions > 0:
+                    current_session['numContributions'] = contributions
+                    current_session['dayDate'] = day_date
+                    convert_dates(current_session)
+                    manage_material(current_session)
+                    manage_presenters(current_session, current_session['eventId'], current_session['id'], presenter_id)
+                    current_session['conveners'] = ''
+                    db_session = Session(**current_session)
+                    db_session.save()
+                    number_sessions = number_sessions + 1
             db_day = Day(date=day_date, eventId=event['id'])
             db_day.save()
     numSessions = query_session.query(Session).filter({'_type': {'$ne': 'BreakTimeSchEntry'}, 'eventId': event_id})
@@ -310,8 +305,7 @@ def eventInfo(event_id):
         event = is_event_in_DB[0]
         return json.dumps(event.fields(), default=dthandler)
     else:
-        req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
-                              current_app.config['SERVER_URL'] +
+        req = urllib2.Request(current_app.config['SERVER_URL'] +
                               '/export/event/' + event_id +
                               '.json?ak=' +
                               current_app.config['API_KEY'])
@@ -323,8 +317,7 @@ def eventInfo(event_id):
 @events.route('/searchEvent', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
-    url = current_app.config['PROTOCOL_SPECIFIER'] +'://' + \
-          current_app.config['SERVER_URL'] + \
+    url = current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
           '.json?ak=' + \
           current_app.config['API_KEY']
@@ -332,6 +325,7 @@ def search_event():
     opener = urllib2.build_opener()
     f = opener.open(req)
     return json.dumps(json.load(f)['results'])
+
 
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
@@ -349,10 +343,10 @@ def search_speaker(event_id):
     else:
         return json.dumps({})
 
+
 @events.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
-    req = urllib2.Request(current_app.config['PROTOCOL_SPECIFIER'] +'://' +
-                          current_app.config['SERVER_URL'] +
+    req = urllib2.Request(current_app.config['SERVER_URL'] +
                           '/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
                           '&from=today&pretty=yes&limit=' + part)

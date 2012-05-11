@@ -10,7 +10,7 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
     var myAgendaEvents = loadAgendaEvents();
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
-    var contribution = getContribution(eventId, sessionId, contributionId);
+    var contribution = getContribution(eventId, contributionId);
 
     var contribInAgenda = myAgendaContributions.find(function(contrib){
         return contrib.get('eventId') == eventId &&
@@ -44,7 +44,11 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
         if (numContributionsInSession == session.get('numContributions')){
             myAgendaCompleteSessions.add({'eventId': eventId, 'sessionId': session.get('sessionId')});
             localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
-            $('#sessions_' + eventId).remove();
+            $('#sessions_'+eventId).remove();
+        }
+        if (isEventInAgenda(eventId)){
+            $('a[href="#event_'+eventId+'"]').find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $('a[href="#event_'+eventId+'"]').attr('id', 'removeEventFromAgenda');
         }
 
     }
@@ -94,9 +98,6 @@ function addSessionToAgenda(eventId, sessionId) {
         }
     });
 
-    $('div[id*="sessionDay_' + eventId + '_' + sessionId + '"]').data('reload', true);
-    $('div[id*="timetableDay_' + eventId + '"]').data('reload', true);
-
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
@@ -112,7 +113,7 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
     var myAgendaEvents = loadAgendaEvents();
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
-    var contribution = getContribution(eventId, sessionId, contributionId);
+    var contribution = getContribution(eventId, contributionId);
 
     myAgendaContributions.remove(
             myAgendaContributions.find(function(contrib){
@@ -133,11 +134,13 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
         contrib.get('sessionUniqueId') == sessionId;
     });
     if (!contribInSession){
-        var sessionInAgenda = myAgendaSessions.find(function(agendaSession){
+        sessionInAgenda = myAgendaSessions.find(function(agendaSession){
             return agendaSession.get('eventId') == eventId &&
             agendaSession.get('id') == sessionId;
         });
         myAgendaSessions.remove(sessionInAgenda);
+        $('#sessions_'+eventId+'_agenda').remove();
+        $('#session_'+eventId+'_'+session.get('sessionId')+'_agenda').remove();
     }
 
     var contribInEvent = myAgendaContributions.find(function(contrib){
@@ -200,35 +203,51 @@ function removeSessionFromAgenda(eventId, sessionId) {
         );
     }
 
-    $('div[id*="sessionDay_' + eventId + '_' + sessionId + '"]').data('reload', true);
-    $('div[id*="timetableDay_' + eventId + '"]').data('reload', true);
-
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
 
 }
 
-$('.ui-collapsible-favorite').live('favoritecontrib', function() {
+function removeEvent(eventId){
+    var myAgendaEvents = loadAgendaEvents();
+    var myAgendaContributions = loadAgendaContributions();
+    var myAgendaSessions = loadAgendaSessions();
+    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
 
-    if(!window.localStorage) {
-        alert('Your browser is not compatible');
+    var contribInAgenda = myAgendaContributions.filter(function(contrib){
+        return contrib.get('eventId') == eventId;
+    });
+    for (var i = 0; i < contribInAgenda.length; i++){
+        myAgendaContributions.remove(contribInAgenda[i]);
     }
 
-    var eventId = $(this).attr('eventId');
-    var sessionId = $(this).attr('sessionId');
-    var contributionId = $(this).attr('contribId');
+    var sessionInAgenda = myAgendaSessions.filter(function(session){
+        return session.get('eventId') == eventId;
+    });
+    for (i = 0; i < sessionInAgenda.length; i++){
+        myAgendaSessions.remove(sessionInAgenda[i]);
+    }
 
-    if (!eventId && !sessionId && !contributionId){
-        return;
+    sessionInAgenda = myAgendaCompleteSessions.filter(function(session){
+        return session.get('eventId') == eventId;
+    });
+    for (i = 0; i < sessionInAgenda.length; i++){
+        myAgendaCompleteSessions.remove(sessionInAgenda[i]);
     }
-    if ($(this).attr('data-theme') == 'g'){
-        addContributionToAgenda(eventId, sessionId, contributionId);
+
+    var eventInAgenda = myAgendaEvents.filter(function(event){
+        return event.get('id') == eventId;
+    });
+    for (i = 0; i < eventInAgenda.length; i++){
+        myAgendaEvents.remove(eventInAgenda[i]);
     }
-    else if ($(this).attr('data-theme') == 'c'){
-        removeContributionFromAgenda(eventId, sessionId, contributionId);
-    }
-});
+
+    localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
+    localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+}
 
 $('#addEventToAgenda').live('click', function(){
 
@@ -239,52 +258,54 @@ $('#addEventToAgenda').live('click', function(){
     var myAgendaEvents = loadAgendaEvents();
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaSessions = loadAgendaSessions();
+    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
     var eventId = $(this).attr('eventId');
     var event = getEvent(eventId);
 
-    var eventInAgenda = myAgendaEvents.find(function(event){
-        return event.get('id') == eventId;
-    });
-    if (!eventInAgenda){
-        myAgendaEvents.add(event);
-    }
+    removeEvent($(this).attr('eventId'));
+
+    myAgendaEvents.add(event);
+
 
     var allContributions = getEventContributions(eventId);
-    allContributions.each(function(contrib1){
-        var contribInAgenda = myAgendaContributions.find(function(contrib2){
-            return contrib2.get('eventId') == eventId &&
-            contrib1.get('contributionId') == contrib2.get('contributionId') &&
-            contrib1.get('sessionId') == contrib2.get('sessionId') &&
-            contrib1.get('dayDate') == contrib2.get('dayDate');
-        });
-        if (!contribInAgenda){
-            myAgendaContributions.add(contrib1);
-        }
+    allContributions.each(function(contrib){
+        myAgendaContributions.add(contrib);
     });
+
     var allSessions = getEventSessions(eventId);
+
     allSessions.each(function(session1){
-        var sessionInAgenda = myAgendaSessions.find(function(session2){
+        var completeSessionInAgenda = myAgendaCompleteSessions.find(function(session2){
             return session2.get('eventId') == eventId &&
-            session1.get('sessionId') == session2.get('sessionId') &&
-            session1.get('dayDate') == session2.get('dayDate');
+            session1.get('sessionId') == session2.get('sessionId');
         });
-        if (!sessionInAgenda){
-            myAgendaSessions.add(session1);
+        myAgendaSessions.add(session1);
+        if (!completeSessionInAgenda){
+            myAgendaCompleteSessions.add({'eventId': eventId, 'sessionId': session1.get('sessionId')});
         }
     });
 
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+    localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
 
     //css changes
     $(this).attr('id','removeEventFromAgenda');
-    $(this).parent().attr('data-theme','g');
-    $(this).parent().find('[data-theme="c"]').attr('data-theme','g');
-    $(this).parent().removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
-    $(this).parent().find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
-    $(this).parent().removeClass('ui-btn-hover-c').addClass('ui-btn-hover-g');
-    $(this).parent().find('.ui-btn-hover-c').removeClass('ui-btn-hover-c').addClass('ui-btn-hover-g');
-    $(this).parent().find('.ui-icon-star').removeClass('ui-icon-star').addClass('ui-icon-delete');
+    $(this).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+
+});
+
+$('#removeEventFromAgenda').live('click', function(){
+
+    if(!window.localStorage) {
+        alert('Your browser is not compatible');
+    }
+
+    removeEvent($(this).attr('eventId'));
+
+    //css changes
+    $(this).attr('id','addEventToAgenda');
+    $(this).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
 
 });

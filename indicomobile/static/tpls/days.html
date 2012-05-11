@@ -1,14 +1,13 @@
 <script type="text/template" id="dayPage">
 <div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#timetable_<%=eventId%>" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
-        <ul data-role="listview" id="day_list_<%=eventId%>_<%= date %>"></ul>
-        <img id="loading_<%=eventId%>_<%=date%>" style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>
-    </div>
+    <div data-role="content" data-theme="c" id="day_list_<%=eventId%>_<%= date %>">
+
+        </div>
 
 </div>
 </script>
@@ -16,13 +15,12 @@
 <script type="text/template" id="agendaDayPage">
 <div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#timetable_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" id="day_list_<%=eventId%>_<%= date %>_agenda"></ul>
-    <img id="loading_<%=eventId%>_<%=date%>" style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>
+        <ul data-role="listview" data-inset="true" id="day_list_<%=eventId%>_<%= date %>_agenda"></ul>
     </div>
 
 </div>
@@ -31,14 +29,13 @@
 <script type="text/template" id="sessionDay">
 <div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#session_<%=eventId%>_<%= sessionId %>" rel="external" data-icon="back">Back</a>
         <h3><%= dayDate %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></ul>
-        <img id="loading_<%=eventId%>_<%=dayDate%>" style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>
-    </div>
+        <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></div>
+        </div>
 
 </div>
 </script>
@@ -46,14 +43,13 @@
 <script type="text/template" id="agendaSessionDay">
 <div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#session_<%=eventId%>_<%= sessionId %>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= dayDate %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda"></ul>
-        <img id="loading_<%=eventId%>_<%=dayDate%>" style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>
-    </div>
+        <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda"></div>
+        </div>
 
 </div>
 </script>
@@ -62,7 +58,7 @@
 <script type="text/template" id="timetableDays">
 <div data-role="page" id="timetable_<%= id %>">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%= id %>" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -76,7 +72,7 @@
 <script type="text/template" id="agendaTimetableDays">
 <div data-role="page" id="timetable_<%= id %>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%= id %>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -93,7 +89,7 @@
 </script>
 
 <script type="text/template" id="agendaTimetableDaysList">
-<li id="li_<%=eventId%>_<%= dayDate %>">
+<li id="li_<%=eventId%>_<%= dayDate %>_agenda">
     <a href="#timetableDay_<%=eventId%>_<%= dayDate %>_agenda" rel="external"><%=dayDate %></a>
 </li>
 </script>

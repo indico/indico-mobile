@@ -45,9 +45,9 @@ var SessionsListView = Backbone.View.extend({
     },
 
     render: function() {
-        var sessions = this.options.sessions,
+        var sessions = this.collection,
         agenda = this.options.agenda,
-        container = this.options.container
+        container = this.options.container,
         sessionsListTemplate = this.sessionsListTemplate,
         agendaSessionsListTemplate = this.agendaSessionsListTemplate,
         sessionsListInAgendaTemplate = this.sessionsListInAgendaTemplate,
@@ -89,7 +89,8 @@ var SessionsListView = Backbone.View.extend({
     },
 
     events: {
-        "click #addRemoveSession": "addRemoveSession"
+        "click #addRemoveSession": "addRemoveSession",
+        "click #removeSession": "removeSession"
     },
 
     addRemoveSession: function(e){
@@ -109,7 +110,8 @@ var SessionsListView = Backbone.View.extend({
                 $(e.currentTarget).attr('action', 'remove');
                 $(e.currentTarget).attr('title', 'Remove this session from my agenda');
                 $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
-                $(e.currentTarget).find('.ui-icon-star').removeClass('ui-icon-star').addClass('ui-icon-delete');
+                $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+                $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').attr('action', 'remove');
             }
         }
         else{
@@ -118,13 +120,43 @@ var SessionsListView = Backbone.View.extend({
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
             $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
-            $(e.currentTarget).find('.ui-icon-delete').removeClass('ui-icon-delete').addClass('ui-icon-star');
+            $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').attr('action', 'add');
             if (isEventInAgenda(eventId)){
                 $('#eventHome').remove();
             }
         }
+
         localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
 
+    },
+
+    removeSession: function(e){
+        e.preventDefault();
+        var eventId = $(e.currentTarget).attr('eventId');
+        var sessionId = $(e.currentTarget).attr('sessionId');
+        var myAgendaCompleteSessions = loadAgendaCompleteSessions();
+        var sessionInAgenda = myAgendaCompleteSessions.find(function(session){
+            return session.get('eventId') == eventId &&
+            session.get('sessionId') == sessionId;
+        });
+        myAgendaCompleteSessions.remove(sessionInAgenda);
+        removeSessionFromAgenda(eventId, sessionId);
+        $(e.currentTarget).parent().remove();
+
+        $('div[id*="speaker_'+eventId+'_"]').remove();
+        $('#timetable_'+eventId+'_agenda').remove();
+        $('div[id*="timetableDay_'+eventId+'_"]').remove();
+
+        if ($('#sessions_list_'+eventId+'_agenda').find('li').length === 0){
+
+            $('#eventHome').remove();
+            $.mobile.changePage('/agenda');
+        }
+
+
+
+        localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
     }
 
 });
@@ -231,6 +263,13 @@ var SessionDayView = Backbone.View.extend({
 
 var SessionDayContributions = Backbone.View.extend({
 
+    tagName: 'ul',
+
+    attributes: {
+        'data-role': 'listview',
+        'data-inset': 'true'
+    },
+
     initialize: function() {
         var dayTemplates = getHTMLTemplate('contributions.html');
         this.contributionTemplate = _.template($(dayTemplates).siblings('#contribution').html());
@@ -241,13 +280,14 @@ var SessionDayContributions = Backbone.View.extend({
     render: function() {
 
         var container = this.options.container,
-        contributions = this.options.contributions,
+        contributions = container.data('contributions'),
         create = this.options.create,
         contributionTemplate = this.contributionTemplate,
         agendaContributionTemplate = this.agendaContributionTemplate,
         contributionInAgendaTemplate = this.contributionInAgendaTemplate,
         myAgenda = loadAgendaContributions(),
         agenda = this.options.agenda,
+        listView = $(this.el),
         part = container.data('part');
 
         contributions.comparator = function(contribution){
@@ -258,7 +298,7 @@ var SessionDayContributions = Backbone.View.extend({
         container.data('lastTime');
         var end = false;
         if (part === 0){
-            container.empty();
+            listView.empty();
         }
         for (var i = part; i < contributions.size() && !end; i++) {
 
@@ -267,13 +307,10 @@ var SessionDayContributions = Backbone.View.extend({
                     container.data('lastTime') != contributions.at(i).get('startDate').time){
                         container.data('lastTime', contributions.at(i).get('startDate').time);
                         splittedTime = container.data('lastTime').split(':');
-                        container.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
-                        container.append('<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
-                                         '<div data-role="collapsible-set" class="hourSet"></div></li>');
+                        listView.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
                 }
-                var hourSets = container.find('.hourSet');
                 if(agenda){
-                    container.append(agendaContributionTemplate(contributions.at(i).toJSON()));
+                    listView.append(agendaContributionTemplate(contributions.at(i).toJSON()));
                 }
                 else{
                     var contribInAgenda = myAgenda.find(function(contrib){
@@ -281,10 +318,10 @@ var SessionDayContributions = Backbone.View.extend({
                         contrib.get('contributionId') == contributions.at(i).get('contributionId');
                     });
                     if (contribInAgenda){
-                        $(hourSets[hourSets.length-1]).append(contributionInAgendaTemplate(contributions.at(i).toJSON()));
+                        listView.append(contributionInAgendaTemplate(contributions.at(i).toJSON()));
                     }
                     else{
-                        $(hourSets[hourSets.length-1]).append(contributionTemplate(contributions.at(i).toJSON()));
+                        listView.append(contributionTemplate(contributions.at(i).toJSON()));
                     }
                 }
             }
@@ -295,16 +332,104 @@ var SessionDayContributions = Backbone.View.extend({
         }
         if (!end){
             container.data('part', -1);
-            $('#loading_' + contributions.at(0).get('eventId') + '_' + contributions.at(0).get('dayDate')).hide();
+            container.parent().find('img').hide();
         }
         if (create){
+            listView.trigger('create');
+            container.append(listView);
             container.trigger('refresh');
+            if (!end){
+                container.data('part', -1);
+            }
+            else{
+                container.append('<img style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>');
+            }
         }
         else{
-            container.trigger('create')
-            container.listview('refresh');
+            listView.listview('refresh');
+            if (!end){
+                container.data('part', -1);
+                container.find('img').hide();
+            }
         }
         return this;
+    },
+
+    events: {
+        "click #addRemoveContribution": "addRemoveContribution",
+        "click #removeContribution": "removeContribution"
+    },
+
+    addRemoveContribution: function(e){
+        e.preventDefault();
+        var eventId = $(e.currentTarget).attr('eventId');
+        var sessionUniqueId = $(e.currentTarget).attr('sessionUniqueId');
+        var sessionId = $(e.currentTarget).attr('sessionId');
+        var contributionId = $(e.currentTarget).attr('contributionId');
+        var action = $(e.currentTarget).attr('action');
+        if (action == 'add'){
+            addContributionToAgenda(eventId, sessionUniqueId, contributionId);
+            $(e.currentTarget).attr('action', 'remove');
+            $(e.currentTarget).attr('title', 'Remove this session from my agenda');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+        }
+        else{
+            removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
+            $(e.currentTarget).attr('action', 'add');
+            $(e.currentTarget).attr('title', 'Add this session to my agenda');
+            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+        }
+        $('div[id*="speaker_'+eventId+'_"]').remove();
+        $('#timetableDay_'+eventId+'_'+dayDate+'_agenda').remove();
+        $('#sessions_'+eventId+'_agenda').remove();
+    },
+
+    removeContribution: function(e){
+        e.preventDefault();
+        var eventId = $(e.currentTarget).attr('eventId');
+        var sessionUniqueId = $(e.currentTarget).attr('sessionUniqueId');
+        var sessionId = $(e.currentTarget).attr('sessionId');
+        var contributionId = $(e.currentTarget).attr('contributionId');
+        var dayDate = $(e.currentTarget).attr('dayDate');
+
+        removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
+
+
+        var prevEl = $(e.currentTarget).closest('li').prev();
+        var nextEl = $(e.currentTarget).closest('li').next();
+        if (prevEl.attr('data-role') == 'list-divider' && (nextEl.length === 0 || nextEl.attr('data-role') == 'list-divider')){
+            prevEl.remove();
+        }
+        $(e.currentTarget).closest('li').remove();
+
+        if ($('#sessionDay_list_'+eventId+'_'+sessionId+'_'+dayDate+'_agenda').find('li').length === 0){
+
+            $('a[href="#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate+'_agenda"]').closest('li').remove();
+
+            if($('#session_days_'+eventId+'_'+sessionId+'_agenda').find('li').length === 0){
+
+                $('a[href="#session_'+eventId+'_'+sessionId+'_agenda"]').closest('li').remove();
+
+                if($('#sessions_list_'+eventId+'_agenda').find('li').length === 0){
+                    $('#eventHome').remove();
+                    $.mobile.changePage('/agenda');
+                }
+                else{
+                    $('div[id*="speaker_'+eventId+'_"]').remove();
+                    $('#timetable_'+eventId+'_agenda').remove();
+                    $('#timetableDay_'+eventId+'_'+dayDate+'_agenda').remove();
+                    $('#sessions_'+eventId+'_agenda').remove();
+                    window.location.href='#sessions_'+eventId+'_agenda';
+                }
+            }
+            else{
+                $('div[id*="speaker_'+eventId+'_"]').remove();
+                $('#timetable_'+eventId+'_agenda').remove();
+                $('#timetableDay_'+eventId+'_'+dayDate+'_agenda').remove();
+                $('#session_'+eventId+'_'+sessionId+'_agenda').remove();
+                window.location.href='#session_'+eventId+'_'+sessionId+'_agenda';
+            }
+        }
     }
 
 });

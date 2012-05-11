@@ -7,4 +7,3 @@ from indicomobile.agenda import agenda
 app.register_blueprint(routing)
 app.register_blueprint(events)
 app.register_blueprint(agenda)
-

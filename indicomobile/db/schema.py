@@ -1,16 +1,7 @@
-import copy
 from flask import Flask, Blueprint
-from flaskext.mongoalchemy import MongoAlchemy, BaseQuery
+from flaskext.mongoalchemy import MongoAlchemy
 
 from indicomobile.db.base import DBClass, db
-
-
-
-
-class EventIdQuery(BaseQuery):
-
-    def getEventById(self, eventID):
-        return self.filter(self.type.id == eventID)
 
 
 class Presenter_id():
@@ -73,6 +64,7 @@ class Contribution(DBClass):
     sessionCode = db.StringField()
     uniqueId = db.StringField(default='')
     room = db.StringField()
+    isPoster = db.BoolField(default=False)
     eventId = db.AnythingField()
     dayDate = db.StringField()
 
@@ -122,13 +114,11 @@ class Chair(DBClass):
 
 
 class Day(DBClass):
-    query_class = EventIdQuery
     date = db.StringField()
     eventId = db.AnythingField()
 
 
 class Event(DBClass):
-    query_class = EventIdQuery
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()
     title = db.StringField()
@@ -147,4 +137,3 @@ class Event(DBClass):
     categoryId = db.StringField()
     numContributions = db.IntField()
     numSessions = db.IntField()
-

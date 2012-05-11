@@ -176,13 +176,12 @@ function getEventSameSessions(eventId, sessionId){
 
 }
 
-function getContribution(eventId, sessionId, contributionId){
+function getContribution(eventId, contributionId){
 
     var contribution;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/session/" +
-        sessionId + "/contrib/" + contributionId,
+        url: "/event/" + eventId + "/contrib/" + contributionId,
         dataType: "json",
         async: false,
         success: function(resp){
@@ -215,7 +214,6 @@ function isEventInAgenda(eventId){
     }).length;
 
     var event = getEvent(eventId);
-
     if (myAgendaSessionsNumber == event.get('numSessions') && event.get('numSessions') !== 0){
         return true;
     }

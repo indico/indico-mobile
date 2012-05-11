@@ -1,7 +1,7 @@
 <script type="text/template" id="sessionsPage">
 <div data-role="page" id="sessions_<%= id %>">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%= id %>" rel="external" data-icon="back">Back</a>
         <h3>Sessions</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -14,12 +14,11 @@
 <script type="text/template" id="agendaSessionsPage">
 <div data-role="page" id="sessions_<%= id %>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%= id %>_agenda" rel="external" data-icon="back">Back</a>
         <h3>Sessions</h3>
             <a href="/agenda" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
-        <ul data-role="listview" id="sessions_list_<%= id %>_agenda" data-inset="true"></ul>
+    <div data-role="content" data-theme="c" id="sessions_list_<%= id %>_agenda">
     </div>
 
 </div>
@@ -28,7 +27,7 @@
 <script type="text/template" id="sessionPage">
 <div data-role="page" id="session_<%=eventId%>_<%= sessionId %>">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#sessions_<%=eventId%>" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -42,7 +41,7 @@
 <script type="text/template" id="agendaSessionPage">
 <div data-role="page" id="session_<%=eventId%>_<%= sessionId %>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#sessions_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= title %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -55,20 +54,21 @@
 
 <script type="text/template" id="sessionsList">
 <li>
-    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external"><%= title %></a>
+    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
     <a href="#" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c">Add this session to my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="sessionsListInAgenda">
 <li>
-    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external"><%= title %></a>
-    <a href="#" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="g">Remove this session from my agenda</a>
+    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
+    <a href="#" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="g">Remove this session from my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="agendaSessionsList">
 <li>
     <a href="#session_<%= eventId %>_<%= sessionId %>_agenda" rel="external"><%= title %></a>
+    <a href="#" id="removeSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" data-icon="delete" data-iconpos="notext" data-theme="c">Remove this session from my agenda</a>
 </li>
 </script>

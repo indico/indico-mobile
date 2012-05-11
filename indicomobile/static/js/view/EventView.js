@@ -46,7 +46,7 @@ var AgendaEventsListView = Backbone.View.extend({
         events = this.collection,
         agendaEventListTemplate = this.agendaEventListTemplate,
         listView = $(this.el);
-        if (events.size()>0){
+        if (events.size() > 0){
             listView.empty();
 
             events.comparator = function(event){
@@ -104,7 +104,7 @@ var EventsListView = Backbone.View.extend({
 
     render: function(){
         var container = this.options.viewContainer,
-        events = this.collection,
+        events = container.data('resultEvents'),
         eventListTemplate = this.eventListTemplate,
         eventListInAgendaTemplate = this.eventListInAgendaTemplate,
         part = container.data('part');
@@ -118,7 +118,9 @@ var EventsListView = Backbone.View.extend({
                 );
             };
             events.sort();
-
+            if (part === 0){
+                container.empty();
+            }
             var dates = [];
             var end = false;
             for (var i = part; !end && i < events.size() ; i++){

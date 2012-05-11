@@ -1,47 +1,47 @@
 <script type="text/template" id="speakersPage">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%=id%>" rel="external" data-icon="back">Back</a>
         <h3>Speakers</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
         <input type="text" data-type="search" id="searchSpeaker_<%=id%>">
         <ul data-role="listview" data-inset="true" id="speakers_list_<%=id%>"></ul>
-        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="{{url_for('static',filename='style/images/loading.gif')}}"></img>
+        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="static/style/images/loading.gif"></img>
     </div>
 </script>
 
 <script type="text/template" id="agendaSpeakersPage">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#event_<%=id%>_agenda" rel="external" data-icon="back">Back</a>
         <h3>Speakers</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
         <ul data-role="listview" data-inset="true" id="speakers_list_<%=id%>_agenda" data-filter="true"></ul>
-        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="{{url_for('static',filename='style/images/loading.gif')}}"></img>
+        <img id="loadingSpeakers_<%=id%>" style="display: block; margin: 0 auto; width: 5%;" src="static/style/images/loading.gif"></img>
     </div>
 </script>
 
 <script type="text/template" id="speakerPage">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#speakers_<%=eventId%>" rel="external" data-icon="back">Back</a>
         <h3><%=name%></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" data-theme="c"  id="speaker_contribs_<%=eventId%>_<%=id%>"></ul>
+        <div data-theme="c"  id="speaker_contribs_<%=eventId%>_<%=id%>"></div>
     </div>
 </script>
 
 <script type="text/template" id="agendaSpeakerPage">
     <div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" rel="external" data-icon="back">Back</a>
+        <a href="#speakers_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%=name%></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" data-theme="c"  id="speaker_contribs_<%=eventId%>_<%=id%>_agenda"></ul>
+        <div data-theme="c"  id="speaker_contribs_<%=eventId%>_<%=id%>_agenda"></div>
     </div>
 </script>
 

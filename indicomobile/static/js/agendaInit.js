@@ -5,7 +5,7 @@ $('#eventHome').live('pageinit', function(){
 
     var eventsView = new AgendaEventsListView({
         collection : myEvents,
-        viewContainer : eventsContainer = $('#eventList')
+        viewContainer : eventsContainer = $('#agendaEventList')
     });
     eventsView.render();
 

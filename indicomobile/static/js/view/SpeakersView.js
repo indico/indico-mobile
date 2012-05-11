@@ -1,3 +1,84 @@
+var SpeakersListView = Backbone.View.extend({
+
+    initialize: function(){
+        if (this.options.agenda){
+            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersList').html());
+        }
+        else{
+            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersList').html());
+        }
+    },
+
+    render: function(){
+
+        var speakers = this.collection,
+        container = this.options.container,
+        speakersListTemplate = this.speakersListTemplate,
+        create = this.options.create;
+
+        if (speakers.size() > 0){
+            if (container.data('part') === 0){
+                container.empty();
+            }
+            var end = false;
+
+            speakers.comparator = function(speaker){
+                return speaker.get('name');
+            };
+            speakers.sort();
+            for (var i = container.data('part'); i < speakers.size() && !end; i++) {
+
+                if (i < container.data('part') + screen.height/50){
+
+                    if (container.data('firstLetter') === ""){
+                        container.data('firstLetter', speakers.at(i).get('name')[0]);
+                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
+                    }
+                    else if(container.data('firstLetter') != speakers.at(i).get('name')[0]){
+                        container.data('firstLetter', speakers.at(i).get('name')[0]);
+                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
+                    }
+                    container.append(speakersListTemplate(speakers.at(i).toJSON()));
+                }
+                else{
+                    container.data('part', i);
+                    end = true;
+                }
+
+            }
+            if (!end){
+                container.data('part', -1);
+                $('#loadingSpeakers_' + speakers.at(0).get('eventId')).hide();
+                container.parent().find('h3').hide();
+            }
+            else{
+                container.parent().find('img').show();
+                container.parent().find('h3').hide();
+            }
+            if (!create){
+                container.listview('refresh');
+            }
+            else{
+                container.trigger('create');
+            }
+        }
+        else{
+            container.data('part', -1);
+            container.empty();
+            container.parent().find('img').hide();
+            if (container.parent().find('h3').length === 0){
+                container.parent().append('<h3>No speaker found.</h3>');
+            }
+            else{
+                container.parent().find('h3').show();
+            }
+        }
+
+        return this;
+    }
+
+});
+
 var SpeakersPageView = Backbone.View.extend({
 
     tagName: 'div',
@@ -15,7 +96,7 @@ var SpeakersPageView = Backbone.View.extend({
         var  event = this.options.event,
         speakersPageTemplate = this.speakersPageTemplate,
         agendaSpeakersPageTemplate = this.agendaSpeakersPageTemplate,
-        agenda = this.options.agenda
+        agenda = this.options.agenda,
         pageView = $(this.el);
         if (typeof event.attributes.id === "undefined"){
             event.attributes = event.attributes[0];
@@ -88,87 +169,6 @@ var SpeakersPageView = Backbone.View.extend({
 
 });
 
-var SpeakersListView = Backbone.View.extend({
-
-    initialize: function(){
-        if (this.options.agenda){
-            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersList').html());
-        }
-        else{
-            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersList').html());
-        }
-    },
-
-    render: function(){
-
-        var speakers = this.collection,
-        container = this.options.container,
-        speakersListTemplate = this.speakersListTemplate,
-        create = this.options.create;
-
-        if (speakers.size() > 0){
-            if (container.data('part') === 0){
-                container.empty();
-            }
-            var end = false;
-
-            speakers.comparator = function(speaker){
-                return speaker.get('name');
-            };
-            speakers.sort();
-            for (var i = container.data('part'); i < speakers.size() && !end; i++) {
-
-                if (i < container.data('part') + screen.height/50){
-
-                    if (container.data('firstLetter') === ""){
-                        container.data('firstLetter', speakers.at(i).get('name')[0]);
-                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
-                    }
-                    else if(container.data('firstLetter') != speakers.at(i).get('name')[0]){
-                        container.data('firstLetter', speakers.at(i).get('name')[0]);
-                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
-                    }
-                    container.append(speakersListTemplate(speakers.at(i).toJSON()));
-                }
-                else{
-                    container.data('part', i);
-                    end = true;
-                }
-
-            }
-            if (!end){
-                container.data('part', -1);
-                $('#loadingSpeakers_' + speakers.at(0).get('eventId')).hide();
-                container.parent().find('h3').hide();
-            }
-            else{
-                container.parent().find('img').show();
-                container.parent().find('h3').hide();
-            }
-            if (!create){
-                container.listview('refresh');
-            }
-            else{
-                container.trigger('create');
-            }
-        }
-        else{
-            container.data('part', -1);
-            container.empty();
-            container.parent().find('img').hide();
-            if (container.parent().find('h3').length == 0){
-                container.parent().append('<h3>No speaker found.</h3>');
-            }
-            else{
-                container.parent().find('h3').show();
-            }
-        }
-
-        return this;
-    }
-
-});
-
 var SpeakerPageView = Backbone.View.extend({
 
     tagName: 'div',
@@ -212,6 +212,13 @@ var SpeakerPageView = Backbone.View.extend({
 
 var SpeakerContributionsView = Backbone.View.extend({
 
+    tagName: 'ul',
+
+    attributes: {
+        'data-role': 'listview',
+        'data-inset': 'true'
+    },
+
     initialize: function(){
         this.contributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#contribution').html());
         this.agendaContributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#agendaContribution').html());
@@ -245,21 +252,16 @@ var SpeakerContributionsView = Backbone.View.extend({
                lastDay = contribution.get('startDate').date;
                lastTime = contribution.get('startDate').time;
                splittedTime = lastTime.split(':');
-               container.append('<li data-role="list-divider"><h4>' + lastDay + '</h4></li>');
-               container.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
-               container.append('<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
-               '<div data-role="collapsible-set" class="hourSet"></div></li>');
+               listView.append('<li data-role="list-divider"><h4>' + lastDay + '</h4></li>');
+               listView.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
            }
            if (lastTime != contribution.get('startDate').time){
                lastTime = contribution.get('startDate').time;
                splittedTime = lastTime.split(':');
-               container.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
-               container.append('<li style="padding-left: 5px !important; padding-right: 5px !important; padding-bottom: 0px !important; padding-top: 0px !important">'+
-               '<div data-role="collapsible-set" class="hourSet"></div></li>');
+               listView.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
            }
-           var hourSets = container.find('.hourSet');
            if (agenda){
-               $(hourSets[hourSets.length-1]).append(agendaContributionTemplate(contribution.attributes));
+               listView.append(agendaContributionTemplate(contribution.attributes));
            }
            else{
                var contribInAgenda = myAgenda.find(function(contrib){
@@ -267,16 +269,96 @@ var SpeakerContributionsView = Backbone.View.extend({
                    contrib.get('contributionId') == contribution.get('contributionId');
                });
                if (contribInAgenda){
-                   $(hourSets[hourSets.length-1]).append(contributionInAgendaTemplate(contribution.toJSON()));
+                   listView.append(contributionInAgendaTemplate(contribution.toJSON()));
                }
                else{
-                   $(hourSets[hourSets.length-1]).append(contributionTemplate(contribution.toJSON()));
+                   listView.append(contributionTemplate(contribution.toJSON()));
                }
            }
         });
+        container.append(listView);
         container.trigger('refresh');
 
         return this;
+    },
 
+    events: {
+        "click #addRemoveContribution": "addRemoveContribution",
+        "click #removeContribution": "removeContribution"
+    },
+
+    addRemoveContribution: function(e){
+        e.preventDefault();
+        var eventId = $(e.currentTarget).attr('eventId');
+        var sessionUniqueId = $(e.currentTarget).attr('sessionUniqueId');
+        var sessionId = $(e.currentTarget).attr('sessionId');
+        var contributionId = $(e.currentTarget).attr('contributionId');
+        var dayDate = $(e.currentTarget).attr('dayDate');
+        var action = $(e.currentTarget).attr('action');
+        if (action == 'add'){
+            addContributionToAgenda(eventId, sessionUniqueId, contributionId);
+            $(e.currentTarget).attr('action', 'remove');
+            $(e.currentTarget).attr('title', 'Remove this session from my agenda');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+        }
+        else{
+            removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
+            $(e.currentTarget).attr('action', 'add');
+            $(e.currentTarget).attr('title', 'Add this session to my agenda');
+            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $('#sessions_'+eventId).remove();
+        }
+        $('#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate).remove();
+        $('#timetableDay_'+eventId+'_'+dayDate).remove();
+    },
+
+    removeContribution: function(e){
+        e.preventDefault();
+        var eventId = $(e.currentTarget).attr('eventId');
+        var sessionUniqueId = $(e.currentTarget).attr('sessionUniqueId');
+        var sessionId = $(e.currentTarget).attr('sessionId');
+        var contributionId = $(e.currentTarget).attr('contributionId');
+        var dayDate = $(e.currentTarget).attr('dayDate');
+        removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
+
+        var prevElIsDivider = $(e.currentTarget).closest('li').prev().attr('data-role') == 'list-divider';
+        var nextElIsDivider = $(e.currentTarget).closest('li').next().attr('data-role') == 'list-divider';
+        var prevPrevElIsDivider = $(e.currentTarget).closest('li').prev().prev().attr('data-role') == 'list-divider';
+        var nextNextElIsDivider = $(e.currentTarget).closest('li').next().next().attr('data-role') == 'list-divider';
+
+        if (prevElIsDivider && nextElIsDivider && prevPrevElIsDivider && nextNextElIsDivider){
+            $(e.currentTarget).closest('li').prev().remove();
+            $(e.currentTarget).closest('li').prev().prev().remove();
+        }
+        else if (prevElIsDivider && prevPrevElIsDivider &&
+                $(e.currentTarget).closest('li').next().length === 0){
+            $(e.currentTarget).closest('li').prev().prev().remove();
+            $(e.currentTarget).closest('li').prev().remove();
+        }
+        else if (prevElIsDivider && prevPrevElIsDivider &&
+                nextElIsDivider && !nextNextElIsDivider){
+            $(e.currentTarget).closest('li').prev().remove();
+        }
+        else if (prevElIsDivider && !prevPrevElIsDivider &&
+                $(e.currentTarget).closest('li').next().length === 0){
+            $(e.currentTarget).closest('li').prev().remove();
+        }
+        else if (prevElIsDivider && !prevPrevElIsDivider &&
+                nextElIsDivider && !nextNextElIsDivider){
+            $(e.currentTarget).closest('li').prev().remove();
+        }
+
+        $(e.currentTarget).closest('li').remove();
+        $('#timetableDay_'+eventId+'_'+dayDate+'_agenda').remove();
+        $('#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate+'_agenda').remove();
+        $('#session_'+eventId+'_'+sessionId+'_agenda').remove();
+        $('#sessions_'+eventId+'_agenda').remove();
+
+        if ($.mobile.activePage.find('li').length === 0){
+
+            $('#speakers_'+eventId+'_agenda').remove();
+            window.location.href='#speakers_'+eventId+'_agenda';
+        }
     }
+
 });

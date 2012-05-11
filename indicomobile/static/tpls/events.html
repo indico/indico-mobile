@@ -5,14 +5,52 @@
         <h1 id="headerTitle"><%=title%></h1>
     </div>
         <div data-role="content" data-theme="c">
+            <!--
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                    <a href="#sessions_<%= id %>" rel="external">
+                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/sessions.png">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">Sessions</p>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#timetable_<%= id %>" rel="external">
+                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/timetable.png">
+                    </img>
+                    </a>
+                    <p style="text-align: center;">Timetable</p>
+                </div>
+                <div class="ui-block-a">
+                    <a href="#speakers_<%= id %>" rel="external">
+                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/speaker.png">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">Speakers</p>
+                </div>
+            </div>
+            -->
             <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>" rel="external">Sessions</a></li>
-                <li><a href="#timetable_<%= id %>" rel="external">Timetable</a></li>
-                <li><a href="#speakers_<%= id %>" rel="external">Speakers</a></li>
+                <li><a href="#sessions_<%= id %>" rel="external"> <img
+                        src="static/style/images/sessions.png"
+                        width="64" height="64" />
+                        <h2>Sessions</h2>
+                    </a>
+                </li>
+                <li><a href="#timetable_<%= id %>" rel="external"> <img
+                        src="static/style/images/timetable.png"
+                        width="64" height="64" />
+                        <h2>Timetable</h2>
+                    </a>
+                </li>
+                <li><a href="#speakers_<%= id %>" rel="external"> <img
+                        src="static/style/images/speaker.png"
+                        width="64" height="64" />
+                        <h2>Speakers</h2>
+                    </a>
+                </li>
             </ul>
-        <div id="event_days_<%=id%>"></div>
     </div>
-    <div data-role="footer" data-theme="c">Made by Me</div>
   </div>
 </script>
 
@@ -23,14 +61,52 @@
         <h1 id="headerTitle"><%=title%></h1>
     </div>
         <div data-role="content" data-theme="c">
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                    <a href="#sessions_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
+                        <img data-role="button" src="static/style/images/sessions.png" style="width: 64px; height: 64px;">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">Sessions</p>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#timetable_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
+                        <img data-role="button"  style="width: 64px; height: 64px;" src="static/style/images/timetable.png">
+                    </img>
+                    </a>
+                    <p style="text-align: center;">Timetable</p>
+                </div>
+                <div class="ui-block-a">
+                    <a href="#speakers_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
+                        <img data-role="button"  style="width: 64px; height: 64px;" src="static/style/images/speaker.png">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">Speakers</p>
+                </div>
+            </div>
+            <!--
             <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>_agenda" rel="external">Sessions</a></li>
-                <li><a href="#timetable_<%= id %>_agenda" rel="external">Timetable</a></li>
-                <li><a href="#speakers_<%= id %>_agenda" rel="external">Speakers</a></li>
+                <li><a href="#sessions_<%= id %>_agenda" rel="external"> <img
+                        src="static/style/images/sessions.png"
+                        width="64" height="64" />
+                        <h2>Sessions</h2>
+                    </a>
+                </li>
+                <li><a href="#timetable_<%= id %>_agenda" rel="external"> <img
+                        src="static/style/images/timetable.png"
+                        width="64" height="64" />
+                        <h2>Timetable</h2>
+                    </a>
+                </li>
+                <li><a href="#speakers_<%= id %>_agenda" rel="external"> <img
+                        src="static/style/images/speaker.png"
+                        width="64" height="64" />
+                        <h2>Speakers</h2>
+                    </a>
+                </li>
             </ul>
-        <div id="event_days_<%=id%>_agenda"></div>
+            -->
     </div>
-    <div data-role="footer" data-theme="c">Made by Me</div>
   </div>
 </script>
 
@@ -39,16 +115,14 @@
     <a href="#event_<%=id%>" rel="external">
         <%if (attributes.title!='') { print(attributes.title); } else { print('Event'+id); }%>
     </a>
-    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext">Add to agenda</a>
+    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 
 <script type="text/template" id="eventListInAgenda">
-<li data-theme="g">
-    <a data-theme="g" href="#event_<%=id%>" rel="external">
-        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
-    </a>
-    <a data-theme="g" data-icon="delete" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext">Remove from agenda</a>
+<li data-theme="c">
+    <a data-theme="c" href="#event_<%=id%>" rel="external"><%=attributes.title%></a>
+    <a data-theme="g" data-icon="star" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 
