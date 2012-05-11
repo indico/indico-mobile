@@ -155,7 +155,7 @@ var Router = Backbone.Router.extend({
         var sessionId = infoSplitted[1];
         var day = infoSplitted[2];
 
-        var container = $('#sessionDay_list_' + info);
+        var container;
 
         if ($('#sessionDay_' + info).length === 0){
             var create = true;
@@ -180,6 +180,8 @@ var Router = Backbone.Router.extend({
                 agenda: agenda
             });
             sessionDayView.render();
+
+            container = $('#sessionDay_list_' + info);
             container.data('contributions', contributions);
             container.data('part', 0);
             container.data('lastTime', '');
@@ -205,6 +207,7 @@ var Router = Backbone.Router.extend({
         }
         else{
             $.mobile.changePage('#sessionDay_' + info);
+            container = $('#sessionDay_list_' + info);
             $(window).on('scroll', function() {
                 if(container.data('part') != -1 &&
                         $(window).scrollTop() + $(window).height() >= $('#sessionDay_' + info).height()-150) {
@@ -273,7 +276,7 @@ var Router = Backbone.Router.extend({
         }
         var eventId = infoSplitted[0];
         var dayDate = infoSplitted[1];
-        var container = $('#day_list_' + info);
+        var container;
         if ($('#timetableDay_' + info).length === 0){
 
             var create = true;
@@ -296,6 +299,7 @@ var Router = Backbone.Router.extend({
             else{
                 contributions = getDayContributions(eventId, dayDate);
             }
+            container = $('#day_list_' + info);
             container.data('part', 0);
             container.data('lastTime', '');
             container.data('lastPosterTime', '');
@@ -323,6 +327,7 @@ var Router = Backbone.Router.extend({
         }
         else {
             $.mobile.changePage('#timetableDay_' + info);
+            container = $('#day_list_' + info);
             $(window).on('scroll', function() {
                     if($('#day_list_' + info).data('part') != -1 &&
                             $(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150) {
@@ -344,7 +349,7 @@ var Router = Backbone.Router.extend({
         }
 
         var create = true;
-        var container = $('#speakers_list_' + info);
+        var container;
         if ($('#speakers_' + info).length === 0){
             var eventId = infoSplitted[0];
             var speakers;
@@ -380,6 +385,7 @@ var Router = Backbone.Router.extend({
             });
             speakersPageView.render();
 
+            container = $('#speakers_list_' + info);
             container.data('part', 0);
             container.data('firstLetter', '');
             container.data('speakers', speakers);
@@ -406,6 +412,7 @@ var Router = Backbone.Router.extend({
         }
         else{
             $.mobile.changePage('#speakers_' + info);
+            container = $('#speakers_list_' + info);
             $(window).on('scroll', function() {
                 if(container.data('part') != -1 &&
                         $(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-150) {

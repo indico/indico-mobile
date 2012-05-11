@@ -126,6 +126,9 @@ var TimetableDayContributionsView = Backbone.View.extend({
         listView = $(this.el),
         part = container.data('part');
 
+
+        console.log(contributions)
+
         contributions.comparator = function(contribution){
             return contribution.get('startDate').time;
         };
