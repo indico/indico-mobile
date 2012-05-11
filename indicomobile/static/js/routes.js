@@ -193,17 +193,17 @@ var Router = Backbone.Router.extend({
             contributionsView.render();
             container.data('view', contributionsView);
 
-            $(window).scroll(function() {
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#sessionDay_' + info);
+            }
+
+            $(window).on('scroll', function() {
                 if($(window).scrollTop() + $(window).height() >= $('#sessionDay_' + info).height()-150 &&
                         container.data('part') != -1) {
                     contributionsView.options.create = false;
                     contributionsView.render();
                 }
             });
-
-            if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#sessionDay_' + info);
-            }
         }
         else{
             $.mobile.changePage('#sessionDay_' + info);
@@ -312,18 +312,17 @@ var Router = Backbone.Router.extend({
             timetableDayContributionsView.render();
             container.data('view', timetableDayContributionsView);
 
-            $(window).scroll(function() {
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#timetableDay_' + info);
+            }
+
+            $(window).on('scroll', function() {
                     if($('#day_list_' + info).data('part') != -1 &&
                             $(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150) {
                         timetableDayContributionsView.options.create = false;
                         timetableDayContributionsView.render();
                     }
-
             });
-
-            if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#timetableDay_' + info);
-            }
         }
         else {
             $.mobile.changePage('#timetableDay_' + info);
@@ -398,17 +397,17 @@ var Router = Backbone.Router.extend({
             speakersListView.render();
             container.data('view', speakersListView);
 
-            $(window).scroll(function() {
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#speakers_' + info);
+            }
+
+            $(window).on('scroll', function() {
                 if(container.data('part') != -1 &&
                         $(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-150) {
                     speakersListView.options.create = false;
                     speakersListView.render();
                 }
             });
-
-            if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#speakers_' + info);
-            }
         }
         else{
             $.mobile.changePage('#speakers_' + info);

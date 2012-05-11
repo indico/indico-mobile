@@ -23,7 +23,7 @@ function searchInDB(term){
 
             $.mobile.hidePageLoadingMsg();
 
-            $(window).scroll(function() {
+            $(window).on('scroll', function() {
                 if($(window).scrollTop() + $(window).height() > $('#eventHome').height()-150 &&
                         $('#searchResults').data('part') != -1) {
                     resultEventsView.options.create = false;
