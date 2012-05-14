@@ -1,47 +1,39 @@
 <script type="text/template" id="dayPage">
-<div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>" class="inDay">
     <div data-role="header" data-theme="c">
         <a href="#timetable_<%=eventId%>" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c" id="day_list_<%=eventId%>_<%= date %>">
-
-        </div>
-
-</div>
+    <div data-role="content" data-theme="c">
+        <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=date%>">
+        <div id="day_list_<%=eventId%>_<%= date %>"></div>
+    </div>
 </script>
 
 <script type="text/template" id="agendaDayPage">
-<div data-role="page" id="timetableDay_<%=eventId%>_<%= date %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
         <a href="#timetable_<%=eventId%>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= date %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
-        <ul data-role="listview" data-inset="true" id="day_list_<%=eventId%>_<%= date %>_agenda"></ul>
+        <div data-role="listview" data-inset="true" id="day_list_<%=eventId%>_<%= date %>_agenda"></div>
     </div>
-
-</div>
 </script>
 
 <script type="text/template" id="sessionDay">
-<div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" class="inDay">
     <div data-role="header" data-theme="c">
         <a href="#session_<%=eventId%>_<%= sessionId %>" rel="external" data-icon="back">Back</a>
         <h3><%= dayDate %></h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div data-role="content" data-theme="c">
+        <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=sessionId%>_<%=dayDate%>">
         <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></div>
         </div>
-
-</div>
 </script>
 
 <script type="text/template" id="agendaSessionDay">
-<div data-role="page" id="sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" class="inDay">
     <div data-role="header" data-theme="c">
         <a href="#session_<%=eventId%>_<%= sessionId %>_agenda" rel="external" data-icon="back">Back</a>
         <h3><%= dayDate %></h3>
@@ -50,8 +42,6 @@
     <div data-role="content" data-theme="c">
         <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda"></div>
         </div>
-
-</div>
 </script>
 
 

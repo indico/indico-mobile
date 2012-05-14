@@ -19,6 +19,11 @@ function searchInDB(term){
                 part: $('#searchResults').data('part')
             });
             resultEventsView.render();
+            if (typeof term !== 'undefined' && term != '' && term != ' '){
+                for (word in term.split(' ')){
+                    $('#searchResults').find('li[data-role!="list-divider"]').highlight(term.split(' ')[word]);
+                }
+            }
             $('#searchResults').data('view', resultEventsView);
 
             $.mobile.hidePageLoadingMsg();
@@ -28,6 +33,11 @@ function searchInDB(term){
                         $('#searchResults').data('part') != -1) {
                     resultEventsView.options.create = false;
                     resultEventsView.render();
+                    if (typeof term !== 'undefined' && term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            $('#searchResults').find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
                 }
             });
         }
@@ -38,10 +48,18 @@ function searchInDB(term){
 $('#eventHome').live('pageshow', function(){
     var container = $('#searchResults');
     $(window).on('scroll', function() {
-        if(container.data('part') != -1 &&
-                $(window).scrollTop() + $(window).height() >= $('#eventHome').height()-150) {
-            container.data('view').options.create = false;
-            container.data('view').render();
+        if (container.html() != ''){
+            if(container.data('part') != -1 &&
+                    $(window).scrollTop() + $(window).height() >= $('#eventHome').height()-150) {
+                container.data('view').options.create = false;
+                container.data('view').render();
+                var term = $('#searchEvent').val();
+                if (typeof term !== 'undefined' && term != '' && term != ' '){
+                    for (word in term.split(' ')){
+                        container.find('li[data-role!="list-divider"]').highlight(term.split(' ')[word]);
+                    }
+                }
+            }
         }
     });
 });

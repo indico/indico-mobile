@@ -137,3 +137,11 @@ class Event(DBClass):
     categoryId = db.StringField()
     numContributions = db.IntField()
     numSessions = db.IntField()
+
+
+class Recent_Event(DBClass):
+    today = db.StringField()
+    title = db.StringField()
+    id = db.StringField()
+    startDate = db.DateTimeField()
+    part = db.AnythingField()

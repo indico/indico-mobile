@@ -232,6 +232,12 @@ var SessionDaysView = Backbone.View.extend({
 
 var SessionDayView = Backbone.View.extend({
 
+    tagName: 'div',
+
+    attributes: {
+        'data-role': 'page'
+    },
+
     initialize: function() {
         var dayTemplates = getHTMLTemplate('days.html');
         this.sessionDayTemplate = _.template($(dayTemplates).siblings('#sessionDay').html());
@@ -243,19 +249,70 @@ var SessionDayView = Backbone.View.extend({
         create = this.options.create,
         sessionDayTemplate = this.sessionDayTemplate,
         agendaSessionDayTemplate = this.agendaSessionDayTemplate,
-        agenda = this.options.agenda;
+        agenda = this.options.agenda,
+        pageView = $(this.el);
 
         if (typeof contribution.attributes.eventId === 'undefined'){
             contribution.attributes = contribution.attributes[0];
         }
         if (agenda){
-            container.append(agendaSessionDayTemplate(contribution.attributes));
+            pageView.attr('id', 'sessionDay_' + contribution.get('eventId') + '_' + contribution.get('sessionId') + '_' + contribution.get('dayDate') + '_agenda');
+            pageView.append(agendaSessionDayTemplate(contribution.attributes));
         }
         else{
-            container.append(sessionDayTemplate(contribution.attributes));
+            pageView.attr('id', 'sessionDay_' + contribution.get('eventId') + '_' + contribution.get('sessionId') + '_' + contribution.get('dayDate'));
+            pageView.append(sessionDayTemplate(contribution.attributes));
         }
 
+        container.append(pageView);
         return this;
+    },
+
+    events: {
+        "keyup input": "searchContribution"
+    },
+
+    searchContribution: function(e){
+
+        if (e.keyCode == 13){
+            e.preventDefault();
+            var splittedId = $(e.currentTarget).attr('id').split('_');
+            var eventId = splittedId[1];
+            var sessionId = splittedId[2];
+            var dayDate = splittedId[3];
+            var term = $(e.currentTarget).val();
+
+            var results;
+            $.ajax({
+                type: "GET",
+                url: "/searchContrib/event/" + eventId + "/session/" + sessionId + "/day/" + dayDate,
+                dataType: "json",
+                data: {
+                    search: term
+                },
+                async: true,
+                success: function(resp){
+                    results = resp;
+                    var resultContributions = new Contributions();
+                    if (typeof results.length !== "undefined"){
+                        resultContributions = new Contributions(results);
+                    }
+                    var container = $('#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3]);
+                    container.data('part', 0);
+                    container.data('lastTime', '');
+                    container.data('contributions', resultContributions);
+                    container.data('view').options.create = false;
+                    container.data('view').render();
+                    if (term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
+
+                }
+            });
+        }
+
     }
 
 });
@@ -294,8 +351,6 @@ var SessionDayContributions = Backbone.View.extend({
             return contribution.get('startDate').time;
         };
         contributions.sort();
-        var lastTime = "";
-        container.data('lastTime');
         var end = false;
         if (part === 0){
             listView.empty();
@@ -403,14 +458,21 @@ var SessionDayContributions = Backbone.View.extend({
         $(e.currentTarget).closest('li').remove();
 
         if ($('#sessionDay_list_'+eventId+'_'+sessionId+'_'+dayDate+'_agenda').find('li').length === 0){
-
+            var myAgendaContributions = loadAgendaContributions();
+            var isSessionInAgenda = myAgendaContributions.find(function(contrib){
+                return contrib.get('eventId') == eventId &&
+                contrib.get('sessionId') == sessionId;
+            });
             $('a[href="#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate+'_agenda"]').closest('li').remove();
 
-            if($('#session_days_'+eventId+'_'+sessionId+'_agenda').find('li').length === 0){
-
+            if(!isSessionInAgenda){
+                myAgendaContributions = loadAgendaContributions();
+                isEventInAgenda = myAgendaContributions.find(function(contrib){
+                    return contrib.get('eventId') == eventId;
+                });
                 $('a[href="#session_'+eventId+'_'+sessionId+'_agenda"]').closest('li').remove();
-
-                if($('#sessions_list_'+eventId+'_agenda').find('li').length === 0){
+                if(!isEventInAgenda){
+                    console.log('no more sessions')
                     $('#eventHome').remove();
                     $.mobile.changePage('/agenda');
                 }

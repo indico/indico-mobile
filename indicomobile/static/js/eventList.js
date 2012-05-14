@@ -1,9 +1,9 @@
 $('#eventHome').live('pagecreate', function(){
 
     visited = false;
-    var futureEvents = getFutureEvents(10);
+    var futureEvents = getFutureEvents(0);
 
-    var futureEventsCollection = new Events(futureEvents.results);
+    var futureEventsCollection = new Events(futureEvents);
 
     if (futureEvents === ''){
         futureEventsCollection = null;
@@ -24,7 +24,7 @@ $('#moreFutureEvents').live('click', function(){
     var recEvents = getFutureEvents(part);
 
     if (recEvents !== ''){
-        var recentEvents = new Events(recEvents.results);
+        var recentEvents = new Events(recEvents);
         var recentEventsView = new RecentEventsView({
             collection: recentEvents,
             viewContainer: $('#futureEventList'),

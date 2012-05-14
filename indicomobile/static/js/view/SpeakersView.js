@@ -121,7 +121,7 @@ var SpeakersPageView = Backbone.View.extend({
 
     searchSpeaker: function(e){
 
-//        if (e.keyCode == 13){
+        if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
             var eventId = splittedId[1];
@@ -161,9 +161,15 @@ var SpeakersPageView = Backbone.View.extend({
                     });
                     speakersListView.render();
 
+                    if (term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
+
                 }
             });
-//        }
+        }
 
     }
 

@@ -1,3 +1,13 @@
+a .buttonIcon {
+    width: 64px;
+    height: 64px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.highlight { background-color: #80e0ff }
+
 @media all and (min-width: 600px){
 
 	.leftSide {
@@ -10,7 +20,6 @@
 	}
 
 }
-
 
 @media all and (max-width: 600px){
 	.leftSide{

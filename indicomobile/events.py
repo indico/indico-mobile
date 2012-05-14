@@ -330,10 +330,13 @@ def search_event():
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
     search = urllib.quote(request.args.get('search'))
-    if query_session.db.Presenter.find({'name': {'$regex': search, '$options': 'i'},
-                                        'eventId': event_id}).count() > 0:
-        speakers = query_session.db.Presenter.find({'name': {'$regex': search, '$options': 'i'},
+    words = search.split('%20')
+    regex = ''
+    for word in words:
+        regex += '(?=.*' + word + ')'
+    speakers = query_session.db.Presenter.find({'name': {'$regex': regex, '$options': 'i'},
                                                     'eventId': event_id})
+    if speakers.count() > 0:
         results = []
         for speaker in speakers:
             speaker.pop('_id')
@@ -344,12 +347,81 @@ def search_speaker(event_id):
         return json.dumps({})
 
 
+@events.route('/searchContrib/event/<event_id>/day/<day_date>', methods=['GET'])
+def search_contrib(event_id, day_date):
+    search = urllib.quote(request.args.get('search'))
+    words = search.split('%20')
+    regex = ''
+    for word in words:
+        regex += '(?=.*' + word + ')'
+    contributions = query_session.db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
+                                           'eventId': event_id,
+                                           'dayDate': day_date})
+    if contributions.count() > 0:
+        results = []
+        for contrib in contributions:
+            contrib.pop('_id')
+            contrib['presenters'] = []
+            contrib['material'] = []
+            contrib = Contribution(**contrib)
+            results.append(contrib.fields())
+        return json.dumps(results, default=dthandler)
+    else:
+        return json.dumps({})
+
+
+@events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>', methods=['GET'])
+def search_contrib_in_session(event_id, session_id, day_date):
+    search = urllib.quote(request.args.get('search'))
+    words = search.split('%20')
+    regex = ''
+    for word in words:
+        regex += '(?=.*' + word + ')'
+    contributions = query_session.db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
+                                           'eventId': event_id,
+                                           'dayDate': day_date,
+                                           'sessionId': session_id})
+    if contributions.count() > 0:
+        results = []
+        for contrib in contributions:
+            contrib.pop('_id')
+            contrib['presenters'] = []
+            contrib['material'] = []
+            contrib = Contribution(**contrib)
+            results.append(contrib.fields())
+        return json.dumps(results, default=dthandler)
+    else:
+        return json.dumps({})
+
+
 @events.route('/futureEvents/<part>', methods=['GET'])
 def getFutureEvents(part):
-    req = urllib2.Request(current_app.config['SERVER_URL'] +
-                          '/export/categ/0.json?ak=' +
-                          current_app.config['API_KEY'] +
-                          '&from=today&pretty=yes&limit=' + part)
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    return json.dumps(json.load(f))
+    today = datetime.today().strftime('%Y/%m/%d')
+    event_in_DB = query_session.query(Recent_Event).filter(Recent_Event.today == today)
+    if event_in_DB.count() == 0:
+        print 'new day'
+        query_session.db.Recent_Event.drop()
+    event_in_DB = query_session.query(Recent_Event).filter(Recent_Event.today == today,
+                                                           Recent_Event.part == part)
+    if (event_in_DB.count() > 0):
+        print 'already in DB'
+        results = []
+        for event in event_in_DB:
+            results.append(event.fields())
+        return json.dumps(results, default=dthandler)
+    else:
+            req = urllib2.Request(current_app.config['SERVER_URL'] +
+                                  '/export/categ/0.json?ak=' +
+                                  current_app.config['API_KEY'] +
+                                  '&from=today&pretty=yes&offset=' + part + '&limit=10')
+            opener = urllib2.build_opener()
+            f = opener.open(req)
+            events = json.load(f)['results']
+            for event in events:
+                print event
+                convert_dates(event)
+                new_event = Recent_Event(today=today, title=event['title'],
+                                         id=event['id'], startDate=event['startDate'],
+                                         part=part)
+                new_event.save()
+            return json.dumps(events, default=dthandler)

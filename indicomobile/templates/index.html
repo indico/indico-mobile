@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}" />
+            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.min.css')}}" />
 <link rel="stylesheet"
 	href="{{url_for('static',filename='style/myStyle.css')}}" />
 <script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
 <script
-	src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.js')}}"></script>
+	src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.min.js')}}"></script>
 </head>
 <body id="allpages">
 
@@ -18,24 +18,36 @@
 			<a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
 		</div>
 		<div data-role="content" data-theme="c">
-			<ul data-role="listview" data-inset="true">
-				<li><a href="/agenda" rel="external"> <img
-						src="{{url_for('static',filename='style/images/schedule.png')}}"
-						width="60" height="60" />
-						<h2>Personal agenda</h2>
-				</a></li>
-				<li><a href="/events" rel="external"><img
-						src="{{url_for('static',filename='style/images/conference.png')}}"
-						width="60" height="60" />
-						<h2>Events</h2> </a></li>
-				<li><a href="/agenda" rel="external"><img
-						src="{{url_for('static',filename='style/images/new.png')}}"
-						width="60" height="60" />
-						<h2>What's going on?</h2> </a></li>
-				<li><a href="/history" rel="external"><img
-						src="{{url_for('static',filename='style/images/history.png')}}"
-						width="60" height="60" />
-						<h2>History</h2> </a></li>
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                    <a href="/agenda" rel="external" class="buttonIcon">
+                        <img data-role="button" src="static/style/images/schedule.png" class="buttonIcon">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">Agenda</p>
+                </div>
+                <div class="ui-block-b">
+                    <a href="/events" rel="external"  class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/conference.png">
+                    </img>
+                    </a>
+                    <p style="text-align: center;">Events</p>
+                </div>
+                <div class="ui-block-a">
+                    <a href="/agenda" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/new.png">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">What's going on?</p>
+                </div>
+                <div class="ui-block-b">
+                    <a href="/history" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/history.png">
+                        </img>
+                    </a>
+                    <p style="text-align: center;">History</p>
+                </div>
+            </div>
 		</div>
 	</div>
 </body>

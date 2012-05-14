@@ -1,34 +1,34 @@
 <script type="text/template" id="agendaContribution">
 <li>
-    <a href="#contribution_<%=eventId%>_<%=contributionId%>_agenda" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
-    <a id="removeContribution" data-icon="delete" eventId="<%=eventId%>" dayDate="<%=dayDate%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" dayDate="<%=dayDate%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c">Remove this contribution from my agenda</a>
+    <a href="#contribution_<%=eventId%>_<%=contributionId%>_agenda" style="padding-right: 45px;" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
+    <a href="#" id="removeContribution" data-icon="delete" eventId="<%=eventId%>" dayDate="<%=dayDate%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" dayDate="<%=dayDate%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c">Remove this contribution from my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="contribution">
 <li>
-    <a href="#contribution_<%=eventId%>_<%=contributionId%>" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
-    <a id="addRemoveContribution" action="add" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c">Add this contribution to my agenda</a>
+    <a href="#contribution_<%=eventId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= title %></a>
+    <a href="#" id="addRemoveContribution" action="add" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c">Add this contribution to my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="poster">
 <li>
-    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
+    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>" style="padding-right: 45px;" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
     <a href="#" id="addRemoveSession" sessionId="<%= sessionId %>" dayDate="<%=dayDate%>" eventId="<%= eventId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c">Add this session to my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="posterInAgenda">
 <li>
-    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
+    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>" style="padding-right: 45px;" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
     <a href="#" id="addRemoveSession" sessionId="<%= sessionId %>" dayDate="<%=dayDate%>" eventId="<%= eventId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="g">Remove this session from my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="agendaPoster">
 <li>
-    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>_agenda" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
+    <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>_agenda" style="padding-right: 45px;" rel="external"><span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span><%= sessionTitle %></a>
     <a href="#" id="removeSession" sessionId="<%= sessionId %>" dayDate="<%=dayDate%>" eventId="<%= eventId %>" data-icon="delete" data-iconpos="notext" data-theme="c">Remove this session from my agenda</a>
 </li>
 </script>
@@ -165,10 +165,10 @@
 
 <script type="text/template" id="contributionInAgenda">
 <li>
-    <a href="#contribution_<%=eventId%>_<%=contributionId%>" rel="external">
+    <a href="#contribution_<%=eventId%>_<%=contributionId%>" rel="external" style="padding-right: 45px;">
         <span style="display: block; float: left; background:<%=color%>; width: 10px; height: 10px; margin-right: 10px"></span>
         <%= title %>
     </a>
-    <a id="addRemoveContribution" action="remove" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="g">Remove this contribution from my agenda</a>
+    <a href="#" id="addRemoveContribution" action="remove" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="g">Remove this contribution from my agenda</a>
 </li>
 </script>

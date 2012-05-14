@@ -202,6 +202,12 @@ var Router = Backbone.Router.extend({
                         container.data('part') != -1) {
                     contributionsView.options.create = false;
                     contributionsView.render();
+                    var term = $('#searchContrib_' + info).val();
+                    if (typeof term !== 'undefined' && term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
                 }
             });
         }
@@ -213,6 +219,12 @@ var Router = Backbone.Router.extend({
                         $(window).scrollTop() + $(window).height() >= $('#sessionDay_' + info).height()-150) {
                     container.data('view').options.create = false;
                     container.data('view').render();
+                    var term = $('#searchContrib_' + info).val();
+                    if (typeof term !== 'undefined' && term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
                 }
             });
         }
@@ -321,6 +333,12 @@ var Router = Backbone.Router.extend({
                             $(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150) {
                         timetableDayContributionsView.options.create = false;
                         timetableDayContributionsView.render();
+                        var term = $('#searchContrib_' + info).val();
+                        if (typeof term !== 'undefined' && term != '' && term != ' '){
+                            for (word in term.split(' ')){
+                                container.find('li').highlight(term.split(' ')[word]);
+                            }
+                        }
                     }
             });
         }
@@ -332,6 +350,12 @@ var Router = Backbone.Router.extend({
                             $(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150) {
                         container.data('view').options.create = false;
                         container.data('view').render();
+                        var term = $('#searchContrib_' + info).val();
+                        if (typeof term !== 'undefined' && term != '' && term != ' '){
+                            for (word in term.split(' ')){
+                                container.find('li').highlight(term.split(' ')[word]);
+                            }
+                        }
                     }
 
             });
@@ -406,6 +430,12 @@ var Router = Backbone.Router.extend({
                         $(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-150) {
                     speakersListView.options.create = false;
                     speakersListView.render();
+                    var term = $('#searchSpeaker_' + info).val();
+                    if (typeof term !== 'undefined' && term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
                 }
             });
         }
@@ -417,6 +447,12 @@ var Router = Backbone.Router.extend({
                         $(window).scrollTop() + $(window).height() >= $('#speakers_' + info).height()-150) {
                     container.data('view').options.create = false;
                     container.data('view').render();
+                    var term = $('#searchSpeaker_' + info).val();
+                    if (typeof term !== 'undefined' && term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
                 }
             });
         }
@@ -503,6 +539,16 @@ var Router = Backbone.Router.extend({
 
 $('div[data-role="page"]').live('pagebeforehide', function(e){
     $(window).off('scroll');
+});
+
+$('a[href!="#"]').live('click', function(e){
+    $.mobile.loadingMessageTextVisible = true;
+    $.mobile.loadingMessage = "Loading... Please wait.";
+    $.mobile.showPageLoadingMsg();
+});
+
+$('div[data-role="page"]').live('pageshow', function(e){
+    $.mobile.hidePageLoadingMsg();
 });
 
 $.mobile.defaultPageTransition = 'none';

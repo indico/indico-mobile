@@ -5,51 +5,29 @@
         <h1 id="headerTitle"><%=title%></h1>
     </div>
         <div data-role="content" data-theme="c">
-            <!--
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
-                    <a href="#sessions_<%= id %>" rel="external">
-                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/sessions.png">
+                    <a href="#sessions_<%= id %>" rel="external" class="buttonIcon">
+                        <img data-role="button" src="static/style/images/sessions.png" class="buttonIcon">
                         </img>
                     </a>
                     <p style="text-align: center;">Sessions</p>
                 </div>
                 <div class="ui-block-b">
-                    <a href="#timetable_<%= id %>" rel="external">
-                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/timetable.png">
+                    <a href="#timetable_<%= id %>" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/timetable.png">
                     </img>
                     </a>
                     <p style="text-align: center;">Timetable</p>
                 </div>
                 <div class="ui-block-a">
-                    <a href="#speakers_<%= id %>" rel="external">
-                        <img data-role="button" style="width: 64px; display: block; margin-left: auto; margin-right: auto;" src="static/style/images/speaker.png">
+                    <a href="#speakers_<%= id %>" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/speaker.png">
                         </img>
                     </a>
                     <p style="text-align: center;">Speakers</p>
                 </div>
             </div>
-            -->
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>" rel="external"> <img
-                        src="static/style/images/sessions.png"
-                        width="64" height="64" />
-                        <h2>Sessions</h2>
-                    </a>
-                </li>
-                <li><a href="#timetable_<%= id %>" rel="external"> <img
-                        src="static/style/images/timetable.png"
-                        width="64" height="64" />
-                        <h2>Timetable</h2>
-                    </a>
-                </li>
-                <li><a href="#speakers_<%= id %>" rel="external"> <img
-                        src="static/style/images/speaker.png"
-                        width="64" height="64" />
-                        <h2>Speakers</h2>
-                    </a>
-                </li>
-            </ul>
     </div>
   </div>
 </script>
@@ -63,49 +41,27 @@
         <div data-role="content" data-theme="c">
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
-                    <a href="#sessions_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
-                        <img data-role="button" src="static/style/images/sessions.png" style="width: 64px; height: 64px;">
+                    <a href="#sessions_<%= id %>_agenda" rel="external" class="buttonIcon">
+                        <img data-role="button" src="static/style/images/sessions.png" class="buttonIcon">
                         </img>
                     </a>
                     <p style="text-align: center;">Sessions</p>
                 </div>
                 <div class="ui-block-b">
-                    <a href="#timetable_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
-                        <img data-role="button"  style="width: 64px; height: 64px;" src="static/style/images/timetable.png">
+                    <a href="#timetable_<%= id %>_agenda" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/timetable.png">
                     </img>
                     </a>
                     <p style="text-align: center;">Timetable</p>
                 </div>
                 <div class="ui-block-a">
-                    <a href="#speakers_<%= id %>_agenda" rel="external" style="width: 64px; height: 64px; display: block; margin-left: auto; margin-right: auto;">
-                        <img data-role="button"  style="width: 64px; height: 64px;" src="static/style/images/speaker.png">
+                    <a href="#speakers_<%= id %>_agenda" rel="external" class="buttonIcon">
+                        <img data-role="button" class="buttonIcon" src="static/style/images/speaker.png">
                         </img>
                     </a>
                     <p style="text-align: center;">Speakers</p>
                 </div>
             </div>
-            <!--
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>_agenda" rel="external"> <img
-                        src="static/style/images/sessions.png"
-                        width="64" height="64" />
-                        <h2>Sessions</h2>
-                    </a>
-                </li>
-                <li><a href="#timetable_<%= id %>_agenda" rel="external"> <img
-                        src="static/style/images/timetable.png"
-                        width="64" height="64" />
-                        <h2>Timetable</h2>
-                    </a>
-                </li>
-                <li><a href="#speakers_<%= id %>_agenda" rel="external"> <img
-                        src="static/style/images/speaker.png"
-                        width="64" height="64" />
-                        <h2>Speakers</h2>
-                    </a>
-                </li>
-            </ul>
-            -->
     </div>
   </div>
 </script>

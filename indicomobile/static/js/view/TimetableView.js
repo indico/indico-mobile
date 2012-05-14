@@ -70,6 +70,12 @@ var TimetableDaysListView = Backbone.View.extend({
 
 var TimetableDayView = Backbone.View.extend({
 
+    tagName: 'div',
+
+    attributes: {
+        'data-role': 'page'
+    },
+
     initialize: function() {
         this.dayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#dayPage').html());
         this.agendaDayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#agendaDayPage').html());
@@ -79,16 +85,68 @@ var TimetableDayView = Backbone.View.extend({
         var  day = this.options.day,
         dayPageTemplate = this.dayPageTemplate,
         agendaDayPageTemplate = this.agendaDayPageTemplate,
-        agenda = this.options.agenda;
+        agenda = this.options.agenda,
+        pageView = $(this.el);
 
         if (agenda){
-            $('body').append(agendaDayPageTemplate(day.toJSON()));
+            pageView.attr('id', 'timetableDay_' + day.get('eventId') + '_' + day.get('date') + '_agenda');
+            pageView.append(agendaDayPageTemplate(day.toJSON()));
         }
         else{
-            $('body').append(dayPageTemplate(day.toJSON()));
+            pageView.attr('id', 'timetableDay_' + day.get('eventId') + '_' + day.get('date'));
+            pageView.append(dayPageTemplate(day.toJSON()));
         }
 
+        $('body').append(pageView);
+
         return this;
+    },
+
+    events: {
+        "keyup input": "searchContribution"
+    },
+
+    searchContribution: function(e){
+
+        if (e.keyCode == 13){
+            e.preventDefault();
+            var splittedId = $(e.currentTarget).attr('id').split('_');
+            var eventId = splittedId[1];
+            var dayDate = splittedId[2];
+            var term = $(e.currentTarget).val();
+
+            var results;
+            $.ajax({
+                type: "GET",
+                url: "/searchContrib/event/" + eventId + "/day/" + dayDate,
+                dataType: "json",
+                data: {
+                    search: term
+                },
+                async: true,
+                success: function(resp){
+                    results = resp;
+                    var resultContributions = new Contributions();
+                    if (typeof results.length !== "undefined"){
+                        resultContributions = new Contributions(results);
+                    }
+                    var container = $('#day_list_' + splittedId[1] + '_' + splittedId[2]);
+                    container.data('part', 0);
+                    container.data('contributions', resultContributions);
+                    container.data('lastTime', '');
+                    container.data('lastPosterTime', '');
+                    container.data('view').options.create = false;
+                    container.data('view').render();
+                    if (term != '' && term != ' '){
+                        for (word in term.split(' ')){
+                            container.find('li').highlight(term.split(' ')[word]);
+                        }
+                    }
+
+                }
+            });
+        }
+
     }
 
 });
@@ -125,9 +183,6 @@ var TimetableDayContributionsView = Backbone.View.extend({
         myAgenda = loadAgendaContributions(),
         listView = $(this.el),
         part = container.data('part');
-
-
-        console.log(contributions)
 
         contributions.comparator = function(contribution){
             return contribution.get('startDate').time;
