@@ -1,7 +1,7 @@
 <script type="text/template" id="eventPage">
 <div data-role="page" id="event_<%=id%>">
     <div data-role="header" data-theme="c">
-        <a href="#eventHome" data-icon="back">Back</a>
+        <a href="#eventHome" data-icon="back" data-iconpos="notext"></a>
         <h1 id="headerTitle"><%=title%></h1>
     </div>
         <div data-role="content" data-theme="c">
@@ -35,7 +35,7 @@
 <script type="text/template" id="agendaEventPage">
 <div data-role="page" id="event_<%=id%>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="#eventHome" data-icon="back">Back</a>
+        <a href="#eventHome" data-icon="back" data-iconpos="notext"></a>
         <h1 id="headerTitle"><%=title%></h1>
     </div>
         <div data-role="content" data-theme="c">
@@ -71,14 +71,14 @@
     <a href="#event_<%=id%>" rel="external">
         <%if (attributes.title!='') { print(attributes.title); } else { print('Event'+id); }%>
     </a>
-    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext"></a>
+    <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 
 <script type="text/template" id="eventListInAgenda">
 <li data-theme="c">
     <a data-theme="c" href="#event_<%=id%>" rel="external"><%=attributes.title%></a>
-    <a data-theme="g" data-icon="star" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext"></a>
+    <a data-theme="g" href="" data-icon="star" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 

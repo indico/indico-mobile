@@ -8,23 +8,37 @@ a .buttonIcon {
 
 .highlight { background-color: #80e0ff }
 
+.contribTitle {
+    margin-top: 40px;
+    padding: 1px;
+    box-shadow: 0px 0px 8px #aaa;
+    background-image: -o-linear-gradient(bottom, rgb(224,224,224) 14%, rgb(249,249,249) 57%);
+    background-image: -moz-linear-gradient(bottom, rgb(224,224,224) 14%, rgb(249,249,249) 57%);
+    background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0, white), color-stop(1, #E6EFF2));
+    background-image: -ms-linear-gradient(bottom, rgb(224,224,224) 14%, rgb(249,249,249) 57%);
+    text-align: center;
+}
+
+.sessionColor{
+    display: block;
+    float: left;
+    width: 10px;
+    height: 10px;
+    margin-top: 2px;
+    margin-right: 8px;
+}
+
 @media all and (min-width: 600px){
 
 	.leftSide {
 		float: left !important;
-		width: 33% !important;
+		width: 49% !important;
 	}
 	.rightSide {
-		float: right;
-		width: 65% !important;
+		float: right !important;
+		width: 49% !important;
 	}
 
-}
-
-@media all and (max-width: 600px){
-	.leftSide{
-		display: none;
-	}
 }
 
 .ui-icon-download{

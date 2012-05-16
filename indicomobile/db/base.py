@@ -13,9 +13,7 @@ class DBClass(db.Document):
     def get_list(self, field):
         res = []
         for e in self._field_values[field]:
-            print e
             if (type(e) != type(unicode())):
-                print e._field_values
                 fields = e.fields()
                 for k, v in fields.iteritems():
                     if isinstance(v, list):
@@ -29,7 +27,6 @@ class DBClass(db.Document):
         field_values = copy.copy(self._field_values)
         field_values.pop('mongo_id', None)
         if 'presenters' in field_values:
-            print field_values['presenters']
             field_values['presenters'] = self.get_list('presenters')
         if 'material' in field_values:
             field_values['material'] = self.get_list('material')

@@ -12,25 +12,55 @@ $('#eventHome').live('pagecreate', function(){
     var futureEventsView = new RecentEventsView({
         collection: futureEventsCollection,
         viewContainer: $('#futureEventList'),
-        part: 10
+        part: 0
     });
     futureEventsView.render();
+    $('#futureEventList').data('view', futureEventsView);
 
-});
+    var ongoingEvents = getOngoingEvents(0);
 
-$('#moreFutureEvents').live('click', function(){
+    var ongoingEventsCollection = new Events(ongoingEvents);
 
-    var part = parseInt($(this).attr('part'), 10);
-    var recEvents = getFutureEvents(part);
-
-    if (recEvents !== ''){
-        var recentEvents = new Events(recEvents);
-        var recentEventsView = new RecentEventsView({
-            collection: recentEvents,
-            viewContainer: $('#futureEventList'),
-            part: part
-        });
-        recentEventsView.render();
+    if (ongoingEvents === ''){
+        ongoingEventsCollection = null;
     }
 
+    var ongoingEventsView = new RecentEventsView({
+        collection: ongoingEventsCollection,
+        viewContainer: $('#ongoingEventList'),
+        part: 0
+    });
+    ongoingEventsView.render();
+    $('#ongoingEventList').data('view', ongoingEventsView);
+
 });
+
+//$('#moreFutureEvents').live('click', function(){
+//
+//    var part = parseInt($(this).attr('part'), 10);
+//    var recEvents = getFutureEvents(part);
+//    $(this).hide();
+//
+//    if (recEvents !== ''){
+//        var recentEvents = new Events(recEvents);
+//        $('#futureEventList').data('view').options.part = part;
+//        $('#futureEventList').data('view').collection = recentEvents;
+//        $('#futureEventList').data('view').render();
+//    }
+//
+//});
+//
+//$('#moreOngoingEvents').live('click', function(){
+//
+//    var part = parseInt($(this).attr('part'), 10);
+//    var recEvents = getOngoingEvents(part);
+//    $(this).hide();
+//
+//    if (recEvents !== ''){
+//        var recentEvents = new Events(recEvents);
+//        $('#ongoingEventList').data('view').options.part = part;
+//        $('#ongoingEventList').data('view').collection = recentEvents;
+//        $('#ongoingEventList').data('view').render();
+//    }
+//
+//});

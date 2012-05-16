@@ -43,7 +43,7 @@ class Material(DBClass):
 class Contribution(DBClass):
     _type = db.StringField()
     startDate = db.DateTimeField()
-    sessionSlotId = db.StringField()
+    sessionSlotId = db.AnythingField()
     contributionId = db.StringField(default='')
     endDate = db.DateTimeField()
     description = db.StringField()
@@ -56,12 +56,12 @@ class Contribution(DBClass):
     textColor = db.StringField(default='')
     duration = db.IntField(default=0)
     presenters = db.ListField(db.DocumentField('Presenter'))
-    sessionId = db.StringField()
-    sessionUniqueId = db.StringField()
+    sessionId = db.AnythingField()
+    sessionUniqueId = db.AnythingField()
     location = db.StringField()
     uniqueId = db.StringField()
     _fossil = db.StringField()
-    sessionCode = db.StringField()
+    sessionCode = db.AnythingField()
     uniqueId = db.StringField(default='')
     room = db.StringField()
     isPoster = db.BoolField(default=False)
@@ -73,7 +73,6 @@ class Session(DBClass):
     id = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
-    contributionId = db.AnythingField(default='')
     endDate = db.DateTimeField()
     color = db.StringField(default='')
     conferenceId = db.StringField()
@@ -140,8 +139,38 @@ class Event(DBClass):
 
 
 class Recent_Event(DBClass):
-    today = db.StringField()
+    today = db.DateTimeField()
     title = db.StringField()
     id = db.StringField()
     startDate = db.DateTimeField()
+    endDate = db.DateTimeField()
     part = db.AnythingField()
+
+
+class Ongoing_Event(DBClass):
+    today = db.DateTimeField()
+    title = db.StringField()
+    id = db.StringField()
+    startDate = db.DateTimeField()
+    endDate = db.DateTimeField()
+    part = db.AnythingField()
+
+
+class Ongoing_Contribution(DBClass):
+    url = db.StringField()
+    track = db.AnythingField()
+    _type = db.StringField()
+    type = db.AnythingField()
+    room = db.AnythingField()
+    contributionId = db.AnythingField()
+    eventId = db.AnythingField()
+    _fossil = db.StringField()
+    session = db.AnythingField()
+    location = db.AnythingField()
+    description = db.StringField()
+    title = db.StringField()
+    duration = db.AnythingField()
+    startDate = db.DateTimeField()
+    speakers = db.ListField(db.DocumentField('Presenter'))
+    material = db.ListField(db.DocumentField('Material'))
+    endDate = db.DateTimeField()

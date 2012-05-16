@@ -127,6 +127,22 @@ function getDay(eventId, dayDate){
 
 }
 
+function getEventDays(eventId){
+
+    var days;
+    $.ajax({
+        type: "GET",
+        url: "/event/" + eventId + "/days",
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            days = resp;
+        }
+    });
+    return new Days(days);
+
+}
+
 function getEvent(eventId){
 
     var event;
@@ -207,14 +223,49 @@ function getFutureEvents(part){
     return futureEvents;
 }
 
+function getOngoingEvents(part){
+
+    var ongoingEvents;
+    $.ajax({
+        type: "GET",
+        url: "/ongoingEvents/"+part,
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            ongoingEvents = resp;
+        }
+    });
+    return ongoingEvents;
+}
+
+function getOngoingContributions(){
+
+    var ongoingContribs;
+    $.ajax({
+        type: "GET",
+        url: "/ongoingContributions/",
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            ongoingContribs = resp;
+        }
+    });
+    return ongoingContribs;
+}
+
 function isEventInAgenda(eventId){
 
     var myAgendaSessionsNumber = loadAgendaCompleteSessions().filter(function(session){
         return session.get('eventId') == eventId;
     }).length;
 
+    var myAgendaContribsNumber = loadAgendaContributions().filter(function(contrib){
+        return contrib.get('eventId') == eventId;
+    }).length;
+
     var event = getEvent(eventId);
-    if (myAgendaSessionsNumber == event.get('numSessions') && event.get('numSessions') !== 0){
+    if (myAgendaSessionsNumber == event.get('numSessions') &&
+         myAgendaContribsNumber == event.get('numContributions') && event.get('numContributions') !== 0){
         return true;
     }
     else{

@@ -8,9 +8,12 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaCompleteSessions = loadAgendaCompleteSessions();
     var myAgendaEvents = loadAgendaEvents();
+    var myAgendaDays = loadAgendaDays();
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
     var contribution = getContribution(eventId, contributionId);
+
+    console.log(session)
 
     var contribInAgenda = myAgendaContributions.find(function(contrib){
         return contrib.get('eventId') == eventId &&
@@ -36,6 +39,15 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
         if (!sessionInAgenda){
             myAgendaSessions.add(session);
             localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
+        }
+
+        var dayInAgenda = myAgendaDays.find(function(day){
+            return day.get('date') == contribution.get('dayDate') &&
+            day.get('eventId') == eventId;
+        });
+        if (!dayInAgenda){
+            myAgendaDays.add({date: contribution.get('dayDate'), eventId: contribution.get('eventId')});
+            localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
         }
 
         var numContributionsInSession = myAgendaContributions.filter(function(contrib){
@@ -65,6 +77,7 @@ function addSessionToAgenda(eventId, sessionId) {
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaEvents = loadAgendaEvents();
+    var myAgendaDays = loadAgendaDays();
     var event = getEvent(eventId);
     var sessions = getEventSameSessions(eventId, sessionId);
 
@@ -82,6 +95,13 @@ function addSessionToAgenda(eventId, sessionId) {
         });
         if (!sessionInAgenda){
             myAgendaSessions.add(session);
+        }
+        var dayInAgenda = myAgendaDays.find(function(day){
+            return day.get('date') == session.get('dayDate') &&
+            day.get('eventId') == eventId;
+        });
+        if (!dayInAgenda){
+            myAgendaDays.add({date: session.get('dayDate'), eventId: eventId});
         }
     });
 
@@ -101,6 +121,7 @@ function addSessionToAgenda(eventId, sessionId) {
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
 
 }
 
@@ -111,6 +132,7 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
     var myAgendaCompleteSessions = loadAgendaCompleteSessions();
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaEvents = loadAgendaEvents();
+    var myAgendaDays = loadAgendaDays();
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
     var contribution = getContribution(eventId, contributionId);
@@ -122,6 +144,18 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
                 contrib.get('contributionId') == contributionId;
             })
     );
+
+    var dayInAgenda = myAgendaContributions.find(function(contrib){
+        return contrib.get('eventId') == eventId &&
+        contrib.get('dayDate') == contribution.get('dayDate');
+    });
+
+    if (!dayInAgenda){
+        myAgendaDays.remove(myAgendaDays.find(function(day){
+            return day.get('date') == contribution.get('dayDate') &&
+            day.get('eventId') == eventId;
+        }));
+    }
 
     var sessionInAgenda = myAgendaCompleteSessions.find(function(agendaSession){
         return agendaSession.get('eventId') == eventId &&
@@ -157,6 +191,7 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
 
 }
 
@@ -166,18 +201,7 @@ function removeSessionFromAgenda(eventId, sessionId) {
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaEvents = loadAgendaEvents();
-
-    while (myAgendaSessions.find(function(session){
-        return session.get('eventId') == eventId &&
-        session.get('sessionId') == sessionId;
-    })){
-        myAgendaSessions.remove(
-                myAgendaSessions.find(function(session){
-                    return session.get('eventId') == eventId &&
-                    session.get('sessionId') == sessionId;
-                })
-        );
-    }
+    var myAgendaDays = loadAgendaDays();
 
     while (myAgendaContributions.find(function(contrib){
         return contrib.get('eventId') == eventId &&
@@ -189,6 +213,30 @@ function removeSessionFromAgenda(eventId, sessionId) {
                     contrib.get('sessionId') == sessionId;
                 })
         );
+    }
+
+    while (myAgendaSessions.find(function(session){
+        return session.get('eventId') == eventId &&
+        session.get('sessionId') == sessionId;
+    })){
+        var currentSession = myAgendaSessions.find(function(session){
+            return session.get('eventId') == eventId &&
+            session.get('sessionId') == sessionId;
+        });
+        var dayInAgenda = myAgendaContributions.find(function(contrib){
+            return contrib.get('eventId') == eventId &&
+            contrib.get('dayDate') == currentSession.get('dayDate');
+        });
+
+        if (!dayInAgenda){
+            console.log('remove day')
+            myAgendaDays.remove(myAgendaDays.find(function(day){
+                return day.get('eventId') == eventId &&
+                day.get('date') == currentSession.get('dayDate');
+            }));
+        }
+
+        myAgendaSessions.remove(currentSession);
     }
 
     var eventInAgenda = myAgendaContributions.find(function(contribution){
@@ -206,6 +254,7 @@ function removeSessionFromAgenda(eventId, sessionId) {
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
 
 }
 
@@ -214,6 +263,14 @@ function removeEvent(eventId){
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaCompleteSessions = loadAgendaCompleteSessions();
+    var myAgendaDays = loadAgendaDays();
+
+    var dayInAgenda = myAgendaDays.filter(function(day){
+        return day.get('eventId') == eventId;
+    });
+    for (var i = 0; i < dayInAgenda.length; i++){
+        myAgendaDays.remove(dayInAgenda[i]);
+    }
 
     var contribInAgenda = myAgendaContributions.filter(function(contrib){
         return contrib.get('eventId') == eventId;
@@ -247,6 +304,7 @@ function removeEvent(eventId){
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
 }
 
 $('#addEventToAgenda').live('click', function(){
@@ -259,6 +317,7 @@ $('#addEventToAgenda').live('click', function(){
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaSessions = loadAgendaSessions();
     var myAgendaCompleteSessions = loadAgendaCompleteSessions();
+    var myAgendaDays = loadAgendaDays();
     var eventId = $(this).attr('eventId');
     var event = getEvent(eventId);
 
@@ -285,10 +344,25 @@ $('#addEventToAgenda').live('click', function(){
         }
     });
 
+    var allDays = getEventDays(eventId);
+    console.log(allDays)
+
+    allDays.each(function(day1){
+        console.log(day1.get('date'))
+        var dayInAgenda = myAgendaDays.find(function(day2){
+            return day1.get('eventId') == day2.get('eventId') &&
+            day1.get('date') == day2.get('date');
+        });
+        if (!dayInAgenda){
+            myAgendaDays.add(day1);
+        }
+    });
+
     localStorage.setItem('events', JSON.stringify(myAgendaEvents.toJSON()));
     localStorage.setItem('sessions', JSON.stringify(myAgendaSessions.toJSON()));
     localStorage.setItem('complete_sessions', JSON.stringify(myAgendaCompleteSessions.toJSON()));
     localStorage.setItem('contributions', JSON.stringify(myAgendaContributions.toJSON()));
+    localStorage.setItem('days', JSON.stringify(myAgendaDays.toJSON()));
 
     //css changes
     $(this).attr('id','removeEventFromAgenda');

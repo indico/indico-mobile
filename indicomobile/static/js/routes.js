@@ -71,6 +71,7 @@ var Router = Backbone.Router.extend({
             else{
                 sessions = getEventSessions(eventId);
             }
+            console.log(sessions)
 
             var listContainer = $('#sessions_list_' + info);
             var sessionsListView = new SessionsListView({
@@ -78,9 +79,6 @@ var Router = Backbone.Router.extend({
                 container: listContainer,
                 agenda: agenda
             });
-            sessionsListView.render();
-
-            sessionsListView.collection = new Slots();
             sessionsListView.render();
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -251,18 +249,19 @@ var Router = Backbone.Router.extend({
             });
             timetableDaysView.render();
 
-            var sessions;
+            var days;
             if (agenda){
-                sessions = new Slots(loadAgendaSessions().filter(function(session){
-                    return session.get('eventId') == eventId;
+                days = new Days(loadAgendaDays().filter(function(day){
+                    return day.get('eventId') == eventId;
                 }));
             }
             else{
-                sessions = getEventSessions(eventId);
+                days = getEventDays(eventId);
             }
+            console.log(days)
             var listContainer = $('#timetable_days_' + info);
             var timetableDaysListView = new TimetableDaysListView({
-                sessions: sessions,
+                days: days,
                 container: listContainer,
                 agenda: agenda
             });
@@ -541,10 +540,8 @@ $('div[data-role="page"]').live('pagebeforehide', function(e){
     $(window).off('scroll');
 });
 
-$('a[href!="#"]').live('click', function(e){
-    $.mobile.loadingMessageTextVisible = true;
-    $.mobile.loadingMessage = "Loading... Please wait.";
-    $.mobile.showPageLoadingMsg();
+$('a[rel="external"]').live('tap', function(e){
+    $.mobile.showPageLoadingMsg("a", "Loading...", true);
 });
 
 $('div[data-role="page"]').live('pageshow', function(e){

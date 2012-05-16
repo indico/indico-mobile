@@ -53,37 +53,42 @@ var SessionsListView = Backbone.View.extend({
         sessionsListInAgendaTemplate = this.sessionsListInAgendaTemplate,
         listView = $(this.el);
 
-        sessions.comparator = function(session){
-            return session.get('title');
-        };
-        sessions.sort();
+        if(sessions.size() > 0){
+            sessions.comparator = function(session){
+                return session.get('title');
+            };
+            sessions.sort();
 
-        var myAgendaSessions = loadAgendaCompleteSessions();
-        var latestTitle = "";
-        sessions.each(function(session){
-            if (latestTitle === "" || latestTitle != session.get('title')){
-                latestTitle = session.get('title');
-                if (session.get('_type') != 'BreakTimeSchEntry'){
-                    if (agenda){
-                        listView.append(agendaSessionsListTemplate(session.attributes));
-                    }
-                    else{
-                        var isSessionInAgenda = myAgendaSessions.find(function(sessionInAgenda){
-                            return sessionInAgenda.get('eventId') == session.get('eventId') &&
-                            sessionInAgenda.get('sessionId') == session.get('sessionId');
-                        });
-                        if (isSessionInAgenda){
-                            listView.append(sessionsListInAgendaTemplate(session.attributes));
+            var myAgendaSessions = loadAgendaCompleteSessions();
+            var latestTitle = "";
+            sessions.each(function(session){
+                if (latestTitle === "" || latestTitle != session.get('title')){
+                    latestTitle = session.get('title');
+                    if (session.get('_type') != 'BreakTimeSchEntry'){
+                        if (agenda){
+                            listView.append(agendaSessionsListTemplate(session.attributes));
                         }
                         else{
-                            listView.append(sessionsListTemplate(session.attributes));
+                            var isSessionInAgenda = myAgendaSessions.find(function(sessionInAgenda){
+                                return sessionInAgenda.get('eventId') == session.get('eventId') &&
+                                sessionInAgenda.get('sessionId') == session.get('sessionId');
+                            });
+                            if (isSessionInAgenda){
+                                listView.append(sessionsListInAgendaTemplate(session.attributes));
+                            }
+                            else{
+                                listView.append(sessionsListTemplate(session.attributes));
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        container.append(listView);
+            container.append(listView);
+        }
+        else{
+            container.append('<h4>There is no session in this event.</h4>')
+        }
 
         return this;
     },

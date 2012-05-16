@@ -265,9 +265,17 @@ var RecentEventsView = Backbone.View.extend({
         listView = $(this.el);
 
         if (events === null){
-            container.html('<h3>No future events for the moment.</h3>');
+            container.html('<h3>No events for the moment.</h3>');
         }
         else {
+            if(part == 0){
+                if (container.attr('id') == 'futureEventList'){
+                    container.append('<h3>Future events</h3>');
+                }
+                else{
+                    container.append('<h3>Ongoing events</h3>');
+                }
+            }
             events.comparator = function(event){
                 return String.fromCharCode.apply(String,
                         _.map(event.get('startDate').date.split(""), function (c) {
@@ -277,8 +285,6 @@ var RecentEventsView = Backbone.View.extend({
 
             };
             events.sort();
-
-            listView.empty();
 
             var dates = [];
             events.each(function(event){
@@ -313,8 +319,18 @@ var RecentEventsView = Backbone.View.extend({
                 }
 
             });
-            container.html(listView);
-            container.append('<a href="#" data-role="button" id="moreFutureEvents" part="' + (part + 10) + '">more</a>');
+            container.append(listView);
+            if (part > 0){
+                listView.listview('refresh');
+            }
+//            if (events.size() == 10){
+//                if (container.attr('id') == 'futureEventList'){
+//                container.append('<a href="#" data-role="button" id="moreFutureEvents" part="' + (part + 10) + '">more</a>');
+//                }
+//                else{
+//                    container.append('<a href="#" data-role="button" id="moreOngoingEvents" part="' + (part + 10) + '">more</a>');
+//                }
+//            }
         }
         container.trigger('create');
         return this;

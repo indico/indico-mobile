@@ -37,27 +37,23 @@ var TimetableDaysListView = Backbone.View.extend({
     },
     render: function() {
         var container = this.options.container,
-        sessions = this.options.sessions,
+        days = this.options.days,
         create = this.options.create,
         timetableDaysListTemplate = this.timetableDaysListTemplate,
         agendaTimetableDaysListTemplate = this.agendaTimetableDaysListTemplate,
         agenda = this.options.agenda;
 
-        sessions.comparator = function(session){
-            return session.get('dayDate');
+        days.comparator = function(day){
+            return day.get('date');
         };
-        sessions.sort();
-
-        var lastDay = "";
-        sessions.each(function(session) {
-            if (lastDay === "" || lastDay != session.get('dayDate')){
-                lastDay = session.get('dayDate');
-                if(agenda){
-                    container.append(agendaTimetableDaysListTemplate(session.toJSON()));
-                }
-                else{
-                    container.append(timetableDaysListTemplate(session.toJSON()));
-                }
+        days.sort();
+        console.log(days)
+        days.each(function(day) {
+            if(agenda){
+                container.append(agendaTimetableDaysListTemplate(day.toJSON()));
+            }
+            else{
+                container.append(timetableDaysListTemplate(day.toJSON()));
             }
         });
 
