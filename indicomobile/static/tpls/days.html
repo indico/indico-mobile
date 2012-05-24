@@ -1,47 +1,127 @@
 <script type="text/template" id="dayPage">
     <div data-role="header" data-theme="c">
         <a href="#timetable_<%=eventId%>" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= date %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin">
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var newDate = date.split('-');
+        print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
+        %>
+        </h3>
+    </div>
+    <div data-role="content">
         <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=date%>">
         <div id="day_list_<%=eventId%>_<%= date %>"></div>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>">Sessions</a></li>
+                <li class="ui-block-b"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=eventId%>">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=eventId%>">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>">About</a></li>
+            </ul>
+        </div>
     </div>
 </script>
 
 <script type="text/template" id="agendaDayPage">
     <div data-role="header" data-theme="c">
         <a href="#timetable_<%=eventId%>_agenda" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= date %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+    <h3 class="headerTitleMargin">
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var newDate = date.split('-');
+        print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
+        %>
+        </h3>
+    </div>
+    <div data-role="content">
         <div data-role="listview" data-inset="true" id="day_list_<%=eventId%>_<%= date %>_agenda"></div>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>_agenda">Sessions</a></li>
+                <li class="ui-block-b"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=eventId%>_agenda">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=eventId%>_agenda">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>_agenda">About</a></li>
+            </ul>
+        </div>
     </div>
 </script>
 
 <script type="text/template" id="sessionDay">
     <div data-role="header" data-theme="c">
         <a href="#session_<%=eventId%>_<%= sessionId %>" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= dayDate %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin">
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = dayDate.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %>
+        </h3>
+    </div>
+    <div data-role="content">
         <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=sessionId%>_<%=dayDate%>">
         <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></div>
         </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>">Sessions</a></li>
+                <li class="ui-block-b"><a rel="external" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=eventId%>">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=eventId%>">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>">About</a></li>
+            </ul>
+        </div>
+    </div>
 </script>
 
 <script type="text/template" id="agendaSessionDay">
     <div data-role="header" data-theme="c">
         <a href="#session_<%=eventId%>_<%= sessionId %>_agenda" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= dayDate %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin">
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = dayDate.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %>
+        </h3>
+    </div>
+    <div data-role="content">
         <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda"></div>
         </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>_agenda">Sessions</a></li>
+                <li class="ui-block-b"><a rel="external" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=eventId%>_agenda">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=eventId%>_agenda">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>_agenda">About</a></li>
+            </ul>
+        </div>
+    </div>
 </script>
 
 
@@ -49,11 +129,23 @@
 <div data-role="page" id="timetable_<%= id %>">
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= title %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin"><%= title %></h3>
+    </div>
+    <div data-role="content">
         <ul data-role="listview" data-inset="true" id="timetable_days_<%=id%>"></ul>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=id%>">Sessions</a></li>
+                <li class="ui-block-b"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=id%>">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=id%>">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 </script>
@@ -63,35 +155,79 @@
 <div data-role="page" id="timetable_<%= id %>_agenda">
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>_agenda" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3><%= title %></h3>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div data-role="content" data-theme="c">
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin"><%= title %></h3>
+    </div>
+    <div data-role="content">
         <ul data-role="listview" data-inset="true" id="timetable_days_<%=id%>_agenda"></ul>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=id%>_agenda">Sessions</a></li>
+                <li class="ui-block-b"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=id%>_agenda">Timetable</a></li>
+                <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=id%>_agenda">Speakers</a></li>
+                <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>_agenda">About</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 </script>
 
 <script type="text/template" id="timetableDaysList">
 <li id="li_<%=eventId%>_<%= date %>">
-    <a href="#timetableDay_<%=eventId%>_<%= date %>" rel="external"><%=date %></a>
+    <a href="#timetableDay_<%=eventId%>_<%= date %>" rel="external">
+    <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+    %>
+    </a>
 </li>
 </script>
 
 <script type="text/template" id="agendaTimetableDaysList">
 <li id="li_<%=eventId%>_<%= date %>_agenda">
-    <a href="#timetableDay_<%=eventId%>_<%= date %>_agenda" rel="external"><%=date %></a>
+    <a href="#timetableDay_<%=eventId%>_<%= date %>_agenda" rel="external">
+    <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+    %>
+    </a>
 </li>
 </script>
 
 <script type="text/template" id="sessionDaysList">
 <li>
-    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" rel="external"><%=dayDate %></a>
+    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" rel="external">
+    <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = dayDate.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+    %>
+    </a>
 </li>
 </script>
 
 <script type="text/template" id="agendaSessionDaysList">
 <li>
-    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" rel="external"><%=dayDate %></a>
+    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" rel="external">
+    <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = dayDate.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+    %>
+    </a>
 </li>
 </script>

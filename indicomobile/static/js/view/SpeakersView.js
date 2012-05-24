@@ -48,7 +48,7 @@ var SpeakersListView = Backbone.View.extend({
             }
             if (!end){
                 container.data('part', -1);
-                $('#loadingSpeakers_' + speakers.at(0).get('eventId')).hide();
+                $('.loader').hide();
                 container.parent().find('h3').hide();
             }
             else{
@@ -65,7 +65,7 @@ var SpeakersListView = Backbone.View.extend({
         else{
             container.data('part', -1);
             container.empty();
-            container.parent().find('img').hide();
+            container.parent().find('.loader').hide();
             if (container.parent().find('h3').length === 0){
                 container.parent().append('<h3>No speaker found.</h3>');
             }
@@ -243,14 +243,10 @@ var SpeakerContributionsView = Backbone.View.extend({
         listView = $(this.el);
 
         contributions.comparator = function(contribution){
-            return contribution.get('startDate').time;
+            return [contribution.get('startDate').time, contribution.get('startDate').date];
         };
         contributions.sort();
 
-        contributions.comparator = function(contribution){
-            return contribution.get('startDate').date;
-        };
-        contributions.sort();
         var lastDay = "";
         var lastTime = "";
         contributions.each(function(contribution){
@@ -305,13 +301,13 @@ var SpeakerContributionsView = Backbone.View.extend({
             addContributionToAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'remove');
             $(e.currentTarget).attr('title', 'Remove this session from my agenda');
-            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
         }
         else{
             removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
-            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $(e.currentTarget).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
             $('#sessions_'+eventId).remove();
         }
         $('#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate).remove();

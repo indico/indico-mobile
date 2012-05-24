@@ -30,4 +30,6 @@ class DBClass(db.Document):
             field_values['presenters'] = self.get_list('presenters')
         if 'material' in field_values:
             field_values['material'] = self.get_list('material')
+        if 'chairs' in field_values:
+            field_values['chairs'] = self.get_list('chairs')
         return field_values

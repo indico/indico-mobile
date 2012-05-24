@@ -13,6 +13,20 @@
 </li>
 </script>
 
+<script type="text/template" id="ongoingLecture">
+<li>
+    <a href="#event_<%=eventId%>" style="padding-right: 45px;" rel="external">
+        <%= title %></a>
+</li>
+</script>
+
+<script type="text/template" id="ongoingPoster">
+<li>
+    <a href="#sessions_<%= eventId %>" style="padding-right: 45px;" rel="external">
+        Poster Session</a>
+</li>
+</script>
+
 <script type="text/template" id="contribution">
 <li>
     <a href="#contribution_<%=eventId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
@@ -33,7 +47,7 @@
 <li>
     <a href="#sessionDay_<%= eventId %>_<%= sessionId %>_<%=dayDate%>" style="padding-right: 45px;" rel="external">
         <span  style="background:<%=color%>;" class="sessionColor"></span><%= sessionTitle %></a>
-    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" dayDate="<%=dayDate%>" eventId="<%= eventId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="g">Remove this session from my agenda</a>
+    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" dayDate="<%=dayDate%>" eventId="<%= eventId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="b">Remove this session from my agenda</a>
 </li>
 </script>
 
@@ -51,27 +65,35 @@
         <a href="javascript:history.go(-1)" rel="external" data-icon="back" data-iconpos="notext"></a>
         <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div class="contribTitle">
-        <h3><%=title%></h3>
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin"><%=title%></h3>
+        <%
+            if (location!=''&&room!=''){
+               print('<p>'+location+' - '+room+'</p>');
+            }
+            else if (location!=''&&room==''){
+               print('<p>'+location+'</p>');
+            }
+            else if (location==''&&room!=''){
+               print('<p>'+room+'</p>');
+            }
+        %>
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = startDate.date.split('-');
+        print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %> -
+        <%
+        var time = endDate.time.split(':');
+        print(time[0]+'h'+time[1]+'</p>');
+        %>
     </div>
     <div data-role="content">
         <h4><% if(description!=''){print('Description')} else {print('No
             description')}%></h4>
-        <p style="white-space: normal"><%= description %></p>
-        <%
-            if (location!=''&&room!=''){
-               print('<h4>Location - room</h4>');
-               print('<p>'+location+' - '+room+'</p>');
-            }
-            else if (location!=''&&room==''){
-               print('<h4>Location</h4>');
-               print('<p>'+location+'</p>');
-            }
-            else if (location==''&&room!=''){
-               print('<h4>Room</h4>');
-               print('<p>'+room+'</p>');
-            }
-        %>
+        <p style="white-space: normal; text-align: justify;"><%= description %></p>
         <%
             if (sessionTitle != ''){
                 print('<h4>Session</h4>');
@@ -123,27 +145,35 @@
         <a href="javascript:history.go(-1)" rel="external" data-icon="back" data-iconpos="notext"></a>
         <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-    <div class="contribTitle">
-        <h3><%=title%></h3>
+    <div class="headerTitle">
+        <h3 class="headerTitleMargin"><%=title%></h3>
+        <%
+            if (location!=''&&room!=''){
+               print('<p>'+location+' - '+room+'</p>');
+            }
+            else if (location!=''&&room==''){
+               print('<p>'+location+'</p>');
+            }
+            else if (location==''&&room!=''){
+               print('<p>'+room+'</p>');
+            }
+        %>
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = startDate.date.split('-');
+        print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %> -
+        <%
+        var time = endDate.time.split(':');
+        print(time[0]+'h'+time[1]+'</p>');
+        %>
     </div>
     <div data-role="content">
         <h4><% if(description!=''){print('Description')} else {print('No
             description')}%></h4>
-        <p style="white-space: normal"><%= description %></p>
-        <%
-            if (location!=''&&room!=''){
-               print('<h4>Location - room</h4>');
-               print('<p>'+location+' - '+room+'</p>');
-            }
-            else if (location!=''&&room==''){
-               print('<h4>Location</h4>');
-               print('<p>'+location+'</p>');
-            }
-            else if (location==''&&room!=''){
-               print('<h4>Room</h4>');
-               print('<p>'+room+'</p>');
-            }
-        %>
+        <p style="white-space: normal; text-align: justify;"><%= description %></p>
         <%
             if (sessionTitle != ''){
                 print('<h4>Session</h4>');
@@ -195,6 +225,6 @@
         <span style="background:<%=color%>;" class="sessionColor"></span>
         <%= title %>
     </a>
-    <a href="" id="addRemoveContribution" action="remove" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="g">Remove this contribution from my agenda</a>
+    <a href="" id="addRemoveContribution" action="remove" data-icon="star" dayDate="<%=dayDate%>" eventId="<%=eventId%>" sessionId="<%=sessionId%>" sessionUniqueId="<%=sessionUniqueId%>" contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="b">Remove this contribution from my agenda</a>
 </li>
 </script>

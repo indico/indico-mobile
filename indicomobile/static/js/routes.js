@@ -9,7 +9,8 @@ var Router = Backbone.Router.extend({
         "timetableDay_:info": "getTimetableDayView",
         "speakers_:info": "getSpeakersView",
         "speaker_:info": "getSpeakerView",
-        "contribution_:info": "getContributionView"
+        "contribution_:info": "getContributionView",
+        "about_:info": "getAboutView"
     },
 
     getEventView: function(info){
@@ -23,13 +24,31 @@ var Router = Backbone.Router.extend({
 
         addToHistory(eventId);
 
-        var event = getEvent(eventId);
+        var event;
+        if (agenda){
+            event = loadAgendaEvents().find(function(event){
+                return event.get('id') == eventId;
+            });
+        }
+        else{
+            event = getEvent(eventId);
+        }
+        console.log(event.get('type'))
+        if (event.get('type') != 'simple_event'){
 
-        var eventView = new EventView({
-            event: event,
-            agenda: agenda
-        });
-        eventView.render();
+            var eventView = new EventView({
+                event: event,
+                agenda: agenda
+            });
+            eventView.render();
+        }
+        else{
+            var simpleEventView = new SimpleEventView({
+                event: event,
+                agenda: agenda
+            });
+            simpleEventView.render();
+        }
 
         var create = false;
         if (typeof $.mobile.activePage !== "undefined"){
@@ -287,7 +306,6 @@ var Router = Backbone.Router.extend({
         }
         var eventId = infoSplitted[0];
         var dayDate = infoSplitted[1];
-        var container;
         if ($('#timetableDay_' + info).length === 0){
 
             var create = true;
@@ -310,11 +328,14 @@ var Router = Backbone.Router.extend({
             else{
                 contributions = getDayContributions(eventId, dayDate);
             }
-            container = $('#day_list_' + info);
+            console.log(contributions)
+            var container = $('#day_list_' + info);
+            console.log(container)
             container.data('part', 0);
             container.data('lastTime', '');
             container.data('lastPosterTime', '');
             container.data('contributions', contributions);
+            console.log(container.data('lastTime'))
             var timetableDayContributionsView = new TimetableDayContributionsView({
                 container: container,
                 create: create,
@@ -343,7 +364,7 @@ var Router = Backbone.Router.extend({
         }
         else {
             $.mobile.changePage('#timetableDay_' + info);
-            container = $('#day_list_' + info);
+            var container = $('#day_list_' + info);
             $(window).on('scroll', function() {
                     if($('#day_list_' + info).data('part') != -1 &&
                             $(window).scrollTop() + $(window).height() >= $('#timetableDay_' + info).height()-150) {
@@ -510,7 +531,8 @@ var Router = Backbone.Router.extend({
             agenda = true;
         }
 
-        var create = true;
+        addToHistory(infoSplitted[0]);
+
         if ($('#contribution_' + info).length === 0){
             var eventId = infoSplitted[0];
             var contributionId = infoSplitted[1];
@@ -530,6 +552,36 @@ var Router = Backbone.Router.extend({
         }
         else{
             $.mobile.changePage('#contribution_' + info);
+        }
+
+    },
+
+    getAboutView: function(info){
+
+        var eventId = info.split('_')[0];
+
+        var agenda = false;
+        if (info.split('_').length > 1){
+            agenda = true;
+        }
+
+        if ($('#about_' + info).length === 0){
+
+            var event = getEvent(eventId);
+
+            var aboutPageView = new AboutPageView({
+                event: event,
+                agenda: agenda
+            });
+            aboutPageView.render();
+
+
+            if (typeof $.mobile.activePage !== "undefined"){
+                $.mobile.changePage('#about_' + info);
+            }
+        }
+        else{
+            $.mobile.changePage('#about_' + info);
         }
 
     }

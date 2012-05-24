@@ -30,6 +30,7 @@ class Resource(DBClass):
     _fossil = db.StringField()
     _type = db.StringField()
     name = db.StringField()
+    eventId = db.AnythingField()
 
 
 class Material(DBClass):
@@ -38,6 +39,7 @@ class Material(DBClass):
     id = db.StringField()
     title = db.StringField()
     resources = db.ListField(db.DocumentField('Resource'))
+    eventId = db.AnythingField()
 
 
 class Contribution(DBClass):
@@ -136,6 +138,7 @@ class Event(DBClass):
     categoryId = db.StringField()
     numContributions = db.IntField()
     numSessions = db.IntField()
+    modificationDate = db.DateTimeField()
 
 
 class Recent_Event(DBClass):
@@ -158,19 +161,23 @@ class Ongoing_Event(DBClass):
 
 class Ongoing_Contribution(DBClass):
     url = db.StringField()
-    track = db.AnythingField()
+    track = db.AnythingField(default='')
     _type = db.StringField()
     type = db.AnythingField()
     room = db.AnythingField()
     contributionId = db.AnythingField()
     eventId = db.AnythingField()
     _fossil = db.StringField()
-    session = db.AnythingField()
+    session = db.AnythingField(default='')
     location = db.AnythingField()
     description = db.StringField()
     title = db.StringField()
-    duration = db.AnythingField()
+    duration = db.AnythingField(default=0)
     startDate = db.DateTimeField()
     speakers = db.ListField(db.DocumentField('Presenter'))
     material = db.ListField(db.DocumentField('Material'))
     endDate = db.DateTimeField()
+    category = db.AnythingField(default='')
+    categoryId = db.AnythingField(default='')
+    timezone = db.AnythingField(default='')
+    contributions = db.AnythingField(default='')

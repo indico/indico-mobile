@@ -114,7 +114,7 @@ var SessionsListView = Backbone.View.extend({
                 addSessionToAgenda(eventId, sessionId);
                 $(e.currentTarget).attr('action', 'remove');
                 $(e.currentTarget).attr('title', 'Remove this session from my agenda');
-                $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+                $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
                 $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
                 $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').attr('action', 'remove');
             }
@@ -124,8 +124,8 @@ var SessionsListView = Backbone.View.extend({
             removeSessionFromAgenda(eventId, sessionId);
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
-            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
-            $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $(e.currentTarget).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+            $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
             $('a[sessionId="'+sessionId+'"]').filter('#addRemoveContribution').attr('action', 'add');
             if (isEventInAgenda(eventId)){
                 $('#eventHome').remove();
@@ -392,7 +392,7 @@ var SessionDayContributions = Backbone.View.extend({
         }
         if (!end){
             container.data('part', -1);
-            container.parent().find('img').hide();
+            container.find('.loader').hide();
         }
         if (create){
             listView.trigger('create');
@@ -402,14 +402,14 @@ var SessionDayContributions = Backbone.View.extend({
                 container.data('part', -1);
             }
             else{
-                container.append('<img style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>');
+                container.append('<div class="loader">Loading...</div>');
             }
         }
         else{
             listView.listview('refresh');
             if (!end){
                 container.data('part', -1);
-                container.find('img').hide();
+                container.find('.loader').hide();
             }
         }
         return this;
@@ -431,13 +431,13 @@ var SessionDayContributions = Backbone.View.extend({
             addContributionToAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'remove');
             $(e.currentTarget).attr('title', 'Remove this session from my agenda');
-            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
         }
         else{
             removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
-            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $(e.currentTarget).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
         }
         $('div[id*="speaker_'+eventId+'_"]').remove();
         $('#timetableDay_'+eventId+'_'+dayDate+'_agenda').remove();

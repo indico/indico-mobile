@@ -59,7 +59,7 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
             $('#sessions_'+eventId).remove();
         }
         if (isEventInAgenda(eventId)){
-            $('a[href="#event_'+eventId+'"]').find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $('a[href="#event_'+eventId+'"]').find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
             $('a[href="#event_'+eventId+'"]').attr('id', 'removeEventFromAgenda');
         }
 
@@ -313,6 +313,7 @@ $('#addEventToAgenda').live('click', function(){
         alert('Your browser is not compatible');
     }
 
+    removeEvent($(this).attr('eventId'));
     var myAgendaEvents = loadAgendaEvents();
     var myAgendaContributions = loadAgendaContributions();
     var myAgendaSessions = loadAgendaSessions();
@@ -327,9 +328,11 @@ $('#addEventToAgenda').live('click', function(){
 
 
     var allContributions = getEventContributions(eventId);
-    allContributions.each(function(contrib){
-        myAgendaContributions.add(contrib);
-    });
+    console.log(allContributions)
+    for (var i = 0; i < allContributions.size(); i++){
+        console.log(allContributions.at(i))
+        myAgendaContributions.add(allContributions.at(i));
+    }
 
     var allSessions = getEventSessions(eventId);
 
@@ -366,7 +369,7 @@ $('#addEventToAgenda').live('click', function(){
 
     //css changes
     $(this).attr('id','removeEventFromAgenda');
-    $(this).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+    $(this).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
 
 });
 
@@ -380,6 +383,31 @@ $('#removeEventFromAgenda').live('click', function(){
 
     //css changes
     $(this).attr('id','addEventToAgenda');
-    $(this).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+    $(this).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+
+});
+
+$('#removeEvent').live('click', function(){
+
+    if(!window.localStorage) {
+        alert('Your browser is not compatible');
+    }
+
+    removeEvent($(this).attr('eventId'));
+
+    var prevElement = $(this).closest('li').prev();
+    var nextElement = $(this).closest('li').next();
+
+    if (prevElement.attr('data-role') == 'list-divider'){
+        if (nextElement.length === 0 || nextElement.attr('data-role') == 'list-divider'){
+            prevElement.remove();
+        }
+    }
+    console.log($(this).closest('ul').find('li').length);
+    if ($(this).closest('ul').find('li').length == 1){
+        $('#agendaEventList').append('<h4>There is nothing in your agenda</h4>');
+    }
+    $(this).closest('li').remove();
+
 
 });

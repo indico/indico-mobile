@@ -13,6 +13,7 @@
             <script src="{{url_for('static',filename='js/utils.js')}}"></script>
             <script src="{{url_for('static',filename='js/view/SessionsView.js')}}"></script>
             <script src="{{url_for('static',filename='js/view/TimetableView.js')}}"></script>
+            <script src="{{url_for('static',filename='js/view/AboutView.js')}}"></script>
             <script src="{{url_for('static',filename='js/view/SpeakersView.js')}}"></script>
             <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
             <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
@@ -24,11 +25,13 @@
     <body id="allpages">
         <div data-role="page" id="eventHome">
             <div data-role="header" data-theme="c">
-                <a href="/home" rel="external" data-icon="home">Home</a>
+                <a href="/home" rel="external" data-icon="home" data-iconpos="notext"></a>
                 <a href="#event_35523" rel="external" data-icon="home">CHEP 2009</a>
-                <h1>Search</h1>
             </div>
-            <div data-role="content" data-theme="c">
+            <div class="headerTitle">
+                <h3 class="headerTitleMargin">Search</h3>
+            </div>
+            <div data-role="content">
                 <input type="text" data-type="search" id="searchEvent">
                 <ul id="searchResults" data-role="listview" data-them="c" data-inset="true"></ul>
                 <img id="loadingEvents" style="display: none; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>

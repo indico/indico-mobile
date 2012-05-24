@@ -10,6 +10,7 @@ function getSpeakers(eventId){
             speakers = resp;
         }
     });
+    console.log(speakers.length)
     return new Speakers(speakers);
 
 }
@@ -155,6 +156,7 @@ function getEvent(eventId){
             event = resp;
         }
     });
+    console.log(event)
     return new Event(event);
 
 }
@@ -263,9 +265,20 @@ function isEventInAgenda(eventId){
         return contrib.get('eventId') == eventId;
     }).length;
 
-    var event = getEvent(eventId);
-    if (myAgendaSessionsNumber == event.get('numSessions') &&
+    var event = loadAgendaEvents().find(function(event){
+        return event.get('id') == eventId;
+    });
+    if (event){
+    console.log(myAgendaSessionsNumber)
+    console.log(event.get('numSessions'))
+    console.log(myAgendaContribsNumber)
+    console.log(event.get('numContributions'))
+    }
+    if (event && myAgendaSessionsNumber == event.get('numSessions') &&
          myAgendaContribsNumber == event.get('numContributions') && event.get('numContributions') !== 0){
+        return true;
+    }
+    else if (event && event.get('type') == 'simple_event'){
         return true;
     }
     else{

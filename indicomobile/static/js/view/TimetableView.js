@@ -43,20 +43,24 @@ var TimetableDaysListView = Backbone.View.extend({
         agendaTimetableDaysListTemplate = this.agendaTimetableDaysListTemplate,
         agenda = this.options.agenda;
 
-        days.comparator = function(day){
-            return day.get('date');
-        };
-        days.sort();
-        console.log(days)
-        days.each(function(day) {
-            if(agenda){
-                container.append(agendaTimetableDaysListTemplate(day.toJSON()));
-            }
-            else{
-                container.append(timetableDaysListTemplate(day.toJSON()));
-            }
-        });
-
+        if (days.size() > 0){
+            days.comparator = function(day){
+                return day.get('date');
+            };
+            days.sort();
+            console.log(days)
+            days.each(function(day) {
+                if(agenda){
+                    container.append(agendaTimetableDaysListTemplate(day.toJSON()));
+                }
+                else{
+                    container.append(timetableDaysListTemplate(day.toJSON()));
+                }
+            });
+        }
+        else{
+            container.parent().append('<h4>There is no contribution in this event.</h4>')
+        }
         container.trigger('create');
         return this;
     }
@@ -167,7 +171,6 @@ var TimetableDayContributionsView = Backbone.View.extend({
     },
     render: function() {
         var container = this.options.container,
-        contributions = container.data('contributions'),
         create = this.options.create,
         contributionTemplate = this.contributionTemplate,
         agendaContributionTemplate = this.agendaContributionTemplate,
@@ -179,6 +182,9 @@ var TimetableDayContributionsView = Backbone.View.extend({
         myAgenda = loadAgendaContributions(),
         listView = $(this.el),
         part = container.data('part');
+        var contributions = container.data('contributions');
+
+        console.log(contributions)
 
         contributions.comparator = function(contribution){
             return contribution.get('startDate').time;
@@ -259,14 +265,14 @@ var TimetableDayContributionsView = Backbone.View.extend({
                 container.data('part', -1);
             }
             else{
-                container.append('<img style="display: block; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>');
+                container.append('<div class="loader">Loading...</div>');
             }
         }
         else{
             listView.listview('refresh');
             if (!end){
                 container.data('part', -1);
-                container.find('img').hide();
+                container.find('.loader').hide();
             }
         }
         return this;
@@ -291,13 +297,13 @@ var TimetableDayContributionsView = Backbone.View.extend({
             addContributionToAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'remove');
             $(e.currentTarget).attr('title', 'Remove this session from my agenda');
-            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
         }
         else{
             removeContributionFromAgenda(eventId, sessionUniqueId, contributionId);
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
-            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $(e.currentTarget).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
             $('#sessions_'+eventId).remove();
         }
         $('#sessionDay_'+eventId+'_'+sessionId+'_'+dayDate).remove();
@@ -363,7 +369,7 @@ var TimetableDayContributionsView = Backbone.View.extend({
                                     contributions.at(contributions.size()-1).get('contributionId'));
             $(e.currentTarget).attr('action', 'remove');
             $(e.currentTarget).attr('title', 'Remove this session from my agenda');
-            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-g');
+            $(e.currentTarget).find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
         }
         else{
             for (var j = 0; j < contributions.size()-1; j++){
@@ -379,7 +385,7 @@ var TimetableDayContributionsView = Backbone.View.extend({
                                     contributions.at(contributions.size()-1).get('contributionId'));
             $(e.currentTarget).attr('action', 'add');
             $(e.currentTarget).attr('title', 'Add this session to my agenda');
-            $(e.currentTarget).find('.ui-btn-up-g').removeClass('ui-btn-up-g').addClass('ui-btn-up-c');
+            $(e.currentTarget).find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
             if (isEventInAgenda(eventId)){
                 $('#eventHome').remove();
             }

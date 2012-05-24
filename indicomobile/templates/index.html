@@ -14,37 +14,27 @@
 	<div data-role="page" id="listView">
 		<div data-role="header" data-theme="c">
 			<a href="/" data-role="button">Login</a>
-			<h1>Indico Mobile</h1>
 			<a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
 		</div>
-		<div data-role="content" data-theme="c">
+		<div class="headerTitle">
+		  <h3 class="headerTitleMargin">Indico Mobile</h3>
+		</div>
+		<div data-role="content">
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
-                    <a href="/agenda" rel="external" class="buttonIcon">
-                        <img data-role="button" src="static/style/images/schedule.png" class="buttonIcon">
-                        </img>
-                    </a>
+                    <a data-role="button" href="/agenda" rel="external" style="background-image: url(static/style/images/agenda.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">Agenda</p>
                 </div>
                 <div class="ui-block-b">
-                    <a href="/events" rel="external"  class="buttonIcon">
-                        <img data-role="button" class="buttonIcon" src="static/style/images/conference.png">
-                    </img>
-                    </a>
+                    <a data-role="button" href="/events" rel="external" style="background-image: url(static/style/images/event.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">Events</p>
                 </div>
                 <div class="ui-block-a">
-                    <a href="/now" rel="external" class="buttonIcon">
-                        <img data-role="button" class="buttonIcon" src="static/style/images/new.png">
-                        </img>
-                    </a>
-                    <p style="text-align: center;">What's going on?</p>
+                    <a data-role="button" href="/now" rel="external" style="background-image: url(static/style/images/new.png);" class="buttonIcon"></a>
+                    <p style="text-align: center;">Currently happening</p>
                 </div>
                 <div class="ui-block-b">
-                    <a href="/history" rel="external" class="buttonIcon">
-                        <img data-role="button" class="buttonIcon" src="static/style/images/history.png">
-                        </img>
-                    </a>
+                    <a data-role="button" href="/history" rel="external" style="background-image: url(static/style/images/history.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">History</p>
                 </div>
             </div>

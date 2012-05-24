@@ -26,6 +26,36 @@ var EventView = Backbone.View.extend({
 
 });
 
+var SimpleEventView = Backbone.View.extend({
+
+    initialize: function() {
+        var dayTemplates = getHTMLTemplate('events.html');
+        this.simpleEventPageTemplate = _.template($(dayTemplates).siblings('#simpleEventPage').html());
+        this.agendaSimpleEventPageTemplate = _.template($(dayTemplates).siblings('#agendaSimpleEventPage').html());
+    },
+
+    render: function(){
+        var event = this.options.event,
+        agenda = this.options.agenda,
+        simpleEventPageTemplate = this.simpleEventPageTemplate,
+        agendaSimpleEventPageTemplate = this.agendaSimpleEventPageTemplate;
+
+        console.log(event)
+
+        if (typeof event.attributes.id === "undefined"){
+            event.attributes = event.attributes[0];
+        }
+        if (agenda){
+            $('body').append(agendaSimpleEventPageTemplate(event.toJSON()));
+        }
+        else{
+            $('body').append(simpleEventPageTemplate(event.toJSON()));
+        }
+        return this;
+    }
+
+});
+
 var AgendaEventsListView = Backbone.View.extend({
 
     tagName: 'ul',
@@ -207,6 +237,8 @@ var HistoryListView = Backbone.View.extend({
         eventListInAgendaTemplate = this.eventListInAgendaTemplate,
         part = this.options.part,
         listView = $(this.el);
+
+        console.log(events)
 
         listView.empty();
         events.comparator = function(event){

@@ -3,19 +3,32 @@ $('#eventHome').live('pagecreate', function(){
     visited = false;
     var ongoingContribs = getOngoingContributions();
 
+    console.log(ongoingContribs)
+
     var ongoingContribsCollection = new Contributions(ongoingContribs);
-    console.log(ongoingContribsCollection)
 
     if (ongoingContribs.length === 0){
         ongoingContribsCollection = new Contributions();
     }
 
+    $('#contribList').data('contributions', ongoingContribsCollection);
+    $('#contribList').data('lastTime', '');
+    $('#contribList').data('part', 0);
+
     var ongoingContributionsView = new OngoingContributionsView({
-        collection: ongoingContribsCollection,
         viewContainer: $('#contribList'),
-        part: 0
+        create: true
     });
+
     ongoingContributionsView.render();
     $('#contribList').data('view', ongoingContributionsView);
+
+    $(window).on('scroll', function() {
+        if($(window).scrollTop() + $(window).height() > $('#eventHome').height()-150 &&
+                $('#contribList').data('part') != -1) {
+            ongoingContributionsView.options.create = false;
+            ongoingContributionsView.render();
+        }
+    });
 
 });
