@@ -4,24 +4,17 @@ from flaskext.mongoalchemy import MongoAlchemy
 from indicomobile.db.base import DBClass, db
 
 
-class Presenter_id():
-
-    def __init__(self):
-        self._counter = 0
-
-    def __call__(self):
-        val = self._counter
-        self._counter += 1
-        return val
-
-
 class Presenter(DBClass):
     _fossil = db.StringField()
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
+    familyName = db.StringField()
+    firstName = db.StringField()
+    name = db.StringField()
     contributionId = db.ListField(db.AnythingField())
     eventId = db.AnythingField()
+    email = db.AnythingField()
     id = db.AnythingField()
 
 
@@ -160,6 +153,7 @@ class Ongoing_Event(DBClass):
 
 
 class Ongoing_Contribution(DBClass):
+    now = db.DateTimeField()
     url = db.StringField()
     track = db.AnythingField(default='')
     _type = db.StringField()

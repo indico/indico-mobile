@@ -13,9 +13,9 @@ events = Blueprint('events', __name__, template_folder='templates')
 query_session = MongoSession.connect('library')
 
 """ allow datetime to be serialized to JSON """
-dthandler = lambda obj: {'date': obj.strftime('%Y-%m-%d'),
-                         'time': obj.strftime('%H:%M:%S'),
-                         'tz': obj.strftime('%Z')} if isinstance(obj, datetime) else None
+dthandler = lambda obj: {'date': obj.replace(tzinfo=timezone("UTC")).astimezone(timezone(current_app.config['TZ'])).strftime('%Y-%m-%d'),
+                         'time': obj.replace(tzinfo=timezone("UTC")).astimezone(timezone(current_app.config['TZ'])).strftime('%H:%M:%S'),
+                         'tz': obj.replace(tzinfo=timezone("UTC")).astimezone(timezone(current_app.config['TZ'])).strftime('%Z')} if isinstance(obj, datetime) else None
 
 
 @events.route('/event/<event_id>/days', methods=['GET'])
@@ -162,7 +162,6 @@ def addEventToDB(event_id):
 def manage_event(event, event_tt, event_id):
     number_contributions = 0
     number_sessions = 0
-    presenter_id = Presenter_id()
     for day in event_tt['results'][event_id]:
         current_day = event_tt['results'][event_id][day]
         if current_day:
@@ -175,7 +174,7 @@ def manage_event(event, event_tt, event_id):
                     manage_contributions(current_day[session], '',
                                              '', '',
                                              event_id, day_date, False,
-                                             '#000000', presenter_id)
+                                             '#000000')
                     contributions_in_day += 1
                     number_contributions += 1
                 else:
@@ -188,7 +187,7 @@ def manage_event(event, event_tt, event_id):
                                 manage_contributions(current_session['entries'][contribution], current_session['sessionId'],
                                                      current_session['id'], current_session['title'],
                                                      current_session['eventId'], day_date, current_session['isPoster'],
-                                                     current_session['color'], presenter_id)
+                                                     current_session['color'])
                                 contributions_in_day += 1
                                 contributions += 1
                                 number_contributions += 1
@@ -198,7 +197,7 @@ def manage_event(event, event_tt, event_id):
                         current_session['dayDate'] = day_date
                         convert_dates(current_session)
                         manage_material(current_session, event_id)
-                        manage_presenters(current_session, current_session['eventId'], current_session['id'], presenter_id)
+                        manage_presenters(current_session, current_session['eventId'], current_session['id'])
                         current_session['conveners'] = ''
                         db_session = Session(**current_session)
                         db_session.save()
@@ -242,10 +241,10 @@ def session_contribs_number(event_id):
                                                              'eventId': event_id}).count()
         query_session.query(Session).filter({'eventId': event_id, 'sessionId': session.sessionId}).set(Session.numContributions, contribs).multi().execute()
 
-def manage_contributions(contribution, session_id, session_unique_id, session_title, event_id, day_date, is_poster, color, presenter_id):
+def manage_contributions(contribution, session_id, session_unique_id, session_title, event_id, day_date, is_poster, color):
     convert_dates(contribution)
     manage_material(contribution, event_id)
-    manage_presenters(contribution, event_id, contribution['contributionId'], presenter_id)
+    manage_presenters(contribution, event_id, contribution['contributionId'])
     contribution['sessionId'] = session_id
     contribution['sessionUniqueId'] = session_unique_id
     contribution['sessionTitle'] = session_title
@@ -272,19 +271,20 @@ def manage_chairs(dictionary):
         dictionary['chairs'] = []
 
 
-def manage_presenters(dictionary, event_id, contribution_id, presenter_id):
+def manage_presenters(dictionary, event_id, contribution_id):
     if 'presenters' in dictionary:
         presenters = []
         presenters_dict = dictionary.pop('presenters')
         for presenter in presenters_dict:
             is_presenter_in_DB = query_session.query(Presenter).filter(Presenter.eventId == event_id,
+                                                                       Presenter.email == presenter['email'],
                                                                        Presenter.name == presenter['name'])
             if (is_presenter_in_DB.count() > 0):
                 is_presenter_in_DB.append(Presenter.contributionId, contribution_id).execute()
                 presenters.append(is_presenter_in_DB[0])
             else:
+                presenter['id'] = presenter['name'].replace(')','').replace('(','').replace(', ','').replace(' ','') + presenter['email']
                 presenter['eventId'] = event_id
-                presenter['id'] = str(presenter_id())
                 presenter['contributionId'] = [contribution_id]
                 a_presenter = Presenter(**presenter)
                 a_presenter.save()
@@ -338,7 +338,8 @@ def convert_dates(dictionary):
 def convert_date(date):
     d = datetime.combine(datetime.strptime(date['date'], "%Y-%m-%d"),
                          datetime.strptime(date['time'].split('.')[0], "%H:%M:%S").time())
-    return timezone(date['tz']).localize(d)
+    d=timezone(date['tz']).localize(d)
+    return d
 
 
 @events.route('/event/<event_id>', methods=['GET'])
@@ -495,7 +496,23 @@ def getOngoingEvents(part):
 
 @events.route('/ongoingContributions/', methods=['GET'])
 def getOngoingContributions():
-    today = datetime.now()
+    now = datetime.now()
+    event_in_DB = query_session.query(Ongoing_Contribution).filter(Ongoing_Contribution.now < DateTimeField().wrap(now - timedelta(hours=1)))
+    if event_in_DB.count() > 0:
+        print 'cache too old'
+        query_session.db.Ongoing_Contribution.drop()
+    event_in_DB = query_session.query(Ongoing_Contribution)
+    if (event_in_DB.count() > 0):
+        results = []
+        for event in event_in_DB:
+            results.append(event.fields())
+        return json.dumps(results, default=dthandler)
+    else:
+        return saveOngoingContributions()
+
+
+def saveOngoingContributions():
+    now = datetime.now()
     req = urllib2.Request(current_app.config['SERVER_URL'] +
                           '/export/categ/0.json?ak=' +
                           current_app.config['API_KEY'] +
@@ -508,13 +525,14 @@ def getOngoingContributions():
         if event['type'] == 'simple_event':
             if 'startDate' in event:
                     if event['startDate'] != None:
-                        if event['startDate']['date'] == today.strftime('%Y-%m-%d'):
-                            if today < datetime.strptime(event['startDate']['date']+'_'+event['startDate']['time'], '%Y-%m-%d_%H:%M:%S'):
+                        if event['startDate']['date'] == now.strftime('%Y-%m-%d'):
+                            if now < datetime.strptime(event['startDate']['date']+'_'+event['startDate']['time'], '%Y-%m-%d_%H:%M:%S'):
                                 convert_dates(event)
                                 event['speakers'] = []
                                 event['material'] = []
                                 event['eventId'] = event['id']
                                 event['contributionId'] = event.pop('id')
+                                event['now'] = now
                                 event.pop('chairs')
                                 event.pop('modificationDate')
                                 new_contrib = Ongoing_Contribution(**event)
@@ -524,13 +542,14 @@ def getOngoingContributions():
             for contrib in event['contributions']:
                 if 'startDate' in contrib:
                     if contrib['startDate'] != None:
-                        if contrib['startDate']['date'] == today.strftime('%Y-%m-%d'):
-                            if today < datetime.strptime(contrib['startDate']['date']+'_'+contrib['startDate']['time'], '%Y-%m-%d_%H:%M:%S'):
+                        if contrib['startDate']['date'] == now.strftime('%Y-%m-%d'):
+                            if now < datetime.strptime(contrib['startDate']['date']+'_'+contrib['startDate']['time'], '%Y-%m-%d_%H:%M:%S'):
                                 convert_dates(contrib)
                                 contrib['speakers'] = []
                                 contrib['material'] = []
                                 contrib['eventId'] = event['id']
                                 contrib['contributionId'] = contrib.pop('id')
+                                contrib['now'] = now
                                 new_contrib = Ongoing_Contribution(**contrib)
                                 new_contrib.save()
                                 contribs.append(contrib)

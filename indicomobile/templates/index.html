@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.min.css')}}" />
-<link rel="stylesheet"
-	href="{{url_for('static',filename='style/myStyle.css')}}" />
-<script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
-<script
-	src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.min.js')}}"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/style/jquery.mobile-1.1.0.min.css"/>
+    <link rel="stylesheet" href="static/style/myStyle.css" />
+    <script src="static/js/lib/jquery-1.7.2.js"></script>
+    <script src="static/js/lib/jquery.mobile-1.1.0.min.js"></script>
+    <script src="static/js/lib/underscore.js"></script>
+    <script src="static/js/lib/backbone.js"></script>
+    <script src="static/js/model/modelsForEvents.js"></script>
+    <script src="static/js/utils.js"></script>
+    <script src="static/js/loadAgenda.js"></script>
+    <script src="static/js/view/EventView.js"></script>
+    <script src="static/js/nextEvent.js"></script>
 </head>
 <body id="allpages">
-
-	<div data-role="page" id="listView">
+	<div data-role="page" id="home">
 		<div data-role="header" data-theme="c">
-			<a href="/" data-role="button">Login</a>
-			<a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-		</div>
-		<div class="headerTitle">
-		  <h3 class="headerTitleMargin">Indico Mobile</h3>
+            <a href="/" data-role="button" data-inline="true" data-mini="true">Login</a>
+            <h3>Indico Mobile</h3>
+            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 		</div>
 		<div data-role="content">
             <div class="ui-grid-a" data-inset="true">
@@ -37,6 +40,8 @@
                     <a data-role="button" href="/history" rel="external" style="background-image: url(static/style/images/history.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">History</p>
                 </div>
+            </div>
+            <div id="nextEvent" style="margin-top: 20px;">             
             </div>
 		</div>
 	</div>

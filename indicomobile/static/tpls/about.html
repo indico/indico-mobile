@@ -1,10 +1,11 @@
 <script type="text/template" id="about">
 <div data-role="header" data-theme="c">
-    <a href="#event_<%=id%>" rel="external" data-icon="back" data-iconpos="notext"></a>
-    <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    <a href="#event_<%=id%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+    <h3>Indico Mobile</h3>
+    <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
-    <h3 class="headerTitleMargin">About</h3>
+    <div class="headerElement"><h3>About</h3></div>
 </div>
 <div data-role="content">
     <% if (description != ''){
@@ -32,8 +33,14 @@
 </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
-        <ul class="ui-grid-c">
-            <li class="ui-block-a"><a data-iconpos="top" data-icon="sessions" rel="external" data-icon href="#sessions_<%=id%>">Sessions</a></li>
+                <% if (numSessions !== 0){
+                    print('<ul class="ui-grid-c">');
+                    print('<li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_' + id + '">Sessions</a></li>');
+                    }
+                    else{
+                        print('<ul class="ui-grid-b">');
+                    }
+                %>
             <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>">Timetable</a></li>
             <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>">Speakers</a></li>
             <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
@@ -44,11 +51,12 @@
 
 <script type="text/template" id="agendaAbout">
 <div data-role="header" data-theme="c">
-    <a href="#event_<%=id%>_agenda" rel="external" data-icon="back" data-iconpos="notext"></a>
-    <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    <a href="#event_<%=id%>_agenda" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+    <h3>Indico Mobile</h3>
+    <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
-<h3 class="headerTitleMargin">About</h3>
+    <div class="headerElement"><h3>About</h3></div>
 </div>
 <div data-role="content">
 <% if (description != ''){
@@ -76,8 +84,14 @@
 </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
-        <ul class="ui-grid-c">
-            <li class="ui-block-a"><a data-iconpos="top" data-icon="sessions" rel="external" data-icon href="#sessions_<%=id%>_agenda">Sessions</a></li>
+                <% if (numSessions !== 0){
+                    print('<ul class="ui-grid-c">');
+                    print('<li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_' + id + '_agenda">Sessions</a></li>');
+                    }
+                    else{
+                        print('<ul class="ui-grid-b">');
+                    }
+                %>
             <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>_agenda">Timetable</a></li>
             <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>_agenda">Speakers</a></li>
             <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>_agenda">About</a></li>

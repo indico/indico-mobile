@@ -4,22 +4,37 @@ var EventView = Backbone.View.extend({
         var dayTemplates = getHTMLTemplate('events.html');
         this.eventPageTemplate = _.template($(dayTemplates).siblings('#eventPage').html());
         this.agendaEventPageTemplate = _.template($(dayTemplates).siblings('#agendaEventPage').html());
+        this.meetingPageTemplate = _.template($(dayTemplates).siblings('#meetingPage').html());
+        this.agendaMeetingPageTemplate = _.template($(dayTemplates).siblings('#agendaMeetingPage').html());
     },
 
     render: function(){
         var event = this.options.event,
         agenda = this.options.agenda,
         eventPageTemplate = this.eventPageTemplate,
-        agendaEventPageTemplate = this.agendaEventPageTemplate;
+        agendaEventPageTemplate = this.agendaEventPageTemplate,
+        meetingPageTemplate = this.meetingPageTemplate,
+        agendaMeetingPageTemplate = this.agendaMeetingPageTemplate;
 
+        console.log(event)
         if (typeof event.attributes.id === "undefined"){
             event.attributes = event.attributes[0];
         }
         if (agenda){
-            $('body').append(agendaEventPageTemplate(event.attributes));
+            if (event.get('numSessions') === 0){
+                $('body').append(agendaMeetingPageTemplate(event.toJSON()));
+            }
+            else{
+                $('body').append(agendaEventPageTemplate(event.toJSON()));
+            }
         }
         else{
-            $('body').append(eventPageTemplate(event.attributes));
+            if (event.get('numSessions') === 0){
+                $('body').append(meetingPageTemplate(event.toJSON()));
+            }
+            else{
+                $('body').append(eventPageTemplate(event.toJSON()));
+            }
         }
         return this;
     }
@@ -40,7 +55,7 @@ var SimpleEventView = Backbone.View.extend({
         simpleEventPageTemplate = this.simpleEventPageTemplate,
         agendaSimpleEventPageTemplate = this.agendaSimpleEventPageTemplate;
 
-        console.log(event)
+        console.log(event.get('startDate'))
 
         if (typeof event.attributes.id === "undefined"){
             event.attributes = event.attributes[0];
@@ -249,8 +264,6 @@ var HistoryListView = Backbone.View.extend({
         var dates = [];
         if (events.size() > 0){
             events.each(function(event){
-                var eventInDB = getEvent(event.get('id'));
-                event.set('title', eventInDB.get('title'));
                 var date = new Date(parseInt(event.get('viewedAt'), 10));
                 listView.append('<li data-role="list-divider">' + date + '</li>');
                 if (isEventInAgenda(event.get('id'))){
@@ -367,5 +380,48 @@ var RecentEventsView = Backbone.View.extend({
         container.trigger('create');
         return this;
     }
+
+});
+
+var NextEventView = Backbone.View.extend({
+
+    tagName: 'ul',
+
+    attributes: {
+        'data-role': 'listview'
+    },
+
+    initialize: function(){
+    },
+
+    render: function(){
+        var container = this.options.container,
+        contrib = this.options.contrib,
+        listView = $(this.el);
+
+        if(typeof contrib.get('id') !== 'undefined'){
+            listView.append('<li><a class="nextEvent" rel="external" href="/events#event_'+contrib.get('id')+
+                            '_agenda"><h3>Your next event:<br>'+contrib.get('title')+'</h3><p>'+
+                            contrib.get('startDate').date+'<br>'+
+                            contrib.get('startDate').time+'</p></a></li>');
+
+        }
+        else{
+            var events = loadAgendaEvents();
+            var event = events.find(function(event){
+                return event.get('id') == contrib.get('eventId');
+            });
+            listView.append('<li><a class="nextEvent" rel="external" href="/events#contribution_'+contrib.get('eventId')+'_'+contrib.get('contributionId')+
+                            '_agenda"><h3>Your next event:<br>'+contrib.get('title')+'</h3><p>'+
+                            event.get('title')+'<br>'+
+                            contrib.get('startDate').date+'<br>'+
+                            contrib.get('startDate').time+'</p></a></li>');
+        }
+
+        container.append(listView);
+        container.trigger('create');
+        return this;
+    }
+
 
 });

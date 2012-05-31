@@ -48,7 +48,6 @@ var TimetableDaysListView = Backbone.View.extend({
                 return day.get('date');
             };
             days.sort();
-            console.log(days)
             days.each(function(day) {
                 if(agenda){
                     container.append(agendaTimetableDaysListTemplate(day.toJSON()));
@@ -59,7 +58,7 @@ var TimetableDaysListView = Backbone.View.extend({
             });
         }
         else{
-            container.parent().append('<h4>There is no contribution in this event.</h4>')
+            container.parent().append('<div class="notimetable"><h4>There is no contribution in this event.</h4></div>')
         }
         container.trigger('create');
         return this;
@@ -77,24 +76,32 @@ var TimetableDayView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.dayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#dayPage').html());
-        this.agendaDayPageTemplate = _.template($(getHTMLTemplate('days.html')).siblings('#agendaDayPage').html());
+        var daysTemplate = $(getHTMLTemplate('days.html'));
+        this.dayPageTemplate = _.template(daysTemplate.siblings('#dayPage').html());
+        this.agendaDayPageTemplate = _.template(daysTemplate.siblings('#agendaDayPage').html());
+        this.dayFooterPageTemplate = _.template(daysTemplate.siblings('#dayFooterPage').html());
+        this.agendaDayFooterPageTemplate = _.template(daysTemplate.siblings('#agendaDayFooterPage').html());
     },
 
     render: function() {
         var  day = this.options.day,
+        event = this.options.event,
         dayPageTemplate = this.dayPageTemplate,
         agendaDayPageTemplate = this.agendaDayPageTemplate,
+        dayFooterPageTemplate = this.dayFooterPageTemplate,
+        agendaDayFooterPageTemplate = this.agendaDayFooterPageTemplate,
         agenda = this.options.agenda,
         pageView = $(this.el);
 
         if (agenda){
             pageView.attr('id', 'timetableDay_' + day.get('eventId') + '_' + day.get('date') + '_agenda');
             pageView.append(agendaDayPageTemplate(day.toJSON()));
+            pageView.append(agendaDayFooterPageTemplate(event.toJSON()));
         }
         else{
             pageView.attr('id', 'timetableDay_' + day.get('eventId') + '_' + day.get('date'));
             pageView.append(dayPageTemplate(day.toJSON()));
+            pageView.append(dayFooterPageTemplate(event.toJSON()));
         }
 
         $('body').append(pageView);
@@ -447,23 +454,44 @@ var TimetableDayContributionsView = Backbone.View.extend({
 
 var ContributionPageView = Backbone.View.extend({
 
+    tagName: 'div',
+
+    attributes: {
+        'data-role': 'page'
+    },
+
     initialize: function() {
         var contributionsTemplates = getHTMLTemplate('contributions.html');
         this.contributionTemplate = _.template($(contributionsTemplates).siblings('#contributionDetail').html());
         this.agendaContributionTemplate = _.template($(contributionsTemplates).siblings('#agendaContributionDetail').html());
+        this.contributionFooterTemplate = _.template($(contributionsTemplates).siblings('#contributionFooter').html());
+        this.agendaContributionFooterTemplate = _.template($(contributionsTemplates).siblings('#agendaContributionFooter').html());
     },
     render: function() {
 
         var contribution = this.options.contribution,
-        agenda = this.options.agenda;
+        agenda = this.options.agenda
+        page = $(this.el);
+
+
+        var event = getEvent(contribution.get('eventId'));
+
+        console.log(contribution)
 
         if (agenda){
-            $('body').append(this.agendaContributionTemplate(contribution.toJSON()));
+            page.attr('id', 'contribution_'+contribution.get('eventId')+
+                '_'+contribution.get('contributionId')+'_agenda');
+            page.append(this.agendaContributionTemplate(contribution.toJSON()));
+            page.append(this.agendaContributionFooterTemplate(event.toJSON()));
         }
         else{
-            $('body').append(this.contributionTemplate(contribution.toJSON()));
+            page.attr('id', 'contribution_'+contribution.get('eventId')+
+                '_'+contribution.get('contributionId'));
+            page.append(this.contributionTemplate(contribution.toJSON()));
+            page.append(this.contributionFooterTemplate(event.toJSON()));
         }
 
+        $('body').append(page);
         return this;
     }
 

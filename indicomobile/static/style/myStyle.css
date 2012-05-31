@@ -15,7 +15,41 @@
     font-weight: bold;
 }
 
+.nextEvent {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    text-align: center;
+}
+
 .highlight { background-color: #80e0ff }
+
+.nouser {
+    background-image: url(images/nouser.png);
+    min-width: 250px;
+    min-height: 250px;
+    background-size: 200px 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+    vertical-align: bottom;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notimetable {
+    background-image: url(images/notimetable.png);
+    min-width: 250px;
+    min-height: 250px;
+    background-size: 200px 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+    vertical-align: bottom;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .loader {
     display: block;
@@ -24,12 +58,9 @@
     text-align: center;
 }
 
-.headerTitleMargin {
-    margin-left: 25px;
-    margin-right: 25px;
-}
-
 .headerTitle {
+    display: table;
+    width: 100%;
     -moz-box-shadow: 0px 0px 8px #aaa;
     -webkit-box-shadow: 0px 0px 8px #aaa;
     box-shadow: 0px 0px 8px #aaa;
@@ -39,6 +70,11 @@
     background-image: -ms-linear-gradient(bottom, rgb(224,224,224) 14%, rgb(249,249,249) 57%);
     text-align: center;
     padding: 1px;
+}
+
+.headerElement {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .ui-footer {

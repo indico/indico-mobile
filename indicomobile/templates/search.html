@@ -2,34 +2,33 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.min.css')}}" />
-            <link rel="stylesheet" href="{{url_for('static',filename='style/myStyle.css')}}" />
-            <script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
-            <script src="{{url_for('static',filename='js/lib/jquery.highlight-3.js')}}"></script>
-            <script src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.min.js')}}"></script>
-            <script src="{{url_for('static',filename='js/lib/underscore.js')}}"></script>
-            <script src="{{url_for('static',filename='js/lib/backbone.js')}}"></script>
-            <script src="{{url_for('static',filename='js/model/modelsForEvents.js')}}"></script>
-            <script src="{{url_for('static',filename='js/utils.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/SessionsView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/TimetableView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/AboutView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/SpeakersView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
-            <script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
-            <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
-            <script src="{{url_for('static',filename='js/editAgenda.js')}}"></script>
-            <script src="{{url_for('static',filename='js/searchEvents.js')}}"></script>
+            <link rel="stylesheet" href="static/style/jquery.mobile-1.1.0.min.css" />
+            <link rel="stylesheet" href="static/style/myStyle.css" />
+            <script src="static/js/lib/jquery-1.7.2.js"></script>
+            <script src="static/js/lib/jquery.highlight-3.js"></script>
+            <script src="static/js/lib/jquery.mobile-1.1.0.min.js"></script>
+            <script src="static/js/lib/underscore.js"></script>
+            <script src="static/js/lib/backbone.js"></script>
+            <script src="static/js/model/modelsForEvents.js"></script>
+            <script src="static/js/utils.js"></script>
+            <script src="static/js/view/SessionsView.js"></script>
+            <script src="static/js/view/TimetableView.js"></script>
+            <script src="static/js/view/AboutView.js"></script>
+            <script src="static/js/view/SpeakersView.js"></script>
+            <script src="static/js/view/EventView.js"></script>
+            <script src="static/js/getFromDB.js"></script>
+            <script src="static/js/loadAgenda.js"></script>
+            <script src="static/js/editAgenda.js"></script>
+            <script src="static/js/searchEvents.js"></script>
     </head>
     <body id="allpages">
         <div data-role="page" id="eventHome">
             <div data-role="header" data-theme="c">
-                <a href="/home" rel="external" data-icon="home" data-iconpos="notext"></a>
-                <a href="#event_35523" rel="external" data-icon="home">CHEP 2009</a>
+                <a href="/home" data-role="button" data-icon="home" rel="external" data-iconpos="notext"></a>
+                <h3>Indico mobile</h3>
             </div>
             <div class="headerTitle">
-                <h3 class="headerTitleMargin">Search</h3>
+                <div class="headerElement"><h3>Search</h3></div>
             </div>
             <div data-role="content">
                 <input type="text" data-type="search" id="searchEvent">
@@ -37,6 +36,6 @@
                 <img id="loadingEvents" style="display: none; margin: 0 auto; margin-top: 20px; width: 5%;" src="static/style/images/loading.gif"></img>
             </div>
         </div>
-        <script src="{{url_for('static',filename='js/routes.js')}}"></script>
+        <script src="static/js/routes.js"></script>
     </body>
 </html>

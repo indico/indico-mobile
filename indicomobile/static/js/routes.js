@@ -1,3 +1,35 @@
+function addToHistory(eventId){
+
+  var myHistory = loadHistory();
+  myHistory.comparator = function(event){
+      return parseInt(event.get('viewedAt'), 10);
+  };
+  myHistory.sort();
+
+  var now = new Date();
+  var event = new Event({'id': eventId, 'viewedAt': now.getTime(), 'title': getEvent(eventId).get('title')});
+
+  var eventInHistory = myHistory.find(function(currentEvent){
+      return currentEvent.get('id') == eventId;
+  });
+  if (eventInHistory){
+      myHistory.remove(eventInHistory);
+      eventInHistory.set('viewedAt', now.getTime());
+      myHistory.add(eventInHistory);
+  }
+  else{
+      if (myHistory.size() >= 10){
+          myHistory.remove(myHistory.at(0));
+          myHistory.add(event);
+      }
+      else{
+          myHistory.add(event);
+      }
+  }
+  localStorage.setItem('myHistory', JSON.stringify(myHistory.toJSON()));
+
+}
+
 var Router = Backbone.Router.extend({
 
     routes: {
@@ -33,7 +65,6 @@ var Router = Backbone.Router.extend({
         else{
             event = getEvent(eventId);
         }
-        console.log(event.get('type'))
         if (event.get('type') != 'simple_event'){
 
             var eventView = new EventView({
@@ -311,9 +342,11 @@ var Router = Backbone.Router.extend({
             var create = true;
 
             var day = getDay(eventId, dayDate);
+            var event = getEvent(eventId);
             var pageContainer = $('body');
             var timetableDayView = new TimetableDayView({
                 day: day,
+                event: event,
                 container: pageContainer,
                 agenda: agenda
             });
@@ -407,7 +440,7 @@ var Router = Backbone.Router.extend({
                     var currentSpeakers = contrib.get('presenters');
                     for (var i = 0; i < currentSpeakers.length; i++){
                         var speakerAlreadyIn = speakers.find(function(speaker){
-                            return speaker.get('id') == currentSpeakers[i].id;
+                            return speaker.get('email') == currentSpeakers[i].email;
                         });
                         if (!speakerAlreadyIn){
                             speakers.add(currentSpeakers[i]);
@@ -487,25 +520,27 @@ var Router = Backbone.Router.extend({
             agenda = true;
         }
 
-        if ($('#speaker_' + info).length === 0){
+        if ($('div[id="speaker_' + info +'"]').length === 0){
 
             var create = true;
 
             var eventId = infoSplitted[0];
-            var speakerId = infoSplitted[1];
+            var speakerId = infoSplitted[1].replace(':','_');
 
             var speaker = getSpeaker(eventId, speakerId);
 
+            var event = getEvent(eventId);
+
             var speakerPageView = new SpeakerPageView({
                 speaker: speaker,
+                event: event,
                 agenda: agenda
             });
             speakerPageView.render();
 
             var contributions = getSpeakerContributions(eventId, speakerId);
-
             var speakerContributionsView = new SpeakerContributionsView({
-                container: $('#speaker_contribs_' + info),
+                container: $('div[id="speaker_contribs_' + info +'"]'),
                 contributions: contributions,
                 agenda: agenda,
                 create: create
@@ -514,11 +549,11 @@ var Router = Backbone.Router.extend({
 
 
             if (typeof $.mobile.activePage !== "undefined"){
-                $.mobile.changePage('#speaker_' + info);
+                $.mobile.changePage($('div[id="speaker_' + info +'"]'));
             }
         }
         else{
-            $.mobile.changePage('#speaker_' + info);
+            $.mobile.changePage($('div[id="speaker_' + info +'"]'));
         }
     },
 

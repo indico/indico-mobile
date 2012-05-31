@@ -156,9 +156,7 @@ function getEvent(eventId){
             event = resp;
         }
     });
-    console.log(event)
     return new Event(event);
-
 }
 
 function getSession(eventId, sessionId){

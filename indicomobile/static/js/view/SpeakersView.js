@@ -49,11 +49,10 @@ var SpeakersListView = Backbone.View.extend({
             if (!end){
                 container.data('part', -1);
                 $('.loader').hide();
-                container.parent().find('h3').hide();
+                container.parent().find('.nouser').hide();
             }
             else{
-                container.parent().find('img').show();
-                container.parent().find('h3').hide();
+                container.parent().find('.nouser').hide();
             }
             if (!create){
                 container.listview('refresh');
@@ -66,11 +65,11 @@ var SpeakersListView = Backbone.View.extend({
             container.data('part', -1);
             container.empty();
             container.parent().find('.loader').hide();
-            if (container.parent().find('h3').length === 0){
-                container.parent().append('<h3>No speaker found.</h3>');
+            if (container.parent().find('.nouser').length === 0){
+                container.parent().append('<div class="nouser"><h3>No speaker found.</h3></div>');
             }
             else{
-                container.parent().find('h3').show();
+                container.parent().find('.nouser').show();
             }
         }
 
@@ -185,14 +184,20 @@ var SpeakerPageView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.speakerPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakerPage').html());
-        this.agendaSpeakerPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakerPage').html());
+        var speakersTemplate = $(getHTMLTemplate('speakers.html'));
+        this.speakerPageTemplate = _.template(speakersTemplate.siblings('#speakerPage').html());
+        this.agendaSpeakerPageTemplate = _.template(speakersTemplate.siblings('#agendaSpeakerPage').html());
+        this.speakerFooterPageTemplate = _.template(speakersTemplate.siblings('#speakerFooterPage').html());
+        this.agendaSpeakerFooterPageTemplate = _.template(speakersTemplate.siblings('#agendaSpeakerFooterPage').html());
     },
 
     render: function() {
         var  speaker = this.options.speaker,
+        event = this.options.event,
         speakerPageTemplate = this.speakerPageTemplate,
         agendaSpeakerPageTemplate = this.agendaSpeakerPageTemplate,
+        speakerFooterPageTemplate = this.speakerFooterPageTemplate,
+        agendaSpeakerFooterPageTemplate = this.agendaSpeakerFooterPageTemplate,
         agenda = this.options.agenda,
         pageView = $(this.el);
 
@@ -201,12 +206,14 @@ var SpeakerPageView = Backbone.View.extend({
         }
 
         if (agenda){
-            pageView.attr('id', 'speaker_'+ speaker.get('eventId') + '_' + speaker.get('id') + '_agenda');
-            pageView.append(agendaSpeakerPageTemplate(speaker.attributes));
+            pageView.attr('id', 'speaker_'+ speaker.get('eventId') + '_' + speaker.get('id').replace('_',':') + '_agenda');
+            pageView.append(agendaSpeakerPageTemplate(speaker.toJSON()));
+            pageView.append(agendaSpeakerFooterPageTemplate(event.toJSON()));
         }
         else{
-            pageView.attr('id', 'speaker_'+ speaker.get('eventId') + '_' + speaker.get('id'));
-            pageView.append(speakerPageTemplate(speaker.attributes));
+            pageView.attr('id', 'speaker_'+ speaker.get('eventId') + '_' + speaker.get('id').replace('_',':'));
+            pageView.append(speakerPageTemplate(speaker.toJSON()));
+            pageView.append(speakerFooterPageTemplate(event.toJSON()));
         }
 
         pageView.trigger('create');
@@ -241,6 +248,8 @@ var SpeakerContributionsView = Backbone.View.extend({
         create = this.options.create,
         myAgenda = loadAgendaContributions(),
         listView = $(this.el);
+
+        console.log(contributions)
 
         contributions.comparator = function(contribution){
             return [contribution.get('startDate').time, contribution.get('startDate').date];
