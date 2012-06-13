@@ -433,7 +433,7 @@ myAgenda.getInstance = function() {
     return this.instance;
 }
 
-$('a[rel="external"]').live('tap', function(e){
+$('a[rel="external"]').live('click', function(e){
     $.mobile.showPageLoadingMsg("a", "Loading...", true);
 });
 

@@ -15,6 +15,7 @@ from indicomobile.util.date_time import dt_from_indico
 
 
 events = Blueprint('events', __name__, template_folder='templates')
+query_session = MongoSession.connect('library')
 
 
 def get_event_info(event_id):
@@ -201,9 +202,10 @@ def eventInfo(event_id):
     return json.dumps(event_db.fields())
 
 
-@events.route('/searchEvent', methods=['GET'])
+@events.route('/searchEvent/', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
     url = current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
           '.json?ak=' + \
@@ -211,7 +213,13 @@ def search_event():
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
-    return json.dumps(json.load(f)['results'])
+    results = json.load(f)['results']
+    results= sorted(results,
+                    key=lambda k: datetime.combine(datetime.strptime(k['startDate']['date'], "%Y-%m-%d"),
+                         datetime.strptime(k['startDate']['time'], "%H:%M:%S").time()))
+    results.reverse()
+    first_element = (pageNumber-1)*20
+    return json.dumps(results[first_element:first_element+20])
 
 
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
@@ -239,6 +247,8 @@ def search_speaker(event_id):
 @events.route('/searchContrib/event/<event_id>/day/<day_date>', methods=['GET'])
 def search_contrib(event_id, day_date):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
