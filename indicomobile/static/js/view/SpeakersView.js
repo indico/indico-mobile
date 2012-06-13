@@ -1,69 +1,84 @@
 var SpeakersListView = Backbone.View.extend({
 
+    tagName: 'ul',
+
+    attributes: {
+        'data-role': 'listview',
+        'data-inset': 'true'
+    },
+
     initialize: function(){
-        if (this.options.agenda){
-            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersList').html());
+        this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersList').html());
+        this.collection.url = this.options.url;
+        this.collection.on("reset", this.render, this);
+        this.collection.on("hasChanged", this.appendRender, this);
+        this.collection.fetch();
+        },
+
+    appendRender: function(newitems){
+        var self = this,
+        container = $(this.options.container),
+        speakersListTemplate = this.speakersListTemplate,
+        listView = $(this.el),
+        term = this.options.term;
+        if (newitems[0].length > 0){
+            _.each(newitems[0], function(element){
+            if (container.data('firstLetter') == '' ||
+                    container.data('firstLetter') != element.name[0]){
+                    container.data('firstLetter',element.name[0]);
+                    listView.append('<li data-role="list-divider">'+element.name[0]+'</li>');
+            }
+            listView.append(speakersListTemplate(element));
+            });
+            listView.listview('refresh');
+
+            if (term != '' && term != ' ' && typeof term !== 'undefined'){
+                for (word in term.split(' ')){
+                    container.find('li').highlight(term.split(' ')[word]);
+                }
+            }
         }
         else{
-            this.speakersListTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersList').html());
+            container.parent().find('.loader').hide();
         }
+
     },
 
     render: function(){
 
         var speakers = this.collection,
-        container = this.options.container,
+        container = $(this.options.container),
         speakersListTemplate = this.speakersListTemplate,
-        create = this.options.create;
+        create = this.options.create,
+        eventId = this.options.eventId,
+        listView = $(this.el),
+        term = this.options.term;
 
-        if (speakers.size() > 0){
+        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+          success: function(collection, changed) {
+              collection.trigger('hasChanged', [changed]);
+          },
+          includePage : true});
+        this.infiniScroll.enableFetch();
+
+        if (typeof speakers.at(0) !== 'undefined' && typeof speakers.at(0).id !== 'undefined'){
             if (container.data('part') === 0){
                 container.empty();
             }
             var end = false;
-
-            speakers.comparator = function(speaker){
-                return speaker.get('name');
-            };
-            speakers.sort();
-            for (var i = container.data('part'); i < speakers.size() && !end; i++) {
-
-                if (i < container.data('part') + screen.height/50){
-
-                    if (container.data('firstLetter') === ""){
-                        container.data('firstLetter', speakers.at(i).get('name')[0]);
-                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
-                    }
-                    else if(container.data('firstLetter') != speakers.at(i).get('name')[0]){
-                        container.data('firstLetter', speakers.at(i).get('name')[0]);
-                        container.append('<li data-role="list-divider">' + container.data('firstLetter') + '</li>');
-                    }
-                    container.append(speakersListTemplate(speakers.at(i).toJSON()));
+            speakers.each(function(element){
+                if (container.data('firstLetter') == '' ||
+                    container.data('firstLetter') != element.get('name')[0]){
+                    container.data('firstLetter',element.get('name')[0]);
+                    listView.append('<li data-role="list-divider">'+element.get('name')[0]+'</li>');
                 }
-                else{
-                    container.data('part', i);
-                    end = true;
-                }
-
-            }
-            if (!end){
-                container.data('part', -1);
-                $('.loader').hide();
-                container.parent().find('.nouser').hide();
-            }
-            else{
-                container.parent().find('.nouser').hide();
-            }
-            if (!create){
-                container.listview('refresh');
-            }
-            else{
-                container.trigger('create');
-            }
+                listView.append(speakersListTemplate(element.toJSON()));
+            });
+            container.append(listView);
+            container.parent().find('.nouser').hide();
+            container.trigger('create');
         }
         else{
-            container.data('part', -1);
-            container.empty();
             container.parent().find('.loader').hide();
             if (container.parent().find('.nouser').length === 0){
                 container.parent().append('<div class="nouser"><h3>No speaker found.</h3></div>');
@@ -71,8 +86,13 @@ var SpeakersListView = Backbone.View.extend({
             else{
                 container.parent().find('.nouser').show();
             }
+            container.trigger('create');
         }
-
+        if (term != '' && term != ' ' && typeof term !== 'undefined'){
+            for (word in term.split(' ')){
+                container.find('li').highlight(term.split(' ')[word]);
+            }
+        }
         return this;
     }
 
@@ -89,28 +109,28 @@ var SpeakersPageView = Backbone.View.extend({
     initialize: function() {
         this.speakersPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#speakersPage').html());
         this.agendaSpeakersPageTemplate = _.template($(getHTMLTemplate('speakers.html')).siblings('#agendaSpeakersPage').html());
+        this.model.url = this.options.url;
+        this.model.on('change', this.render, this);
+        this.model.fetch();
     },
 
     render: function() {
-        var  event = this.options.event,
+        var  event = this.options.model,
         speakersPageTemplate = this.speakersPageTemplate,
         agendaSpeakersPageTemplate = this.agendaSpeakersPageTemplate,
         agenda = this.options.agenda,
+        page = this.options.page,
         pageView = $(this.el);
-        if (typeof event.attributes.id === "undefined"){
-            event.attributes = event.attributes[0];
-        }
 
-        if (agenda){
-            pageView.attr('id', 'speakers_' + event.get('id') + '_agenda');
-            pageView.append(agendaSpeakersPageTemplate(event.toJSON()));
-        }
-        else{
-            pageView.attr('id', 'speakers_' + event.get('id'));
-            pageView.append(speakersPageTemplate(event.toJSON()));
-        }
+        pageView.attr('id', 'speakers_' + event.get('id'));
+        pageView.append(speakersPageTemplate(event.toJSON()));
+
         pageView.trigger('create');
+
         $('body').append(pageView);
+
+        $.mobile.changePage(page);
+
         return this;
     },
 
@@ -129,44 +149,15 @@ var SpeakersPageView = Backbone.View.extend({
                 agenda = true;
             }
             var term = $(e.currentTarget).val();
-
-            var results;
-            $.ajax({
-                type: "GET",
-                url: "/searchSpeaker/" + eventId,
-                dataType: "json",
-                data: {
-                    search: term
-                },
-                async: true,
-                success: function(resp){
-                    results = resp;
-                    var resultSpeakers = new Speakers();
-                    if (typeof results.length !== "undefined"){
-                        resultSpeakers = new Speakers(results);
-                    }
-                    var container = $('#speakers_list_' + splittedId[1]);
-                    if (agenda){
-                        container = $('#speakers_list_' + splittedId[1] + '_' + splittedId[2]);
-                    }
-                    container.data('part', 0);
-                    container.data('firstLetter', '');
-                    container.data('speakers', resultSpeakers);
-                    var speakersListView = new SpeakersListView({
-                        collection: resultSpeakers,
-                        agenda: agenda,
-                        create: false,
-                        container: container
-                    });
-                    speakersListView.render();
-
-                    if (term != '' && term != ' '){
-                        for (word in term.split(' ')){
-                            container.find('li').highlight(term.split(' ')[word]);
-                        }
-                    }
-
-                }
+            var container = $('#speakersContent_' + splittedId[1]);
+            container.data('firstLetter', '');
+            container.empty();
+            var speakersListView = new SpeakersListView({
+                collection: new Speakers(),
+                url: '/searchSpeaker/'+eventId+'?search='+term,
+                eventId: eventId,
+                container: '#speakersContent_' + splittedId[1],
+                term: term
             });
         }
 
@@ -189,6 +180,11 @@ var SpeakerPageView = Backbone.View.extend({
         this.agendaSpeakerPageTemplate = _.template(speakersTemplate.siblings('#agendaSpeakerPage').html());
         this.speakerFooterPageTemplate = _.template(speakersTemplate.siblings('#speakerFooterPage').html());
         this.agendaSpeakerFooterPageTemplate = _.template(speakersTemplate.siblings('#agendaSpeakerFooterPage').html());
+        this.options.speaker.url = this.options.speakerUrl;
+        this.options.event.url = this.options.eventUrl;
+        this.options.speaker.on("change", this.render, this);
+        this.options.event.fetch();
+        this.options.speaker.fetch();
     },
 
     render: function() {
@@ -199,7 +195,10 @@ var SpeakerPageView = Backbone.View.extend({
         speakerFooterPageTemplate = this.speakerFooterPageTemplate,
         agendaSpeakerFooterPageTemplate = this.agendaSpeakerFooterPageTemplate,
         agenda = this.options.agenda,
+        page = this.options.page,
         pageView = $(this.el);
+
+        console.log(speaker)
 
         if (typeof speaker.attributes.id === "undefined"){
             speaker.attributes = speaker.attributes[0];
@@ -218,6 +217,9 @@ var SpeakerPageView = Backbone.View.extend({
 
         pageView.trigger('create');
         $('body').append(pageView);
+
+        $.mobile.changePage($(page))
+
         return this;
     }
 
@@ -236,25 +238,24 @@ var SpeakerContributionsView = Backbone.View.extend({
         this.contributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#contribution').html());
         this.agendaContributionTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#agendaContribution').html());
         this.contributionInAgendaTemplate = _.template($(getHTMLTemplate('contributions.html')).siblings('#contributionInAgenda').html());
+        this.collection.url = this.options.url;
+        this.collection.on("reset", this.render, this);
+        this.collection.on("hasChanged",this.appendRender, this);
+        this.collection.fetch();
     },
 
     render: function(){
-        var contributions = this.options.contributions,
-        container = this.options.container,
+        var contributions = this.collection,
+        container = $(this.options.container),
         contributionTemplate = this.contributionTemplate,
         agendaContributionTemplate = this.agendaContributionTemplate,
         contributionInAgendaTemplate = this.contributionInAgendaTemplate,
         agenda = this.options.agenda,
         create = this.options.create,
-        myAgenda = loadAgendaContributions(),
+        myContributions = myAgenda.getInstance().contributions,
         listView = $(this.el);
 
-        console.log(contributions)
-
-        contributions.comparator = function(contribution){
-            return [contribution.get('startDate').time, contribution.get('startDate').date];
-        };
-        contributions.sort();
+        console.log(container)
 
         var lastDay = "";
         var lastTime = "";
@@ -275,7 +276,7 @@ var SpeakerContributionsView = Backbone.View.extend({
                listView.append(agendaContributionTemplate(contribution.attributes));
            }
            else{
-               var contribInAgenda = myAgenda.find(function(contrib){
+               var contribInAgenda = myContributions.find(function(contrib){
                    return contrib.get('eventId') == contribution.get('eventId') &&
                    contrib.get('contributionId') == contribution.get('contributionId');
                });
@@ -288,7 +289,7 @@ var SpeakerContributionsView = Backbone.View.extend({
            }
         });
         container.append(listView);
-        container.trigger('refresh');
+        container.trigger('create');
 
         return this;
     },

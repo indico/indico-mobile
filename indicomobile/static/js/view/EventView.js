@@ -3,20 +3,25 @@ var EventView = Backbone.View.extend({
     initialize: function() {
         var dayTemplates = getHTMLTemplate('events.html');
         this.eventPageTemplate = _.template($(dayTemplates).siblings('#eventPage').html());
+        this.simpleEventPageTemplate = _.template($(dayTemplates).siblings('#simpleEventPage').html());
         this.agendaEventPageTemplate = _.template($(dayTemplates).siblings('#agendaEventPage').html());
         this.meetingPageTemplate = _.template($(dayTemplates).siblings('#meetingPage').html());
         this.agendaMeetingPageTemplate = _.template($(dayTemplates).siblings('#agendaMeetingPage').html());
+        this.options.model.url = this.options.url;
+        this.options.model.on("change", this.render, this);
+        this.options.model.fetch();
     },
 
     render: function(){
-        var event = this.options.event,
+        var event = this.model,
         agenda = this.options.agenda,
         eventPageTemplate = this.eventPageTemplate,
         agendaEventPageTemplate = this.agendaEventPageTemplate,
         meetingPageTemplate = this.meetingPageTemplate,
-        agendaMeetingPageTemplate = this.agendaMeetingPageTemplate;
+        agendaMeetingPageTemplate = this.agendaMeetingPageTemplate,
+        simpleEventPageTemplate = this.simpleEventPageTemplate,
+        page = this.options.page;
 
-        console.log(event)
         if (typeof event.attributes.id === "undefined"){
             event.attributes = event.attributes[0];
         }
@@ -29,43 +34,19 @@ var EventView = Backbone.View.extend({
             }
         }
         else{
-            if (event.get('numSessions') === 0){
+            if (event.get('type') == 'simple_event'){
+                $('body').append(simpleEventPageTemplate(event.toJSON()));
+            }
+            else if (event.get('numSessions') === 0){
                 $('body').append(meetingPageTemplate(event.toJSON()));
             }
             else{
                 $('body').append(eventPageTemplate(event.toJSON()));
             }
         }
-        return this;
-    }
 
-});
+        $.mobile.changePage(page);
 
-var SimpleEventView = Backbone.View.extend({
-
-    initialize: function() {
-        var dayTemplates = getHTMLTemplate('events.html');
-        this.simpleEventPageTemplate = _.template($(dayTemplates).siblings('#simpleEventPage').html());
-        this.agendaSimpleEventPageTemplate = _.template($(dayTemplates).siblings('#agendaSimpleEventPage').html());
-    },
-
-    render: function(){
-        var event = this.options.event,
-        agenda = this.options.agenda,
-        simpleEventPageTemplate = this.simpleEventPageTemplate,
-        agendaSimpleEventPageTemplate = this.agendaSimpleEventPageTemplate;
-
-        console.log(event.get('startDate'))
-
-        if (typeof event.attributes.id === "undefined"){
-            event.attributes = event.attributes[0];
-        }
-        if (agenda){
-            $('body').append(agendaSimpleEventPageTemplate(event.toJSON()));
-        }
-        else{
-            $('body').append(simpleEventPageTemplate(event.toJSON()));
-        }
         return this;
     }
 
@@ -145,85 +126,92 @@ var EventsListView = Backbone.View.extend({
         var eventTemplates = getHTMLTemplate('events.html');
         this.eventListTemplate = _.template($(eventTemplates).siblings('#eventList').html());
         this.eventListInAgendaTemplate = _.template($(eventTemplates).siblings('#eventListInAgenda').html());
+        this.collection.url = this.options.url;
+        this.collection.on('reset', this.render, this);
+        this.collection.on('hasChanged', this.appendRender, this);
+        this.collection.fetch();
+    },
+
+    appendRender: function(newitems){
+        var self = this,
+        container = $(this.options.container),
+        eventListTemplate = this.eventListTemplate,
+        term = this.options.term
+        date = container.data('date');
+        if (newitems[0].length > 0){
+            _.each(newitems[0], function(element){
+                var dateYear = filterDate(element.startDate.date).month +
+                    ' ' + filterDate(element.startDate.date).year;
+
+                if (date === '' || date != dateYear){
+                    date = dateYear;
+                    container.data('date', date);
+                    container.append('<li data-role="list-divider">' + dateYear + '</li>');
+                }
+            console.log(element)
+                container.append(eventListTemplate(element));
+            });
+            container.listview('refresh');
+
+            if (term != '' && term != ' ' && typeof term !== 'undefined'){
+                for (word in term.split(' ')){
+                    container.find('li').highlight(term.split(' ')[word]);
+                }
+            }
+        }
+        else{
+            container.parent().find('.loader').hide();
+        }
     },
 
     render: function(){
-        var container = this.options.viewContainer,
-        events = container.data('resultEvents'),
+        var container = $(this.options.container),
+        events = this.collection,
         eventListTemplate = this.eventListTemplate,
         eventListInAgendaTemplate = this.eventListInAgendaTemplate,
-        part = container.data('part');
+        term = this.options.term;
+
+        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+          success: function(collection, changed) {
+              collection.trigger('hasChanged', [changed]);
+          },
+          includePage : true});
+        this.infiniScroll.enableFetch();
 
         if (events.size() > 0){
-            events.comparator = function(event){
-                return String.fromCharCode.apply(String,
-                        _.map(event.get('startDate').date.split(""), function (c) {
-                            return 0xffff - c.charCodeAt();
-                        })
-                );
-            };
-            events.sort();
-            if (part === 0){
-                container.empty();
-            }
-            var dates = [];
+            var date = '';
             var end = false;
-            for (var i = part; !end && i < events.size() ; i++){
-                if (i < container.data('part') + screen.height/50){
-                    var isAlreadyIn = false;
-                    var dateYear = filterDate(events.at(i).get('startDate').date).month +
-                    ' ' + filterDate(events.at(i).get('startDate').date).year;
+            events.each(function(event){
+                console.log(event)
+                var dateYear = filterDate(event.get('startDate').date).month +
+                ' ' + filterDate(event.get('startDate').date).year;
 
-                    for (var j = 0; j < dates.length; j++){
-                        if (dateYear == dates[j]){
-                            isAlreadyIn = true;
-                        }
-                    }
-
-                    if (!isAlreadyIn){
-                        if (events.at(i).get('startDate').date !== ''){
-                            dates[dates.length] = dateYear;
-                            container.append('<li data-role="list-divider">' + dateYear + '</li>');
-                        }
-                        else{
-                            container.append('<li data-role="list-divider">Date Unknown</li>');
-                        }
-
-                    }
-
-                    if (isEventInAgenda(events.at(i).get('id'))){
-                        container.append(eventListInAgendaTemplate(events.at(i)));
-                    }else{
-                        container.append(eventListTemplate(events.at(i)));
-                    }
+                if (date === '' || date != dateYear){
+                    date = dateYear;
+                    container.data('date', date);
+                    container.append('<li data-role="list-divider">' + dateYear + '</li>');
                 }
-                else{
-                    container.data('part', i);
-                    end = true;
+                container.append(eventListTemplate(event.toJSON()));
+            });
+            if (term != '' && term != ' ' && typeof term !== 'undefined'){
+                for (word in term.split(' ')){
+                    container.find('li').highlight(term.split(' ')[word]);
+                }
+                if(events.size() > 19){
+                    container.parent().append('<div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>');
                 }
             }
-            if (!end){
-                container.data('part', -1);
-                $('#loadingEvents').hide();
-                container.parent().find('h4').hide();
-            }
-            else{
-                $('#loadingEvents').attr('style', 'display: block; margin: 0 auto; margin-top: 20px; width: 5%;');
-                container.parent().find('h4').hide();
-            }
+            
 
         }
         else{
             container.html('<h4>Nothing found</h4>');
         }
-        if (part === 0){
-            container.trigger('create');
-            container.listview('refresh');
-        }
-        else{
-            container.listview('refresh');
-        }
-        container.trigger('refresh');
+
+        
+        $.mobile.hidePageLoadingMsg();
+        container.trigger('create');
+        container.listview('refresh');
         return this;
     }
 
@@ -264,14 +252,11 @@ var HistoryListView = Backbone.View.extend({
         var dates = [];
         if (events.size() > 0){
             events.each(function(event){
+                console.log(event)
                 var date = new Date(parseInt(event.get('viewedAt'), 10));
                 listView.append('<li data-role="list-divider">' + date + '</li>');
-                if (isEventInAgenda(event.get('id'))){
-                    listView.append(eventListInAgendaTemplate(event));
-                }
-                else{
-                    listView.append(eventListTemplate(event));
-                }
+
+                listView.append(eventListTemplate(event.toJSON()));
             });
             container.html(listView);
         }
@@ -407,7 +392,7 @@ var NextEventView = Backbone.View.extend({
 
         }
         else{
-            var events = loadAgendaEvents();
+            var events = myAgenda.getInstance().events;
             var event = events.find(function(event){
                 return event.get('id') == contrib.get('eventId');
             });

@@ -106,7 +106,6 @@ function getEventSessions(eventId){
         async: false,
         success: function(resp){
             sessions = resp;
-            debugger
         }
     });
     return new Slots(sessions);

@@ -86,7 +86,7 @@ def update_future_events():
 @events.route('/event/<event_id>/days', methods=['GET'])
 def eventDays(event_id):
     days = []
-    for day in Day.query.filter(Day.eventId == event_id):
+    for day in Day.query.filter(Day.eventId == event_id).ascending("date"):
         days.append(day.date)
     return json.dumps(days)
 
@@ -98,11 +98,10 @@ def eventDay(event_id, day_date):
     return json.dumps(day.fields())
 
 
-
 @events.route('/event/<event_id>/sessions/<session_id>', methods=['GET'])
 def eventSameSessions(event_id, session_id):
     sessionsDB = SessionSlot.query.filter(SessionSlot.eventId == event_id,
-                                          SessionSlot.sessionId == session_id)
+                                          SessionSlot.sessionId == session_id).ascending('startDate')
     sessions = []
     for session in sessionsDB:
         sessions.append(session.fields())
@@ -120,7 +119,7 @@ def eventContribution(event_id, contrib_id):
 def dayContributions(event_id, day_date):
     contributions = []
     first_query = Contribution.query.filter(Contribution.eventId == event_id,
-                                            Contribution.dayDate == day_date)
+                                            Contribution.dayDate == day_date).ascending('startDate')
     contribs_DB = first_query
     for contrib in contribs_DB:
         contributions.append(contrib.fields())
@@ -135,8 +134,7 @@ def eventSessions(event_id):
     if not event:
         return 'Not found', 400
 
-
-    slots = SessionSlot.query.filter(SessionSlot.event == event)
+    slots = SessionSlot.query.filter(SessionSlot.event == event).ascending('title')
 
     for slot in slots:
         slot_dict = slot.fields()
@@ -175,15 +173,16 @@ def speakerContributions(event_id, speaker_id):
                                    Presenter.id == speaker_id)[0]
     for contrib in speaker.contributionId:
         contrib_DB = Contribution.query.filter(Contribution.eventId == event_id,
-                                          Contribution.contributionId == contrib)[0]
+                                          Contribution.contributionId == contrib).ascending('startDate')[0]
         contributions.append(contrib_DB.fields())
     return json.dumps(contributions)
 
 
 @events.route('/event/<event_id>/speakers', methods=['GET'])
 def eventSpeakers(event_id):
+    pageNumber = int(request.args.get('page',1))
     speakers = []
-    speakers_DB = Speaker.query.filter(Presenter.eventId == event_id)
+    speakers_DB = Speaker.query.filter(Speaker.eventId == event_id).skip((pageNumber - 1) * 20).limit(20)
     for speaker in speakers_DB:
         speakers.append(speaker.fields())
     return json.dumps(speakers)
@@ -191,8 +190,8 @@ def eventSpeakers(event_id):
 
 @events.route('/event/<event_id>/speaker/<speaker_id>', methods=['GET'])
 def eventSpeaker(event_id, speaker_id):
-    speaker = Speaker.query.filter(Presenter.eventId == event_id,
-                                   Presenter.id == speaker_id)[0]
+    speaker = Speaker.query.filter(Speaker.eventId == event_id,
+                                   Speaker.id == speaker_id)[0]
     return json.dumps(speaker.fields())
 
 
@@ -218,12 +217,14 @@ def search_event():
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
         regex += '(?=.*' + word + ')'
     speakers = Presenter.query.find({'name': {'$regex': regex, '$options': 'i'},
-                                     'eventId': event_id})
+                                     'eventId': event_id}).sort([('name', 1)]).skip((pageNumber-1)*offset).limit(offset)
     if speakers.count() > 0:
         results = []
         for speaker in speakers:
@@ -244,7 +245,7 @@ def search_contrib(event_id, day_date):
         regex += '(?=.*' + word + ')'
     contributions = Contribution.query.find({'title': {'$regex': regex, '$options': 'i'},
                                              'eventId': event_id,
-                                             'dayDate': day_date})
+                                             'dayDate': day_date}).sort([('startDate',1)])
     if contributions.count() > 0:
         results = []
         for contrib in contributions:
@@ -261,6 +262,8 @@ def search_contrib(event_id, day_date):
 @events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>', methods=['GET'])
 def search_contrib_in_session(event_id, session_id, day_date):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
@@ -268,7 +271,7 @@ def search_contrib_in_session(event_id, session_id, day_date):
     contributions = Contribution.query.find({'title': {'$regex': regex, '$options': 'i'},
                                              'eventId': event_id,
                                              'dayDate': day_date,
-                                             'sessionId': session_id})
+                                             'sessionId': session_id}).sort([('startDate',1)]).skip((pageNumber-1)*offset).limit(offset)
     if contributions.count() > 0:
         results = []
         for contrib in contributions:

@@ -18,7 +18,7 @@
 </div>
     <div data-role="content">
         <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=date%>">
-        <div id="day_list_<%=eventId%>_<%= date %>"></div>
+        <div id="day_list_<%=eventId%>_<%= date %>"><div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div></div>
     </div>
 </script>
 
@@ -103,6 +103,7 @@
     <div data-role="content">
         <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=sessionId%>_<%=dayDate%>">
         <div id="sessionDay_list_<%=eventId%>_<%= sessionId %>_<%= dayDate %>"></div>
+        <div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>
         </div>
     <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
         <div data-role="navbar">

@@ -130,12 +130,3 @@ class Day(DBClass):
     date = db.DateTimeField()
     eventId = db.StringField()
     entries = db.AnythingField()
-
-
-class Recent_Event(DBClass):
-    today = db.DateTimeField()
-    title = db.StringField()
-    id = db.StringField()
-    startDate = db.DateTimeField()
-    endDate = db.DateTimeField()
-    part = db.AnythingField()
