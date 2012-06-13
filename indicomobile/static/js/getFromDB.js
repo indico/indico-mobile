@@ -1,33 +1,25 @@
 function getSpeakers(eventId){
 
-    var speakers;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/event/" + eventId + "/speakers",
         dataType: "json",
-        async: false,
-        success: function(resp){
-            speakers = resp;
-        }
+        async: true
     });
-    console.log(speakers.length)
-    return new Speakers(speakers);
 
 }
 
 function getSpeaker(eventId, speakerId){
 
-    var speaker;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/event/" + eventId + "/speaker/" + speakerId,
         dataType: "json",
-        async: false,
+        async: true,
         success: function(resp){
             speaker = resp;
         }
     });
-    return new Speaker(speaker);
 
 }
 
@@ -210,60 +202,45 @@ function getContribution(eventId, contributionId){
 
 function getFutureEvents(part){
 
-    var futureEvents;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/futureEvents/"+part,
         dataType: "json",
-        async: false,
-        success: function(resp){
-            futureEvents = resp;
-        }
+        async: true
     });
-    return futureEvents;
 }
 
 function getOngoingEvents(part){
 
-    var ongoingEvents;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/ongoingEvents/"+part,
         dataType: "json",
-        async: false,
-        success: function(resp){
-            ongoingEvents = resp;
-        }
+        async: true
     });
-    return ongoingEvents;
 }
 
 function getOngoingContributions(){
 
-    var ongoingContribs;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/ongoingContributions/",
         dataType: "json",
-        async: false,
-        success: function(resp){
-            ongoingContribs = resp;
-        }
+        async: true
     });
-    return ongoingContribs;
 }
 
 function isEventInAgenda(eventId){
 
-    var myAgendaSessionsNumber = loadAgendaCompleteSessions().filter(function(session){
+    var myAgendaSessionsNumber = myAgenda.getInstance().completeSessions.filter(function(session){
         return session.get('eventId') == eventId;
     }).length;
 
-    var myAgendaContribsNumber = loadAgendaContributions().filter(function(contrib){
+    var myAgendaContribsNumber = myAgenda.getInstance().contributions.filter(function(contrib){
         return contrib.get('eventId') == eventId;
     }).length;
 
-    var event = loadAgendaEvents().find(function(event){
+    var event = myAgenda.getInstance().events.find(function(event){
         return event.get('id') == eventId;
     });
     if (event){

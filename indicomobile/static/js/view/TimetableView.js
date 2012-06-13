@@ -4,24 +4,32 @@ var TimetableDaysView = Backbone.View.extend({
         var dayTemplates = getHTMLTemplate('days.html');
         this.timetableDaysTemplate = _.template($(dayTemplates).siblings('#timetableDays').html());
         this.agendaTimetableDaysTemplate = _.template($(dayTemplates).siblings('#agendaTimetableDays').html());
+        this.model.url = this.options.url;
+        this.model.on('change', this.render, this);
+        this.model.fetch();
     },
     render: function() {
         var container = this.options.container,
-        event = this.options.event,
+        event = this.options.model,
         create = this.options.create,
         timetableDaysTemplate = this.timetableDaysTemplate,
         agendaTimetableDaysTemplate = this.agendaTimetableDaysTemplate,
-        agenda = this.options.agenda;
+        agenda = this.options.agenda,
+        page = this.options.page;
+
+        console.log(event)
 
         if (typeof event.attributes.id === 'undefined'){
             event.attributes = event.attributes[0];
         }
         if (agenda){
-            container.append(agendaTimetableDaysTemplate(event.attributes));
+            container.append(agendaTimetableDaysTemplate(event.toJSON()));
         }
         else{
-            container.append(timetableDaysTemplate(event.attributes));
+            container.append(timetableDaysTemplate(event.toJSON()));
         }
+
+        $.mobile.changePage(page);
 
         return this;
     }
@@ -34,20 +42,19 @@ var TimetableDaysListView = Backbone.View.extend({
         var dayTemplates = getHTMLTemplate('days.html');
         this.timetableDaysListTemplate = _.template($(dayTemplates).siblings('#timetableDaysList').html());
         this.agendaTimetableDaysListTemplate = _.template($(dayTemplates).siblings('#agendaTimetableDaysList').html());
+        this.collection.url = this.options.url;
+        this.collection.on("reset", this.render, this);
+        this.collection.fetch();
     },
     render: function() {
-        var container = this.options.container,
-        days = this.options.days,
+        var container = $(this.options.container),
+        days = this.options.collection,
         create = this.options.create,
         timetableDaysListTemplate = this.timetableDaysListTemplate,
         agendaTimetableDaysListTemplate = this.agendaTimetableDaysListTemplate,
         agenda = this.options.agenda;
 
         if (days.size() > 0){
-            days.comparator = function(day){
-                return day.get('date');
-            };
-            days.sort();
             days.each(function(day) {
                 if(agenda){
                     container.append(agendaTimetableDaysListTemplate(day.toJSON()));
@@ -61,6 +68,7 @@ var TimetableDaysListView = Backbone.View.extend({
             container.parent().append('<div class="notimetable"><h4>There is no contribution in this event.</h4></div>')
         }
         container.trigger('create');
+        container.listview('refresh');
         return this;
     }
 
@@ -81,6 +89,11 @@ var TimetableDayView = Backbone.View.extend({
         this.agendaDayPageTemplate = _.template(daysTemplate.siblings('#agendaDayPage').html());
         this.dayFooterPageTemplate = _.template(daysTemplate.siblings('#dayFooterPage').html());
         this.agendaDayFooterPageTemplate = _.template(daysTemplate.siblings('#agendaDayFooterPage').html());
+        this.options.event.url = this.options.eventUrl;
+        this.options.day.url = this.options.dayUrl;
+        this.options.day.on('change', this.render, this);
+        this.options.event.fetch();
+        this.options.day.fetch();
     },
 
     render: function() {
@@ -91,6 +104,7 @@ var TimetableDayView = Backbone.View.extend({
         dayFooterPageTemplate = this.dayFooterPageTemplate,
         agendaDayFooterPageTemplate = this.agendaDayFooterPageTemplate,
         agenda = this.options.agenda,
+        page = this.options.page,
         pageView = $(this.el);
 
         if (agenda){
@@ -105,6 +119,8 @@ var TimetableDayView = Backbone.View.extend({
         }
 
         $('body').append(pageView);
+
+        $.mobile.changePage(page);
 
         return this;
     },
@@ -121,36 +137,16 @@ var TimetableDayView = Backbone.View.extend({
             var eventId = splittedId[1];
             var dayDate = splittedId[2];
             var term = $(e.currentTarget).val();
-
-            var results;
-            $.ajax({
-                type: "GET",
-                url: "/searchContrib/event/" + eventId + "/day/" + dayDate,
-                dataType: "json",
-                data: {
-                    search: term
-                },
-                async: true,
-                success: function(resp){
-                    results = resp;
-                    var resultContributions = new Contributions();
-                    if (typeof results.length !== "undefined"){
-                        resultContributions = new Contributions(results);
-                    }
-                    var container = $('#day_list_' + splittedId[1] + '_' + splittedId[2]);
-                    container.data('part', 0);
-                    container.data('contributions', resultContributions);
-                    container.data('lastTime', '');
-                    container.data('lastPosterTime', '');
-                    container.data('view').options.create = false;
-                    container.data('view').render();
-                    if (term != '' && term != ' '){
-                        for (word in term.split(' ')){
-                            container.find('li').highlight(term.split(' ')[word]);
-                        }
-                    }
-
-                }
+            var container = $('#day_list_' + splittedId[1] + '_' + splittedId[2]);
+            container.empty();
+            container.html('<div id="day_list_<%=eventId%>_<%= date %>"><div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div></div>');
+            container.data('lastTime','');
+            container.data('lastPosterTime','');
+            var timetableDayContributionsView = new TimetableDayContributionsView({
+                container: '#day_list_' + splittedId[1] + '_' + splittedId[2],
+                collection: new Contributions(),
+                url: 'searchContrib/event/'+eventId+'/day/'+dayDate+'?search='+term,
+                term: term
             });
         }
 
@@ -175,9 +171,14 @@ var TimetableDayContributionsView = Backbone.View.extend({
         this.agendaPosterTemplate = _.template($(contributionsTemplates).siblings('#agendaPoster').html());
         this.posterTemplate = _.template($(contributionsTemplates).siblings('#poster').html());
         this.posterInAgendaTemplate = _.template($(contributionsTemplates).siblings('#posterInAgenda').html());
+        this.collection.url = this.options.url;
+        this.collection.on('reset', this.render, this);
+        this.collection.on("hasChanged",this.appendRender, this);
+        this.collection.fetch();
     },
+
     render: function() {
-        var container = this.options.container,
+        var container = $(this.options.container),
         create = this.options.create,
         contributionTemplate = this.contributionTemplate,
         agendaContributionTemplate = this.agendaContributionTemplate,
@@ -186,102 +187,81 @@ var TimetableDayContributionsView = Backbone.View.extend({
         posterTemplate = this.posterTemplate,
         posterInAgendaTemplate = this.posterInAgendaTemplate,
         agenda = this.options.agenda,
-        myAgenda = loadAgendaContributions(),
+        myContributions = myAgenda.getInstance().contributions,
         listView = $(this.el),
-        part = container.data('part');
-        var contributions = container.data('contributions');
-
-        console.log(contributions)
-
-        contributions.comparator = function(contribution){
-            return contribution.get('startDate').time;
-        };
-        contributions.sort();
+        term = this.options.term;
+        var contributions = this.collection;
 
         var end = false;
-        if (part === 0){
-            listView.empty();
-        }
         var count = 0;
-        for (var i = part; i < contributions.size() && !end; i++) {
-            if (count < screen.height/50){
-                if (container.data('lastTime') === "" ||
-                    container.data('lastTime') != contributions.at(i).get('startDate').time){
-                        container.data('lastTime', contributions.at(i).get('startDate').time);
-                        splittedTime = container.data('lastTime').split(':');
-                        listView.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
-                }
+        contributions.each(function(contribution){
 
-                if(agenda){
-                    if (contributions.at(i).get('isPoster')){
-                        if (container.data('lastTime') != container.data('lastPosterTime')){
-                            container.data('lastPosterTime', contributions.at(i).get('startDate').time);
-                            listView.append(agendaPosterTemplate(contributions.at(i).toJSON()));
-                            count++;
-                        }
-                    }
-                    else{
-                        listView.append(agendaContributionTemplate(contributions.at(i).toJSON()));
+            if (container.data('lastTime') === "" ||
+                container.data('lastTime') != contribution.get('startDate').time){
+                    container.data('lastTime', contribution.get('startDate').time);
+                    splittedTime = container.data('lastTime').split(':');
+                    listView.append('<li data-role="list-divider">' + splittedTime[0] +'h' + splittedTime[1] + '</li>');
+            }
+
+            if(agenda){
+                if (contribution.get('isPoster')){
+                    if (container.data('lastTime') != container.data('lastPosterTime')){
+                        container.data('lastPosterTime', contribution.get('startDate').time);
+                        listView.append(agendaPosterTemplate(contribution.toJSON()));
                         count++;
                     }
                 }
                 else{
-                    var contribInAgenda = myAgenda.find(function(contrib){
-                        return contrib.get('eventId') == contributions.at(i).get('eventId') &&
-                        contrib.get('contributionId') == contributions.at(i).get('contributionId');
-                    });
-                    if (contribInAgenda){
-                        if (contributions.at(i).get('isPoster')){
-                            if (container.data('lastTime') != container.data('lastPosterTime')){
-                                container.data('lastPosterTime', contributions.at(i).get('startDate').time);
-                                listView.append(posterInAgendaTemplate(contributions.at(i).toJSON()));
-                                count++;
-                            }
-                        }
-                        else{
-                            listView.append(contributionInAgendaTemplate(contributions.at(i).toJSON()));
+                    listView.append(agendaContributionTemplate(contribution.toJSON()));
+                    count++;
+                }
+            }
+            else{
+                var contribInAgenda = myContributions.find(function(contrib){
+                    return contrib.get('eventId') == contribution.get('eventId') &&
+                    contrib.get('contributionId') == contribution.get('contributionId');
+                });
+                if (contribInAgenda){
+                    if (contribution.get('isPoster')){
+                        if (container.data('lastTime') != container.data('lastPosterTime')){
+                            container.data('lastPosterTime', contribution.get('startDate').time);
+                            listView.append(posterInAgendaTemplate(contribution.toJSON()));
                             count++;
                         }
                     }
                     else{
-                        if (contributions.at(i).get('isPoster')){
-                            if (container.data('lastTime') != container.data('lastPosterTime')){
-                                container.data('lastPosterTime', contributions.at(i).get('startDate').time);
-                                listView.append(posterTemplate(contributions.at(i).toJSON()));
-                                count++;
-                            }
-                        }
-                        else{
-                            listView.append(contributionTemplate(contributions.at(i).toJSON()));
+                        listView.append(contributionInAgendaTemplate(contribution.toJSON()));
+                        count++;
+                    }
+                }
+                else{
+                    if (contribution.get('isPoster')){
+                        if (container.data('lastTime') != container.data('lastPosterTime')){
+                            container.data('lastPosterTime', contribution.get('startDate').time);
+                            listView.append(posterTemplate(contribution.toJSON()));
                             count++;
                         }
                     }
+                    else{
+                        listView.append(contributionTemplate(contribution.toJSON()));
+                        count++;
+                    }
                 }
             }
-            else{
-                container.data('part', i);
-                end = true;
-            }
+            
+        });
 
-        }
-        if (create){
-            listView.trigger('create');
-            container.append(listView);
-            container.trigger('refresh');
-            if (!end){
-                container.data('part', -1);
-            }
-            else{
-                container.append('<div class="loader">Loading...</div>');
+        container.append(listView);
+        container.trigger('create');
+        listView.listview('refresh');
+        container.find('.loader').hide();
+
+        if (term != '' && term != ' ' && typeof term !== 'undefined'){
+            for (word in term.split(' ')){
+                container.find('li').highlight(term.split(' ')[word]);
             }
         }
-        else{
-            listView.listview('refresh');
-            if (!end){
-                container.data('part', -1);
-                container.find('.loader').hide();
-            }
-        }
+
         return this;
     },
 
@@ -361,7 +341,7 @@ var TimetableDayContributionsView = Backbone.View.extend({
         var sessionId = $(e.currentTarget).attr('sessionId');
         var dayDate = $(e.currentTarget).attr('dayDate');
         var action = $(e.currentTarget).attr('action');
-        var myAgendaContributions = loadAgendaContributions();
+        var myAgendaContributions = myAgenda.getInstance().contributions;
         var contributions = new Contributions(getSessionContributions(eventId, sessionId).filter(function(contrib){
             return contrib.get('dayDate') == dayDate;
         }));
@@ -409,7 +389,7 @@ var TimetableDayContributionsView = Backbone.View.extend({
         var eventId = $(e.currentTarget).attr('eventId');
         var sessionId = $(e.currentTarget).attr('sessionId');
         var dayDate = $(e.currentTarget).attr('dayDate');
-        var myAgendaContributions = loadAgendaContributions();
+        var myAgendaContributions = myAgenda.getInstance().contributions;
         var contributions = new Contributions(getSessionContributions(eventId, sessionId).filter(function(contrib){
             return contrib.get('dayDate') == dayDate;
         }));
@@ -466,32 +446,27 @@ var ContributionPageView = Backbone.View.extend({
         this.agendaContributionTemplate = _.template($(contributionsTemplates).siblings('#agendaContributionDetail').html());
         this.contributionFooterTemplate = _.template($(contributionsTemplates).siblings('#contributionFooter').html());
         this.agendaContributionFooterTemplate = _.template($(contributionsTemplates).siblings('#agendaContributionFooter').html());
+        this.options.contribution.url = this.options.contributionUrl;
+        this.options.event.url = this.options.eventUrl;
+        this.options.contribution.on('change', this.render, this);
+        this.options.event.fetch();
+        this.options.contribution.fetch();
     },
     render: function() {
 
         var contribution = this.options.contribution,
+        event = this.options.event,
         agenda = this.options.agenda
-        page = $(this.el);
-
-
-        var event = getEvent(contribution.get('eventId'));
-
-        console.log(contribution)
-
-        if (agenda){
-            page.attr('id', 'contribution_'+contribution.get('eventId')+
-                '_'+contribution.get('contributionId')+'_agenda');
-            page.append(this.agendaContributionTemplate(contribution.toJSON()));
-            page.append(this.agendaContributionFooterTemplate(event.toJSON()));
-        }
-        else{
-            page.attr('id', 'contribution_'+contribution.get('eventId')+
-                '_'+contribution.get('contributionId'));
-            page.append(this.contributionTemplate(contribution.toJSON()));
-            page.append(this.contributionFooterTemplate(event.toJSON()));
-        }
-
+        page = $(this.el),
+        link = this.options.page;
+        
+        page.attr('id', 'contribution_'+event.get('id')+'_'+contribution.get('contributionId'));
+        page.append(this.contributionTemplate(contribution.toJSON()));
+        page.append(this.contributionFooterTemplate(event.toJSON()));
+        console.log(page)
         $('body').append(page);
+
+        $.mobile.changePage(link);
         return this;
     }
 

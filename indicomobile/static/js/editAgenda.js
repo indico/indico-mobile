@@ -4,11 +4,11 @@ function addContributionToAgenda(eventId, sessionId, contributionId) {
         alert('Your browser is not compatible');
     }
 
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaCompleteSessions = myAgenda.getInstance().completeSessions;
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaDays = myAgenda.getInstance().days;
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
     var contribution = getContribution(eventId, contributionId);
@@ -74,10 +74,10 @@ function addSessionToAgenda(eventId, sessionId) {
         alert('Your browser is not compatible');
     }
 
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaDays = myAgenda.getInstance().days;
     var event = getEvent(eventId);
     var sessions = getEventSameSessions(eventId, sessionId);
 
@@ -128,11 +128,11 @@ function addSessionToAgenda(eventId, sessionId) {
 
 function removeContributionFromAgenda(eventId, sessionId, contributionId) {
 
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaCompleteSessions = myAgenda.getInstance().completeSessions;
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaDays = myAgenda.getInstance().days;
     var event = getEvent(eventId);
     var session = getSession(eventId, sessionId);
     var contribution = getContribution(eventId, contributionId);
@@ -198,10 +198,10 @@ function removeContributionFromAgenda(eventId, sessionId, contributionId) {
 
 function removeSessionFromAgenda(eventId, sessionId) {
 
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaDays = myAgenda.getInstance().days;
 
     while (myAgendaContributions.find(function(contrib){
         return contrib.get('eventId') == eventId &&
@@ -259,11 +259,11 @@ function removeSessionFromAgenda(eventId, sessionId) {
 }
 
 function removeEvent(eventId){
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaCompleteSessions = myAgenda.getInstance().completeSessions;
+    var myAgendaDays = myAgenda.getInstance().days;
 
     var dayInAgenda = myAgendaDays.filter(function(day){
         return day.get('eventId') == eventId;
@@ -314,11 +314,11 @@ $('#addEventToAgenda').live('click', function(){
     }
 
     removeEvent($(this).attr('eventId'));
-    var myAgendaEvents = loadAgendaEvents();
-    var myAgendaContributions = loadAgendaContributions();
-    var myAgendaSessions = loadAgendaSessions();
-    var myAgendaCompleteSessions = loadAgendaCompleteSessions();
-    var myAgendaDays = loadAgendaDays();
+    var myAgendaEvents = myAgenda.getInstance().events;
+    var myAgendaContributions = myAgenda.getInstance().contributions;
+    var myAgendaSessions = myAgenda.getInstance().sessions;
+    var myAgendaCompleteSessions = myAgenda.getInstance().completeSessions;
+    var myAgendaDays = myAgenda.getInstance().days;
     var eventId = $(this).attr('eventId');
     var event = getEvent(eventId);
 

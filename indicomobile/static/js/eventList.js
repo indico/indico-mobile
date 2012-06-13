@@ -1,37 +1,18 @@
 $('#eventHome').live('pagecreate', function(){
 
     visited = false;
-    var futureEvents = getFutureEvents(0);
 
-    var futureEventsCollection = new Events(futureEvents);
 
-    if (futureEvents === ''){
-        futureEventsCollection = null;
-    }
-
-    var futureEventsView = new RecentEventsView({
-        collection: futureEventsCollection,
-        viewContainer: $('#futureEventList'),
-        part: 0
+    var futureEventsView = new EventsListView({
+        collection: new Events(),
+        url: '/futureEvents/',
+        container: '#futureEventList'
     });
-    futureEventsView.render();
-    $('#futureEventList').data('view', futureEventsView);
-
-    var ongoingEvents = getOngoingEvents(0);
-
-    var ongoingEventsCollection = new Events(ongoingEvents);
-
-    if (ongoingEvents === ''){
-        ongoingEventsCollection = null;
-    }
-
-    var ongoingEventsView = new RecentEventsView({
-        collection: ongoingEventsCollection,
-        viewContainer: $('#ongoingEventList'),
-        part: 0
-    });
-    ongoingEventsView.render();
-    $('#ongoingEventList').data('view', ongoingEventsView);
+    var ongoingEventsView = new EventsListView({
+        collection: new Events(),
+        url: '/ongoingEvents/',
+        container: '#ongoingEventList'
+    }); 
 
 });
 

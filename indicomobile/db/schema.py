@@ -121,7 +121,7 @@ class Event(DBClass):
     id = db.StringField()
     chairs = db.ListField(db.DocumentField('Chair'))
     url = db.StringField()
-    location = db.StringField()
+    location = db.AnythingField()
     _fossil = db.StringField()
     timezone = db.StringField()
     type = db.StringField()
@@ -140,7 +140,6 @@ class Recent_Event(DBClass):
     id = db.StringField()
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()
-    part = db.AnythingField()
 
 
 class Ongoing_Event(DBClass):
@@ -149,7 +148,6 @@ class Ongoing_Event(DBClass):
     id = db.StringField()
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()
-    part = db.AnythingField()
 
 
 class Ongoing_Contribution(DBClass):

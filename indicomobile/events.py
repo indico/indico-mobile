@@ -22,7 +22,7 @@ dthandler = lambda obj: {'date': obj.replace(tzinfo=timezone("UTC")).astimezone(
 def eventDays(event_id):
     is_event_up_to_date(event_id)
     days = []
-    for day in query_session.query(Day).filter(Day.eventId == event_id):
+    for day in query_session.query(Day).filter(Day.eventId == event_id).ascending('date'):
         days.append(day.fields())
     return json.dumps(days)
 
@@ -44,11 +44,18 @@ def eventSession(event_id, session_id):
 @events.route('/event/<event_id>/sessions/<session_id>', methods=['GET'])
 def eventSameSessions(event_id, session_id):
     sessionsDB = query_session.query(Session).filter(Session.eventId == event_id,
-                                                     Session.sessionId == session_id)
+                                                     Session.sessionId == session_id).ascending('dayDate')
     sessions = []
     for session in sessionsDB:
         sessions.append(session.fields())
     return json.dumps(sessions, default=dthandler)
+
+
+@events.route('/event/<event_id>/samesession/<session_id>', methods=['GET'])
+def eventSameSession(event_id, session_id):
+    sessionsDB = query_session.query(Session).filter(Session.eventId == event_id,
+                                                     Session.sessionId == session_id)
+    return json.dumps(sessionsDB[0].fields(), default=dthandler)
 
 
 @events.route('/event/<event_id>/contrib/<contrib_id>', methods=['GET'])
@@ -64,7 +71,7 @@ def eventContribution(event_id, contrib_id):
 def dayContributions(event_id, day_date):
     contributions = []
     first_query = query_session.query(Contribution).filter(Contribution.eventId == event_id,
-                                                      Contribution.dayDate == day_date)
+                                                      Contribution.dayDate == day_date).ascending('startDate')
     contribs_DB = first_query
     for contrib in contribs_DB:
         contributions.append(contrib.fields())
@@ -75,7 +82,7 @@ def dayContributions(event_id, day_date):
 def eventSessions(event_id):
     sessions = []
     is_event_up_to_date(event_id)
-    first_query = query_session.query(Session).filter(Session.eventId == event_id)
+    first_query = query_session.query(Session).filter(Session.eventId == event_id).ascending('title')
     sessions_DB = first_query
     for session in sessions_DB:
         sessions.append(session.fields())
@@ -88,6 +95,21 @@ def sessionContributions(event_id, session_id):
     contrib_query = query_session.query(Contribution)
     first_query = contrib_query.filter(Contribution.eventId == event_id,
                                        Contribution.sessionId == session_id)
+    contributions_DB = first_query
+    for contribution in contributions_DB:
+        contributions.append(contribution.fields())
+    return json.dumps(contributions, default=dthandler)
+
+
+@events.route('/event/<event_id>/session/<session_id>/day/<day>/contribs', methods=['GET'])
+def sessionDayContributions(event_id, session_id, day):
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
+    contributions = []
+    contrib_query = query_session.query(Contribution)
+    first_query = contrib_query.filter(Contribution.eventId == event_id,
+                                       Contribution.sessionId == session_id,
+                                       Contribution.dayDate == day).ascending('startDate').skip((pageNumber-1)*offset).limit(offset)
     contributions_DB = first_query
     for contribution in contributions_DB:
         contributions.append(contribution.fields())
@@ -111,7 +133,7 @@ def speakerContributions(event_id, speaker_id):
     speaker = speaker_query.filter(Presenter.eventId == event_id,
                                    Presenter.id == speaker_id)[0]
     for contrib in speaker.contributionId:
-        contrib_query = query_session.query(Contribution)
+        contrib_query = query_session.query(Contribution).ascending('startDate')
         contrib_DB = contrib_query.filter(Contribution.eventId == event_id,
                                        Contribution.contributionId == contrib)[0]
         contributions.append(contrib_DB.fields())
@@ -120,10 +142,11 @@ def speakerContributions(event_id, speaker_id):
 
 @events.route('/event/<event_id>/speakers', methods=['GET'])
 def eventSpeakers(event_id):
+    pageNumber = int(request.args.get('page',1))
     speakers = []
     is_event_up_to_date(event_id)
     speaker_query = query_session.query(Presenter)
-    speakers_DB = speaker_query.filter(Presenter.eventId == event_id)
+    speakers_DB = speaker_query.filter(Presenter.eventId == event_id).ascending('name').skip((pageNumber-1)*20).limit(20)
     for speaker in speakers_DB:
         speakers.append(speaker.fields())
     return json.dumps(speakers, default=dthandler)
@@ -353,9 +376,10 @@ def eventInfo(event_id):
         return json.dumps(getEventInfo(event_id))
 
 
-@events.route('/searchEvent', methods=['GET'])
+@events.route('/searchEvent/', methods=['GET'])
 def search_event():
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
     url = current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
           '.json?ak=' + \
@@ -363,18 +387,26 @@ def search_event():
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
-    return json.dumps(json.load(f)['results'])
+    results = json.load(f)['results']
+    results= sorted(results,
+                    key=lambda k: datetime.combine(datetime.strptime(k['startDate']['date'], "%Y-%m-%d"),
+                         datetime.strptime(k['startDate']['time'], "%H:%M:%S").time()))
+    results.reverse()
+    first_element = (pageNumber-1)*20
+    return json.dumps(results[first_element:first_element+20])
 
 
 @events.route('/searchSpeaker/<event_id>', methods=['GET'])
 def search_speaker(event_id):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
         regex += '(?=.*' + word + ')'
     speakers = query_session.db.Presenter.find({'name': {'$regex': regex, '$options': 'i'},
-                                                    'eventId': event_id})
+                                                    'eventId': event_id}).sort([('name',1)]).skip((pageNumber-1)*offset).limit(offset)
     if speakers.count() > 0:
         results = []
         for speaker in speakers:
@@ -389,13 +421,15 @@ def search_speaker(event_id):
 @events.route('/searchContrib/event/<event_id>/day/<day_date>', methods=['GET'])
 def search_contrib(event_id, day_date):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
         regex += '(?=.*' + word + ')'
     contributions = query_session.db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
                                            'eventId': event_id,
-                                           'dayDate': day_date})
+                                           'dayDate': day_date}).sort([('startDate',1)])
     if contributions.count() > 0:
         results = []
         for contrib in contributions:
@@ -412,6 +446,8 @@ def search_contrib(event_id, day_date):
 @events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>', methods=['GET'])
 def search_contrib_in_session(event_id, session_id, day_date):
     search = urllib.quote(request.args.get('search'))
+    pageNumber = int(request.args.get('page',1))
+    offset = int(request.args.get('offset', 20))
     words = search.split('%20')
     regex = ''
     for word in words:
@@ -419,7 +455,7 @@ def search_contrib_in_session(event_id, session_id, day_date):
     contributions = query_session.db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
                                            'eventId': event_id,
                                            'dayDate': day_date,
-                                           'sessionId': session_id})
+                                           'sessionId': session_id}).sort([('startDate',1)]).skip((pageNumber-1)*offset).limit(offset)
     if contributions.count() > 0:
         results = []
         for contrib in contributions:
@@ -433,75 +469,79 @@ def search_contrib_in_session(event_id, session_id, day_date):
         return json.dumps({})
 
 
-@events.route('/futureEvents/<part>', methods=['GET'])
-def getFutureEvents(part):
-    today = datetime.today()
-    event_in_DB = query_session.query(Recent_Event).filter(Recent_Event.today < DateTimeField().wrap(today - timedelta(days=1)))
-    if event_in_DB.count() > 0:
-        print 'cache too old'
-        query_session.db.Recent_Event.drop()
+@events.route('/futureEvents/', methods=['GET'])
+def getFutureEvents():
+    pageNumber = int(request.args.get('page',1))
+    if (pageNumber == 1):
+        today = datetime.today()
+        event_in_DB = query_session.query(Recent_Event).filter(Recent_Event.today < DateTimeField().wrap(today - timedelta(days=current_app.config['CACHING_TIME'])))
+        if event_in_DB.count() > 0:
+            print 'cache too old'
+            query_session.db.Recent_Event.drop()
 
-    event_in_DB = query_session.query(Recent_Event).filter(Recent_Event.part == part)
-    if (event_in_DB.count() > 0):
-        results = []
-        for event in event_in_DB:
-            results.append(event.fields())
-        return json.dumps(results, default=dthandler)
-    else:
-            req = urllib2.Request(current_app.config['SERVER_URL'] +
-                                  '/export/categ/0.json?ak=' +
-                                  current_app.config['API_KEY'] +
-                                  '&from=1d&pretty=yes&offset=' + part + '&limit=15')
-            opener = urllib2.build_opener()
-            f = opener.open(req)
-            events = json.load(f)['results']
-            for event in events:
-                convert_dates(event)
-                new_event = Recent_Event(today=today, title=event['title'],
-                                         id=event['id'], startDate=event['startDate'],
-                                         part=part, endDate=event['endDate'])
-                new_event.save()
-            return json.dumps(events, default=dthandler)
+        event_in_DB = query_session.query(Recent_Event).descending('startDate')
+        if (event_in_DB.count() > 0):
+            results = []
+            for event in event_in_DB:
+                results.append(event.fields())
+            return json.dumps(results, default=dthandler)
+        else:
+                req = urllib2.Request(current_app.config['SERVER_URL'] +
+                                      '/export/categ/0.json?ak=' +
+                                      current_app.config['API_KEY'] +
+                                      '&from=1d&pretty=yes&limit=15')
+                opener = urllib2.build_opener()
+                f = opener.open(req)
+                events = json.load(f)['results']
+                for event in events:
+                    convert_dates(event)
+                    new_event = Recent_Event(today=today, title=event['title'],
+                                             id=event['id'], startDate=event['startDate'],
+                                             endDate=event['endDate'])
+                    new_event.save()
+                return json.dumps(events, default=dthandler)
 
 
-@events.route('/ongoingEvents/<part>', methods=['GET'])
-def getOngoingEvents(part):
-    today = datetime.today()
-    event_in_DB = query_session.query(Ongoing_Event).filter(Ongoing_Event.today < DateTimeField().wrap(today - timedelta(days=1)))
-    if event_in_DB.count() > 0:
-        print 'cache too old'
-        query_session.db.Ongoing_Event.drop()
-    event_in_DB = query_session.query(Ongoing_Event).filter(Ongoing_Event.part == part)
-    if (event_in_DB.count() > 0):
-        results = []
-        for event in event_in_DB:
-            results.append(event.fields())
-        return json.dumps(results, default=dthandler)
-    else:
-            req = urllib2.Request(current_app.config['SERVER_URL'] +
-                                  '/export/categ/0.json?ak=' +
-                                  current_app.config['API_KEY'] +
-                                  '&from=today&to=today&pretty=yes&offset=' + part + '&limit=15')
-            opener = urllib2.build_opener()
-            f = opener.open(req)
-            events = json.load(f)['results']
-            for event in events:
-                convert_dates(event)
-                new_event = Ongoing_Event(today=today, title=event['title'],
-                                         id=event['id'], startDate=event['startDate'],
-                                         part=part, endDate=event['endDate'])
-                new_event.save()
-            return json.dumps(events, default=dthandler)
+@events.route('/ongoingEvents/', methods=['GET'])
+def getOngoingEvents():
+    pageNumber = int(request.args.get('page',1))
+    if (pageNumber == 1):
+        today = datetime.today()
+        event_in_DB = query_session.query(Ongoing_Event).filter(Ongoing_Event.today < DateTimeField().wrap(today - timedelta(days=1)))
+        if event_in_DB.count() > 0:
+            print 'cache too old'
+            query_session.db.Ongoing_Event.drop()
+        event_in_DB = query_session.query(Ongoing_Event).descending('startDate')
+        if (event_in_DB.count() > 0):
+            results = []
+            for event in event_in_DB:
+                results.append(event.fields())
+            return json.dumps(results, default=dthandler)
+        else:
+                req = urllib2.Request(current_app.config['SERVER_URL'] +
+                                      '/export/categ/0.json?ak=' +
+                                      current_app.config['API_KEY'] +
+                                      '&from=today&to=today&pretty=yes&limit=15')
+                opener = urllib2.build_opener()
+                f = opener.open(req)
+                events = json.load(f)['results']
+                for event in events:
+                    convert_dates(event)
+                    new_event = Ongoing_Event(today=today, title=event['title'],
+                                             id=event['id'], startDate=event['startDate'],
+                                             endDate=event['endDate'])
+                    new_event.save()
+                return json.dumps(events, default=dthandler)
 
 
 @events.route('/ongoingContributions/', methods=['GET'])
 def getOngoingContributions():
     now = datetime.now()
-    event_in_DB = query_session.query(Ongoing_Contribution).filter(Ongoing_Contribution.now < DateTimeField().wrap(now - timedelta(hours=1)))
+    event_in_DB = query_session.query(Ongoing_Contribution).filter(Ongoing_Contribution.now < DateTimeField().wrap(now - timedelta(hours=1))).ascending('startDate')
     if event_in_DB.count() > 0:
         print 'cache too old'
         query_session.db.Ongoing_Contribution.drop()
-    event_in_DB = query_session.query(Ongoing_Contribution)
+    event_in_DB = query_session.query(Ongoing_Contribution).ascending('startDate')
     if (event_in_DB.count() > 0):
         results = []
         for event in event_in_DB:

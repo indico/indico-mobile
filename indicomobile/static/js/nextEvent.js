@@ -1,12 +1,12 @@
 $('#home').live('pageinit', function(){
-	var contribs = loadAgendaContributions();
-	var simpleEvents = loadAgendaEvents().filter(function(event){
+	var agenda = myAgenda.getInstance();
+	var contribs = agenda.contributions;
+	var simpleEvents = agenda.events.filter(function(event){
 		return event.get('type') == 'simple_event';
 	});
 	for (var i = 0; i < simpleEvents.length; i++){
 		contribs.add(simpleEvents[i]);
 	}
-	console.log(contribs);
 
 	var now = new Date();
 

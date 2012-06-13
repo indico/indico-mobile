@@ -355,7 +355,7 @@
 <script type="text/template" id="eventList">
 <li>
     <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
-        <%if (attributes.title!='') { print(attributes.title); } else { print('Event'+id); }%>
+        <%if (title!='') { print(title); } else { print('Event'+id); }%>
     </a>
     <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext"></a>
 </li>
@@ -371,7 +371,7 @@
 <script type="text/template" id="agendaEventList">
 <li>
     <a href="#event_<%=id%>_agenda" rel="external" style="padding-right: 45px;">
-        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+        <%if(title!=''){print(title);}else{print('Event'+id);}%>
         <a data-theme="c" href="" data-icon="delete" eventId="<%=id%>" id="removeEvent" data-iconpos="notext"></a>
     </a>
 </li>
