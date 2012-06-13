@@ -1,32 +1,25 @@
 function getSpeakers(eventId){
 
-    var speakers;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/event/" + eventId + "/speakers",
         dataType: "json",
-        async: false,
-        success: function(resp){
-            speakers = resp;
-        }
+        async: true
     });
-    return new Speakers(speakers);
 
 }
 
 function getSpeaker(eventId, speakerId){
 
-    var speaker;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/event/" + eventId + "/speaker/" + speakerId,
         dataType: "json",
-        async: false,
+        async: true,
         success: function(resp){
             speaker = resp;
         }
     });
-    return new Speaker(speaker);
 
 }
 
@@ -71,9 +64,7 @@ function getSessionContributions(eventId, sessionId){
         dataType: "json",
         async: false,
         success: function(resp){
-            console.log(resp)
             contributions = new Contributions(resp);
-            console.log(contributions)
 
         }
     });
@@ -129,6 +120,22 @@ function getDay(eventId, dayDate){
 
 }
 
+function getEventDays(eventId){
+
+    var days;
+    $.ajax({
+        type: "GET",
+        url: "/event/" + eventId + "/days",
+        dataType: "json",
+        async: false,
+        success: function(resp){
+            days = resp;
+        }
+    });
+    return new Days(days);
+
+}
+
 function getEvent(eventId){
 
     var event;
@@ -142,7 +149,6 @@ function getEvent(eventId){
         }
     });
     return new Event(event);
-
 }
 
 function getSession(eventId, sessionId){
@@ -178,13 +184,12 @@ function getEventSameSessions(eventId, sessionId){
 
 }
 
-function getContribution(eventId, sessionId, contributionId){
+function getContribution(eventId, contributionId){
 
     var contribution;
     $.ajax({
         type: "GET",
-        url: "/event/" + eventId + "/session/" +
-        sessionId + "/contrib/" + contributionId,
+        url: "/event/" + eventId + "/contrib/" + contributionId,
         dataType: "json",
         async: false,
         success: function(resp){
@@ -197,30 +202,58 @@ function getContribution(eventId, sessionId, contributionId){
 
 function getFutureEvents(part){
 
-    var futureEvents;
-    $.ajax({
+    return $.ajax({
         type: "GET",
         url: "/futureEvents/"+part,
         dataType: "json",
-        async: false,
-        success: function(resp){
-            futureEvents = resp;
-        }
+        async: true
     });
-    return futureEvents;
+}
+
+function getOngoingEvents(part){
+
+    return $.ajax({
+        type: "GET",
+        url: "/ongoingEvents/"+part,
+        dataType: "json",
+        async: true
+    });
+}
+
+function getOngoingContributions(){
+
+    return $.ajax({
+        type: "GET",
+        url: "/ongoingContributions/",
+        dataType: "json",
+        async: true
+    });
 }
 
 function isEventInAgenda(eventId){
 
-    var myAgendaSessionsNumber = loadAgendaCompleteSessions().filter(function(session){
+    var myAgendaSessionsNumber = myAgenda.getInstance().completeSessions.filter(function(session){
         return session.get('eventId') == eventId;
     }).length;
 
-    var event = getEvent(eventId);
+    var myAgendaContribsNumber = myAgenda.getInstance().contributions.filter(function(contrib){
+        return contrib.get('eventId') == eventId;
+    }).length;
 
+    var event = myAgenda.getInstance().events.find(function(event){
+        return event.get('id') == eventId;
+    });
+    if (event){
     console.log(myAgendaSessionsNumber)
-
-    if (myAgendaSessionsNumber == event.get('numSessions')){
+    console.log(event.get('numSessions'))
+    console.log(myAgendaContribsNumber)
+    console.log(event.get('numContributions'))
+    }
+    if (event && myAgendaSessionsNumber == event.get('numSessions') &&
+         myAgendaContribsNumber == event.get('numContributions') && event.get('numContributions') !== 0){
+        return true;
+    }
+    else if (event && event.get('type') == 'simple_event'){
         return true;
     }
     else{

@@ -1,0 +1,122 @@
+// Created by Jonathan Eatherly, (https://github.com/joneath)
+// MIT license
+// Version 0.1
+
+(function() {
+  Backbone.InfiniScroll = function(collection, options) {
+    options = options || { };
+
+    var self = { },
+        $target,
+        fetchOn,
+        page,
+        pageSize,
+        prevScrollY = 0;
+
+    pageSize = collection.length || 25;
+
+    self.collection = collection;
+    self.options = _.defaults(options, {
+      success: function(){ },
+      error: function(){ },
+      onFetch: function(){ },
+      target: $(window),
+      param: "until",
+      untilAttr: "id",
+      pageSize: pageSize,
+      scrollOffset: 100,
+      add: true,
+      strict: false,
+      includePage: false
+    });
+
+    var initialize = function() {
+      $target = $(self.options.target);
+      fetchOn = true;
+      page = 1;
+
+      $target.on("scroll", self.watchScroll);
+    };
+
+    self.destroy = function() {
+      $target.off("scroll", self.watchScroll);
+    };
+
+    self.reset = function() {
+      self.destroy();
+      initialize();
+    }
+
+    self.enableFetch = function() {
+      fetchOn = true;
+    };
+
+    self.disableFetch = function() {
+      fetchOn = false;
+    };
+
+    self.onFetch = function() {
+      self.options.onFetch();
+    };
+
+    self.fetchSuccess = function(collection, response) {
+      if ((self.options.strict && collection.length >= (page + 1) * self.options.pageSize) || (!self.options.strict && response.length > 0)) {
+        self.enableFetch();
+        page += 1;
+      } else {
+        self.disableFetch();
+      }
+      self.options.success(collection, response);
+    };
+
+    self.fetchError = function(collection, response) {
+      self.enableFetch();
+
+      self.options.error(collection, response);
+    };
+
+    self.watchScroll = function(e) {
+      var queryParams,
+          scrollY = $target.scrollTop() + $target.height(),
+          docHeight = $target.get(0).scrollHeight;
+
+      if (!docHeight) {
+        docHeight = $(document).height();
+      }
+
+      if (scrollY >= docHeight - self.options.scrollOffset && fetchOn && prevScrollY <= scrollY) {
+        var lastModel = self.collection.last();
+        if (!lastModel) { return; }
+
+        self.onFetch();
+        self.disableFetch();
+        self.collection.fetch({
+          success: self.fetchSuccess,
+          error: self.fetchError,
+          add: self.options.add,
+          data: buildQueryParams(lastModel)
+        });
+      }
+      prevScrollY = scrollY;
+    };
+
+    function buildQueryParams(model) {
+      self.collection.options || (self.collection.options = {});
+      var params = (self.collection.options.data || {});
+
+      params[self.options.param] = typeof(model[self.options.untilAttr]) === "function" ? model[self.options.untilAttr]() : model.get(self.options.untilAttr);
+
+      if (self.options.includePage) {
+        params["page"] = page + 1;
+      }
+
+      params["offset"] = Math.floor(screen.height/50);
+
+      return params;
+    }
+
+    initialize();
+
+    return self;
+  };
+})( );

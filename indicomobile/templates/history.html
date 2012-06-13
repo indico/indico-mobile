@@ -2,36 +2,48 @@
 <html>
     <head>
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	        <link rel="stylesheet" href="{{url_for('static',filename='style/jquery.mobile-1.1.0.css')}}" />
-	        <link rel="stylesheet" href="{{url_for('static',filename='style/myStyle.css')}}"/>
-	        <script src="{{url_for('static',filename='js/lib/jquery-1.7.2.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/lib/jquery.mobile-1.1.0.js')}}"></script>
-            <script src="{{url_for('static',filename='js/lib/jquery.mobile.extension.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/lib/underscore.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/lib/backbone.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/model/modelsForEvents.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/utils.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/view/SessionsView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/SpeakersView.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/view/EventView.js')}}"></script>
-            <script src="{{url_for('static',filename='js/view/TimetableView.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/getFromDB.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/clickEvents.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/loadAgenda.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/editAgenda.js')}}"></script>
-	        <script src="{{url_for('static',filename='js/historyInit.js')}}"></script>
+	        <link rel="stylesheet" href="static/style/jquery.mobile-1.1.0.min.css" />
+	        <link rel="stylesheet" href="static/style/myStyle.css"/>
+	        <script src="static/js/lib/jquery-1.7.2.js"></script>
+            <script src="static/js/lib/jquery.highlight-3.js"></script>
+	        <script src="static/js/lib/jquery.mobile-1.1.0.min.js"></script>
+	        <script src="static/js/lib/underscore.js"></script>
+	        <script src="static/js/lib/backbone.js"></script>
+            <script src="static/js/lib/inifiniScroll.js"></script>
+	        <script src="static/js/model/modelsForEvents.js"></script>
+	        <script src="static/js/utils.js"></script>
+	        <script src="static/js/view/SessionsView.js"></script>
+            <script src="static/js/view/SpeakersView.js"></script>
+	        <script src="static/js/view/EventView.js"></script>
+            <script src="static/js/view/AboutView.js"></script>
+            <script src="static/js/view/TimetableView.js"></script>
+	        <script src="static/js/loadAgenda.js"></script>
+	        <script src="static/js/editAgenda.js"></script>
+	        <script src="static/js/historyInit.js"></script>
     </head>
     <body id="allpages">
         <div data-role="page" id="eventHome">
             <div data-role="header" data-theme="c">
-            <a href="/home" data-icon="home" rel="external">Home</a>
-                <h1>History</h1>
-            <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+                <a href="/home" data-role="button" data-icon="home" rel="external" data-iconpos="notext"></a>
+                <h3>Indico Mobile</h3>
+                <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
             </div>
-            <div data-role="content" data-theme="c"  id="eventList">
+            <div class="headerTitle">
+                <div class="headerElement"><h3>History</h3></div>
             </div>
-            <div data-role="footer" data-theme="c">Made by Me</div>
+            <div data-role="content" id="eventList">
+            </div>
+            <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+                <div data-role="navbar">
+                    <ul class="ui-grid-c">
+                        <li class="ui-block-a"><a data-iconpos="top" data-icon="agenda" rel="external" data-icon href="/agenda">Agenda</a></li>
+                        <li class="ui-block-b"><a data-iconpos="top" data-icon="event" rel="external" data-icon href="/events">Events</a></li>
+                        <li class="ui-block-c"><a data-iconpos="top" data-icon="new" rel="external" data-icon href="/now">Happening</a></li>
+                        <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="history" data-icon href="/history">History</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <script src="{{url_for('static',filename='js/routes.js')}}"></script>
+        <script src="static/js/routes.js"></script>
     </body>
 </html>

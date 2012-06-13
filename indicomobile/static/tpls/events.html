@@ -1,61 +1,378 @@
 <script type="text/template" id="eventPage">
 <div data-role="page" id="event_<%=id%>">
     <div data-role="header" data-theme="c">
-        <a href="#eventHome" data-icon="back">Back</a>
-        <h1 id="headerTitle"><%=title%></h1>
+        <a data-role="button" href="#eventHome" data-icon="back" data-iconpos="notext">Back</a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-        <div data-role="content" data-theme="c">
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>" rel="external">Sessions</a></li>
-                <li><a href="#timetable_<%= id %>" rel="external">Timetable</a></li>
-                <li><a href="#speakers_<%= id %>" rel="external">Speakers</a></li>
-            </ul>
-        <div id="event_days_<%=id%>"></div>
+    <div class="headerTitle">
+        <div class="headerElement"><h3><%=title%></h3>
+        <p><%=location%><br>
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = startDate.date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %> -
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = endDate.date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]+'</p>');
+        %>
+        </div>
     </div>
-    <div data-role="footer" data-theme="c">Made by Me</div>
+    <div data-role="content">
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                        <a href="#sessions_<%=id%>" rel="external" data-role="button" style="background-image: url(static/style/images/session.png);" class="buttonIcon"></a>
+                        <p class="buttonTitle">Sessions</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#timetable_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/timetable.png)"></a>
+                        <p class="buttonTitle">Timetable</p>
+                </div>
+                <div class="ui-block-a">
+                        <a href="#speakers_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/user.png)"></a>
+                        <p class="buttonTitle">Speakers</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#about_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/info.png)"></a>
+                        <p class="buttonTitle">About</p>
+                </div>
+        </div>
+    </div>
   </div>
 </script>
 
 <script type="text/template" id="agendaEventPage">
 <div data-role="page" id="event_<%=id%>_agenda">
     <div data-role="header" data-theme="c">
-        <a href="#eventHome" data-icon="back">Back</a>
-        <h1 id="headerTitle"><%=title%></h1>
+        <a data-role="button" href="#eventHome" data-icon="back" data-iconpos="notext">Back</a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
-        <div data-role="content" data-theme="c">
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#sessions_<%= id %>_agenda" rel="external">Sessions</a></li>
-                <li><a href="#timetable_<%= id %>_agenda" rel="external">Timetable</a></li>
-                <li><a href="#speakers_<%= id %>_agenda" rel="external">Speakers</a></li>
-            </ul>
-        <div id="event_days_<%=id%>_agenda"></div>
+    <div class="headerTitle">
+        <div class="headerElement"><h3><%=title%></h3>
+        <p><%=location%><br>
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = startDate.date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+        %> -
+        <%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var date = endDate.date.split('-');
+        print(month[date[1]-1]+' '+date[2]+', '+date[0]+'</p>');
+        %>
+        </div>
     </div>
-    <div data-role="footer" data-theme="c">Made by Me</div>
+    <div data-role="content">
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                        <a href="#sessions_<%=id%>_agenda" rel="external" data-role="button" style="background-image: url(static/style/images/session.png);" class="buttonIcon"></a>
+                        <p class="buttonTitle">Sessions</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#timetable_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/timetable.png)"></a>
+                        <p class="buttonTitle">Timetable</p>
+                </div>
+                <div class="ui-block-a">
+                        <a href="#speakers_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/user.png)"></a>
+                        <p class="buttonTitle">Speakers</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#about_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/info.png)"></a>
+                        <p class="buttonTitle">About</p>
+                </div>
+        </div>
   </div>
+</script>
+
+<script type="text/template" id="meetingPage">
+<div data-role="page" id="event_<%=id%>">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back" data-iconpos="notext"></a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div class="headerTitle">
+        <div class="headerElement">
+            <h3><%=title%></h3>
+            <p><%=location%></p>
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = startDate.date.split('-');
+            print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+            %> -
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = endDate.date.split('-');
+            print(month[date[1]-1]+' '+date[2]+', '+date[0]+'</p>');
+            %>
+        </div>
+    </div>
+    <div data-role="content">
+            <div>
+                    <a href="#timetable_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/timetable.png)"></a>
+                    <p class="buttonTitle">Timetable</p>
+            </div>
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                        <a href="#speakers_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/user.png)"></a>
+                        <p class="buttonTitle">Speakers</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#about_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/info.png)"></a>
+                        <p class="buttonTitle">About</p>
+                </div>
+        </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="agendaMeetingPage">
+<div data-role="page" id="event_<%=id%>_agenda">
+    <div data-role="header" data-theme="c">
+        <a href="#eventHome" data-icon="back" data-iconpos="notext"></a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div class="headerTitle">
+        <div class="headerElement">
+            <h3><%=title%></h3>
+            <p><%=location%></p>
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = startDate.date.split('-');
+            print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+            %> -
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = endDate.date.split('-');
+            print(month[date[1]-1]+' '+date[2]+', '+date[0]+'</p>');
+            %>
+        </div>
+    </div>
+    <div data-role="content">
+            <div>
+                    <a href="#timetable_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/timetable.png)"></a>
+                    <p class="buttonTitle">Timetable</p>
+            </div>
+            <div class="ui-grid-a" data-inset="true">
+                <div class="ui-block-a">
+                        <a href="#speakers_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/user.png)"></a>
+                        <p class="buttonTitle">Speakers</p>
+                </div>
+                <div class="ui-block-b">
+                        <a href="#about_<%=id%>_agenda" rel="external" data-role="button" class="buttonIcon" style="background-image: url(static/style/images/info.png)"></a>
+                        <p class="buttonTitle">About</p>
+                </div>
+        </div>
+  </div>
+</script>
+
+<script type="text/template" id="simpleEventPage">
+<div data-role="page" id="event_<%=id%>">
+    <div data-role="header" data-theme="c">
+        <a href="javascript:history.back(1)" rel="external" data-icon="back" data-iconpos="notext"></a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div class="headerTitle">
+        <div class="headerElement">
+            <h3><%=title%></h3>
+            <%
+                if (location!=''&&room!=''){
+                   print('<p>'+location+' - '+room+'</p>');
+                }
+                else if (location!=''&&room==''){
+                   print('<p>'+location+'</p>');
+                }
+                else if (location==''&&room!=''){
+                   print('<p>'+room+'</p>');
+                }
+            %>
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = startDate.date.split('-');
+            print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+            %> -
+            <%
+            var time = startDate.time.split(':');
+            print(time[0]+'h'+time[1]+'</p>');
+            %>
+        </div>
+    </div>
+    <div data-role="content">
+        <h4><% if(description!=''){print('Description')} else {print('No
+            description')}%></h4>
+        <p style="white-space: normal; text-align: justify;"><%= description %></p>
+        <%
+            if (typeof(chairs)!="undefined"){
+                if (chairs.length>0){
+                    print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                    for (var i=0; i<chairs.length;i++){
+                       print('<li>'+chairs[i].fullName+'</a></li>');
+                    }
+                    print('</ul>');
+                }
+            }
+        %>
+        <%
+        if (typeof(material)!="undefined"){
+            if (material.length>0){
+                print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+                for (var i=0; i<material.length; i++){
+                    print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                    for (var j=0; j<material[i].resources.length; j++){
+                        var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                            print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
+                            material[i].resources[j].url+
+                            '\" target=\"_blank\" >'+material[i].resources[j].name+
+                            '</a></li>');
+                    }
+                    print('</ul></div>');
+                }
+
+               print('</div>');
+            }
+         }
+        %>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a data-iconpos="top" data-icon="agenda" rel="external" data-icon href="/agenda">Agenda</a></li>
+                <li class="ui-block-b"><a data-iconpos="top" data-icon="event" rel="external" data-icon href="/events">Events</a></li>
+                <li class="ui-block-c"><a data-iconpos="top" data-icon="new" rel="external" data-icon href="/now">Happening</a></li>
+                <li class="ui-block-d"><a data-iconpos="top" data-icon="history" rel="external" data-icon href="/history">History</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/template" id="agendaSimpleEventPage">
+<div data-role="page" id="event_<%=id%>_agenda">
+    <div data-role="header" data-theme="c">
+        <a href="javascript:history.back(1)" rel="external" data-icon="back" data-iconpos="notext"></a>
+        <h3>Indico Mobile</h3>
+        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+    </div>
+    <div class="headerTitle">
+        <div class="headerElement">
+            <h3><%=title%></h3>
+            <%
+                if (location!=''&&room!=''){
+                   print('<p>'+location+' - '+room+'</p>');
+                }
+                else if (location!=''&&room==''){
+                   print('<p>'+location+'</p>');
+                }
+                else if (location==''&&room!=''){
+                   print('<p>'+room+'</p>');
+                }
+            %>
+            <%
+            var month = ["January", "February", "March", "April",
+                     "May", "June", "July", "August",
+                     "September", "October", "November", "December"];
+            var date = startDate.date.split('-');
+            print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
+            %> -
+            <%
+            var time = startDate.time.split(':');
+            print(time[0]+'h'+time[1]+'</p>');
+            %>
+        </div>
+    </div>
+    <div data-role="content">
+        <h4><% if(description!=''){print('Description')} else {print('No
+            description')}%></h4>
+        <p style="white-space: normal; text-align: justify;"><%= description %></p>
+        <%
+            if (typeof(chairs)!="undefined"){
+                if (chairs.length>0){
+                    print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
+                    for (var i=0; i<chairs.length;i++){
+                       print('<li>'+chairs[i].fullName+'</a></li>');
+                    }
+                    print('</ul>');
+                }
+            }
+        %>
+        <%
+        if (typeof(material)!="undefined"){
+            if (material.length>0){
+                print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
+                for (var i=0; i<material.length; i++){
+                    print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
+                    for (var j=0; j<material[i].resources.length; j++){
+                        var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
+                            print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
+                            material[i].resources[j].url+
+                            '\" target=\"_blank\" >'+material[i].resources[j].name+
+                            '</a></li>');
+                    }
+                    print('</ul></div>');
+                }
+
+               print('</div>');
+            }
+         }
+        %>
+    </div>
+    <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
+        <div data-role="navbar">
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a data-iconpos="top" data-icon="agenda" rel="external" data-icon href="/agenda">Agenda</a></li>
+                <li class="ui-block-b"><a data-iconpos="top" data-icon="event" rel="external" data-icon href="/events">Events</a></li>
+                <li class="ui-block-c"><a data-iconpos="top" data-icon="new" rel="external" data-icon href="/now">Happening</a></li>
+                <li class="ui-block-d"><a data-iconpos="top" data-icon="history" rel="external" data-icon href="/history">History</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 </script>
 
 <script type="text/template" id="eventList">
 <li>
-    <a href="#event_<%=id%>" rel="external">
-        <%if (attributes.title!='') { print(attributes.title); } else { print('Event'+id); }%>
+    <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
+        <%if (title!='') { print(title); } else { print('Event'+id); }%>
     </a>
-    <a data-icon="star" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext">Add to agenda</a>
+    <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" id="addEventToAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 
 <script type="text/template" id="eventListInAgenda">
-<li data-theme="g">
-    <a data-theme="g" href="#event_<%=id%>" rel="external">
-        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
-    </a>
-    <a data-theme="g" data-icon="delete" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext">Remove from agenda</a>
+<li data-theme="c">
+    <a data-theme="c" href="#event_<%=id%>" rel="external" style="padding-right: 45px;"><%=attributes.title%></a>
+    <a data-theme="b" href="" data-icon="star" eventId="<%=id%>" id="removeEventFromAgenda" data-iconpos="notext"></a>
 </li>
 </script>
 
 <script type="text/template" id="agendaEventList">
 <li>
-    <a href="#event_<%=id%>_agenda" rel="external">
-        <%if(attributes.title!=''){print(attributes.title);}else{print('Event'+id);}%>
+    <a href="#event_<%=id%>_agenda" rel="external" style="padding-right: 45px;">
+        <%if(title!=''){print(title);}else{print('Event'+id);}%>
+        <a data-theme="c" href="" data-icon="delete" eventId="<%=id%>" id="removeEvent" data-iconpos="notext"></a>
     </a>
 </li>
 </script>

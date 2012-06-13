@@ -1,11 +1,11 @@
 $('#eventHome').live('pageinit', function(){
 
-    var myEvents = loadAgendaEvents();
+    var myEvents = myAgenda.getInstance().events;
     visited = false;
 
     var eventsView = new AgendaEventsListView({
         collection : myEvents,
-        viewContainer : eventsContainer = $('#eventList')
+        viewContainer : eventsContainer = $('#agendaEventList')
     });
     eventsView.render();
 

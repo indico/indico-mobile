@@ -1,27 +1,7 @@
-import copy
 from flask import Flask, Blueprint
-from flaskext.mongoalchemy import MongoAlchemy, BaseQuery
+from flaskext.mongoalchemy import MongoAlchemy
 
 from indicomobile.db.base import DBClass, db
-
-
-
-
-class EventIdQuery(BaseQuery):
-
-    def getEventById(self, eventID):
-        return self.filter(self.type.id == eventID)
-
-
-class Presenter_id():
-
-    def __init__(self):
-        self._counter = 0
-
-    def __call__(self):
-        val = self._counter
-        self._counter += 1
-        return val
 
 
 class Presenter(DBClass):
@@ -29,8 +9,12 @@ class Presenter(DBClass):
     affiliation = db.StringField()
     _type = db.StringField()
     name = db.StringField()
+    familyName = db.StringField()
+    firstName = db.StringField()
+    name = db.StringField()
     contributionId = db.ListField(db.AnythingField())
     eventId = db.AnythingField()
+    email = db.AnythingField()
     id = db.AnythingField()
 
 
@@ -39,6 +23,7 @@ class Resource(DBClass):
     _fossil = db.StringField()
     _type = db.StringField()
     name = db.StringField()
+    eventId = db.AnythingField()
 
 
 class Material(DBClass):
@@ -47,12 +32,13 @@ class Material(DBClass):
     id = db.StringField()
     title = db.StringField()
     resources = db.ListField(db.DocumentField('Resource'))
+    eventId = db.AnythingField()
 
 
 class Contribution(DBClass):
     _type = db.StringField()
     startDate = db.DateTimeField()
-    sessionSlotId = db.StringField()
+    sessionSlotId = db.AnythingField()
     contributionId = db.StringField(default='')
     endDate = db.DateTimeField()
     description = db.StringField()
@@ -65,14 +51,15 @@ class Contribution(DBClass):
     textColor = db.StringField(default='')
     duration = db.IntField(default=0)
     presenters = db.ListField(db.DocumentField('Presenter'))
-    sessionId = db.StringField()
-    sessionUniqueId = db.StringField()
+    sessionId = db.AnythingField()
+    sessionUniqueId = db.AnythingField()
     location = db.StringField()
     uniqueId = db.StringField()
     _fossil = db.StringField()
-    sessionCode = db.StringField()
+    sessionCode = db.AnythingField()
     uniqueId = db.StringField(default='')
     room = db.StringField()
+    isPoster = db.BoolField(default=False)
     eventId = db.AnythingField()
     dayDate = db.StringField()
 
@@ -81,7 +68,6 @@ class Session(DBClass):
     id = db.StringField()
     startDate = db.DateTimeField()
     sessionSlotId = db.AnythingField()
-    contributionId = db.AnythingField(default='')
     endDate = db.DateTimeField()
     color = db.StringField(default='')
     conferenceId = db.StringField()
@@ -122,13 +108,11 @@ class Chair(DBClass):
 
 
 class Day(DBClass):
-    query_class = EventIdQuery
     date = db.StringField()
     eventId = db.AnythingField()
 
 
 class Event(DBClass):
-    query_class = EventIdQuery
     startDate = db.DateTimeField()
     endDate = db.DateTimeField()
     title = db.StringField()
@@ -137,7 +121,7 @@ class Event(DBClass):
     id = db.StringField()
     chairs = db.ListField(db.DocumentField('Chair'))
     url = db.StringField()
-    location = db.StringField()
+    location = db.AnythingField()
     _fossil = db.StringField()
     timezone = db.StringField()
     type = db.StringField()
@@ -147,4 +131,45 @@ class Event(DBClass):
     categoryId = db.StringField()
     numContributions = db.IntField()
     numSessions = db.IntField()
+    modificationDate = db.DateTimeField()
 
+
+class Recent_Event(DBClass):
+    today = db.DateTimeField()
+    title = db.StringField()
+    id = db.StringField()
+    startDate = db.DateTimeField()
+    endDate = db.DateTimeField()
+
+
+class Ongoing_Event(DBClass):
+    today = db.DateTimeField()
+    title = db.StringField()
+    id = db.StringField()
+    startDate = db.DateTimeField()
+    endDate = db.DateTimeField()
+
+
+class Ongoing_Contribution(DBClass):
+    now = db.DateTimeField()
+    url = db.StringField()
+    track = db.AnythingField(default='')
+    _type = db.StringField()
+    type = db.AnythingField()
+    room = db.AnythingField()
+    contributionId = db.AnythingField()
+    eventId = db.AnythingField()
+    _fossil = db.StringField()
+    session = db.AnythingField(default='')
+    location = db.AnythingField()
+    description = db.StringField()
+    title = db.StringField()
+    duration = db.AnythingField(default=0)
+    startDate = db.DateTimeField()
+    speakers = db.ListField(db.DocumentField('Presenter'))
+    material = db.ListField(db.DocumentField('Material'))
+    endDate = db.DateTimeField()
+    category = db.AnythingField(default='')
+    categoryId = db.AnythingField(default='')
+    timezone = db.AnythingField(default='')
+    contributions = db.AnythingField(default='')

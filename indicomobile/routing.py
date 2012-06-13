@@ -25,6 +25,11 @@ def search():
     return render_template('search.html')
 
 
+@routing.route('/now')
+def now():
+    return render_template('goingon.html')
+
+
 @routing.route('/history')
 def history():
     return render_template('history.html')
