@@ -500,6 +500,9 @@ def getFutureEvents():
                                              endDate=event['endDate'])
                     new_event.save()
                 return json.dumps(events, default=dthandler)
+    else:
+        return json.dumps([], default=dthandler)
+
 
 
 @events.route('/ongoingEvents/', methods=['GET'])
@@ -532,6 +535,8 @@ def getOngoingEvents():
                                              endDate=event['endDate'])
                     new_event.save()
                 return json.dumps(events, default=dthandler)
+    else:
+        return json.dumps([], default=dthandler)
 
 
 @events.route('/ongoingContributions/', methods=['GET'])
