@@ -22,10 +22,10 @@ var AboutPageView = Backbone.View.extend({
             aboutPage.append(agendaAboutTemplate(event.toJSON()));
         }
         else{
+            console.log(event)
             aboutPage.attr('id', 'about_' + event.get('id'));
             aboutPage.append(aboutTemplate(event.toJSON()));
         }
-        console.log(aboutPage)
         $('body').append(aboutPage);
 
         return this;

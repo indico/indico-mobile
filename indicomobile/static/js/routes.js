@@ -121,7 +121,6 @@ var Router = Backbone.Router.extend({
             else{
                 sessions = getEventSessions(eventId);
             }
-            console.log(sessions)
 
             var listContainer = $('#sessions_list_' + info);
             var sessionsListView = new SessionsListView({

@@ -1,5 +1,9 @@
 import os, sys
 from indicomobile.server import app
+from indicomobile.util.json import patch_json
+
+
+patch_json()
 
 
 if __name__ == '__main__':

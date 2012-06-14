@@ -1,5 +1,6 @@
 import copy
 from flaskext.mongoalchemy import MongoAlchemy
+from bson.dbref import DBRef
 
 from indicomobile.app import app
 
@@ -33,3 +34,7 @@ class DBClass(db.Document):
         if 'chairs' in field_values:
             field_values['chairs'] = self.get_list('chairs')
         return field_values
+
+
+def ref(obj):
+    return DBRef(obj.get_collection_name(), obj.mongo_id)

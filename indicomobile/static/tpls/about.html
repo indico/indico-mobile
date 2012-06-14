@@ -33,18 +33,12 @@
 </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
-                <% if (numSessions !== 0){
-                    print('<ul class="ui-grid-c">');
-                    print('<li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_' + id + '">Sessions</a></li>');
-                    }
-                    else{
-                        print('<ul class="ui-grid-b">');
-                    }
-                %>
-            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>">Timetable</a></li>
-            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>">Speakers</a></li>
-            <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
-        </ul>
+      <ul class="ui-grid-c">
+        <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%= id %>">Sessions</a></li>
+        <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>">Timetable</a></li>
+        <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>">Speakers</a></li>
+        <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
+      </ul>
     </div>
 </div>
 </script>
@@ -84,17 +78,14 @@
 </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
-                <% if (numSessions !== 0){
-                    print('<ul class="ui-grid-c">');
-                    print('<li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_' + id + '_agenda">Sessions</a></li>');
-                    }
-                    else{
-                        print('<ul class="ui-grid-b">');
-                    }
-                %>
-            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>_agenda">Timetable</a></li>
-            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>_agenda">Speakers</a></li>
-            <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>_agenda">About</a></li>
+      <ul class="ui-grid-c">
+        <li class="ui-block-a">
+          <a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%= id %>_agenda">Sessions</a>
+        </li>
+
+        <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=id%>_agenda">Timetable</a></li>
+        <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=id%>_agenda">Speakers</a></li>
+        <li class="ui-block-d"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>_agenda">About</a></li>
         </ul>
     </div>
 </div>

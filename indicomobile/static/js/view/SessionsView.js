@@ -477,7 +477,6 @@ var SessionDayContributions = Backbone.View.extend({
                 });
                 $('a[href="#session_'+eventId+'_'+sessionId+'_agenda"]').closest('li').remove();
                 if(!isEventInAgenda){
-                    console.log('no more sessions')
                     $('#eventHome').remove();
                     $.mobile.changePage('/agenda');
                 }

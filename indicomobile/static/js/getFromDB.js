@@ -106,6 +106,7 @@ function getEventSessions(eventId){
         async: false,
         success: function(resp){
             sessions = resp;
+            debugger
         }
     });
     return new Slots(sessions);
@@ -254,33 +255,5 @@ function getOngoingContributions(){
 }
 
 function isEventInAgenda(eventId){
-
-    var myAgendaSessionsNumber = loadAgendaCompleteSessions().filter(function(session){
-        return session.get('eventId') == eventId;
-    }).length;
-
-    var myAgendaContribsNumber = loadAgendaContributions().filter(function(contrib){
-        return contrib.get('eventId') == eventId;
-    }).length;
-
-    var event = loadAgendaEvents().find(function(event){
-        return event.get('id') == eventId;
-    });
-    if (event){
-    console.log(myAgendaSessionsNumber)
-    console.log(event.get('numSessions'))
-    console.log(myAgendaContribsNumber)
-    console.log(event.get('numContributions'))
-    }
-    if (event && myAgendaSessionsNumber == event.get('numSessions') &&
-         myAgendaContribsNumber == event.get('numContributions') && event.get('numContributions') !== 0){
-        return true;
-    }
-    else if (event && event.get('type') == 'simple_event'){
-        return true;
-    }
-    else{
-        return false;
-    }
-
+    // TODO
 }
