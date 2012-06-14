@@ -296,16 +296,16 @@ def search_contrib_in_session(event_id, session_id, day_date):
 
 
 # TODO: Cache this
-@events.route('/futureEvents/<part>', methods=['GET'])
-def getFutureEvents(part):
+@events.route('/futureEvents/', methods=['GET'])
+def getFutureEvents():
     update_future_events()
     now = datetime.utcnow()
     return json.dumps(list(Event.query.filter(Event.startDate > now).ascending(Event.startDate).limit(15)))
 
 
 # TODO: Cache this
-@events.route('/ongoingEvents/<part>', methods=['GET'])
-def getOngoingEvents(part):
+@events.route('/ongoingEvents/', methods=['GET'])
+def getOngoingEvents():
     update_ongoing_events()
     now = datetime.utcnow()
     return json.dumps(list(Event.query.filter(Event.startDate < now, Event.endDate > now)))

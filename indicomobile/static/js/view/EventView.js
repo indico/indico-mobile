@@ -130,34 +130,44 @@ var EventsListView = Backbone.View.extend({
         this.collection.on('reset', this.render, this);
         this.collection.on('hasChanged', this.appendRender, this);
         this.collection.fetch();
+
+        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+            success: function(collection, changed) {
+                collection.trigger('hasChanged', [changed]);
+            },
+            includePage : true});
+        this.infiniScroll.enableFetch();
+
+    },
+
+    _renderItems: function(items, tpl, highlight_term) {
+        var container = $(this.options.container);
+        var date = container.data('date');
+        var end = false;
+        items.each(function(event){
+            var dateYear = filterDate(event.get('startDate').date).month +
+                ' ' + filterDate(event.get('startDate').date).year;
+
+            if (date === '' || date != dateYear){
+                date = dateYear;
+                container.data('date', date);
+                container.append('<li data-role="list-divider">' + dateYear + '</li>');
+            }
+            container.append(tpl(event.toJSON()));
+        });
+        container.listview('refresh');
+
+        if (highlight_term != '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
+            for (word in highlight_term.split(' ')){
+                container.find('li').highlight(highlight_term.split(' ')[word]);
+            }
+        }
     },
 
     appendRender: function(newitems){
-        var self = this,
-        container = $(this.options.container),
-        eventListTemplate = this.eventListTemplate,
-        term = this.options.term
-        date = container.data('date');
+        var container = $(this.options.container);
         if (newitems[0].length > 0){
-            _.each(newitems[0], function(element){
-                var dateYear = filterDate(element.startDate.date).month +
-                    ' ' + filterDate(element.startDate.date).year;
-
-                if (date === '' || date != dateYear){
-                    date = dateYear;
-                    container.data('date', date);
-                    container.append('<li data-role="list-divider">' + dateYear + '</li>');
-                }
-            console.log(element)
-                container.append(eventListTemplate(element));
-            });
-            container.listview('refresh');
-
-            if (term != '' && term != ' ' && typeof term !== 'undefined'){
-                for (word in term.split(' ')){
-                    container.find('li').highlight(term.split(' ')[word]);
-                }
-            }
+            this._renderItems(newitems, this.eventListTemplate, this.options.term)
         }
         else{
             container.parent().find('.loader').hide();
@@ -165,53 +175,17 @@ var EventsListView = Backbone.View.extend({
     },
 
     render: function(){
-        var container = $(this.options.container),
-        events = this.collection,
-        eventListTemplate = this.eventListTemplate,
-        eventListInAgendaTemplate = this.eventListInAgendaTemplate,
-        term = this.options.term;
-
-        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
-          success: function(collection, changed) {
-              collection.trigger('hasChanged', [changed]);
-          },
-          includePage : true});
-        this.infiniScroll.enableFetch();
-
-        if (events.size() > 0){
-            var date = '';
-            var end = false;
-            events.each(function(event){
-                console.log(event)
-                var dateYear = filterDate(event.get('startDate').date).month +
-                ' ' + filterDate(event.get('startDate').date).year;
-
-                if (date === '' || date != dateYear){
-                    date = dateYear;
-                    container.data('date', date);
-                    container.append('<li data-role="list-divider">' + dateYear + '</li>');
-                }
-                container.append(eventListTemplate(event.toJSON()));
-            });
-            if (term != '' && term != ' ' && typeof term !== 'undefined'){
-                for (word in term.split(' ')){
-                    container.find('li').highlight(term.split(' ')[word]);
-                }
-                if(events.size() > 19){
-                    container.parent().append('<div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>');
-                }
-            }
-            
-
+        var container = $(this.options.container);
+        if (this.collection.size() > 0){
+            this._renderItems(this.collection, this.eventListTemplate, this.options.term);
         }
         else{
             container.html('<h4>Nothing found</h4>');
         }
 
-        
+        container.parent().find('.loader').hide();
         $.mobile.hidePageLoadingMsg();
         container.trigger('create');
-        container.listview('refresh');
         return this;
     }
 
@@ -241,8 +215,6 @@ var HistoryListView = Backbone.View.extend({
         part = this.options.part,
         listView = $(this.el);
 
-        console.log(events)
-
         listView.empty();
         events.comparator = function(event){
             return -parseInt(event.get('viewedAt'), 10);
@@ -252,7 +224,6 @@ var HistoryListView = Backbone.View.extend({
         var dates = [];
         if (events.size() > 0){
             events.each(function(event){
-                console.log(event)
                 var date = new Date(parseInt(event.get('viewedAt'), 10));
                 listView.append('<li data-role="list-divider">' + date + '</li>');
 
