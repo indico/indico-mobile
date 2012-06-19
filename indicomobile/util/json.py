@@ -22,7 +22,7 @@ class _JSONEncoder(json.JSONEncoder):
         elif isinstance(obj, ObjectId):
             return getattr(obj, 'id', None)
         elif isinstance(obj, DBRef):
-            return null
+            return None
 
         return json.JSONEncoder.default(self, obj)
 

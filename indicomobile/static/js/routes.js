@@ -59,11 +59,12 @@ var Router = Backbone.Router.extend({
 
         addToHistory("/event/" + eventId);
 
-        var eventView = new EventView({
+        var eventView = new PageView({
                 model: new Event(),
                 url: "/event/" + eventId,
-                agenda: agenda,
-                page: '#event_' + info
+                link: 'event_' + info,
+                template_file: 'events.html',
+                template_name: '#eventPage'
             });
 
         var create = false;
@@ -88,19 +89,20 @@ var Router = Backbone.Router.extend({
             var create = true;
 
             var pageContainer = $('body');
-            var sessionsPageView = new SessionsPageView({
+            var sessionsPageView = new PageView({
                 model: new Event(),
                 url: "/event/" + eventId,
-                container: pageContainer,
-                agenda: agenda,
-                page: '#sessions_' + info
+                link: 'sessions_' + info,
+                template_file: 'sessions.html',
+                template_name: '#sessionsPage'
             });
 
-            var sessionsListView = new SessionsListView({
+            var sessionsListView = new ListView({
                 collection: new Slots(),
                 url: "/event/" + eventId + "/sessions",
                 container: '#sessions_list_' + info,
-                agenda: agenda
+                template_file: 'sessions.html',
+                template_name: '#sessionsList'
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -129,20 +131,20 @@ var Router = Backbone.Router.extend({
             var create = true;
 
             var pageContainer = $('body');
-            var sessionView = new SessionView({
+            var sessionView = new PageView({
                 model: new Slot(),
-                url: 'event/' + eventId + '/samesession/' + sessionId,
-                container: pageContainer,
-                agenda: agenda,
-                page: '#session_' + info
+                url: 'event/' + eventId + '/session/' + sessionId,
+                link: 'session_' + info,
+                template_file: 'sessions.html',
+                template_name: '#sessionPage'
             });
 
-            var sessionDaysView = new SessionDaysView({
+            var sessionDaysView = new SessionDaysList({
                 collection: new Slots(),
                 url: 'event/' + eventId + '/sessions/' + sessionId,
                 container: '#session_days_' + info,
-                agenda: agenda,
-                create: create
+                template_file: 'days.html',
+                template_name: '#sessionDaysList'
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -169,24 +171,22 @@ var Router = Backbone.Router.extend({
         var container;
 
         if ($('#sessionDay_' + info).length === 0){
-            var create = true;
-            var pageContainer = $('body');
+
             var contribution = new Contribution({'eventId': eventId, 'sessionId': sessionId, 'dayDate': day});
             var sessionDayView = new SessionDayView({
-                contribution: contribution,
-                container: pageContainer,
-                agenda: agenda
+                model: contribution,
+                template_file: 'days.html',
+                template_name: '#sessionDay',
+                link: 'sessionDay_' + info
             });
-            sessionDayView.render();
 
-            container = $('#sessionDay_list_' + info);
-            container.data('lastTime', '');
-            var contributionsView = new SessionDayContributions({
+            var contributionsView = new ContributionListView({
                 collection: new Contributions(),
                 url: '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs',
                 container: '#sessionDay_list_' + info,
-                agenda: agenda,
-                create: create
+                template_file: 'contributions.html',
+                template_name: '#contribution',
+                sessionDay: true
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -210,20 +210,20 @@ var Router = Backbone.Router.extend({
 
         if ($('#timetable_' + info).length === 0){
 
-            var pageContainer = $('body');
-            var timetableDaysView = new TimetableDaysView({
-                model: new Event,
+            var timetableDaysView = new PageView({
+                model: new Event(),
                 url: 'event/' + eventId,
-                container: pageContainer,
-                agenda: agenda,
-                page: '#timetable_' + info
+                template_file: 'days.html',
+                template_name: '#timetableDays',
+                link: 'timetable_' + info
             });
 
-            var timetableDaysListView = new TimetableDaysListView({
+            var timetableDaysListView = new ListView({
                 collection: new Days(),
                 url: '/event/' + eventId + '/days',
                 container: '#timetable_days_' + info,
-                agenda: agenda
+                template_file: 'days.html',
+                template_name: '#timetableDaysList'
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -250,23 +250,22 @@ var Router = Backbone.Router.extend({
 
             var pageContainer = $('body');
             var timetableDayView = new TimetableDayView({
-                day: new Day(),
-                event: new Event(),
-                dayUrl: '/event/' + eventId + '/day/' + dayDate,
-                eventUrl: 'event/' + eventId,
-                container: pageContainer,
-                agenda: agenda,
-                page: '#timetableDay_' + info
+                model: new Day(),
+                url: '/event/' + eventId + '/day/' + dayDate,
+                template_file: 'days.html',
+                template_name: '#dayPage',
+                link: 'timetableDay_' + info
             });
             var container = $('#day_list_' + info);
             container.data('lastTime', '');
             container.data('lastPosterTime', '');
-            var timetableDayContributionsView = new TimetableDayContributionsView({
+            var timetableDayContributionsView = new ContributionListView({
                 container: '#day_list_' + info,
                 collection: new Contributions(),
                 url: '/event/'+eventId+'/day/'+dayDate+'/contributions',
-                create: create,
-                agenda: agenda
+                template_file: 'contributions.html',
+                template_name: '#contribution',
+                sessionDay: false
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -293,24 +292,26 @@ var Router = Backbone.Router.extend({
         if ($('#speakers_' + info).length === 0){
             var eventId = infoSplitted[0];
 
-            var speakersPageView = new SpeakersPageView({
+            var speakersPageView = new SpeakersPage({
                 model: new Event(),
                 url: '/event/' + eventId,
-                agenda: agenda,
-                page: '#speakers_' + info
+                template_file: 'speakers.html',
+                template_name: '#speakersPage',
+                link: 'speakers_' + info
             });
 
             container = $('#speakersContent_' + info);
             container.data('firstLetter', '');
 
             speakers = new Speakers();
-            var speakersListView = new SpeakersListView({
+            var speakersListView = new SpeakerListView({
                 collection: new Speakers(),
                 url: '/event/'+eventId+'/speakers',
-                agenda: agenda,
-                eventId: eventId,
-                create: create,
-                container: '#speakersContent_' + info
+                container: '#speakersContent_' + info,
+                event_id: eventId,
+                lastIndex: null,
+                template_file: 'speakers.html',
+                template_name: '#speakersList'
             });
         }
         else{
@@ -333,21 +334,21 @@ var Router = Backbone.Router.extend({
 
             var eventId = infoSplitted[0];
             var speakerId = infoSplitted[1].replace(':','_');
-            var speakerPageView = new SpeakerPageView({
-                speaker: new Speaker(),
-                speakerUrl: "/event/" + eventId + "/speaker/" + speakerId,
-                event: new Event(),
-                eventUrl: '/event/'+eventId,
-                agenda: agenda,
-                page:'div[id="speaker_' + info +'"]'
+            var speakerPageView = new PageView({
+                model: new Speaker(),
+                url: "/event/" + eventId + "/speaker/" + speakerId,
+                event_id: eventId,
+                template_file: 'speakers.html',
+                template_name: '#speakerPage',
+                link: 'speaker_' + info
             });
 
-            var speakerContributionsView = new SpeakerContributionsView({
+            var speakerContributionsView = new SpeakerContribsListView({
                 container: 'div[id="speaker_contribs_' + info +'"]',
                 collection: new Contributions(),
                 url: "/event/" + eventId + "/speaker/" + speakerId + "/contributions",
-                agenda: agenda,
-                create: create
+                template_file: 'contributions.html',
+                template_name: '#contribution'
             });
         }
         else{
@@ -370,12 +371,12 @@ var Router = Backbone.Router.extend({
             var eventId = infoSplitted[0];
             var contributionId = infoSplitted[1];
 
-            var contributionPageView = new ContributionPageView({
-                contribution: new Contribution(),
-                contributionUrl: '/event/' + eventId + '/contrib/' + contributionId,
-                event: new Event(),
-                eventUrl: '/event/' + eventId,
-                page: '#contribution_' + info
+            var contributionPageView = new PageView({
+                model: new Contribution(),
+                url: '/event/' + eventId + '/contrib/' + contributionId,
+                template_file: 'contributions.html',
+                template_name: '#contributionDetail',
+                link: 'contribution_' + info
             });
         }
         else{
@@ -395,11 +396,12 @@ var Router = Backbone.Router.extend({
 
         if ($('#about_' + info).length === 0){
 
-            var aboutPageView = new AboutPageView({
+            var aboutPageView = new PageView({
                 model: new Event(),
                 url: '/event/'+eventId,
-                agenda: agenda,
-                page: '#about_' + info
+                template_file: 'about.html',
+                template_name: '#about',
+                link: 'about_' + info
             });
         }
         else{
@@ -432,14 +434,6 @@ myAgenda.getInstance = function() {
     }
     return this.instance;
 }
-
-$('a[rel="external"]').live('click', function(e){
-    $.mobile.showPageLoadingMsg("a", "Loading...", true);
-});
-
-$('div[data-role="page"]').live('pageshow', function(e){
-    $.mobile.hidePageLoadingMsg();
-});
 
 $.mobile.defaultPageTransition = 'none';
 var router = new Router();

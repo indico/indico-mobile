@@ -1,5 +1,4 @@
 <script type="text/template" id="sessionsPage">
-<div data-role="page" id="sessions_<%= id %>">
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
@@ -20,7 +19,6 @@
             <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
         </ul>
     </div>
-</div>
 </div>
 </script>
 
@@ -50,9 +48,8 @@
 </script>
 
 <script type="text/template" id="sessionPage">
-<div data-role="page" id="session_<%=eventId%>_<%= sessionId %>">
     <div data-role="header" data-theme="c">
-            <a href="#sessions_<%=eventId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+            <a href="#sessions_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
             <h3>Indico Mobile</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
     </div>
@@ -60,25 +57,24 @@
         <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
     </div>
     <div data-role="content">
-        <ul data-role="listview" id="session_days_<%=eventId%>_<%= sessionId %>" data-inset="true"></ul>
+        <ul data-role="listview" id="session_days_<%=conferenceId%>_<%= sessionId %>" data-inset="true"></ul>
     </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
         <ul class="ui-grid-c">
-            <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>">Sessions</a></li>
-            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=eventId%>">Timetable</a></li>
-            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=eventId%>">Speakers</a></li>
-            <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>">About</a></li>
+            <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=conferenceId%>">Sessions</a></li>
+            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=conferenceId%>">Timetable</a></li>
+            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=conferenceId%>">Speakers</a></li>
+            <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=conferenceId%>">About</a></li>
         </ul>
     </div>
-</div>
 </div>
 </script>
 
 <script type="text/template" id="agendaSessionPage">
-<div data-role="page" id="session_<%=eventId%>_<%= sessionId %>_agenda">
+<div data-role="page" id="session_<%=conferenceId%>_<%= sessionId %>_agenda">
     <div data-role="header" data-theme="c">
-            <a href="#sessions_<%=eventId%>_agenda" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+            <a href="#sessions_<%=conferenceId%>_agenda" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
             <h3>Indico Mobile</h3>
             <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
     </div>
@@ -86,15 +82,15 @@
         <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
     </div>
     <div data-role="content">
-        <ul data-role="listview" id="session_days_<%=eventId%>_<%= sessionId %>_agenda" data-inset="true"></ul>
+        <ul data-role="listview" id="session_days_<%=conferenceId%>_<%= sessionId %>_agenda" data-inset="true"></ul>
     </div>
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
         <ul class="ui-grid-c">
-            <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=eventId%>_agenda">Sessions</a></li>
-            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=eventId%>_agenda">Timetable</a></li>
-            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=eventId%>_agenda">Speakers</a></li>
-            <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=eventId%>_agenda">About</a></li>
+            <li class="ui-block-a"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=conferenceId%>_agenda">Sessions</a></li>
+            <li class="ui-block-b"><a data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<%=conferenceId%>_agenda">Timetable</a></li>
+            <li class="ui-block-c"><a data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<%=conferenceId%>_agenda">Speakers</a></li>
+            <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=conferenceId%>_agenda">About</a></li>
         </ul>
     </div>
 </div>
@@ -103,24 +99,24 @@
 
 <script type="text/template" id="sessionsList">
 <li>
-    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
+    <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
         <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c">Add this session to my agenda</a>
+    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c">Add this session to my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="sessionsListInAgenda">
 <li>
-    <a href="#session_<%= eventId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
+    <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
         <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="b">Remove this session from my agenda</a>
+    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="star" data-iconpos="notext" data-theme="b">Remove this session from my agenda</a>
 </li>
 </script>
 
 <script type="text/template" id="agendaSessionsList">
 <li>
-    <a href="#session_<%= eventId %>_<%= sessionId %>_agenda" rel="external" style="padding-right: 45px;">
+    <a href="#session_<%= conferenceId %>_<%= sessionId %>_agenda" rel="external" style="padding-right: 45px;">
         <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-    <a href="" id="removeSession" sessionId="<%= sessionId %>" eventId="<%= eventId %>" data-icon="delete" data-iconpos="notext" data-theme="c">Remove this session from my agenda</a>
+    <a href="" id="removeSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" data-icon="delete" data-iconpos="notext" data-theme="c">Remove this session from my agenda</a>
 </li>
 </script>

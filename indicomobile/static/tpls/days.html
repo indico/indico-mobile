@@ -18,21 +18,16 @@
 </div>
     <div data-role="content">
         <input type="text" data-type="search" id="searchContrib_<%=eventId%>_<%=date%>">
-        <div id="day_list_<%=eventId%>_<%= date %>"><div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div></div>
+        <div id="day_list_<%=eventId%>_<%= date %>"></div>
+        <div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>
     </div>
 </script>
 
 <script type="text/template" id="dayFooterPage">
     <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
         <div data-role="navbar">
-                <% if (numSessions !== 0){
-                    print('<ul class="ui-grid-c">');
-                    print('<li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_' + id + '">Sessions</a></li>');
-                    }
-                    else{
-                        print('<ul class="ui-grid-b">');
-                    }
-                %>
+            <ul class="ui-grid-c">
+                <li class="ui-block-a"><a rel="external" data-iconpos="top" data-icon="sessions" data-icon href="#sessions_<%=id%>">Sessions</a></li>
                 <li class="ui-block-b"><a class="ui-btn-active ui-state-persist" data-iconpos="top" data-icon="timetable" data-icon href="#timetable_<%=id%>">Timetable</a></li>
                 <li class="ui-block-c"><a rel="external" data-iconpos="top" data-icon="speakers" data-icon href="#speakers_<%=id%>">Speakers</a></li>
                 <li class="ui-block-d"><a rel="external" data-iconpos="top" data-icon="about" data-icon href="#about_<%=id%>">About</a></li>
@@ -151,7 +146,6 @@
 
 
 <script type="text/template" id="timetableDays">
-<div data-role="page" id="timetable_<%= id %>">
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
@@ -173,7 +167,6 @@
           </ul>
         </div>
     </div>
-</div>
 </script>
 
 
@@ -239,12 +232,12 @@
 
 <script type="text/template" id="sessionDaysList">
 <li>
-    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>" rel="external">
+    <a href="#sessionDay_<%=conferenceId%>_<%= sessionId %>_<%= startDate.date %>" rel="external">
     <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
-        var date = dayDate.split('-');
+        var date = startDate.date.split('-');
         print(month[date[1]-1]+' '+date[2]+', '+date[0]);
     %>
     </a>
@@ -253,12 +246,12 @@
 
 <script type="text/template" id="agendaSessionDaysList">
 <li>
-    <a href="#sessionDay_<%=eventId%>_<%= sessionId %>_<%= dayDate %>_agenda" rel="external">
+    <a href="#sessionDay_<%=conferenceId%>_<%= sessionId %>_<%= startDate.date %>_agenda" rel="external">
     <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
-        var date = dayDate.split('-');
+        var date = startDate.date.split('-');
         print(month[date[1]-1]+' '+date[2]+', '+date[0]);
     %>
     </a>
