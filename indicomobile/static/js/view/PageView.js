@@ -60,7 +60,6 @@ var SessionDayView = PageView.extend({
             var dayDate = splittedId[3];
             var term = $(e.currentTarget).val();
             var container = $('#sessionDay_list_' + eventId + '_' + sessionId + '_' + dayDate);
-            console.log($(e.currentTarget).parent());
             $(e.currentTarget).parent().parent().find('.loader').show();
             container.empty();
             var contributionsView = new ContributionListView({
@@ -93,7 +92,6 @@ var TimetableDayView = PageView.extend({
             var dayDate = splittedId[2];
             var term = $(e.currentTarget).val();
             var container = $('#day_list_' + splittedId[1] + '_' + splittedId[2]);
-            console.log($(e.currentTarget).parent());
             $(e.currentTarget).parent().parent().find('.loader').show();
             container.empty();
             var contributionsView = new ContributionListView({
@@ -126,8 +124,9 @@ var SpeakersPage = PageView.extend({
             var term = $(e.currentTarget).val();
             var container = $('#speakersContent_' + splittedId[1]);
             $(e.currentTarget).parent().parent().find('.loader').show();
-            container.empty();
-            var speakersView = new SpeakerListView({
+            container.data('view').remove();
+            container.data('view').infiniScroll.disableFetch();
+            var view = new SpeakerListView({
                 container: '#speakersContent_' + splittedId[1],
                 collection: new Speakers(),
                 url: 'searchSpeaker/'+eventId+'?search='+term,

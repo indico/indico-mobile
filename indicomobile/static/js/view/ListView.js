@@ -192,46 +192,12 @@ var ContributionListView = ListView.extend({
 
 var SpeakerListView = ListView.extend({
     initialize: function () {
+        var template_file = getHTMLTemplate(this.options.template_file);
+        this.template = _.template($(template_file).siblings(this.options.template_name).html());
         this.collection.on('hasChanged', this.appendRender, this);
-        SpeakerListView.__super__.initialize.call(this);
-    },
-
-    appendRender: function(newitems) {
-        var self = this,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        term = this.options.term;
-        if (newitems[0].length > 0){
-            _.each(newitems[0], function(element){
-                if (self.options.lastIndex === null || self.options.lastIndex != element.name[0]){
-                    self.options.lastIndex = element.name[0];
-                    listView.append('<li data-role="list-divider">'+element.name[0]+'</li>');
-                }
-                element.conferenceId = self.options.event_id;
-                listView.append(template(element));
-            });
-            listView.listview('refresh');
-
-            if (term != '' && term != ' ' && typeof term !== 'undefined'){
-                for (word in term.split(' ')){
-                    container.find('li').highlight(term.split(' ')[word]);
-                }
-            }
-        }
-        else{
-            container.parent().find('.loader').hide();
-        }
-    },
-
-
-    render: function() {
-        var collection = this.collection,
-        self = this,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        term = this.options.term;
+        this.collection.on('reset', this.render, this);
+        this.collection.url = this.options.url;
+        this.collection.fetch();
 
         this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
           success: function(collection, changed) {
@@ -239,13 +205,30 @@ var SpeakerListView = ListView.extend({
           },
           includePage : true});
         this.infiniScroll.enableFetch();
+    },
 
+    appendRender: function(newitems) {
+        var container = $(this.options.container);
+        if (newitems[0].length > 0){
+            this.renderItems(new Speakers(newitems[0]), this.template, this.options.term);
+        }
+        else{
+            container.parent().find('.loader').hide();
+        }
+    },
+
+
+    renderItems: function(items, template, highlight_term) {
+        var collection = items,
+        self = this,
+        container = $(this.options.container),
+        listView = $(this.el);
+        container.data('view', this);
         collection.each(function(element){
             if (self.options.lastIndex === null || self.options.lastIndex != element.get('name')[0]){
                 self.options.lastIndex = element.get('name')[0];
                 listView.append('<li data-role="list-divider">'+element.get('name')[0]+'</li>');
             }
-            element.set('conferenceId', self.options.event_id);
             listView.append(template(element.toJSON()));
         });
 
@@ -254,12 +237,16 @@ var SpeakerListView = ListView.extend({
         container.trigger('create');
         listView.listview('refresh');
 
-        if (term != '' && term != ' ' && typeof term !== 'undefined'){
-            for (word in term.split(' ')){
-                container.find('li').highlight(term.split(' ')[word]);
+        if (highlight_term != '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
+            for (word in highlight_term.split(' ')){
+                container.find('li').highlight(highlight_term.split(' ')[word]);
             }
         }
 
         return this;
+    },
+
+    render: function(){
+        this.renderItems(this.collection, this.template, this.options.term);
     }
 });

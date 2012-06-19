@@ -282,13 +282,6 @@ var Router = Backbone.Router.extend({
     getSpeakersView: function(info){
         var infoSplitted = info.split('_');
 
-        var agenda = false;
-        if (infoSplitted.length > 1){
-            agenda = true;
-        }
-
-        var create = true;
-        var container;
         if ($('#speakers_' + info).length === 0){
             var eventId = infoSplitted[0];
 
@@ -300,15 +293,10 @@ var Router = Backbone.Router.extend({
                 link: 'speakers_' + info
             });
 
-            container = $('#speakersContent_' + info);
-            container.data('firstLetter', '');
-
-            speakers = new Speakers();
             var speakersListView = new SpeakerListView({
                 collection: new Speakers(),
                 url: '/event/'+eventId+'/speakers',
                 container: '#speakersContent_' + info,
-                event_id: eventId,
                 lastIndex: null,
                 template_file: 'speakers.html',
                 template_name: '#speakersList'

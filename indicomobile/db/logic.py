@@ -97,7 +97,6 @@ def store_chairs(event):
 
 def store_presenters(contribution):
     presenters = []
-    print contribution
     for presenter in contribution.get('presenters', []):
         presenter_id = presenter['name'] + presenter['email']
         presenter_db = db.Presenter.find_one({'id': presenter_id, 'conferenceId': contribution['conferenceId']})

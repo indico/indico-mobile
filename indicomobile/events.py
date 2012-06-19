@@ -125,7 +125,6 @@ def dayContributions(event_id, day_date):
     first_query = db.Contribution.find({'$and':[{'startDate': {'$gte': start_date}},
                                                 {'startDate': {'$lt': end_date}},
                                                 {'conferenceId': event_id}]}).sort([('startDate',1)])
-    print first_query.count()
     for contrib in first_query:
         if contrib['slot']:
             contrib['slot'] = db.dereference(contrib['slot'])
@@ -143,11 +142,7 @@ def eventSessions(event_id):
     if not event:
         return 'Not found', 400
 
-    print event
-
     slots = db.SessionSlot.find({'conferenceId': event['id']}).sort([('title',1)])
-
-    print slots[0]
 
     for slot in slots:
         sessions[slot['sessionId']] = slot
@@ -209,7 +204,6 @@ def eventSpeaker(event_id, speaker_id):
 
 @events.route('/event/<event_id>', methods=['GET'])
 def eventInfo(event_id):
-    print event_id
     event_db = db.Event.find_one({'id': event_id})
     return json.dumps(event_db)
 
