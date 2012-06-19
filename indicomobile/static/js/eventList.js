@@ -8,14 +8,16 @@ $('#eventHome').live('pagecreate', function(){
         url: '/futureEvents/',
         container: '#futureEventList',
         template_file: 'events.html',
-        template_name: '#eventList'
+        template_name: '#eventList',
+        empty_message: 'No future events found.'
     });
     var ongoingEventsView = new ListByMonthView({
         collection: new Events(),
         url: '/ongoingEvents/',
         container: '#ongoingEventList',
         template_file: 'events.html',
-        template_name: '#eventList'
+        template_name: '#eventList',
+        empty_message: 'No ongoing events found.'
     }); 
 
 });

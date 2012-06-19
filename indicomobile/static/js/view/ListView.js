@@ -25,17 +25,25 @@ var ListView = Backbone.View.extend({
         var collection = this.collection,
         container = $(this.options.container),
         template = this.template,
+        empty_message = this.options.empty_message;
         listView = $(this.el);
 
-        collection.each(function(element){
-            listView.append(template(element.toJSON()));
-        });
+        if (collection.size() > 0){
 
-        container.append(listView);
+            collection.each(function(element){
+                listView.append(template(element.toJSON()));
+            });
 
-        container.trigger('create');
-        listView.listview('refresh');
-        container.parent().find('.loader').hide();
+            container.append(listView);
+
+            container.trigger('create');
+            listView.listview('refresh');
+            container.parent().find('.loader').hide();
+
+        }
+        else{
+            container.append('<h3 class="emptyMessage">'+empty_message+'</h4>');
+        }
 
         return this;
     }
@@ -75,23 +83,31 @@ var ListByMonthView = ListView.extend({
         container = $(this.options.container),
         template = this.template,
         listView = $(this.el),
+        empty_message = this.options.empty_message,
         lastDate = '';
 
-        collection.each(function(element){
-            var month = filterDate(element.get('startDate').date).month +
-                ' ' + filterDate(element.get('startDate').date).year;
-            if (lastDate === '' || lastDate != month){
-                lastDate = month;
-                listView.append('<li data-role="list-divider">'+month+'</li>');
-            }
-            listView.append(template(element.toJSON()));
-        });
+        if (collection.size() > 0){
+            collection.each(function(element){
+                var month = filterDate(element.get('startDate').date).month +
+                    ' ' + filterDate(element.get('startDate').date).year;
+                if (lastDate === '' || lastDate != month){
+                    lastDate = month;
+                    listView.append('<li data-role="list-divider">'+month+'</li>');
+                }
+                listView.append(template(element.toJSON()));
+            });
 
-        container.append(listView);
+            container.append(listView);
 
-        container.trigger('create');
-        listView.listview('refresh');
-        container.parent().find('.loader').hide();
+            container.trigger('create');
+            listView.listview('refresh');
+            container.parent().find('.loader').hide();
+        }
+        else{
+            container.append('<h3 class="emptyMessage">'+empty_message+'</h4>');
+            container.parent().find('.loader').hide();
+        }
+
 
         return this;
 
@@ -242,11 +258,17 @@ var SpeakerListView = ListView.extend({
                 container.find('li').highlight(highlight_term.split(' ')[word]);
             }
         }
-
+        $(this.options.container).parent().find('.emptyMessage').hide();
         return this;
     },
 
     render: function(){
-        this.renderItems(this.collection, this.template, this.options.term);
+        if (this.collection.size() > 0){
+            this.renderItems(this.collection, this.template, this.options.term);
+        }
+        else {
+            $(this.options.container).parent().find('.loader').hide();
+            $(this.options.container).parent().find('.emptyMessage').show();
+        }
     }
 });

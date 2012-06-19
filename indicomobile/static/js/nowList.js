@@ -7,7 +7,8 @@ $('#eventHome').live('pagecreate', function(){
         url: '/ongoingContributions/',
         container: '#contribList',
         template_file: 'contributions.html',
-        template_name: '#contribution'
+        template_name: '#contribution',
+        empty_message: 'No contributions happening now.'
     });
 
 });

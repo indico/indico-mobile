@@ -4,7 +4,8 @@ function searchInDB(term){
         url: '/searchEvent/?search='+term,
         container : '#searchResults',
         template_file: 'events.html',
-        template_name: '#eventList'
+        template_name: '#eventList',
+        empty_message: 'Nothing found.'
     });
 
 }

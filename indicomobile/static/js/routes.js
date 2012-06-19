@@ -102,7 +102,8 @@ var Router = Backbone.Router.extend({
                 url: "/event/" + eventId + "/sessions",
                 container: '#sessions_list_' + info,
                 template_file: 'sessions.html',
-                template_name: '#sessionsList'
+                template_name: '#sessionsList',
+                empty_message: 'No sessions in this event.'
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
@@ -223,7 +224,8 @@ var Router = Backbone.Router.extend({
                 url: '/event/' + eventId + '/days',
                 container: '#timetable_days_' + info,
                 template_file: 'days.html',
-                template_name: '#timetableDaysList'
+                template_name: '#timetableDaysList',
+                empty_message: 'No contributions in this event.'
             });
 
             if (typeof $.mobile.activePage !== "undefined"){
