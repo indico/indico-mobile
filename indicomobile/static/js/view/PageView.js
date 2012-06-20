@@ -43,8 +43,7 @@ var PageView = Backbone.View.extend({
     }
 
 });
-
-var SessionDayView = PageView.extend({
+var SearchContributionsView = PageView.extend({
 
     events: {
         "keyup input": "searchContribution"
@@ -55,58 +54,36 @@ var SessionDayView = PageView.extend({
         if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
-            var eventId = splittedId[1];
-            var sessionId = splittedId[2];
-            var dayDate = splittedId[3];
+            var url, container, sessionDay;
             var term = $(e.currentTarget).val();
-            var container = $('#sessionDay_list_' + eventId + '_' + sessionId + '_' + dayDate);
+            if (splittedId.length > 3){
+                container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
+                sessionDay = true;
+                url = '/searchContrib/event/'+splittedId[1]+'/session/'+splittedId[2]+'/day/'+splittedId[3]+'/?search='+term;
+            }
+            else{
+                container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
+                url = '/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/?search='+term;
+                sessionDay = false;
+            }
             $(e.currentTarget).parent().parent().find('.loader').show();
-            container.empty();
+            $(container).empty();
+
+            console.log(url)
             var contributionsView = new ContributionListView({
-                container: '#sessionDay_list_' + eventId + '_' + sessionId + '_' + dayDate,
+                container: container,
                 collection: new Contributions(),
-                url: 'searchContrib/event/'+eventId+'/session/'+sessionId+'/day/'+dayDate+'?search='+term,
+                url: url,
                 template_file: 'contributions.html',
                 template_name: '#contribution',
-                sessionDay: true,
-                term: term
+                sessionDay: sessionDay,
+                term: term,
+                empty_message: 'No contributions found.'
             });
         }
 
     }
     
-});
-
-var TimetableDayView = PageView.extend({
-
-    events: {
-        "keyup input": "searchContribution"
-    },
-
-    searchContribution: function(e){
-
-        if (e.keyCode == 13){
-            e.preventDefault();
-            var splittedId = $(e.currentTarget).attr('id').split('_');
-            var eventId = splittedId[1];
-            var dayDate = splittedId[2];
-            var term = $(e.currentTarget).val();
-            var container = $('#day_list_' + splittedId[1] + '_' + splittedId[2]);
-            $(e.currentTarget).parent().parent().find('.loader').show();
-            container.empty();
-            var contributionsView = new ContributionListView({
-                container: '#day_list_' + splittedId[1] + '_' + splittedId[2],
-                collection: new Contributions(),
-                url: 'searchContrib/event/'+eventId+'/day/'+dayDate+'?search='+term,
-                template_file: 'contributions.html',
-                template_name: '#contribution',
-                sessionDay: false,
-                term: term
-            });
-        }
-
-    }
-
 });
 
 var SpeakersPage = PageView.extend({

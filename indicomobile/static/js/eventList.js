@@ -9,6 +9,7 @@ $('#eventHome').live('pagecreate', function(){
         container: '#futureEventList',
         template_file: 'events.html',
         template_name: '#eventList',
+        template_name2: '#simpleEventList',
         empty_message: 'No future events found.'
     });
     var ongoingEventsView = new ListByMonthView({
@@ -17,6 +18,7 @@ $('#eventHome').live('pagecreate', function(){
         container: '#ongoingEventList',
         template_file: 'events.html',
         template_name: '#eventList',
+        template_name2: '#simpleEventList',
         empty_message: 'No ongoing events found.'
     }); 
 

@@ -9,9 +9,12 @@ from flask import request, json, current_app, request, jsonify
 from indicomobile.db.schema import *
 from indicomobile.db.logic import store_event, convert_dates
 from indicomobile.util.date_time import dt_from_indico
+from indicomobile.cache import cache
 
 
 events = Blueprint('events', __name__, template_folder='templates')
+
+CACHE_TTL = 3600
 
 
 def get_event_info(event_id):
@@ -77,7 +80,12 @@ def update_future_events():
             store_event(event, event_tt)
 
 
-@events.route('/event/<event_id>/days', methods=['GET'])
+@events.route('/myAgenda/', methods=['GET'])
+def myAgenda():
+    return json.dumps([])
+
+
+@events.route('/event/<event_id>/days/', methods=['GET'])
 def eventDays(event_id):
     days = []
     for day in db.Day.find({'eventId': event_id}).sort([("date",1)]):
@@ -85,14 +93,14 @@ def eventDays(event_id):
     return json.dumps(days)
 
 
-@events.route('/event/<event_id>/day/<day_date>', methods=['GET'])
+@events.route('/event/<event_id>/day/<day_date>/', methods=['GET'])
 def eventDay(event_id, day_date):
     day = db.Day.find_one({'eventId': event_id,
                         'date': day_date})
     return json.dumps(day)
 
 
-@events.route('/event/<event_id>/sessions/<session_id>', methods=['GET'])
+@events.route('/event/<event_id>/session/<session_id>/entries/', methods=['GET'])
 def eventSameSessions(event_id, session_id):
     sessionsDB = db.SessionSlot.find({'conferenceId': event_id, 'sessionId': session_id}).sort([('startDate',1)])
     sessions = []
@@ -101,26 +109,33 @@ def eventSameSessions(event_id, session_id):
     return json.dumps(sessions)
 
 
-@events.route('/event/<event_id>/session/<session_id>', methods=['GET'])
+@events.route('/event/<event_id>/session/<session_id>/', methods=['GET'])
 def eventSameSession(event_id, session_id):
     sessionsDB = db.SessionSlot.find({'conferenceId': event_id, 'sessionId': session_id}).sort([('startDate',1)])
     return json.dumps(sessionsDB[0])
 
 
-@events.route('/event/<event_id>/contrib/<contrib_id>', methods=['GET'])
+@events.route('/event/<event_id>/day/<day_date>/session/<session_id>/', methods=['GET'])
+def eventDaySession(event_id, session_id, day_date):
+    start_date = datetime.strptime(day_date, '%Y-%m-%d')
+    end_date = start_date + timedelta(days=1)
+    sessionsDB = db.SessionSlot.find({'$and':[{'conferenceId': event_id},
+                                    {'sessionId': session_id},
+                                    {'startDate': {'$gte': start_date}},
+                                    {'startDate':{'$lt': end_date}}]}).sort([('startDate',1)])
+    return json.dumps(sessionsDB[0])
+
+
+@events.route('/event/<event_id>/contrib/<contrib_id>/', methods=['GET'])
 def eventContribution(event_id, contrib_id):
     contribution = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
     return json.dumps(contribution)
 
 
-@events.route('/event/<event_id>/day/<day_date>/contributions', methods=['GET'])
+@events.route('/event/<event_id>/day/<day_date>/contributions/', methods=['GET'])
 def dayContributions(event_id, day_date):
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
-    string = '' + \
-            day_date.split('-')[0] + \
-            '-' + day_date.split('-')[1] + \
-            '-' + str(int(day_date.split('-')[2])+1)
-    end_date = datetime.strptime(string, '%Y-%m-%d')
+    end_date = start_date + timedelta(days=1)
     contributions = []
     first_query = db.Contribution.find({'$and':[{'startDate': {'$gte': start_date}},
                                                 {'startDate': {'$lt': end_date}},
@@ -134,7 +149,7 @@ def dayContributions(event_id, day_date):
     return json.dumps(contributions)
 
 
-@events.route('/event/<event_id>/sessions', methods=['GET'])
+@events.route('/event/<event_id>/sessions/', methods=['GET'])
 def eventSessions(event_id):
     sessions = {}
     event = db.Event.find_one({'id': event_id})
@@ -150,14 +165,10 @@ def eventSessions(event_id):
     return json.dumps(sorted(sessions.values(), key=lambda x:x['title']))
 
 
-@events.route('/event/<event_id>/session/<session_id>/day/<day>/contribs', methods=['GET'])
+@events.route('/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
 def sessionDayContributions(event_id, session_id, day):
     start_date = datetime.strptime(day, '%Y-%m-%d')
-    string = '' + \
-            day.split('-')[0] + \
-            '-' + day.split('-')[1] + \
-            '-' + str(int(day.split('-')[2])+1)
-    end_date = datetime.strptime(string, '%Y-%m-%d')
+    end_date = start_date + timedelta(days=1)
     contributions = []
     session = db.SessionSlot.find({'$and':[{'startDate': {'$gte': start_date}},
                                             {'startDate': {'$lt': end_date}},
@@ -171,7 +182,7 @@ def sessionDayContributions(event_id, session_id, day):
     return json.dumps(sorted(contributions.values(), key=lambda x:x['startDate']))
 
 
-@events.route('/event/<event_id>/speaker/<speaker_id>/contributions', methods=['GET'])
+@events.route('/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def speakerContributions(event_id, speaker_id):
     contributions = []
     speaker = db.Presenter.find_one({'id': speaker_id})
@@ -182,7 +193,7 @@ def speakerContributions(event_id, speaker_id):
     return json.dumps(sorted(contributions, key=lambda x:x['startDate']))
 
 
-@events.route('/event/<event_id>/speakers', methods=['GET'])
+@events.route('/event/<event_id>/speakers/', methods=['GET'])
 def eventSpeakers(event_id):
     pageNumber = int(request.args.get('page',1))
     speakers = []
@@ -196,13 +207,13 @@ def eventSpeakers(event_id):
     return json.dumps(sorted(speakers, key=lambda x:x['name'])[first_element:first_element+20])
 
 
-@events.route('/event/<event_id>/speaker/<speaker_id>', methods=['GET'])
+@events.route('/event/<event_id>/speaker/<speaker_id>/', methods=['GET'])
 def eventSpeaker(event_id, speaker_id):
     speaker = db.Presenter.find_one({'id': speaker_id})
     return json.dumps(speaker)
 
 
-@events.route('/event/<event_id>', methods=['GET'])
+@events.route('/event/<event_id>/', methods=['GET'])
 def eventInfo(event_id):
     event_db = db.Event.find_one({'id': event_id})
     return json.dumps(event_db)
@@ -228,7 +239,7 @@ def search_event():
     return json.dumps(results[first_element:first_element+20])
 
 
-@events.route('/searchSpeaker/<event_id>', methods=['GET'])
+@events.route('/searchSpeaker/<event_id>/', methods=['GET'])
 def search_speaker(event_id):
     search = urllib.quote(request.args.get('search'))
     pageNumber = int(request.args.get('page',1))
@@ -242,24 +253,23 @@ def search_speaker(event_id):
     return json.dumps(list(speakers))
 
 
-@events.route('/searchContrib/event/<event_id>/day/<day_date>', methods=['GET'])
+@events.route('/searchContrib/event/<event_id>/day/<day_date>/', methods=['GET'])
 def search_contrib(event_id, day_date):
     search = urllib.quote(request.args.get('search'))
+    print search
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
-    string = '' + \
-            day_date.split('-')[0] + \
-            '-' + day_date.split('-')[1] + \
-            '-' + str(int(day_date.split('-')[2])+1)
-    end_date = datetime.strptime(string, '%Y-%m-%d')
+    end_date = start_date + timedelta(days=1)
+    print start_date
+    print end_date
     words = search.split('%20')
     regex = ''
     for word in words:
         regex += '(?=.*' + word + ')'
     contributions = []
-    results = db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
-                                        'conferenceId': event_id,
-                                        'startDate': {'$gte': start_date},
-                                        'startDate': {'$lt': end_date}}).sort([('startDate',1)])
+    results = db.Contribution.find({'$and':[{'title': {'$regex': regex, '$options': 'i'}},
+                                        {'conferenceId': event_id},
+                                        {'startDate': {'$gte': start_date}},
+                                        {'startDate': {'$lt': end_date}}]}).sort([('startDate',1)])
     for contrib in results:
         if contrib['slot']:
             contrib['slot'] = db.dereference(contrib['slot'])
@@ -269,24 +279,20 @@ def search_contrib(event_id, day_date):
     return json.dumps(contributions)
 
 
-@events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>', methods=['GET'])
+@events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>/', methods=['GET'])
 def search_contrib_in_session(event_id, session_id, day_date):
     search = urllib.quote(request.args.get('search'))
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
-    string = '' + \
-            day_date.split('-')[0] + \
-            '-' + day_date.split('-')[1] + \
-            '-' + str(int(day_date.split('-')[2])+1)
-    end_date = datetime.strptime(string, '%Y-%m-%d')
+    end_date = start_date + timedelta(days=1)
     words = search.split('%20')
     regex = ''
     for word in words:
         regex += '(?=.*' + word + ')'
     contributions = []
-    results = db.Contribution.find({'title': {'$regex': regex, '$options': 'i'},
-                                        'conferenceId': event_id,
-                                        'startDate': {'$gte': start_date},
-                                        'startDate': {'$lt': end_date}}).sort([('startDate',1)])
+    results = db.Contribution.find({'$and':[{'title': {'$regex': regex, '$options': 'i'}},
+                                        {'conferenceId': event_id},
+                                        {'startDate': {'$gte': start_date}},
+                                        {'startDate': {'$lt': end_date}}]}).sort([('startDate',1)])
     for contrib in results:
         if contrib['slot']:
             contrib['slot'] = db.dereference(contrib['slot'])
@@ -295,28 +301,48 @@ def search_contrib_in_session(event_id, session_id, day_date):
     return json.dumps(contributions)
 
 
-# TODO: Cache this
 @events.route('/futureEvents/', methods=['GET'])
+@cache.cached(timeout=CACHE_TTL)
 def getFutureEvents():
+    print 'not cached'
     update_future_events()
     now = datetime.utcnow()
-    return json.dumps(list(db.Event.find({'startDate': {'$gt': now}}).sort([('startDate',1)]).sort('startDate',-1).limit(15)))
+    future_events = list(db.Event.find({'startDate': {'$gt': now}}).sort([('startDate',1)]).sort('startDate',-1).limit(15))
+    return json.dumps(future_events)
 
 
-# TODO: Cache this
 @events.route('/ongoingEvents/', methods=['GET'])
+@cache.cached(timeout=CACHE_TTL)
 def getOngoingEvents():
+    print 'not cached'
     update_ongoing_events()
     now = datetime.utcnow()
-    return json.dumps(list(db.Event.find({'$and':[{'startDate' :{'$lte': now}},
-                                        {'endDate': {'$gte': now}}]}).sort('startDate',-1)))
+    ongoing_events = list(db.Event.find({'$and':[{'startDate' :{'$lte': now}},
+                                        {'endDate': {'$gte': now}}]}).sort('startDate',-1))
+    return json.dumps(ongoing_events)
 
 
-# TODO: Cache this
 @events.route('/ongoingContributions/', methods=['GET'])
+@cache.cached(timeout=CACHE_TTL)
 def getOngoingContributions():
+    print 'not cached'
     update_ongoing_events()
     now = datetime.utcnow()
-    return json.dumps(list(db.Contribution.find({'$and':[{'startDate' :{'$lte': now}},
-                                        {'endDate': {'$gte': now}},
-                                        {'_fossil': 'contribSchEntryDisplay'}]}).sort('startDate',-1)))
+    tomorrow = now + timedelta(days=1)
+    ongoing_contributions = list(db.Contribution.find({'$and':[{'startDate' :{'$gte': now}},
+                                    {'startDate' :{'$lt': tomorrow}},
+                                    {'_fossil': 'contribSchEntryDisplay'}]}).sort([('startDate',1)]))
+    return json.dumps(ongoing_contributions)
+
+
+@events.route('/ongoingSimpleEvents/', methods=['GET'])
+@cache.cached(timeout=CACHE_TTL)
+def getOngoingSimpleEvents():
+    print 'not cached'
+    update_ongoing_events()
+    now = datetime.utcnow()
+    tomorrow = now + timedelta(days=1)
+    ongoing_simple_events = list(db.Event.find({'$and':[{'startDate' :{'$gte': now}},
+                                    {'startDate' :{'$lt': tomorrow}},
+                                    {'type': 'simple_event'}]}).sort([('startDate',1)]))
+    return json.dumps(ongoing_simple_events)

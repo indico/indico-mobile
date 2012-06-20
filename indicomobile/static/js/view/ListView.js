@@ -21,18 +21,26 @@ var ListView = Backbone.View.extend({
         }
     },
 
+    renderItems: function(collection, template, listView){
+
+        collection.each(function(element){
+            listView.append(template(element.toJSON()));
+        });
+
+    },
+
     render: function() {
         var collection = this.collection,
+        self = this,
         container = $(this.options.container),
         template = this.template,
-        empty_message = this.options.empty_message;
+        empty_message = this.options.empty_message,
+        term = this.options.term,
         listView = $(this.el);
 
         if (collection.size() > 0){
 
-            collection.each(function(element){
-                listView.append(template(element.toJSON()));
-            });
+            self.renderItems(collection, template, listView);
 
             container.append(listView);
 
@@ -40,9 +48,16 @@ var ListView = Backbone.View.extend({
             listView.listview('refresh');
             container.parent().find('.loader').hide();
 
+            if (term != '' && term != ' ' && term !== undefined){
+                for (word in term.split(' ')){
+                    container.find('li').highlight(term.split(' ')[word]);
+                }
+            }
+
         }
         else{
-            container.append('<h3 class="emptyMessage">'+empty_message+'</h4>');
+            container.append('<h4 class="emptyMessage">'+empty_message+'</h4>');
+            container.parent().find('.loader').hide();
         }
 
         return this;
@@ -51,65 +66,46 @@ var ListView = Backbone.View.extend({
 
 var SessionDaysList = ListView.extend({
 
-    render: function() {
-        var collection = this.collection,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        lastDate = null;
+    renderItems: function(collection, template, listView){
+
+        var lastDate = null;
 
         collection.each(function(element){
-            if (lastDate === null || lastDate != element.get('startDate').date){
+            if (element.get('entries').length > 0 &&
+            (lastDate === null || lastDate != element.get('startDate').date)){
                 lastDate = element.get('startDate').date;
                 listView.append(template(element.toJSON()));
             }
         });
 
-        container.append(listView);
-
-        container.trigger('create');
-        listView.listview('refresh');
-        container.parent().find('.loader').hide();
-
-        return this;
     }
 
 });
 
 var ListByMonthView = ListView.extend({
 
-    render: function() {
-        var collection = this.collection,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        empty_message = this.options.empty_message,
-        lastDate = '';
+    renderItems: function(collection, template, listView){
 
-        if (collection.size() > 0){
-            collection.each(function(element){
-                var month = filterDate(element.get('startDate').date).month +
-                    ' ' + filterDate(element.get('startDate').date).year;
-                if (lastDate === '' || lastDate != month){
-                    lastDate = month;
-                    listView.append('<li data-role="list-divider">'+month+'</li>');
-                }
+        var template_file = getHTMLTemplate(this.options.template_file);
+        this.template2 = _.template($(template_file).siblings(this.options.template_name2).html());
+
+        var lastDate = null,
+        self = this;
+
+        collection.each(function(element){
+            var month = filterDate(element.get('startDate').date).month +
+                ' ' + filterDate(element.get('startDate').date).year;
+            if (lastDate === null || lastDate != month){
+                lastDate = month;
+                listView.append('<li data-role="list-divider">'+month+'</li>');
+            }
+            if (element.get('type') == 'simple_event'){
+                listView.append(self.template2(element.toJSON()));
+            }
+            else{
                 listView.append(template(element.toJSON()));
-            });
-
-            container.append(listView);
-
-            container.trigger('create');
-            listView.listview('refresh');
-            container.parent().find('.loader').hide();
-        }
-        else{
-            container.append('<h3 class="emptyMessage">'+empty_message+'</h4>');
-            container.parent().find('.loader').hide();
-        }
-
-
-        return this;
+            }
+        });
 
     }
 
@@ -117,13 +113,10 @@ var ListByMonthView = ListView.extend({
 
 var SpeakerContribsListView = ListView.extend({
 
-    render: function() {
-        var collection = this.collection,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        lastDate = null,
-        lastHour = null;
+    renderItems: function(collection, template, listView){
+
+        var lastDate = null,
+        lastTime = null;
 
         collection.each(function(element){
             var day = filterDate(element.get('startDate').date).month +
@@ -141,34 +134,17 @@ var SpeakerContribsListView = ListView.extend({
             listView.append(template(element.toJSON()));
         });
 
-        container.append(listView);
-
-        container.trigger('create');
-        listView.listview('refresh');
-        container.parent().find('.loader').hide();
-
-        return this;
-
     }
 
 });
 
 var ContributionListView = ListView.extend({
 
-    initialize: function() {
-        ContributionListView.__super__.initialize.call(this);
-        this.lastTime = null;
-    },
+    renderItems: function(collection, template, listView){
 
-    render: function() {
-        var self = this,
-        collection = this.collection,
-        container = $(this.options.container),
-        template = this.template,
-        listView = $(this.el),
-        term = this.options.term,
-        lastTime = null,
-        lastPosterTime = null;
+        var lastTime = null,
+        lastPosterTime = null
+        self = this;
 
         collection.each(function(element){
             if (lastTime === null || lastTime != element.get('startDate').time){
@@ -188,25 +164,12 @@ var ContributionListView = ListView.extend({
             }
         });
 
-        container.append(listView);
-
-        container.trigger('create');
-        listView.listview('refresh');
-        container.parent().find('.loader').hide();
-
-        if (term != '' && term != ' ' && typeof term !== 'undefined'){
-            for (word in term.split(' ')){
-                container.find('li').highlight(term.split(' ')[word]);
-            }
-        }
-
-        return this;
-
     }
 
 });
 
-var SpeakerListView = ListView.extend({
+var InfiniteListView = ListView.extend({
+
     initialize: function () {
         var template_file = getHTMLTemplate(this.options.template_file);
         this.template = _.template($(template_file).siblings(this.options.template_name).html());
@@ -221,7 +184,11 @@ var SpeakerListView = ListView.extend({
           },
           includePage : true});
         this.infiniScroll.enableFetch();
-    },
+    }
+
+});
+
+var SpeakerListView = InfiniteListView.extend({
 
     appendRender: function(newitems) {
         var container = $(this.options.container);
@@ -271,4 +238,40 @@ var SpeakerListView = ListView.extend({
             $(this.options.container).parent().find('.emptyMessage').show();
         }
     }
+});
+
+var SearchResultsView = SpeakerListView.extend({
+
+
+    renderItems: function(items, template, highlight_term) {
+        var collection = items,
+        self = this,
+        container = $(this.options.container),
+        lastDate = null,
+        listView = $(this.el);
+        container.data('view', this);
+        collection.each(function(element){
+            var month = filterDate(element.get('startDate').date).month +
+                ' ' + filterDate(element.get('startDate').date).year;
+            if (lastDate === '' || lastDate != month){
+                lastDate = month;
+                listView.append('<li data-role="list-divider">'+month+'</li>');
+            }
+            listView.append(template(element.toJSON()));
+        });
+
+        container.append(listView);
+
+        container.trigger('create');
+        listView.listview('refresh');
+
+        if (highlight_term != '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
+            for (word in highlight_term.split(' ')){
+                container.find('li').highlight(highlight_term.split(' ')[word]);
+            }
+        }
+        $(this.options.container).parent().find('.emptyMessage').hide();
+        return this;
+    }
+
 });
