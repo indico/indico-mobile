@@ -7,22 +7,17 @@ var PageView = Backbone.View.extend({
     },
 
     initialize: function(){
-        var template_file = getHTMLTemplate(this.options.template_file);
-        this.template = _.template($(template_file).siblings(this.options.template_name).html());
-        if (typeof this.options.url !== 'undefined'){
-            this.model.url = this.options.url;
-            this.model.on('change', this.render, this);
-            this.model.fetch();
-        }
-        else{
-            this.render();
-        }
+        this.template_file = getHTMLTemplate('pages.html');
+        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
+        this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
+        this.model.url = this.options.url;
+        this.model.on('change', this.render, this);
+        this.model.fetch();
     },
 
     render: function() {
         var model = this.model,
         container = $(this.options.container),
-        template = this.template,
         pageView = $(this.el),
         link = this.options.link;
         if (pageView.html() === ''){
@@ -32,8 +27,11 @@ var PageView = Backbone.View.extend({
                 model.set('conferenceId', this.options.event_id);
             }
 
-            pageView.append(template(model.toJSON()));
-
+            pageView.append(this.template(model.toJSON()));
+            if (this.options.selectedTab !== undefined){
+                pageView.append(this.footerTemplate(model.toJSON()));
+                pageView.find(this.options.selectedTab).addClass('ui-btn-active ui-state-persist').removeAttr('rel');
+            }
             $('body').append(pageView);
 
             $.mobile.changePage($('div[id="'+link+'"]'));
@@ -68,8 +66,7 @@ var SearchContributionsView = PageView.extend({
             }
             $(e.currentTarget).parent().parent().find('.loader').show();
             $(container).empty();
-
-            console.log(url)
+            
             var contributionsView = new ContributionListView({
                 container: container,
                 collection: new Contributions(),

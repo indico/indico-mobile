@@ -8,17 +8,11 @@ var ListView = Backbone.View.extend({
     },
 
     initialize: function() {
-        var template_file = getHTMLTemplate(this.options.template_file);
-        this.template = _.template($(template_file).siblings(this.options.template_name).html());
-
-        if (typeof this.options.url !== 'undefined'){
-            this.collection.url = this.options.url;
-            this.collection.on('reset', this.render, this);
-            this.collection.fetch();
-        }
-        else{
-            this.render();
-        }
+        this.template_file = getHTMLTemplate('lists.html');
+        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
+        this.collection.url = this.options.url;
+        this.collection.on('reset', this.render, this);
+        this.collection.fetch();
     },
 
     renderItems: function(collection, template, listView){
@@ -86,8 +80,7 @@ var ListByMonthView = ListView.extend({
 
     renderItems: function(collection, template, listView){
 
-        var template_file = getHTMLTemplate(this.options.template_file);
-        this.template2 = _.template($(template_file).siblings(this.options.template_name2).html());
+        this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
 
         var lastDate = null,
         self = this;
@@ -154,8 +147,7 @@ var ContributionListView = ListView.extend({
             if (element.get('isPoster') && !self.options.sessionDay){
                 if (lastPosterTime === null || lastPosterTime != element.get('startDate').time){
                     lastPosterTime = element.get('startDate').time;
-                    var template_file = getHTMLTemplate(self.options.template_file);
-                    var template2 = _.template($(template_file).siblings('#poster').html());
+                    var template2 = _.template($(self.template_file).siblings('#poster').html());
                     listView.append(template2(element.toJSON()))
                 }
             }
@@ -171,8 +163,8 @@ var ContributionListView = ListView.extend({
 var InfiniteListView = ListView.extend({
 
     initialize: function () {
-        var template_file = getHTMLTemplate(this.options.template_file);
-        this.template = _.template($(template_file).siblings(this.options.template_name).html());
+        this.template_file = getHTMLTemplate('lists.html');
+        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
         this.collection.on('hasChanged', this.appendRender, this);
         this.collection.on('reset', this.render, this);
         this.collection.url = this.options.url;

@@ -88,14 +88,14 @@ def myAgenda():
 @events.route('/event/<event_id>/days/', methods=['GET'])
 def eventDays(event_id):
     days = []
-    for day in db.Day.find({'eventId': event_id}).sort([("date",1)]):
+    for day in db.Day.find({'conferenceId': event_id}).sort([("date",1)]):
         days.append(day)
     return json.dumps(days)
 
 
 @events.route('/event/<event_id>/day/<day_date>/', methods=['GET'])
 def eventDay(event_id, day_date):
-    day = db.Day.find_one({'eventId': event_id,
+    day = db.Day.find_one({'conferenceId': event_id,
                         'date': day_date})
     return json.dumps(day)
 
@@ -256,11 +256,8 @@ def search_speaker(event_id):
 @events.route('/searchContrib/event/<event_id>/day/<day_date>/', methods=['GET'])
 def search_contrib(event_id, day_date):
     search = urllib.quote(request.args.get('search'))
-    print search
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
     end_date = start_date + timedelta(days=1)
-    print start_date
-    print end_date
     words = search.split('%20')
     regex = ''
     for word in words:

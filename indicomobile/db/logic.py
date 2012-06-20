@@ -136,6 +136,6 @@ def store_event(event_http, event_tt):
             date = datetime.strptime(day, '%Y%M%d').strftime('%Y-%M-%d').decode('utf-8')
             day = db.Day()
             day['date'] = date
-            day['eventId'] = event_id
+            day['conferenceId'] = event_id
             day['entries'] = entries
             day.save()

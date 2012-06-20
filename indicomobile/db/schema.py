@@ -150,7 +150,7 @@ class Day(Document):
     __collection__ = 'days'
     structure = {
         'date': unicode,
-        'eventId': unicode,
+        'conferenceId': unicode,
         'entries': list
     }
 
