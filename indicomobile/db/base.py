@@ -1,40 +1,20 @@
-import copy
-from flaskext.mongoalchemy import MongoAlchemy
+import sys
+
 from bson.dbref import DBRef
-
 from indicomobile.app import app
+import traceback
 
 
-app.config['MONGOALCHEMY_DATABASE'] = 'library'
-db = MongoAlchemy(app)
+app.config['MONGODB_DATABASE'] = 'library'
 
+if app.config.get('MONGODB_DATABASE'):
+    from flask.ext.mongokit import MongoKit
+    db = MongoKit(app)
+else:
+    from mongokit import Connection
+    db = Connection()
 
-class DBClass(db.Document):
-
-    def get_list(self, field):
-        res = []
-        for e in self._field_values[field]:
-            if (type(e) != type(unicode())):
-                fields = e.fields()
-                for k, v in fields.iteritems():
-                    if isinstance(v, list):
-                        fields[k] = e.get_list(k)
-                res.append(fields)
-            else:
-                res.append(e)
-        return res
-
-    def fields(self):
-        field_values = copy.copy(self._field_values)
-        field_values.pop('mongo_id', None)
-        if 'presenters' in field_values:
-            field_values['presenters'] = self.get_list('presenters')
-        if 'material' in field_values:
-            field_values['material'] = self.get_list('material')
-        if 'chairs' in field_values:
-            field_values['chairs'] = self.get_list('chairs')
-        return field_values
-
-
-def ref(obj):
-    return DBRef(obj.get_collection_name(), obj.mongo_id)
+def ref(doc):
+    return DBRef(collection=doc.__collection__,
+                id=doc['_id'],
+                database='library')

@@ -12,12 +12,8 @@
             <script src="static/js/lib/inifiniScroll.js"></script>
             <script src="static/js/model/modelsForEvents.js"></script>
             <script src="static/js/utils.js"></script>
-            <script src="static/js/view/SessionsView.js"></script>
-            <script src="static/js/view/EventView.js"></script>
-            <script src="static/js/view/AboutView.js"></script>
-            <script src="static/js/view/SpeakersView.js"></script>
-            <script src="static/js/view/TimetableView.js"></script>
-            <script src="static/js/view/OngoingContributions.js"></script>
+            <script src="static/js/view/PageView.js"></script>
+            <script src="static/js/view/ListView.js"></script>
             <script src="static/js/loadAgenda.js"></script>
             <script src="static/js/editAgenda.js"></script>
             <script src="static/js/nowList.js"></script>
@@ -33,7 +29,13 @@
                 <div class="headerElement"><h3>Currently happening</h3></div>
             </div>
             <div data-role="content">
-                <div id="contribList">
+                <div id="eventList" class="leftSide">
+                    <h4>Lectures</h4>
+                    <div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>
+                </div>
+                <div id="contribList" class="rightSide">
+                    <h4>Contributions</h4>
+                    <div class="loader"><h4>Loading...</h4><img src="static/style/images/ajax-loader2.gif"/></div>
                 </div>
             </div>
             <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">

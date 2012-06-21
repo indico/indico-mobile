@@ -58,6 +58,10 @@
     text-align: center;
 }
 
+.emptyMessage {
+    text-align: center;
+}
+
 .headerTitle {
     display: table;
     width: 100%;
@@ -268,7 +272,7 @@
     margin-right: 8px;
 }
 
-@media all and (min-width: 600px){
+@media all and (min-width: 500px){
 
 	.leftSide {
 		float: left !important;

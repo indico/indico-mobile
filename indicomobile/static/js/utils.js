@@ -26,3 +26,8 @@ function getHTMLTemplate(link) {
     return template;
 
 }
+
+function hourToText(time){
+    var splittedTime = time.split(':');
+    return splittedTime[0]+'h'+splittedTime[1];
+}

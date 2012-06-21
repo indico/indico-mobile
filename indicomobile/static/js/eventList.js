@@ -3,15 +3,23 @@ $('#eventHome').live('pagecreate', function(){
     visited = false;
 
 
-    var futureEventsView = new EventsListView({
+    var futureEventsView = new ListByMonthView({
         collection: new Events(),
         url: '/futureEvents/',
-        container: '#futureEventList'
+        container: '#futureEventList',
+        template_file: 'events.html',
+        template_name: '#eventList',
+        template_name2: '#simpleEventList',
+        empty_message: 'No future events found.'
     });
-    var ongoingEventsView = new EventsListView({
+    var ongoingEventsView = new ListByMonthView({
         collection: new Events(),
         url: '/ongoingEvents/',
-        container: '#ongoingEventList'
+        container: '#ongoingEventList',
+        template_file: 'events.html',
+        template_name: '#eventList',
+        template_name2: '#simpleEventList',
+        empty_message: 'No ongoing events found.'
     }); 
 
 });
