@@ -55,8 +55,7 @@ def with_event(event_id=None):
 
 def update_ongoing_events():
     url = '{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
-        current_app.config['SERVER_URL'], current_app.config['API_KEY'])
-
+        current_app.config['SERVER_URL'], current_app.config['API_KEY'])  
     f = urllib2.urlopen(url)
     events = json.loads(f.read().decode('utf-8'))['results']
 
