@@ -36,7 +36,7 @@ def fetch_timetable(event_id):
 
 
 @events.before_request
-def with_event():
+def with_event(event_id=None):
     """
     Gets executed before every request in this blueprint
     """
@@ -78,11 +78,6 @@ def update_future_events():
             # store event
             event_tt = fetch_timetable(event['id'])
             store_event(event, event_tt)
-
-
-@events.route('/myAgenda/', methods=['GET'])
-def myAgenda():
-    return json.dumps([])
 
 
 @events.route('/event/<event_id>/days/', methods=['GET'])
@@ -129,6 +124,8 @@ def eventDaySession(event_id, session_id, day_date):
 @events.route('/event/<event_id>/contrib/<contrib_id>/', methods=['GET'])
 def eventContribution(event_id, contrib_id):
     contribution = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
+    if contribution['slot']:
+        contribution['slot'] = db.dereference(contribution['slot'])
     return json.dumps(contribution)
 
 
@@ -141,11 +138,12 @@ def dayContributions(event_id, day_date):
                                                 {'startDate': {'$lt': end_date}},
                                                 {'conferenceId': event_id}]}).sort([('startDate',1)])
     for contrib in first_query:
-        if contrib['slot']:
-            contrib['slot'] = db.dereference(contrib['slot'])
-            contributions.append(contrib)
-        else:
-            contributions.append(contrib)
+        if contrib['contributionId']:
+            if contrib['slot']:
+                contrib['slot'] = db.dereference(contrib['slot'])
+                contributions.append(contrib)
+            else:
+                contributions.append(contrib)
     return json.dumps(contributions)
 
 
@@ -178,6 +176,7 @@ def sessionDayContributions(event_id, session_id, day):
     for slot in session:
         for contrib in slot['entries']:
             current_contrib = db.dereference(contrib)
+            current_contrib['slot'] = slot
             contributions[current_contrib['contributionId']] = current_contrib
     return json.dumps(sorted(contributions.values(), key=lambda x:x['startDate']))
 
@@ -189,6 +188,8 @@ def speakerContributions(event_id, speaker_id):
     contribs = db.Contribution.find({'$and': [{'presenters': {'$elemMatch': speaker}},
                                     {'conferenceId': event_id}]})
     for contrib in contribs:
+        if contrib['slot']:
+            contrib['slot'] = db.dereference(contrib['slot'])
         contributions.append(contrib)
     return json.dumps(sorted(contributions, key=lambda x:x['startDate']))
 
@@ -219,9 +220,9 @@ def eventInfo(event_id):
     return json.dumps(event_db)
 
 
-@events.route('/searchEvent/', methods=['GET'])
-def search_event():
-    search = urllib.quote(request.args.get('search'))
+@events.route('/searchEvent/<search>/', methods=['GET'])
+def search_event(search, everything=False):
+    search = urllib.quote(search)
     pageNumber = int(request.args.get('page',1))
     url = current_app.config['SERVER_URL'] + \
           '/export/event/search/' + search + \
@@ -236,12 +237,14 @@ def search_event():
                          datetime.strptime(k['startDate']['time'], "%H:%M:%S").time()))
     results.reverse()
     first_element = (pageNumber-1)*20
+    if everything:
+        return json.dumps(results)
     return json.dumps(results[first_element:first_element+20])
 
 
-@events.route('/searchSpeaker/<event_id>/', methods=['GET'])
-def search_speaker(event_id):
-    search = urllib.quote(request.args.get('search'))
+@events.route('/searchSpeaker/event/<event_id>/search/<search>/', methods=['GET'])
+def search_speaker(event_id, search):
+    search = urllib.quote(search)
     pageNumber = int(request.args.get('page',1))
     offset = int(request.args.get('offset', 20))
     words = search.split('%20')
@@ -253,9 +256,7 @@ def search_speaker(event_id):
     return json.dumps(list(speakers))
 
 
-@events.route('/searchContrib/event/<event_id>/day/<day_date>/', methods=['GET'])
-def search_contrib(event_id, day_date):
-    search = urllib.quote(request.args.get('search'))
+def generic_search_contrib(search, event_id, day_date, session_id):
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
     end_date = start_date + timedelta(days=1)
     words = search.split('%20')
@@ -270,32 +271,26 @@ def search_contrib(event_id, day_date):
     for contrib in results:
         if contrib['slot']:
             contrib['slot'] = db.dereference(contrib['slot'])
-            contributions.append(contrib)
-        else:
+            if session_id:
+                if contrib['slot']['sessionId'] == session_id:
+                    contributions.append(contrib)
+            else:
+                contributions.append(contrib)
+        elif not session_id:
             contributions.append(contrib)
     return json.dumps(contributions)
+
+
+@events.route('/searchContrib/event/<event_id>/day/<day_date>/', methods=['GET'])
+def search_contrib(event_id, day_date):
+    search = urllib.quote(request.args.get('search'))
+    return generic_search_contrib(search, event_id, day_date, None)
 
 
 @events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>/', methods=['GET'])
 def search_contrib_in_session(event_id, session_id, day_date):
     search = urllib.quote(request.args.get('search'))
-    start_date = datetime.strptime(day_date, '%Y-%m-%d')
-    end_date = start_date + timedelta(days=1)
-    words = search.split('%20')
-    regex = ''
-    for word in words:
-        regex += '(?=.*' + word + ')'
-    contributions = []
-    results = db.Contribution.find({'$and':[{'title': {'$regex': regex, '$options': 'i'}},
-                                        {'conferenceId': event_id},
-                                        {'startDate': {'$gte': start_date}},
-                                        {'startDate': {'$lt': end_date}}]}).sort([('startDate',1)])
-    for contrib in results:
-        if contrib['slot']:
-            contrib['slot'] = db.dereference(contrib['slot'])
-            if contrib['slot']['sessionId'] == session_id:
-                contributions.append(contrib)
-    return json.dumps(contributions)
+    return generic_search_contrib(search, event_id, day_date, session_id)
 
 
 @events.route('/futureEvents/', methods=['GET'])
@@ -326,10 +321,15 @@ def getOngoingContributions():
     update_ongoing_events()
     now = datetime.utcnow()
     tomorrow = now + timedelta(days=1)
+    results = []
     ongoing_contributions = list(db.Contribution.find({'$and':[{'startDate' :{'$gte': now}},
                                     {'startDate' :{'$lt': tomorrow}},
                                     {'_fossil': 'contribSchEntryDisplay'}]}).sort([('startDate',1)]))
-    return json.dumps(ongoing_contributions)
+    for contribution in ongoing_contributions:
+        if contribution['slot']:
+            contribution['slot'] = db.dereference(contribution['slot'])
+        results.append(contribution)
+    return json.dumps(results)
 
 
 @events.route('/ongoingSimpleEvents/', methods=['GET'])

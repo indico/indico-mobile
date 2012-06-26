@@ -52,16 +52,24 @@ var Router = Backbone.Router.extend({
     getEventView: function(info){
 
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
+        var eventId, agenda;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+        }
 
         addToHistory("/event/" + eventId);
 
         var eventView = new PageView({
                 model: new Event(),
-                url: "/event/" + eventId + '/',
+                url: '/event/'+eventId+'/',
                 link: 'event_' + info,
-                template_name: '#eventPage'
+                template_name: '#eventPage',
+                agenda: agenda
             });
 
     },
@@ -69,8 +77,15 @@ var Router = Backbone.Router.extend({
     getSimpleEventView: function(info){
 
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
+        var eventId, agenda;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+        }
 
         addToHistory("/event/" + eventId);
 
@@ -78,7 +93,8 @@ var Router = Backbone.Router.extend({
                 model: new Event(),
                 url: "/event/" + eventId + '/',
                 link: 'event_' + info,
-                template_name: '#simpleEventPage'
+                template_name: '#simpleEventPage',
+                agenda: agenda
             });
 
     },
@@ -86,8 +102,18 @@ var Router = Backbone.Router.extend({
     getSessionsView: function(info){
 
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
+        var eventId, agenda, url, agendaUrl;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            url = '/agenda/event/' + eventId + '/allsessions/user/'+getUserId()+'/';
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            url = '/event/' + eventId + '/sessions/';
+            agendaUrl = '/agenda/event/' + eventId + '/sessions/user/'+getUserId()+'/';
+        }
 
         if ($('#sessions_' + info).length === 0){
 
@@ -97,15 +123,18 @@ var Router = Backbone.Router.extend({
                 url: "/event/" + eventId + '/',
                 link: 'sessions_' + info,
                 template_name: '#sessionsPage',
-                selectedTab: '#sessionsTab'
+                selectedTab: '#sessionsTab',
+                agenda: agenda
             });
 
-            var sessionsListView = new ListView({
+            var sessionsListView = new SessionsList({
                 collection: new Slots(),
-                url: '/event/' + eventId + '/sessions/',
-                container: '#sessions_list_' + info,
+                url: url,
+                agendaUrl: agendaUrl,
+                container: '#sessionsList_' + info,
                 template_name: '#sessionsList',
-                empty_message: 'No sessions in this event.'
+                empty_message: 'No sessions in this event.',
+                agenda: agenda
             });
 
         }
@@ -118,26 +147,39 @@ var Router = Backbone.Router.extend({
     getSessionView: function(info){
 
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
-        var sessionId = infoSplitted[1];
+        var eventId, sessionId, agenda, url;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            sessionId = infoSplitted[2];
+            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/user/'+getUserId()+'/';
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            sessionId = infoSplitted[1];
+            url = '/event/' + eventId + '/session/' + sessionId + '/entries/';
+        }
 
         if ($('#session_' + info).length === 0){
 
             var pageContainer = $('body');
             var sessionView = new PageView({
                 model: new Slot(),
-                url: 'event/' + eventId + '/session/' + sessionId + '/',
+                url: '/event/' + eventId + '/session/' + sessionId + '/',
                 link: 'session_' + info,
                 template_name: '#sessionPage',
-                selectedTab: '#sessionsTab'
+                selectedTab: '#sessionsTab',
+                agenda: agenda
             });
 
             var sessionDaysView = new SessionDaysList({
                 collection: new Slots(),
-                url: 'event/' + eventId + '/session/' + sessionId + '/entries/',
-                container: '#session_days_' + info,
-                template_name: '#sessionDaysList'
+                url: url,
+                container: '#sessionDays_' + info,
+                template_name: '#sessionDaysList',
+                empty_message: 'There is nothing in this session.',
+                agenda: agenda
             });
 
         }
@@ -150,10 +192,24 @@ var Router = Backbone.Router.extend({
     getSessionDay: function(info){
 
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
-        var sessionId = infoSplitted[1];
-        var day = infoSplitted[2];
+        var eventId, sessionId, agenda, url, day, agendaUrl;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            sessionId = infoSplitted[2];
+            day = infoSplitted[3];
+            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/'
+                + day + '/contribs/user/' + getUserId() + '/';
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            sessionId = infoSplitted[1];
+            day = infoSplitted[2];
+            url = '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
+            agendaUrl = '/agenda/event/' + eventId + '/session/' +
+                            sessionId + '/day/' + day + '/contribs/user/'+getUserId()+'/';
+        }
 
         if ($('#sessionDay_' + info).length === 0){
 
@@ -162,15 +218,19 @@ var Router = Backbone.Router.extend({
                 url: '/event/'+eventId+'/day/'+day+'/session/'+sessionId+'/',
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
-                selectedTab: '#sessionsTab'
+                selectedTab: '#sessionsTab',
+                agenda: agenda
             });
 
             var contributionsView = new ContributionListView({
                 collection: new Contributions(),
-                url: '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/',
+                url: url,
+                agendaUrl: agendaUrl,
                 container: '#sessionDay_list_' + info,
                 template_name: '#contribution',
-                sessionDay: true
+                sessionDay: true,
+                empty_message: 'There is nothing in this day.',
+                agenda: agenda
             });
 
         }
@@ -183,25 +243,36 @@ var Router = Backbone.Router.extend({
 
     getTimetableView: function(info){
         var infoSplitted = info.split('_');
-
-        var eventId = infoSplitted[0];
+        var eventId, agenda;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            url = '/agenda/event/' + eventId + '/days/user/'+ getUserId() + '/';
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            url = '/event/' + eventId + '/days/';
+        }
 
         if ($('#timetable_' + info).length === 0){
 
             var timetableDaysView = new PageView({
                 model: new Event(),
-                url: 'event/' + eventId + '/',
+                url: '/event/' + eventId + '/',
                 template_name: '#timetableDays',
                 link: 'timetable_' + info,
-                selectedTab: '#timetableTab'
+                selectedTab: '#timetableTab',
+                agenda: agenda
             });
 
             var timetableDaysListView = new ListView({
                 collection: new Days(),
-                url: '/event/' + eventId + '/days/',
+                url: url,
                 container: '#timetable_days_' + info,
                 template_name: '#timetableDaysList',
-                empty_message: 'No contributions in this event.'
+                empty_message: 'No contributions in this event.',
+                agenda: agenda
             });
 
         }
@@ -214,8 +285,20 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var eventId = infoSplitted[0];
-        var dayDate = infoSplitted[1];
+        var agenda, eventId, dayDate, url, agendaUrl;
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            dayDate = infoSplitted[2];
+            url = '/agenda/event/'+eventId+'/day/'+dayDate+'/contributions/user/'+getUserId()+'/';
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            dayDate = infoSplitted[1];
+            url = '/event/'+eventId+'/day/'+dayDate+'/contributions/';
+            agendaUrl = '/agenda/event/'+eventId+'/day/'+dayDate+'/contributions/user/'+getUserId()+'/';
+        }
 
         if ($('#timetableDay_' + info).length === 0){
 
@@ -224,15 +307,19 @@ var Router = Backbone.Router.extend({
                 url: '/event/' + eventId + '/day/' + dayDate + '/',
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,
-                selectedTab: '#timetableTab'
+                selectedTab: '#timetableTab',
+                agenda: agenda
             });
 
             var timetableDayContributionsView = new ContributionListView({
                 container: '#day_list_' + info,
                 collection: new Contributions(),
-                url: '/event/'+eventId+'/day/'+dayDate+'/contributions/',
+                url: url,
+                agendaUrl: agendaUrl,
                 template_name: '#contribution',
-                sessionDay: false
+                sessionDay: false,
+                empty_message: 'There is nothing in this day.',
+                agenda: agenda
             });
         }
         else {
@@ -248,22 +335,34 @@ var Router = Backbone.Router.extend({
 
         if ($('#speakers_' + info).length === 0){
 
-            var eventId = infoSplitted[0];
+            var eventId, agenda;
+            if (infoSplitted[0] == 'agenda'){
+                agenda = true;
+                eventId = infoSplitted[1];
+                url = '/agenda/event/' + eventId + '/speakers/user/'+getUserId()+'/';
+            }
+            else{
+                agenda = false;
+                eventId = infoSplitted[0];
+                url = '/event/' + eventId + '/speakers/';
+            }
 
             var speakersPageView = new SpeakersPage({
                 model: new Event(),
                 url: '/event/' + eventId + '/',
                 template_name: '#speakersPage',
                 link: 'speakers_' + info,
-                selectedTab: '#speakersTab'
+                selectedTab: '#speakersTab',
+                agenda: agenda
             });
 
             var speakersListView = new SpeakerListView({
                 collection: new Speakers(),
-                url: '/event/' + eventId + '/speakers/',
+                url: url,
                 container: '#speakersContent_' + info,
                 lastIndex: null,
-                template_name: '#speakersList'
+                template_name: '#speakersList',
+                agenda: agenda
             });
         }
         else{
@@ -277,8 +376,18 @@ var Router = Backbone.Router.extend({
 
         if ($('div[id="speaker_' + info +'"]').length === 0){
 
-            var eventId = infoSplitted[0];
-            var speakerId = infoSplitted[1].replace(':','_');
+            var eventId, speakerId, agenda, url, agendaUrl;
+
+            if (infoSplitted[0] == 'agenda'){
+                agenda = true;
+                eventId = infoSplitted[1];
+                speakerId = infoSplitted[2].replace(':','_');
+            }
+            else{
+                agenda = false;
+                eventId = infoSplitted[0];
+                speakId = infoSplitted[1].replace(':','_');
+            }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
@@ -286,14 +395,19 @@ var Router = Backbone.Router.extend({
                 event_id: eventId,
                 template_name: '#speakerPage',
                 link: 'speaker_' + info,
-                selectedTab: '#speakersTab'
+                selectedTab: '#speakersTab',
+                agenda: agenda
             });
 
             var speakerContributionsView = new SpeakerContribsListView({
                 container: 'div[id="speaker_contribs_' + info +'"]',
                 collection: new Contributions(),
                 url: "/event/" + eventId + "/speaker/" + speakerId + "/contributions/",
-                template_name: '#contribution'
+                agendaUrl: "/agenda/event/" + eventId + "/speaker/" +
+                    speakerId + "/contributions/user/"+getUserId()+'/',
+                template_name: '#contribution',
+                empty_message: 'This speaker is in no contribution.',
+                agenda: agenda
             });
         }
         else{
@@ -309,15 +423,26 @@ var Router = Backbone.Router.extend({
 
         if ($('#contribution_' + info).length === 0){
 
-            var eventId = infoSplitted[0];
-            var contributionId = infoSplitted[1];
+            var eventId, contributionId, agenda;
+
+            if (infoSplitted[0] == 'agenda'){
+                agenda = true;
+                eventId = infoSplitted[1];
+                contributionId = infoSplitted[2];
+            }
+            else{
+                agenda = false;
+                eventId = infoSplitted[0];
+                contributionId = infoSplitted[1];
+            }
 
             var contributionPageView = new PageView({
                 model: new Contribution(),
                 url: '/event/' + eventId + '/contrib/' + contributionId + '/',
                 template_name: '#contributionDetail',
                 link: 'contribution_' + info,
-                selectedTab: '#any'
+                selectedTab: '#any',
+                agenda: agenda
             });
 
         }
@@ -329,7 +454,16 @@ var Router = Backbone.Router.extend({
 
     getAboutView: function(info){
 
-        var eventId = info.split('_')[0];
+        var infoSplitted = info.split('_');
+
+        var eventId;
+
+        if (infoSplitted[0] == 'agenda'){
+            eventId = info.split('_')[1];
+        }
+        else{
+            eventId = info.split('_')[0];
+        }
 
         if ($('#about_' + info).length === 0){
 
@@ -348,6 +482,10 @@ var Router = Backbone.Router.extend({
     }
 
 });
+
+function getUserId() {
+    return 1;
+}
 
 //source: http://code18.blogspot.ch/2009/07/creer-un-singleton-en-javascript.html
 function myAgenda() {

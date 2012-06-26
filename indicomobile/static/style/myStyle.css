@@ -24,7 +24,7 @@
 .highlight { background-color: #80e0ff }
 
 .nouser {
-    background-image: url(images/nouser.png);
+    background-image: url(/static/style/images/nouser.png);
     min-width: 250px;
     min-height: 250px;
     background-size: 200px 200px;
@@ -38,7 +38,7 @@
 }
 
 .notimetable {
-    background-image: url(images/notimetable.png);
+    background-image: url(/static/style/images/notimetable.png);
     min-width: 250px;
     min-height: 250px;
     background-size: 200px 200px;
@@ -112,7 +112,7 @@
 }
 
 .ui-icon-download{
-    background-image: url(images/download.png);
+    background-image: url(/static/style/images/download.png);
     background-size: 16px 16px;
     background-position: center;
     width: 18px;
@@ -121,7 +121,7 @@
 
 .ui-icon-agenda {
     background-color: transparent !important;
-    background-image: url(images/agenda.png);
+    background-image: url(/static/style/images/agenda.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -130,11 +130,10 @@
 }
 
 .ui-btn-active .ui-icon-agenda {
-    background: none;
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/agenda-selected.png);
+    background-image: url(/static/style/images/agenda-selected.png);
 }
 
 .ui-icon-event {
@@ -148,11 +147,10 @@
 }
 
 .ui-btn-active .ui-icon-event {
-    background: none;
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/event-selected.png);
+    background-image: url(/static/style/images/event-selected.png);
 }
 
 .ui-icon-new {
@@ -166,11 +164,10 @@
 }
 
 .ui-btn-active .ui-icon-new {
-    background: none;
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/new-selected.png);
+    background-image: url(/static/style/images/new-selected.png);
 }
 
 .ui-icon-history {
@@ -184,16 +181,15 @@
 }
 
 .ui-btn-active .ui-icon-history {
-    background: none;
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/history-selected.png);
+    background-image: url(/static/style/images/history-selected.png);
 }
 
 .ui-icon-sessions {
     background-color: transparent !important;
-    background-image: url(images/session.png);
+    background-image: url(/static/style/images/session.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -202,11 +198,10 @@
 }
 
 .ui-btn-active .ui-icon-sessions {
-    background: none;
     box-shadow: none;
-    -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/session-selected.png);
+    -moz-box-shadow: none;
+    background-image: url(/static/style/images/session-selected.png);
 }
 
 .ui-icon-timetable {
@@ -220,16 +215,15 @@
 }
 
 .ui-btn-active .ui-icon-timetable {
-    background: none;
     box-shadow: none;
-    -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/timetable-selected.png);
+    -moz-box-shadow: none;
+    background-image: url(/static/style/images/timetable-selected.png);
 }
 
 .ui-icon-speakers {
     background-color: transparent !important;
-    background-image: url(images/user.png);
+    background-image: url(/static/style/images/user.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -238,16 +232,15 @@
 }
 
 .ui-btn-active .ui-icon-speakers {
-    background: none;
     box-shadow: none;
-    -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/user-selected.png);
+    -moz-box-shadow: none;
+    background-image: url(/static/style/images/user-selected.png);
 }
 
 .ui-icon-about {
     background-color: transparent !important;
-    background-image: url(images/info.png);
+    background-image: url(/static/style/images/info.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -256,11 +249,10 @@
 }
 
 .ui-btn-active .ui-icon-about {
-    background: none;
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(images/info-selected.png);
+    background-image: url(/static/style/images/info-selected.png);
 }
 
 .sessionColor{

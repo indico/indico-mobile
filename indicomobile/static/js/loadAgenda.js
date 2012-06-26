@@ -57,3 +57,23 @@ function loadHistory(){
     return myHistory;
 
 }
+
+function getHistoryInAgenda() {
+    var myHistory = loadHistory();
+    var events = [];
+    myHistory.each(function(event){
+        events.push(event.get('id'));
+    });
+    var results;
+    $.ajax({
+        type: "GET",
+        data: {events: JSON.stringify(events)},
+        dataType: 'json',
+        url: "/agenda/history/user/" + getUserId() + "/",
+        async: false,
+        success: function(resp){
+            results = resp;
+        }
+    });
+    return results;
+}
