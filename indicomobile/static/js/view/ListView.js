@@ -70,7 +70,7 @@ var ListView = Backbone.View.extend({
             }
             container.parent().find('.loader').hide();
         }
-
+        $.mobile.hidePageLoadingMsg();
         return this;
     }
 });
@@ -109,6 +109,7 @@ var SessionsList = ListView.extend({
     },
 
     addRemoveSession: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
         addRemoveSessionAction($(e.currentTarget), this.collection);
     }
@@ -176,6 +177,7 @@ var ListByMonthView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), this.collection);
     }
@@ -228,8 +230,9 @@ var SpeakerContribsListView = ListView.extend({
     },
 
     addRemoveContribution: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
-        addRemoveContributionAction($(e.currentTarget));
+        addRemoveContributionAction($(e.currentTarget), this.collection);
     }
 
 });
@@ -278,6 +281,7 @@ var ContributionListView = ListView.extend({
     },
 
     addRemoveContribution: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
         addRemoveContributionAction($(e.currentTarget), this.collection);
     }
@@ -411,6 +415,7 @@ var SearchResultsView = SpeakerListView.extend({
     },
 
     addRemoveEvent: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
     }
@@ -458,6 +463,7 @@ var HistoryListView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
+        $.mobile.showPageLoadingMsg("a", "Updating", true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
     }

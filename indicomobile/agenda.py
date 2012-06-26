@@ -113,8 +113,9 @@ def removeEvent(event_id, user_id):
 @agenda.route('/removeSession/<event_id>/session/<session_id>/user/<user_id>/', methods=['GET'])
 def removeSession(event_id, session_id, user_id):
     eventInAgenda = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id})
-    sessionInAgenda = db.SessionSlot.find_one({'conferenceId': event_id, 'sessionId': session_id})
+    sessionInAgenda = db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id})
     if eventInAgenda:
+        print 'remove session from event'
         db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
         session_ids = db.SessionSlot.find({'conferenceId': event_id}).distinct('sessionId')
         for current_id in session_ids:
@@ -125,14 +126,18 @@ def removeSession(event_id, session_id, user_id):
                     agenda_session.update({'user_id': user_id, 'session_slot': session_slot})
                     agenda_session.save()
     elif sessionInAgenda:
+        print 'remove session'
         db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.sessionId': session_id})
     else:
+        print 'remove contributions'
         contributions = db.AgendaContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id})
         for contribution in contributions:
+            print contribution
             current_contribution = contribution['contribution']
-            current_slot = db.dereference(contribution['slot'])
-            if current_slot['sessionId'] == session_id:
-                removeContribution(event_id, current_contribution['contributionId'], user_id)
+            if current_contribution['slot']:
+                current_slot = db.dereference(current_contribution['slot'])
+                if current_slot['sessionId'] == session_id:
+                    removeContribution(event_id, current_contribution['contributionId'], user_id)
     return ''
 
 

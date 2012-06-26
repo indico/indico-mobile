@@ -169,7 +169,7 @@ var Router = Backbone.Router.extend({
                 url: '/event/' + eventId + '/session/' + sessionId + '/',
                 link: 'session_' + info,
                 template_name: '#sessionPage',
-                selectedTab: '#sessionsTab',
+                selectedTab: null,
                 agenda: agenda
             });
 
@@ -218,7 +218,7 @@ var Router = Backbone.Router.extend({
                 url: '/event/'+eventId+'/day/'+day+'/session/'+sessionId+'/',
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
-                selectedTab: '#sessionsTab',
+                selectedTab: null,
                 agenda: agenda
             });
 
@@ -307,7 +307,7 @@ var Router = Backbone.Router.extend({
                 url: '/event/' + eventId + '/day/' + dayDate + '/',
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,
-                selectedTab: '#timetableTab',
+                selectedTab: null,
                 agenda: agenda
             });
 
@@ -382,29 +382,32 @@ var Router = Backbone.Router.extend({
                 agenda = true;
                 eventId = infoSplitted[1];
                 speakerId = infoSplitted[2].replace(':','_');
+                url = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/user/"+getUserId()+'/';
             }
             else{
                 agenda = false;
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
+                url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
                 url: "/event/" + eventId + "/speaker/" + speakerId + '/',
+                agendaUrl: "/agenda/event/" + eventId + "/speaker/" +
+                    speakerId + "/contributions/user/"+getUserId()+'/',
                 event_id: eventId,
                 template_name: '#speakerPage',
                 link: 'speaker_' + info,
-                selectedTab: '#speakersTab',
+                selectedTab: null,
                 agenda: agenda
             });
 
             var speakerContributionsView = new SpeakerContribsListView({
                 container: 'div[id="speaker_contribs_' + info +'"]',
                 collection: new Contributions(),
-                url: "/event/" + eventId + "/speaker/" + speakerId + "/contributions/",
-                agendaUrl: "/agenda/event/" + eventId + "/speaker/" +
-                    speakerId + "/contributions/user/"+getUserId()+'/',
+                url: url,
+                agendaUrl: agendaUrl,
                 template_name: '#contribution',
                 empty_message: 'This speaker is in no contribution.',
                 agenda: agenda

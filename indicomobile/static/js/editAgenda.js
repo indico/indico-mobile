@@ -43,7 +43,7 @@ function addRemoveSessionAction(button, collection){
     var eventId = button.attr('eventId');
     var sessionId = button.attr('sessionId');
     var action = button.attr('action');
-    console.log(eventId + '_' + action)
+    console.log(eventId + '_' + sessionId + '_' + action)
     var userId = getUserId();
     if (userId){ 
         if (action == 'add'){
