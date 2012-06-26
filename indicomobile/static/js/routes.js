@@ -386,7 +386,7 @@ var Router = Backbone.Router.extend({
             else{
                 agenda = false;
                 eventId = infoSplitted[0];
-                speakId = infoSplitted[1].replace(':','_');
+                speakerId = infoSplitted[1].replace(':','_');
             }
 
             var speakerPageView = new PageView({

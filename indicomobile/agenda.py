@@ -146,9 +146,9 @@ def removeContribution(event_id, contribution_id, user_id):
         db.agenda_contributions.remove({'user_id': user_id, 'contribution.contributionId': contribution_id})
     elif db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id}):
         db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
-        contributions = db.Contribution.find({'$and':[{'conferenceId': event_id}, {'contributionId': {'$ne': contribution_id}}]})
+        contributions = db.Contribution.find({'conferenceId': event_id, 'contributionId': {'$ne': contribution_id}})
         for contribution in contributions:
-            addContribution(event_id, contribution_id, user_id)
+            addContribution(event_id, contribution['contributionId'], user_id)
     elif db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id}):
         contributions = db.Contribution.find({'conferenceId': event_id, 'slot':{'$ne': None}, 'contributionId': {'$ne': contribution_id}})
         db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.sessionId': session_id})
@@ -160,7 +160,6 @@ def removeContribution(event_id, contribution_id, user_id):
 
 def createListAgendaContributions(contributions, user_id):
     contribs_in_db = []
-    print contributions
     for contribution in contributions:
         session = contribution['slot']
         if db.AgendaEvent.find_one({'user_id': user_id, 'event.id': contribution['conferenceId']}):
@@ -358,7 +357,6 @@ def getAgendaHistory(user_id):
     events = []
     event_ids = json.loads(request.args.get('events'))
     for event in event_ids:
-        print event
         eventInAgenda = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event})
         if eventInAgenda:
             events.append(eventInAgenda['event'])
