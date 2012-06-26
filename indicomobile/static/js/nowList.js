@@ -5,6 +5,7 @@ $('#eventHome').live('pagecreate', function(){
     var ongoingContributionsView = new SpeakerContribsListView({
         collection: new Events(),
         url: '/ongoingContributions/',
+        agendaUrl: '/agenda/ongoingContributions/user/'+getUserId()+'/',
         container: '#contribList',
         template_file: 'contributions.html',
         template_name: '#contribution',
@@ -15,6 +16,7 @@ $('#eventHome').live('pagecreate', function(){
     var ongoingContributionsView = new SpeakerContribsListView({
         collection: new Events(),
         url: '/ongoingSimpleEvents/',
+        agendaUrl: '/agenda/ongoingSimpleEvents/user/'+getUserId()+'/',
         container: '#eventList',
         template_file: 'events.html',
         template_name: '#simpleEventList',

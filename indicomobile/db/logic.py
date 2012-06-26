@@ -12,7 +12,7 @@ def convert_dates(dictionary):
         dictionary['modificationDate'] = dt_from_indico(dictionary['modificationDate'])
 
 
-def store_contribution(contribution, color=None, is_poster=False, slot=None):
+def store_contribution(contribution, event, color=None, is_poster=False, slot=None):
     convert_dates(contribution)
 
     contribution.update({
@@ -25,6 +25,7 @@ def store_contribution(contribution, color=None, is_poster=False, slot=None):
     contribution.pop('sessionId')
     contribution.pop('sessionSlotId')
     contribution.pop('sessionCode')
+    contribution['event'] = ref(event)
     store_material(contribution)
     store_presenters(contribution)
     db_contribution = db.Contribution()
@@ -55,7 +56,7 @@ def store_slot(slot, event):
 
     for contribution, block_content in slot.get('entries', {}).iteritems():
         if block_content['_type'] == 'ContribSchEntry':
-            entries.append(ref(store_contribution(block_content, color, is_poster, db_slot)))
+            entries.append(ref(store_contribution(block_content, event, color, is_poster, db_slot)))
     db_slot['entries'] = entries
     if len(db_slot['entries']) > 0:
         db_slot.save()
@@ -130,7 +131,7 @@ def store_event(event_http, event_tt):
             if block_content['_type'] == 'LinkedTimeSchEntry':
                 entry = store_slot(block_content, event_db)
             else:
-                entry = store_contribution(block_content)
+                entry = store_contribution(block_content, event_db)
             entries.append(ref(entry))
         if len(day_content.keys()) > 0:
             date = datetime.strptime(day, '%Y%M%d').strftime('%Y-%M-%d').decode('utf-8')

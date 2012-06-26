@@ -5,36 +5,31 @@ routing = Blueprint('routing',
                     template_folder='templates')
 
 
-@routing.route('/home')
+@routing.route('/')
 def index():
     return render_template('index.html')
 
 
-@routing.route('/agenda')
+@routing.route('/agenda/')
 def agenda():
     return render_template('agenda.html')
 
 
-@routing.route('/events')
+@routing.route('/events/')
 def event():
     return render_template('events.html')
 
 
-@routing.route('/search')
+@routing.route('/search/')
 def search():
     return render_template('search.html')
 
 
-@routing.route('/now')
+@routing.route('/now/')
 def now():
     return render_template('goingon.html')
 
 
-@routing.route('/history')
+@routing.route('/history/')
 def history():
     return render_template('history.html')
-
-
-@routing.route('/')
-def root():
-    return render_template('index.html')

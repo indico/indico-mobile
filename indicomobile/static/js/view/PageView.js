@@ -26,7 +26,15 @@ var PageView = Backbone.View.extend({
             if (typeof this.options.event_id !== 'undefined'){
                 model.set('conferenceId', this.options.event_id);
             }
-
+            if(this.options.agenda){
+                console.log(model)
+                if (model.get('conferenceId') === undefined){
+                    model.set('id', 'agenda_'+model.get('id'));
+                }
+                else{
+                    model.set('conferenceId', 'agenda_'+model.get('conferenceId'));
+                }
+            }
             pageView.append(this.template(model.toJSON()));
             if (this.options.selectedTab !== undefined){
                 pageView.append(this.footerTemplate(model.toJSON()));
@@ -66,7 +74,7 @@ var SearchContributionsView = PageView.extend({
             }
             $(e.currentTarget).parent().parent().find('.loader').show();
             $(container).empty();
-            
+
             var contributionsView = new ContributionListView({
                 container: container,
                 collection: new Contributions(),
@@ -97,13 +105,14 @@ var SpeakersPage = PageView.extend({
             var eventId = splittedId[1];
             var term = $(e.currentTarget).val();
             var container = $('#speakersContent_' + splittedId[1]);
-            $(e.currentTarget).parent().parent().find('.loader').show();
+            container.parent().find('.loader').show();
+            container.parent().find('.emptyMessage').hide()
             container.data('view').remove();
             container.data('view').infiniScroll.disableFetch();
             var view = new SpeakerListView({
                 container: '#speakersContent_' + splittedId[1],
                 collection: new Speakers(),
-                url: 'searchSpeaker/'+eventId+'?search='+term,
+                url: '/searchSpeaker/event/'+eventId+'/search/'+term+'/',
                 template_file: 'speakers.html',
                 template_name: '#speakersList',
                 term: term

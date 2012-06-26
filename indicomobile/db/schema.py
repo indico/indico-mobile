@@ -124,6 +124,7 @@ class Contribution(Document):
     __collection__ = 'contributions'
     structure = {
         'startDate': datetime,
+        'event': Event,
         'contributionId': unicode,
         'endDate': datetime,
         'description': unicode,
@@ -155,4 +156,33 @@ class Day(Document):
     }
 
 
-db.register([Presenter, Resource, Material, Chair, Event, Contribution, SessionSlot, Day])
+
+class AgendaContribution(Document):
+    __collection__ = 'agenda_contributions'
+    structure = {
+        'user_id': unicode,
+        'contribution': Contribution
+    }
+
+
+
+class AgendaSessionSlot(Document):
+    __collection__ = 'agenda_session_slots'
+    structure = {
+        'user_id': unicode,
+        'session_slot': SessionSlot
+    }
+
+
+
+class AgendaEvent(Document):
+    __collection__ = 'agenda_events'
+    structure = {
+        'user_id': unicode,
+        'event': Event
+    }
+
+
+db.register([Presenter, Resource, Material, Chair, Event, Contribution,
+            SessionSlot, Day, AgendaContribution, AgendaSessionSlot,
+            AgendaEvent])

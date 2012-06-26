@@ -1,7 +1,8 @@
 function searchInDB(term){
     var resultEventsView = new SearchResultsView({
         collection: new Events(),
-        url: '/searchEvent/?search='+term,
+        url: '/searchEvent/'+term+'/',
+        agendaUrl: '/agenda/searchEvent/'+term+'/user/'+getUserId()+'/',
         container : '#searchResults',
         template_file: 'events.html',
         template_name: '#eventList',
