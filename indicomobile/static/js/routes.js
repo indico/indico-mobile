@@ -390,6 +390,7 @@ var Router = Backbone.Router.extend({
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
                 url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                agendaUrl = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/user/"+getUserId()+'/';
             }
 
             var speakerPageView = new PageView({
@@ -494,28 +495,6 @@ function getUserId() {
     return 1;
 }
 
-//source: http://code18.blogspot.ch/2009/07/creer-un-singleton-en-javascript.html
-function myAgenda() {
-    
-    this.events = loadAgendaEvents();
-    this.days = loadAgendaDays();
-    this.completeSessions = loadAgendaCompleteSessions();
-    this.sessions = loadAgendaSessions();
-    this.contributions = loadAgendaContributions();
-
-    if (myAgenda.caller != myAgenda.getInstance){
-        throw new Error("This object cannot be instanciated");
-    }
-}
-
-myAgenda.instance = null;
-
-myAgenda.getInstance = function() {
-    if (this.instance == null) {
-        this.instance = new myAgenda();
-    }
-    return this.instance;
-}
 
 $.mobile.defaultPageTransition = 'none';
 var router = new Router();

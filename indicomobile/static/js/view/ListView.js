@@ -109,9 +109,7 @@ var SessionsList = ListView.extend({
     },
 
     addRemoveSession: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg();
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
         addRemoveSessionAction($(e.currentTarget), this.collection);
         page_id = $.mobile.activePage.attr('id');
@@ -173,9 +171,7 @@ var ListByMonthView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg();
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), this.collection);
         page_id = $.mobile.activePage.attr('id');
@@ -209,7 +205,7 @@ var SpeakerContribsListView = ListView.extend({
                 listView.append('<li data-role="list-divider">'+hourToText(element.get('startDate').time)+'</li>');
             }
             var isInAgenda = self.agendaCollection.find(function(contrib){
-                if (element.get('id') === undefined){
+                if (element.get('contributionId') !== undefined){
                     return contrib.get('contributionId') == element.get('contributionId');
                 }
                 else{
@@ -226,15 +222,20 @@ var SpeakerContribsListView = ListView.extend({
     },
 
     events: {
-        "click #addRemoveContribution": "addRemoveContribution"
+        "click #addRemoveEvent": "addRemove",
+        "click #addRemoveContribution": "addRemove"
     },
 
-    addRemoveContribution: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg();
+    addRemove: function(e) {
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
-        addRemoveContributionAction($(e.currentTarget), this.collection);
+        if ($(e.currentTarget).attr('id') == 'addRemoveContribution'){
+            addRemoveContributionAction($(e.currentTarget), this.collection);
+        }
+        else{
+            addRemoveEventAction($(e.currentTarget), this.collection);
+        }
+        
         page_id = $.mobile.activePage.attr('id');
         $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
@@ -285,9 +286,7 @@ var ContributionListView = ListView.extend({
     },
 
     addRemoveContribution: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg();
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
         addRemoveContributionAction($(e.currentTarget), this.collection);
         page_id = $.mobile.activePage.attr('id');
@@ -422,9 +421,7 @@ var SearchResultsView = SpeakerListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg();
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
         page_id = $.mobile.activePage.attr('id');
@@ -474,9 +471,7 @@ var HistoryListView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.loadingMessage = 'Saving...';
-        $.mobile.loadingMessageTextVisible = true;
-        $.mobile.showPageLoadingMsg(); 
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
         page_id = $.mobile.activePage.attr('id');

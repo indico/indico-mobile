@@ -31,3 +31,33 @@ function hourToText(time){
     var splittedTime = time.split(':');
     return splittedTime[0]+'h'+splittedTime[1];
 }
+
+function loadHistory(){
+
+    var myHistory = new Events();
+    if(localStorage.getItem('myHistory')) {
+        myHistory = new Events(JSON.parse(localStorage.getItem('myHistory')));
+    }
+    return myHistory;
+
+}
+
+function getHistoryInAgenda() {
+    var myHistory = loadHistory();
+    var events = [];
+    myHistory.each(function(event){
+        events.push(event.get('id'));
+    });
+    var results;
+    $.ajax({
+        type: "GET",
+        data: {events: JSON.stringify(events)},
+        dataType: 'json',
+        url: "/agenda/history/user/" + getUserId() + "/",
+        async: false,
+        success: function(resp){
+            results = resp;
+        }
+    });
+    return results;
+}
