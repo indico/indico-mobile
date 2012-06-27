@@ -69,6 +69,7 @@ var Router = Backbone.Router.extend({
                 url: '/event/'+eventId+'/',
                 link: 'event_' + info,
                 template_name: '#eventPage',
+                template_name2: '#simpleEventPage',
                 agenda: agenda
             });
 
@@ -459,12 +460,14 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var eventId;
+        var eventId, agenda;
 
         if (infoSplitted[0] == 'agenda'){
+            agenda = true;
             eventId = info.split('_')[1];
         }
         else{
+            agenda = false;
             eventId = info.split('_')[0];
         }
 
@@ -475,7 +478,8 @@ var Router = Backbone.Router.extend({
                 url: '/event/'+eventId,
                 template_name: '#about',
                 link: 'about_' + info,
-                selectedTab: '#aboutTab'
+                selectedTab: '#aboutTab',
+                agenda: agenda
             });
         }
         else{

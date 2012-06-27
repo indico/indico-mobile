@@ -4,8 +4,8 @@ function searchInDB(term){
         url: '/searchEvent/'+term+'/',
         agendaUrl: '/agenda/searchEvent/'+term+'/user/'+getUserId()+'/',
         container : '#searchResults',
-        template_file: 'events.html',
         template_name: '#eventList',
+        template_name2: '#simpleEventList',
         empty_message: 'Nothing found.',
         term: term
     });

@@ -9,6 +9,7 @@ var PageView = Backbone.View.extend({
     initialize: function(){
         this.template_file = getHTMLTemplate('pages.html');
         this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
+        this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
         this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
         this.model.url = this.options.url;
         this.model.on('change', this.render, this);
@@ -34,6 +35,9 @@ var PageView = Backbone.View.extend({
                 else{
                     model.set('conferenceId', 'agenda_'+model.get('conferenceId'));
                 }
+            }
+            if (model.get('type') == 'simple_event'){
+                this.template = this.template2;
             }
             pageView.append(this.template(model.toJSON()));
             if (this.options.selectedTab !== undefined){

@@ -109,9 +109,13 @@ var SessionsList = ListView.extend({
     },
 
     addRemoveSession: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg();
         e.preventDefault();
         addRemoveSessionAction($(e.currentTarget), this.collection);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -142,8 +146,6 @@ var ListByMonthView = ListView.extend({
 
     renderItems: function(collection, template, listView){
 
-        this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
-
         var lastDate = null,
         self = this;
         collection.each(function(element){
@@ -154,13 +156,7 @@ var ListByMonthView = ListView.extend({
                 lastDate = month;
                 listView.append('<li data-role="list-divider">'+month+'</li>');
             }
-            var listItem;
-            if (element.get('type') == 'simple_event'){
-                listItem = self.template2(element.toJSON());
-            }
-            else{
-                listItem = template(element.toJSON());
-            }
+            var listItem = template(element.toJSON());
             var isInAgenda = self.agendaCollection.find(function(event){
                 return event.get('id') == element.get('id');
             });
@@ -177,9 +173,13 @@ var ListByMonthView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg();
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), this.collection);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -230,9 +230,13 @@ var SpeakerContribsListView = ListView.extend({
     },
 
     addRemoveContribution: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg();
         e.preventDefault();
         addRemoveContributionAction($(e.currentTarget), this.collection);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -281,9 +285,13 @@ var ContributionListView = ListView.extend({
     },
 
     addRemoveContribution: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg();
         e.preventDefault();
         addRemoveContributionAction($(e.currentTarget), this.collection);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -367,8 +375,6 @@ var SearchResultsView = SpeakerListView.extend({
 
 
     renderItems: function(items, template, highlight_term) {
-        console.log(this.agendaCollection)
-        console.log(this.collection)
         var collection = items,
         self = this,
         container = $(this.options.container),
@@ -377,6 +383,7 @@ var SearchResultsView = SpeakerListView.extend({
         container.data('view', this);
         collection.each(function(element){
             element.set('inAgenda', false);
+            console.log(element)
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
             if (lastDate === '' || lastDate != month){
@@ -415,9 +422,13 @@ var SearchResultsView = SpeakerListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg();
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -449,7 +460,7 @@ var HistoryListView = ListView.extend({
             var isInAgenda = self.agendaCollection.find(function(event){
                 return event.get('id') == element.get('id');
             });
-            listItem = template(element.toJSON());
+            var listItem = template(element.toJSON());
             if (isInAgenda){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"','"b"');
             }
@@ -463,9 +474,41 @@ var HistoryListView = ListView.extend({
     },
 
     addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg("a", "Updating", true);
+        $.mobile.loadingMessage = 'Saving...';
+        $.mobile.loadingMessageTextVisible = true;
+        $.mobile.showPageLoadingMsg(); 
         e.preventDefault();
         addRemoveEventAction($(e.currentTarget), null);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
+    }
+
+});
+
+var NextEventView = ListView.extend({
+
+    initialize: function(){
+        this.template_file = getHTMLTemplate('lists.html');
+        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
+        this.model.url = this.options.url;
+        this.model.on('change:title', this.render, this);
+        this.model.fetch();
+    },
+
+    render: function(){
+        console.log(this.model)
+
+        var container = $(this.options.container),
+        listView = $(this.el);
+        if(this.model.get('type') === undefined){
+            this.model.set('type', null);
+        }
+        listView.append('<li data-role="list-divider">Next event in your agenda</li>');
+        listView.append(this.template(this.model.toJSON()));
+        container.append(listView);
+
+        container.trigger('create');
+        listView.listview('refresh');
     }
 
 });
