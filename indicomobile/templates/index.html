@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/static/style/jquery.mobile-1.1.0.min.css"/>
-    <link rel="stylesheet" href="/static/style/myStyle.css" />
-    <script src="/static/js/lib/jquery-1.7.2.js"></script>
-    <script src="/static/js/lib/jquery.highlight-3.js"></script>
-    <script src="/static/js/lib/jquery.mobile-1.1.0.min.js"></script>
-    <script src="/static/js/lib/underscore.js"></script>
-    <script src="/static/js/lib/backbone.js"></script>
-    <script src="/static/js/lib/inifiniScroll.js"></script>
-    <script src="/static/js/model/modelsForEvents.js"></script>
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/js/view/PageView.js"></script>
-    <script src="/static/js/view/ListView.js"></script>
-    <script src="/static/js/loadAgenda.js"></script>
-    <script src="/static/js/editAgenda.js"></script>
+        {% assets "style_css" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
+        {% endassets %}
+        {% assets "core_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
     <script src="/static/js/nextEventInAgenda.js"></script>
-    <script src="/static/js/routes.js"></script>
 </head>
 <body id="allpages">
 	<div data-role="page" id="home">

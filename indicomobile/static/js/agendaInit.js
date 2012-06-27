@@ -1,8 +1,5 @@
 $('#eventHome').live('pageinit', function(){
 
-    var myEvents = myAgenda.getInstance().events;
-    visited = false;
-
     var eventsView = new ListByMonthView({
         collection : new Events(),
         url: '/agenda/events/user/'+getUserId()+'/',

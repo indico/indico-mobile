@@ -24,7 +24,7 @@
 .highlight { background-color: #80e0ff }
 
 .nouser {
-    background-image: url(/static/style/images/nouser.png);
+    background-image: url('/static/style/images/nouser.png');
     min-width: 250px;
     min-height: 250px;
     background-size: 200px 200px;
@@ -38,7 +38,7 @@
 }
 
 .notimetable {
-    background-image: url(/static/style/images/notimetable.png);
+    background-image: url('/static/style/images/notimetable.png');
     min-width: 250px;
     min-height: 250px;
     background-size: 200px 200px;
@@ -112,7 +112,7 @@
 }
 
 .ui-icon-download{
-    background-image: url(/static/style/images/download.png);
+    background-image: url('/static/style/images/download.png');
     background-size: 16px 16px;
     background-position: center;
     width: 18px;
@@ -121,7 +121,7 @@
 
 .ui-icon-agenda {
     background-color: transparent !important;
-    background-image: url(/static/style/images/agenda.png);
+    background-image: url('/static/style/images/agenda.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -133,12 +133,12 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(/static/style/images/agenda-selected.png);
+    background-image: url('/static/style/images/agenda-selected.png');
 }
 
 .ui-icon-event {
     background-color: transparent !important;
-    background-image: url(images/event.png);
+    background-image: url(/static/style/images/event.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -150,12 +150,12 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(/static/style/images/event-selected.png);
+    background-image: url('/static/style/images/event-selected.png');
 }
 
 .ui-icon-new {
     background-color: transparent !important;
-    background-image: url(images/new.png);
+    background-image: url(/static/style/images/new.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -167,12 +167,12 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(/static/style/images/new-selected.png);
+    background-image: url('/static/style/images/new-selected.png');
 }
 
 .ui-icon-history {
     background-color: transparent !important;
-    background-image: url(images/history.png);
+    background-image: url(/static/style/images/history.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -184,12 +184,12 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(/static/style/images/history-selected.png);
+    background-image: url('/static/style/images/history-selected.png');
 }
 
 .ui-icon-sessions {
     background-color: transparent !important;
-    background-image: url(/static/style/images/session.png);
+    background-image: url('/static/style/images/session.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -201,12 +201,12 @@
     box-shadow: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
-    background-image: url(/static/style/images/session-selected.png);
+    background-image: url('/static/style/images/session-selected.png');
 }
 
 .ui-icon-timetable {
     background-color: transparent !important;
-    background-image: url(images/timetable.png);
+    background-image: url(/static/style/images/timetable.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -218,12 +218,12 @@
     box-shadow: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
-    background-image: url(/static/style/images/timetable-selected.png);
+    background-image: url('/static/style/images/timetable-selected.png');
 }
 
 .ui-icon-speakers {
     background-color: transparent !important;
-    background-image: url(/static/style/images/user.png);
+    background-image: url('/static/style/images/user.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -235,12 +235,12 @@
     box-shadow: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
-    background-image: url(/static/style/images/user-selected.png);
+    background-image: url('/static/style/images/user-selected.png');
 }
 
 .ui-icon-about {
     background-color: transparent !important;
-    background-image: url(/static/style/images/info.png);
+    background-image: url('/static/style/images/info.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -252,7 +252,7 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
-    background-image: url(/static/style/images/info-selected.png);
+    background-image: url('/static/style/images/info-selected.png');
 }
 
 .sessionColor{
