@@ -366,3 +366,43 @@ def getAgendaHistory(user_id):
         if eventInAgenda:
             events.append(eventInAgenda['event'])
     return json.dumps(events)
+
+
+@agenda.route('/agenda/nextEvent/user/<user_id>/', methods=['GET'])
+def getNextEvent(user_id):
+    events = []
+    now = datetime.utcnow()
+    agenda_events = db.AgendaEvent.find({'user_id': user_id})
+    agenda_sessions = db.AgendaSessionSlot.find({'user_id': user_id})
+    agenda_contributions = db.AgendaContribution.find({'user_id': user_id})
+    for event in agenda_events:
+        current_event = event['event']
+        if current_event['type'] == 'simple_event':
+            events.append(current_event)
+        else:
+            contributions = db.Contribution.find({'conferenceId': current_event['id'],
+                                                'startDate': {'$gte': now}}).sort('startDate',-1)
+            if contributions.count() > 0:
+                events.append(contributions[0])
+    for session in agenda_sessions:
+        current_session = session['session_slot']
+        session_slots = db.SessionSlot.find({'conferenceId': current_session['conferenceId'],
+                                            'sessionId': current_session['sessionId']})
+        for session_slot in session_slots:
+            contributions = []
+            for contribution in session_slot['entries']:
+                if db.dereference(contribution)['startDate'] > now:
+                    contributions.append(db.dereference(contribution))
+            if len(contributions) > 0:
+                events.append(sorted(contributions, key=lambda x:x['startDate'])[0])
+    for contribution in agenda_contributions:
+        current_contribution = contribution['contribution']
+        contributions = []
+        if current_contribution['startDate'] > now:
+            contributions.append(current_contribution)
+        if len(contributions) > 0:
+            events.append(sorted(contributions, key=lambda x:x['startDate'])[0])
+    nextEvent = []
+    if len(events) > 0:
+        nextEvent = sorted(events, key=lambda x:x['startDate'])[0]
+    return json.dumps(nextEvent)

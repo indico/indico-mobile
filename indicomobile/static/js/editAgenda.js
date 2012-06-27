@@ -16,6 +16,7 @@ function addRemoveEventAction(button, collection){
                     else{
                         button.attr('action', 'remove');
                         button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
+                        $.mobile.hidePageLoadingMsg();
                     }
                 }
             });
@@ -32,6 +33,7 @@ function addRemoveEventAction(button, collection){
                     else{
                         button.attr('action', 'add');
                         button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+                        $.mobile.hidePageLoadingMsg();
                     }
                 }
             });

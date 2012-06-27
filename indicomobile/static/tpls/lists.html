@@ -43,6 +43,23 @@
 </li>
 </script>
 
+<script type="text/template" id="nextEvent">
+<li>
+    <a href="#<% if(type == 'simple_event'){print('event_'+id);} else{print('contribution_'+conferenceId+'_'+contributionId)}%>" rel="external">
+        <h3><%=title%></h3>
+        <p><%
+        var month = ["January", "February", "March", "April",
+                 "May", "June", "July", "August",
+                 "September", "October", "November", "December"];
+        var newDate = startDate.date.split('-');
+        print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
+    %>, at <%var splittedTime = startDate.time.split(':');
+            print(splittedTime[0]+'h'+splittedTime[1]);%></p>
+        <p><%=location%>, <%=room%></p>
+    </a>
+</li>
+</script>
+
 <script type="text/template" id="poster">
 <li>
     <a href="#sessionDay_<%= conferenceId %>_<%= slot.sessionId %>_<%=slot.startDate.date%>" style="padding-right: 45px;" rel="external">
