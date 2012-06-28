@@ -70,7 +70,9 @@ def addSession(event_id, session_id, user_id):
 @agenda.route('/addContribution/<event_id>/contribution/<contribution_id>/user/<user_id>/', methods=['GET'])
 def addContribution(event_id, contribution_id, user_id):
     if contribution_id:
-        if db.AgendaContribution.find_one({'user_id': user_id, 'contribution.contributionId': contribution_id}):
+        if db.AgendaContribution.find_one({'user_id': user_id,
+                                        'contribution.contributionId': contribution_id,
+                                        'contribution.conferenceId': event_id}):
             print 'already in agenda'
         else:
             agenda_contribution = db.Contribution.find_one({'contributionId': contribution_id, 'conferenceId': event_id})
@@ -263,13 +265,9 @@ def getAgendaSpeakers(event_id, user_id):
             current_contribution = contribution['contribution']
             for speaker in current_contribution['presenters']:
                 if not speaker in speakers:
-                    if speaker['familyName'] == 'Adamova':
-                        print speaker['familyName'], ' ', current_contribution['contributionId']
                     speakers.append(speaker)
         for contribution in contribs:
             for speaker in contribution['presenters']:
-                if speaker['familyName'] == 'Adamova':
-                    print speaker['familyName'], ' ', contribution['contributionId']
                 if not speaker in speakers:
                     speakers.append(speaker)
 
