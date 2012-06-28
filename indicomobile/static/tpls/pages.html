@@ -116,7 +116,9 @@
     <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
-    <div class="headerElement"><h3>
+    <div class="headerElement">
+    <%if (prevDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#timetableDay_'+ conferenceId+'_'+prevDay+'" rel="external"></a>')}%>
+    <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
     <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
@@ -124,7 +126,9 @@
         var newDate = date.split('-');
         print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
     %>
-        </h3>
+        </div>
+
+    <%if (nextDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href=\"#timetableDay_'+conferenceId+'_'+nextDay+'\" rel="external"></a>')}%>
     </div>
 </div>
     <div data-role="content">
@@ -149,7 +153,7 @@
 
 <script type="text/template" id="eventPage">
     <div data-role="header" data-theme="c">
-        <a data-role="button" href="#eventHome" data-icon="back" data-iconpos="notext">Back</a>
+        <a data-role="button" href=<%if (window.location.pathname == '/'){print('"#home"');} else{print('"#eventHome"');}%> data-icon="back" data-iconpos="notext" rel="external">Back</a>
         <h3>Indico Mobile</h3>
         <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -201,19 +205,24 @@
         <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
-        <div class="headerElement"><h3 class="headerTitleMargin">
+        <div class="headerElement">
+        <%if (prevDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#sessionDay_'+conferenceId+'_'+sessionId+'_'+prevDay+'" rel="external"></a>');}
+        %>
+        <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
-        var date = startDate.date.split('-');
-        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
+        var new_date = date.split('-');
+        print(month[new_date[1]-1]+' '+new_date[2]+', '+new_date[0]);
         %>
-        </h3></div>
+        </div>
+        <%if (nextDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href="#sessionDay_'+conferenceId+'_'+sessionId+'_'+nextDay+'" rel="external"></a>');}%>
+        </div>
     </div>
     <div data-role="content">
-        <input type="text" data-type="search" id="searchContrib_<%=conferenceId%>_<%=sessionId%>_<%=startDate.date%>">
-        <div id="sessionDay_list_<%=conferenceId%>_<%= sessionId %>_<%= startDate.date %>"></div>
+        <input type="text" data-type="search" id="searchContrib_<%=conferenceId%>_<%=sessionId%>_<%=date%>">
+        <div id="sessionDay_list_<%=conferenceId%>_<%= sessionId %>_<%= date %>"></div>
         <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
         </div>
 </script>
@@ -228,7 +237,7 @@
         <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
     </div>
     <div data-role="content">
-        <ul data-role="listview" id="sessionDays_<%=conferenceId%>_<%= sessionId %>" data-inset="true"></ul>
+        <div id="sessionDays_<%=conferenceId%>_<%= sessionId %>"></div>
     </div>
 </script>
 

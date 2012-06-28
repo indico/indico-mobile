@@ -71,6 +71,7 @@ def store_material(block):
 
         for resource_dict in material_dict.get('resources', []):
             resource_dict.pop('_type')
+            resource_dict['conferenceId'] = block.get('conferenceId')
             resource = db.Resource()
             resource.update(resource_dict)
             resources.append(resource)
@@ -78,6 +79,7 @@ def store_material(block):
 
         material_dict['resources'] = resources
         material_dict.pop('_type')
+        material_dict['conferenceId'] = block.get('conferenceId')
         material = db.Material()
         material.update(material_dict)
         materials.append(material)
@@ -89,6 +91,7 @@ def store_chairs(event):
     chairs = []
     for chair_dict in event.get('chairs', []):
         chair = db.Chair()
+        chair_dict['conferenceId'] = event.get('id')
         chair.update(chair_dict)
         chair.pop('_type')
         chairs.append(chair)

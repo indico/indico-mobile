@@ -193,7 +193,7 @@ var Router = Backbone.Router.extend({
     getSessionDay: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, sessionId, agenda, url, day, agendaUrl;
+        var eventId, sessionId, agenda, url, url1, day, agendaUrl;
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
@@ -201,6 +201,7 @@ var Router = Backbone.Router.extend({
             day = infoSplitted[3];
             url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/'
                 + day + '/contribs/user/' + getUserId() + '/';
+            url1 = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/user/'+getUserId()+'/';
         }
         else{
             agenda = false;
@@ -210,13 +211,15 @@ var Router = Backbone.Router.extend({
             url = '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
             agendaUrl = '/agenda/event/' + eventId + '/session/' +
                             sessionId + '/day/' + day + '/contribs/user/'+getUserId()+'/';
+            url1 = '/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
         if ($('#sessionDay_' + info).length === 0){
 
-            var sessionDayView = new SearchContributionsView({
-                model: new Slot(),
-                url: '/event/'+eventId+'/day/'+day+'/session/'+sessionId+'/',
+            var sessionDayView = new ContributionsPageView({
+                collection: new Slots(),
+                url: url1,
+                day: day,
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
                 selectedTab: null,
@@ -286,26 +289,29 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var agenda, eventId, dayDate, url, agendaUrl;
+        var agenda, eventId, day, url, url1, agendaUrl;
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
-            dayDate = infoSplitted[2];
-            url = '/agenda/event/'+eventId+'/day/'+dayDate+'/contributions/user/'+getUserId()+'/';
+            day = infoSplitted[2];
+            url = '/agenda/event/'+eventId+'/day/'+day+'/contributions/user/'+getUserId()+'/';
+            url1 = '/agenda/event/' + eventId + '/days/user/'+ getUserId() + '/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
-            dayDate = infoSplitted[1];
-            url = '/event/'+eventId+'/day/'+dayDate+'/contributions/';
-            agendaUrl = '/agenda/event/'+eventId+'/day/'+dayDate+'/contributions/user/'+getUserId()+'/';
+            day = infoSplitted[1];
+            url = '/event/'+eventId+'/day/'+day+'/contributions/';
+            agendaUrl = '/agenda/event/'+eventId+'/day/'+day+'/contributions/user/'+getUserId()+'/';
+            url1 = '/event/' + eventId + '/days/';
         }
 
         if ($('#timetableDay_' + info).length === 0){
 
-            var timetableDayView = new SearchContributionsView({
-                model: new Day(),
-                url: '/event/' + eventId + '/day/' + dayDate + '/',
+            var timetableDayView = new ContributionsPageView({
+                collection: new Days(),
+                url: url1,
+                day: day,
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,
                 selectedTab: null,
@@ -405,7 +411,7 @@ var Router = Backbone.Router.extend({
                 agenda: agenda
             });
 
-            var speakerContributionsView = new SpeakerContribsListView({
+            var speakerContributionsView = new SimpleEventsAndContributions({
                 container: 'div[id="speaker_contribs_' + info +'"]',
                 collection: new Contributions(),
                 url: url,

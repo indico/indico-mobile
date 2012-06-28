@@ -53,7 +53,79 @@ var PageView = Backbone.View.extend({
     }
 
 });
-var SearchContributionsView = PageView.extend({
+var ContributionsPageView = PageView.extend({
+
+    initialize: function(){
+        this.template_file = getHTMLTemplate('pages.html');
+        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
+        this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
+        this.collection.url = this.options.url;
+        this.collection.on('reset', this.render, this);
+        this.collection.fetch();
+    },
+
+    render: function() {
+        var collection = this.collection,
+        container = $(this.options.container),
+        pageView = $(this.el),
+        thisDay = null,
+        prevDay = null,
+        nextDay = null,
+        link = this.options.link;
+        console.log(collection)
+        if (pageView.html() === ''){
+            pageView.attr('id', link);
+            if (collection.at(0).get('sessionId') === undefined){
+                for (var i = 0; i < collection.size(); i++){
+                    if (collection.at(i).get('date') == this.options.day){
+                        thisDay = collection.at(i);
+                        if (collection.at(i-1) !== undefined){
+                            prevDay = collection.at(i-1).get('date');
+                        }
+                        if (collection.at(i+1) !== undefined){
+                            nextDay = collection.at(i+1).get('date');
+                        }
+                    }
+                }
+            }
+            else{
+                var new_collection = new Days();
+                collection.each(function(session){
+                    var isDayIn = new_collection.find(function(day){
+                        return day.get('date') == session.get('startDate').date;
+                    });
+                    if (!isDayIn){
+                        new_collection.add({'date': session.get('startDate').date,
+                                            'conferenceId': session.get('conferenceId'),
+                                            'sessionId': session.get('sessionId')});
+                    }
+                });
+                for (var i = 0; i < new_collection.size(); i++){
+                    if (new_collection.at(i).get('date') == this.options.day){
+                        thisDay = new_collection.at(i);
+                        if (new_collection.at(i-1) !== undefined){
+                            prevDay = new_collection.at(i-1).get('date');
+                        }
+                        if (new_collection.at(i+1) !== undefined){
+                            nextDay = new_collection.at(i+1).get('date');
+                        }
+                    }
+                }
+            }
+            if (this.options.agenda){
+                thisDay.set('conferenceId', 'agenda_'+thisDay.get('conferenceId'));
+            }
+            thisDay.set('prevDay', prevDay);
+            thisDay.set('nextDay', nextDay);
+            pageView.append(this.template(thisDay.toJSON()));
+            pageView.append(this.footerTemplate(thisDay.toJSON()));
+            $('body').append(pageView);
+            console.log('div[id="'+link+'"]')
+            $.mobile.changePage($('div[id="'+link+'"]'));
+        }
+        return this;
+
+    },
 
     events: {
         "keyup input": "searchContribution"

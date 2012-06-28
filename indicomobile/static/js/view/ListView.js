@@ -180,17 +180,20 @@ var ListByMonthView = ListView.extend({
 
 });
 
-var SpeakerContribsListView = ListView.extend({
+var SimpleEventsAndContributions = ListView.extend({
 
     renderItems: function(collection, template, listView){
+
+        if (this.options.template_name2 !== undefined){
+            this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
+        }
 
         var lastDate = null,
         lastTime = null,
         self = this;
 
-        console.log(self.agendaCollection)
-
         collection.each(function(element){
+            console.log(element)
             element.set('inAgenda', self.options.agenda);
             var day = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).day +
@@ -205,14 +208,20 @@ var SpeakerContribsListView = ListView.extend({
                 listView.append('<li data-role="list-divider">'+hourToText(element.get('startDate').time)+'</li>');
             }
             var isInAgenda = self.agendaCollection.find(function(contrib){
-                if (element.get('contributionId') !== undefined){
+                if (contrib.get('contributionId') !== undefined){
                     return contrib.get('contributionId') == element.get('contributionId');
                 }
                 else{
                     return contrib.get('id') == element.get('id');
                 }
             });
-            var listItem = template(element.toJSON());
+            var listItem;
+            if (element.get('contributionId') !== undefined){
+                listItem = template(element.toJSON());
+            }
+            else{
+                listItem = self.template2(element.toJSON());
+            }
             if (isInAgenda){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
             }

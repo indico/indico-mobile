@@ -26,7 +26,8 @@ class Resource(Document):
     structure = {
         'url': unicode,
         '_fossil': unicode,
-        'name': unicode
+        'name': unicode,
+        'conferenceId': unicode
     }
 
 
@@ -36,7 +37,8 @@ class Material(Document):
         '_fossil': unicode,
         'id': unicode,
         'title': unicode,
-        'resources': [Document]
+        'resources': [Document],
+        'conferenceId': unicode
     }
 
 
@@ -47,7 +49,8 @@ class Chair(Document):
         'affiliation': unicode,
         '_fossil': unicode,
         'fullName': unicode,
-        'email': unicode
+        'email': unicode,
+        'conferenceId': unicode
     }
 
 
@@ -70,17 +73,14 @@ class Event(Document):
         'categoryId': unicode,
         'modificationDate': datetime
     }
-
-
-    # @classmethod
-    # def cleanup(cls, query_session, event_id):
-    #     query_session.remove_query(Contribution).filter(Contribution.eventId == event_id).execute()
-    #     query_session.remove_query(Session).filter(Session.eventId == event_id).execute()
-    #     query_session.remove_query(Day).filter(Day.eventId == event_id).execute()
-    #     query_session.remove_query(Presenter).filter(Presenter.eventId == event_id).execute()
-    #     query_session.remove_query(Chair).filter(Chair.eventId == event_id).execute()
-    #     query_session.remove_query(Material).filter(Material.eventId == event_id).execute()
-    #     query_session.remove_query(Resource).filter(Resource.eventId == event_id).execute()
+    def cleanup(event_id):
+        db.contributions.remove({'conferenceId': event_id})
+        db.session_slots.remove({'conferenceId': event_id})
+        db.days.remove({'conferenceId': event_id})
+        db.presenters.remove({'conferenceId': event_id})
+        db.materials.remove({'conferenceId': event_id})
+        db.resources.remove({'conferenceId': event_id})
+        db.chairs.remove({'conferenceId': event_id})
 
 class Contribution(Document):
     pass
