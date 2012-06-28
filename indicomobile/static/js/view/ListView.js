@@ -85,20 +85,17 @@ var SessionsList = ListView.extend({
         console.log(self.agendaCollection)
 
         collection.each(function(element){
-            if (element.get('entries').length > 0){
-                element.set('inAgenda', self.options.agenda);
-                if (lastTitle === null || lastTitle != element.get('title')){
-                    lastTitle = element.get('title');
-                    var isInAgenda = self.agendaCollection.find(function(session){
-                        return session.get('sessionId') == element.get('sessionId');
-                    });
-                    var listItem = template(element.toJSON());
-                    if (isInAgenda){
-                        listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
-                    }
-                    listView.append(listItem);
+            element.set('inAgenda', self.options.agenda);
+            if (lastTitle === null || lastTitle != element.get('title')){
+                lastTitle = element.get('title');
+                var isInAgenda = self.agendaCollection.find(function(session){
+                    return session.get('sessionId') == element.get('sessionId');
+                });
+                var listItem = template(element.toJSON());
+                if (isInAgenda){
+                    listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
                 }
-                
+                listView.append(listItem);
             }
         });
 
@@ -126,8 +123,7 @@ var SessionDaysList = ListView.extend({
         self = this;
 
         collection.each(function(element){
-            if (element.get('entries').length > 0 &&
-            (lastDate === null || lastDate != element.get('startDate').date)){
+            if (lastDate === null || lastDate != element.get('startDate').date){
                 lastDate = element.get('startDate').date;
                 if (self.options.agenda){
                     element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
