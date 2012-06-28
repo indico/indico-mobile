@@ -1,7 +1,7 @@
 <script type="text/template" id="contribution">
 <li>
     <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
-        <span  style="background: <%=color%>;" class="sessionColor"></span>
+        <% if (color){print('<span  style="background: <%=color%>;" class="sessionColor"></span>');}%>
         <%= title %></a>
     <a href="" id="addRemoveContribution"
     <%  if (inAgenda){print('action="remove" data-icon="delete"');}

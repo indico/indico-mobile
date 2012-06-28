@@ -67,7 +67,7 @@ def update_ongoing_events():
 
 
 def update_future_events():
-    url = '{0}/export/categ/0.json?ak={1}&from=now&limit=20'.format(
+    url = '{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
         current_app.config['SERVER_URL'], current_app.config['API_KEY'])
     f = urllib2.urlopen(url)
     events = json.loads(f.read().decode('utf-8'))['results']
@@ -183,7 +183,7 @@ def sessionDayContributions(event_id, session_id, day):
 @events.route('/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def speakerContributions(event_id, speaker_id):
     contributions = []
-    speaker = db.Presenter.find_one({'id': speaker_id})
+    speaker = db.Presenter.find_one({'id': speaker_id, 'conferenceId': event_id})
     contribs = db.Contribution.find({'$and': [{'presenters': {'$elemMatch': speaker}},
                                     {'conferenceId': event_id}]})
     for contrib in contribs:
@@ -297,8 +297,8 @@ def search_contrib_in_session(event_id, session_id, day_date):
 def getFutureEvents():
     print 'not cached'
     update_future_events()
-    now = datetime.utcnow()
-    future_events = list(db.Event.find({'startDate': {'$gt': now}}).sort([('startDate',1)]).sort('startDate',-1).limit(15))
+    tomorrow = datetime.utcnow() + timedelta(days=1)
+    future_events = list(db.Event.find({'startDate': {'$gt': tomorrow}}).sort([('startDate',1)]).sort('startDate',-1).limit(15))
     return json.dumps(future_events)
 
 
@@ -309,7 +309,7 @@ def getOngoingEvents():
     update_ongoing_events()
     now = datetime.utcnow()
     ongoing_events = list(db.Event.find({'$and':[{'startDate' :{'$lte': now}},
-                                        {'endDate': {'$gte': now}}]}).sort('startDate',-1))
+                                        {'endDate': {'$gte': now}}]}).sort('startDate',-1).limit(15))
     return json.dumps(ongoing_events)
 
 
@@ -319,26 +319,17 @@ def getOngoingContributions():
     print 'not cached'
     update_ongoing_events()
     now = datetime.utcnow()
-    tomorrow = now + timedelta(days=1)
+    tomorrow = now + timedelta(hours=2)
     results = []
     ongoing_contributions = list(db.Contribution.find({'$and':[{'startDate' :{'$gte': now}},
                                     {'startDate' :{'$lt': tomorrow}},
                                     {'_fossil': 'contribSchEntryDisplay'}]}).sort([('startDate',1)]))
+
+    results = list(db.Event.find({'$and':[{'startDate' :{'$gte': now}},
+                                    {'startDate' :{'$lt': tomorrow}},
+                                    {'type': 'simple_event'}]}).sort([('startDate',1)]))
     for contribution in ongoing_contributions:
         if contribution['slot']:
             contribution['slot'] = db.dereference(contribution['slot'])
         results.append(contribution)
-    return json.dumps(results)
-
-
-@events.route('/ongoingSimpleEvents/', methods=['GET'])
-@cache.cached(timeout=CACHE_TTL)
-def getOngoingSimpleEvents():
-    print 'not cached'
-    update_ongoing_events()
-    now = datetime.utcnow()
-    tomorrow = now + timedelta(days=1)
-    ongoing_simple_events = list(db.Event.find({'$and':[{'startDate' :{'$gte': now}},
-                                    {'startDate' :{'$lt': tomorrow}},
-                                    {'type': 'simple_event'}]}).sort([('startDate',1)]))
-    return json.dumps(ongoing_simple_events)
+    return json.dumps(sorted(results, key=lambda x:x['startDate']))
