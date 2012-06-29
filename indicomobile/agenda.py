@@ -145,6 +145,7 @@ def removeSession(event_id, session_id, user_id):
 def removeContribution(event_id, contribution_id, user_id):
     agenda_contribution = db.AgendaContribution.find_one({'user_id': user_id, 'contribution.contributionId': contribution_id, 'contribution.conferenceId': event_id})
     contribution_db = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contribution_id})
+    session_id = None
     if contribution_db['slot']:
         session_id = db.dereference(contribution_db['slot'])['sessionId']
     if agenda_contribution:
@@ -154,12 +155,13 @@ def removeContribution(event_id, contribution_id, user_id):
         contributions = db.Contribution.find({'conferenceId': event_id, 'contributionId': {'$ne': contribution_id}})
         for contribution in contributions:
             addContribution(event_id, contribution['contributionId'], user_id)
-    elif db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id}):
-        contributions = db.Contribution.find({'conferenceId': event_id, 'slot':{'$ne': None}, 'contributionId': {'$ne': contribution_id}})
-        db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.sessionId': session_id})
-        for contribution in contributions:
-            if db.dereference(contribution['slot'])['sessionId'] == session_id:
-                addContribution(event_id, contribution['contributionId'], user_id)
+    elif session_id:
+        if db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id}):
+            contributions = db.Contribution.find({'conferenceId': event_id, 'slot':{'$ne': None}, 'contributionId': {'$ne': contribution_id}})
+            db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.sessionId': session_id})
+            for contribution in contributions:
+                if db.dereference(contribution['slot'])['sessionId'] == session_id:
+                    addContribution(event_id, contribution['contributionId'], user_id)
     return ''
 
 
@@ -344,16 +346,6 @@ def getAgendaOngoingEvents(user_id):
 def getAgendaFutureEvents(user_id):
     events = json.loads(getFutureEvents())
     return createListAgendaEvents(events, user_id)
-
-
-@agenda.route('/agenda/ongoingSimpleEvents/user/<user_id>/', methods=['GET'])
-def getAgendaOngoingSimpleEvents(user_id):
-    json_result = getOngoingSimpleEvents()
-    if json_result:
-        events = json.loads(json_result)
-        return createListAgendaEvents(events, user_id)
-    else:
-        return json.dumps([])
 
 
 @agenda.route('/agenda/ongoingContributions/user/<user_id>/', methods=['GET'])

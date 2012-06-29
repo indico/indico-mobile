@@ -205,7 +205,8 @@ var SimpleEventsAndContributions = ListView.extend({
             }
             var isInAgenda = self.agendaCollection.find(function(contrib){
                 if (contrib.get('contributionId') !== undefined){
-                    return contrib.get('contributionId') == element.get('contributionId');
+                    return contrib.get('contributionId') == element.get('contributionId') &&
+                    contrib.get('conferenceId') == element.get('conferenceId');
                 }
                 else{
                     return contrib.get('id') == element.get('id');
