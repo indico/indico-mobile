@@ -21,6 +21,8 @@ var PageView = Backbone.View.extend({
         container = $(this.options.container),
         pageView = $(this.el),
         link = this.options.link;
+        console.log(model)
+        pageView.trigger('create');
         if (pageView.html() === ''){
             pageView.attr('id', link);
 
@@ -44,6 +46,7 @@ var PageView = Backbone.View.extend({
                 pageView.append(this.footerTemplate(model.toJSON()));
                 pageView.find(this.options.selectedTab).addClass('ui-btn-active ui-state-persist').removeAttr('rel');
             }
+
             $('body').append(pageView);
 
             $.mobile.changePage($('div[id="'+link+'"]'));
@@ -136,16 +139,41 @@ var ContributionsPageView = PageView.extend({
         if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
-            var url, container, sessionDay;
+            console.log(splittedId)
+            var url, container, sessionDay, agenda;
             var term = $(e.currentTarget).val();
-            if (splittedId.length > 3){
+            if (splittedId.length > 4){
+                var user_id = getUserId();
+                agenda = true;
+                container = '#sessionDay_list_agenda_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
+                sessionDay = true;
+                url = '/agenda/searchContrib/event/'+splittedId[2]+
+                '/session/'+splittedId[3]+
+                '/day/'+splittedId[4]+
+                '/search/'+term+'/';
+            }
+            else if (splittedId.length > 3 && splittedId[1] != 'agenda'){
                 container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
                 sessionDay = true;
-                url = '/searchContrib/event/'+splittedId[1]+'/session/'+splittedId[2]+'/day/'+splittedId[3]+'/?search='+term;
+                agenda = false;
+                url = '/searchContrib/event/'+splittedId[1]+
+                '/session/'+splittedId[2]+
+                '/day/'+splittedId[3]+
+                '/search/'+term+'/';
+            }
+            else if (splittedId.length > 3){
+                var user_id = getUserId();
+                agenda = true;
+                container = '#day_list_agenda_' + splittedId[2] + '_' + splittedId[3];
+                url = '/agenda/searchContrib/event/'+splittedId[2]+
+                '/day/'+splittedId[3]+
+                '/search/'+term+'/';
+                sessionDay = false;
             }
             else{
+                agenda = false;
                 container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
-                url = '/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/?search='+term;
+                url = '/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
                 sessionDay = false;
             }
             $(e.currentTarget).parent().parent().find('.loader').show();
@@ -159,6 +187,7 @@ var ContributionsPageView = PageView.extend({
                 template_name: '#contribution',
                 sessionDay: sessionDay,
                 term: term,
+                agenda: agenda,
                 empty_message: 'No contributions found.'
             });
         }

@@ -8,28 +8,23 @@
         <div class="headerElement"><h3>About</h3></div>
     </div>
     <div data-role="content">
-        <% if (description != ''){
-            print('<h3>Description</h3>');
-            print('<p style="text-align: justify;">' + description + '</p>');
-            }
-        %>
-        <%
-        if (typeof(chairs)!="undefined"){
-        if (chairs.length>0){
-            print('<h3>Conference Chairs</h3><ul data-role="listview" data-inset="true">');
-            for (var i=0; i<chairs.length;i++){
-                print('<li>'+chairs[i].fullName+'</a></li>');
-            }
-            print('</ul>');
-        }
-        }
-        %>
-        <%
-        if (url != ''){
-            print('<h3>Indico Webpage</h3>');
-            print('<p><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" href="'+url+'" target="_blank">' + title + '</a></p>');
-        }
-        %>
+        <% if (description != ''){ %>
+            <h3>Description</h3>
+            <p style="text-align: justify;"><%=description%></p>
+        <% } %>
+        <% if (typeof(chairs)!="undefined"){ %>
+            <% if (chairs.length>0){ %>
+                <h3>Conference Chairs</h3><ul data-role="listview" data-inset="true">
+                <% for (var i=0; i<chairs.length;i++){ %>
+                    <li><%=chairs[i].fullName%></a></li>
+                <% } %>
+            </ul>
+            <% } %>
+        <% } %>
+        <% if (url != ''){ %>
+            <h3>Indico Webpage</h3>
+            <p><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" href="'+url+'" target="_blank"><%=title%></a></p>
+        <% } %>
     </div>
 </script>
 
@@ -41,71 +36,65 @@
 </div>
 <div class="headerTitle">
     <div class="headerElement"><h3><%=title%></h3>
-        <%
-            if (location!=''&&room!=''){
-               print('<p>'+location+' - '+room+'</p>');
-            }
-            else if (location!=''&&room==''){
-               print('<p>'+location+'</p>');
-            }
-            else if (location==''&&room!=''){
-               print('<p>'+room+'</p>');
-            }
-        %>
+        <% if (location!=''&&room!=''){ %>
+               <p><%=location%> - <%=room%></p>
+        <% } else if (location!=''&&room==''){ %>
+               <p><%=location%></p>
+        <% } else if (location==''&&room!=''){ %>
+               <p><%=room%></p>
+        <% } %>
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var date = startDate.date.split('-');
-        print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
-        %> -
+        %>
+        <p><%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
         <%
         var time = startDate.time.split(':');
-        print(time[0]+'h'+time[1]+'</p>');
-        %></div>
+        %>
+        <%=time[0]%>h<%=time[1]%></p></div>
 </div>
     <div data-role="content">
-        <%
-            if (slot){
-                print('<a data-role="button" data-mini="true" href="#session_<%= conferenceId %>_<%= slot.sessionId %>" rel="external" style="padding-right: 45px;">
-                <span  style="background:<%=slot.color%>;" class="sessionColor"></span><%= slot.title %></a>');
-            }
-        %>
-        <h4><% if(description!=''){print('Description')} else {print('No
-            description')}%></h4>
+        <% if (slot){ %>
+            <a data-role="button" data-mini="true" href="#session_<%= conferenceId %>_<%= slot.sessionId %>" rel="external" style="padding-right: 45px;">
+            <span  style="background:<%=slot.color%>;" class="sessionColor"></span><%= slot.title %></a>
+        <% } %>
+        <h4><% if(description!=''){ %>
+                Description</h4>
+            <% } else { %>
+                No description</h4>
+        <% } %>
         <p style="white-space: normal; text-align: justify;"><%= description %></p>
         
-        <%
-            if (typeof(presenters)!="undefined"){
-                if (presenters.length>0){
-                    print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
-                    for (var i=0; i<presenters.length;i++){
-                       print('<li><a href="#speaker_<%=conferenceId%>_<%=presenters[i].id%>" rel="external">'+presenters[i].name+'</a></li>');
-                    }
-                    print('</ul>');
-                }
-            }
-        %>
-        <%
-        if (typeof(material)!="undefined"){
-            if (material.length>0){
-                print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
-                for (var i=0; i<material.length; i++){
-                    print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
-                    for (var j=0; j<material[i].resources.length; j++){
-                        var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
-                            print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
-                            material[i].resources[j].url+
-                            '\" target=\"_blank\" >'+material[i].resources[j].name+
-                            '</a></li>');
-                    }
-                    print('</ul></div>');
-                }
-
-               print('</div>');
-            }
-         }
-        %>
+        <% if (typeof(presenters)!="undefined"){ %>
+            <%if (presenters.length>0){ %>
+                <h4>Presenters</h4>
+                <ul data-role="listview" data-inset="true">
+                <% for (var i=0; i<presenters.length;i++){ %>
+                    <li><a href="#speaker_<%=conferenceId%>_<%=presenters[i].id%>" rel="external"><%=presenters[i].name%></a></li>
+                <% } %>
+                </ul>
+            <% } %>
+        <% } %>
+        <% if (typeof(material)!="undefined"){ %>
+            <% if (material.length>0){ %>
+                <h4>Materials</h4>
+                <div data-role="collapsible-set" data-inset="true">
+                <% for (var i=0; i<material.length; i++){ %>
+                    <div data-role="collapsible" data-theme="b">
+                    <h2><%=material[i].title%></h2>
+                    <ul data-role="listview" data-inset="true">
+                    <% for (var j=0; j<material[i].resources.length; j++){ %>
+                        <% var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1); %>
+                        <li data-icon="download" data-theme="c"><a data-inline="true" href="<%=material[i].resources[j].url%>" target="_blank" ><%=material[i].resources[j].name%></a></li>
+                    <% } %>
+                    </ul>
+                    </div>
+                <% } %>
+               </div>
+            <% } %>
+        <% } %>
     </div>
 </script>
 
@@ -117,18 +106,22 @@
 </div>
 <div class="headerTitle">
     <div class="headerElement">
-    <%if (prevDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#timetableDay_'+ conferenceId+'_'+prevDay+'" rel="external"></a>')}%>
+    <%if (prevDay) { %>
+        <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float: left;" href="#timetableDay_<%=conferenceId%>_<%=prevDay%>" rel="external"></a>
+    <% } %>
     <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
     <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var newDate = date.split('-');
-        print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
     %>
-        </div>
+    <%=month[newDate[1]-1]%> <%=newDate[2]%>, <%=newDate[0]%>
+    </div>
 
-    <%if (nextDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href=\"#timetableDay_'+conferenceId+'_'+nextDay+'\" rel="external"></a>')}%>
+    <%if (nextDay) { %>
+        <a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href="#timetableDay_<%=conferenceId%>_<%=nextDay%>" rel="external"></a>
+    <% } %>
     </div>
 </div>
     <div data-role="content">
@@ -153,7 +146,13 @@
 
 <script type="text/template" id="eventPage">
     <div data-role="header" data-theme="c">
-        <a data-role="button" href=<%if (window.location.pathname == '/'){print('"#home"');} else{print('"#eventHome"');}%> data-icon="back" data-iconpos="notext" rel="external">Back</a>
+        <a data-role="button" href=
+        <%if (window.location.pathname == '/'){ %>
+            "#home"
+        <% } else{ %>
+            "#eventHome"
+        <% } %>
+        data-icon="back" data-iconpos="notext" rel="external">Back</a>
         <h3>Indico Mobile</h3>
         <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
@@ -165,15 +164,15 @@
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var date = startDate.date.split('-');
-        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
-        %> -
+        %>
+        <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var date = endDate.date.split('-');
-        print(month[date[1]-1]+' '+date[2]+', '+date[0]+'</p>');
         %>
+        <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%></p>
         </div>
     </div>
     <div data-role="content">
@@ -206,18 +205,21 @@
     </div>
     <div class="headerTitle">
         <div class="headerElement">
-        <%if (prevDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#sessionDay_'+conferenceId+'_'+sessionId+'_'+prevDay+'" rel="external"></a>');}
-        %>
+        <% if (prevDay) { %>
+            <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=prevDay%>" rel="external"></a>
+        <% } %>
         <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var new_date = date.split('-');
-        print(month[new_date[1]-1]+' '+new_date[2]+', '+new_date[0]);
         %>
+        <%=month[new_date[1]-1]%> <%=new_date[2]%>, <%=new_date[0]%>
         </div>
-        <%if (nextDay) {print('<a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href="#sessionDay_'+conferenceId+'_'+sessionId+'_'+nextDay+'" rel="external"></a>');}%>
+        <% if (nextDay) { %>
+            <a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=nextDay%>" rel="external"></a>
+        <% } %>
         </div>
     </div>
     <div data-role="content">
@@ -265,65 +267,60 @@
     <div class="headerTitle">
         <div class="headerElement">
             <h3><%=title%></h3>
-            <%
-                if (location!=''&&room!=''){
-                   print('<p>'+location+' - '+room+'</p>');
-                }
-                else if (location!=''&&room==''){
-                   print('<p>'+location+'</p>');
-                }
-                else if (location==''&&room!=''){
-                   print('<p>'+room+'</p>');
-                }
-            %>
+            <% if (location!=''&&room!=''){ %>
+                <p><%=location%> - <%=room%></p>
+            <% } else if (location!=''&&room==''){ %>
+                <p><%=location%></p>
+            <% } else if (location==''&&room!=''){ %>
+                <p><%=room%></p>
+            <% } %>
             <%
             var month = ["January", "February", "March", "April",
                      "May", "June", "July", "August",
                      "September", "October", "November", "December"];
             var date = startDate.date.split('-');
-            print('<p>'+month[date[1]-1]+' '+date[2]+', '+date[0]);
-            %> -
-            <%
-            var time = startDate.time.split(':');
-            print(time[0]+'h'+time[1]+'</p>');
             %>
+            <p><%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
+            <% var time = startDate.time.split(':'); %>
+            <%=time[0]%>h<%=time[1]%></p>
         </div>
     </div>
     <div data-role="content">
-        <h4><% if(description!=''){print('Description')} else {print('No
-            description')}%></h4>
+        <h4>
+        <% if(description!=''){ %>
+            Description
+        <% } else { %>
+            No description
+        <% } %>
+        </h4>
         <p style="white-space: normal; text-align: justify;"><%= description %></p>
-        <%
-            if (typeof(chairs)!="undefined"){
-                if (chairs.length>0){
-                    print('<h4>Presenters</h4><ul data-role="listview" data-inset="true">');
-                    for (var i=0; i<chairs.length;i++){
-                       print('<li>'+chairs[i].fullName+'</a></li>');
-                    }
-                    print('</ul>');
-                }
-            }
-        %>
-        <%
-        if (typeof(material)!="undefined"){
-            if (material.length>0){
-                print('<h4>Materials</h4><div data-role="collapsible-set" data-inset="true">');
-                for (var i=0; i<material.length; i++){
-                    print('<div data-role=\"collapsible\" data-theme="b"><h2>'+material[i].title+'</h2><ul data-role=\"listview\" data-inset=\"true\">');
-                    for (var j=0; j<material[i].resources.length; j++){
-                        var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1);
-                            print('<li data-icon=\"download\" data-theme="c"><a data-inline=\"true\" href=\"'+
-                            material[i].resources[j].url+
-                            '\" target=\"_blank\" >'+material[i].resources[j].name+
-                            '</a></li>');
-                    }
-                    print('</ul></div>');
-                }
-
-               print('</div>');
-            }
-         }
-        %>
+        <% if (typeof(chairs)!="undefined"){ %>
+            <% if (chairs.length>0){ %>
+                <h4>Presenters</h4>
+                <ul data-role="listview" data-inset="true">
+                <% for (var i=0; i<chairs.length;i++){ %>
+                    <li><%=chairs[i].fullName%></a></li>
+                <% } %>
+                </ul>
+            <% } %>
+        <% } %>
+        <% if (typeof(material)!="undefined"){ %>
+            <% if (material.length>0){ %>
+                <h4>Materials</h4>
+                <div data-role="collapsible-set" data-inset="true">
+                <% for (var i=0; i<material.length; i++){ %>
+                    <div data-role="collapsible" data-theme="b">
+                    <h2><%=material[i].title%></h2>
+                    <ul data-role="listview" data-inset="true">
+                    <% for (var j=0; j<material[i].resources.length; j++){ %>
+                        <li data-icon="download" data-theme="c"><a data-inline="true" href="<%=material[i].resources[j].url%>" target="_blank" ><%=material[i].resources[j].name%></a></li>
+                    <% } %>
+                    </ul>
+                    </div>
+                <% } %>
+                </div>
+            <% } %>
+        <% } %>
     </div>
 </div>
 </script>
@@ -353,10 +350,9 @@
     </div>
     <div data-role="content">
 
-    <% if (!id.match('^agenda_')){
-        print('<input type="text" data-type="search" id="searchSpeaker_<%=id%>">');
-        }
-    %>
+    <% if (!id.match('^agenda_')){ %>
+        <input type="text" data-type="search" id="searchSpeaker_<%=id%>">
+    <% } %>
         
         <div id="speakersContent_<%=id%>"></div>
         <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>

@@ -53,7 +53,7 @@ function getHistoryInAgenda() {
         type: "GET",
         data: {events: JSON.stringify(events)},
         dataType: 'json',
-        url: "/agenda/history/user/" + getUserId() + "/",
+        url: "/agenda/history/",
         async: false,
         success: function(resp){
             results = resp;

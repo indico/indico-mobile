@@ -8,7 +8,7 @@ function addToHistory(url){
         };
         myHistory.sort();
         var now = new Date();
-
+        console.log(now.getTime())
         var eventInHistory = myHistory.find(function(currentEvent){
             return currentEvent.get('id') == eventToAdd.get('id');
         });
@@ -21,6 +21,7 @@ function addToHistory(url){
         else{
             if (myHistory.size() >= 10){
                 myHistory.remove(myHistory.at(0));
+                eventToAdd.set('viewedAt', now.getTime());
                 myHistory.add(eventToAdd);
             }
             else{
@@ -107,13 +108,13 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
-            url = '/agenda/event/' + eventId + '/allsessions/user/'+getUserId()+'/';
+            url = '/agenda/event/' + eventId + '/allsessions/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
             url = '/event/' + eventId + '/sessions/';
-            agendaUrl = '/agenda/event/' + eventId + '/sessions/user/'+getUserId()+'/';
+            agendaUrl = '/agenda/event/' + eventId + '/sessions/';
         }
 
         if ($('#sessions_' + info).length === 0){
@@ -153,7 +154,7 @@ var Router = Backbone.Router.extend({
             agenda = true;
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
-            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/user/'+getUserId()+'/';
+            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             agenda = false;
@@ -200,8 +201,8 @@ var Router = Backbone.Router.extend({
             sessionId = infoSplitted[2];
             day = infoSplitted[3];
             url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/'
-                + day + '/contribs/user/' + getUserId() + '/';
-            url1 = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/user/'+getUserId()+'/';
+                + day + '/contribs/';
+            url1 = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             agenda = false;
@@ -210,7 +211,7 @@ var Router = Backbone.Router.extend({
             day = infoSplitted[2];
             url = '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
             agendaUrl = '/agenda/event/' + eventId + '/session/' +
-                            sessionId + '/day/' + day + '/contribs/user/'+getUserId()+'/';
+                            sessionId + '/day/' + day + '/contribs/';
             url1 = '/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
@@ -251,7 +252,7 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
-            url = '/agenda/event/' + eventId + '/days/user/'+ getUserId() + '/';
+            url = '/agenda/event/' + eventId + '/days/';
         }
         else{
             agenda = false;
@@ -294,15 +295,15 @@ var Router = Backbone.Router.extend({
             agenda = true;
             eventId = infoSplitted[1];
             day = infoSplitted[2];
-            url = '/agenda/event/'+eventId+'/day/'+day+'/contributions/user/'+getUserId()+'/';
-            url1 = '/agenda/event/' + eventId + '/days/user/'+ getUserId() + '/';
+            url = '/agenda/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = '/agenda/event/' + eventId + '/days/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
             day = infoSplitted[1];
             url = '/event/'+eventId+'/day/'+day+'/contributions/';
-            agendaUrl = '/agenda/event/'+eventId+'/day/'+day+'/contributions/user/'+getUserId()+'/';
+            agendaUrl = '/agenda/event/'+eventId+'/day/'+day+'/contributions/';
             url1 = '/event/' + eventId + '/days/';
         }
 
@@ -346,7 +347,7 @@ var Router = Backbone.Router.extend({
             if (infoSplitted[0] == 'agenda'){
                 agenda = true;
                 eventId = infoSplitted[1];
-                url = '/agenda/event/' + eventId + '/speakers/user/'+getUserId()+'/';
+                url = '/agenda/event/' + eventId + '/speakers/';
             }
             else{
                 agenda = false;
@@ -389,21 +390,21 @@ var Router = Backbone.Router.extend({
                 agenda = true;
                 eventId = infoSplitted[1];
                 speakerId = infoSplitted[2].replace(':','_');
-                url = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/user/"+getUserId()+'/';
+                url = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
             else{
                 agenda = false;
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
                 url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
-                agendaUrl = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/user/"+getUserId()+'/';
+                agendaUrl = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
                 url: "/event/" + eventId + "/speaker/" + speakerId + '/',
                 agendaUrl: "/agenda/event/" + eventId + "/speaker/" +
-                    speakerId + "/contributions/user/"+getUserId()+'/',
+                    speakerId + "/contributions/",
                 event_id: eventId,
                 template_name: '#speakerPage',
                 link: 'speaker_' + info,
@@ -498,7 +499,27 @@ var Router = Backbone.Router.extend({
 });
 
 function getUserId() {
-    return 1;
+    var user_id = null;
+    $.ajax({
+            type: 'GET',
+            url: '/user_id/',
+            async: false,
+            success: function(resp){
+                user_id = resp;
+            }
+        });
+    return user_id;
+}
+
+function logout() {
+    $.ajax({
+            type: 'GET',
+            url: '/logout/',
+            async: false,
+            success: function(resp){
+                window.location.href = resp
+            }
+        });
 }
 
 

@@ -2,7 +2,7 @@ $('#eventHome').live('pageinit', function(){
 
     var eventsView = new ListByMonthView({
         collection : new Events(),
-        url: '/agenda/events/user/'+getUserId()+'/',
+        url: '/agenda/events/',
         template_name: '#eventList',
         template_name2: '#simpleEventList',
         container : '#agendaEventList',
