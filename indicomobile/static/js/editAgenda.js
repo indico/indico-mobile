@@ -1,13 +1,13 @@
 function addRemoveEventAction(button, collection){
     var eventId = button.attr('eventId');
     var action = button.attr('action');
-    console.log(eventId + '_' + action)
     var userId = getUserId();
-    if (userId){ 
+    console.log(userId);
+    if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addEvent/" + eventId + "/user/" + userId + "/",
+                url: "/addEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
                     if (collection != null){
@@ -24,7 +24,7 @@ function addRemoveEventAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeEvent/" + eventId + "/user/" + userId + "/",
+                url: "/removeEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
                     if (collection != null){
@@ -39,19 +39,23 @@ function addRemoveEventAction(button, collection){
             });
         }
     }
+    else{
+        alert('Please login first.');
+        $.mobile.hidePageLoadingMsg();
+    }
 }
 
 function addRemoveSessionAction(button, collection){
     var eventId = button.attr('eventId');
     var sessionId = button.attr('sessionId');
     var action = button.attr('action');
-    console.log(eventId + '_' + sessionId + '_' + action)
     var userId = getUserId();
-    if (userId){ 
+    console.log(userId);
+    if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addSession/" + eventId + "/session/" + sessionId + "/user/" + userId + "/",
+                url: "/addSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
@@ -61,13 +65,17 @@ function addRemoveSessionAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeSession/" + eventId + "/session/" + sessionId + "/user/" + userId + "/",
+                url: "/removeSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
                 }
             });
         }
+    }
+    else{
+        alert('Please login first.');
+        $.mobile.hidePageLoadingMsg();
     }
     
 }
@@ -77,11 +85,12 @@ function addRemoveContributionAction(button, collection){
     var contributionId = button.attr('contributionId');
     var action = button.attr('action');
     var userId = getUserId();
-    if (userId){ 
+    console.log(userId);
+    if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addContribution/" + eventId + "/contribution/" + contributionId + "/user/" + userId + "/",
+                url: "/addContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
@@ -91,12 +100,16 @@ function addRemoveContributionAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeContribution/" + eventId + "/contribution/" + contributionId + "/user/" + userId + "/",
+                url: "/removeContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
                 }
             });
         }
-    }    
+    }
+    else{
+        alert('Please login first.');
+        $.mobile.hidePageLoadingMsg();
+    }
 }

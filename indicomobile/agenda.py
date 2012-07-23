@@ -1,4 +1,4 @@
-from flask import Blueprint, json, current_app
+from flask import Blueprint, json, current_app, session as flask_session
 from indicomobile.db.base import ref
 from indicomobile.db.schema import *
 from indicomobile.events import *
@@ -7,8 +7,9 @@ from datetime import datetime, timedelta, date
 agenda = Blueprint('agenda', __name__, template_folder='templates')
 
 
-@events.route('/agenda/events/user/<user_id>/', methods=['GET'])
-def myAgendaEvents(user_id):
+@events.route('/agenda/events/', methods=['GET'])
+def myAgendaEvents():
+    user_id = flask_session['indico_user']
     events = []
     contributions = db.AgendaContribution.find({'user_id': user_id}).distinct('contribution.conferenceId')
     for event_id in contributions:
@@ -28,8 +29,9 @@ def myAgendaEvents(user_id):
     return json.dumps(events)
 
 
-@agenda.route('/addEvent/<event_id>/user/<user_id>/', methods=['GET'])
-def addEvent(event_id, user_id):
+@agenda.route('/addEvent/<event_id>/', methods=['GET'])
+def addEvent(event_id):
+    user_id = flask_session['indico_user']
     with_event(event_id=event_id)
     event = db.Event.find_one({'id': event_id})
     if db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id}):
@@ -43,8 +45,9 @@ def addEvent(event_id, user_id):
     return ''
 
 
-@agenda.route('/addSession/<event_id>/session/<session_id>/user/<user_id>/', methods=['GET'])
-def addSession(event_id, session_id, user_id):
+@agenda.route('/addSession/<event_id>/session/<session_id>/', methods=['GET'])
+def addSession(event_id, session_id):
+    user_id = flask_session['indico_user']
     agenda_sessions = db.agenda_session_slots.find({'user_id': user_id,'session_slot.conferenceId': event_id})
     event_sessions = db.SessionSlot.find({'conferenceId': event_id}).distinct('sessionId')
     session = db.SessionSlot.find_one({'conferenceId': event_id, 'sessionId': session_id})
@@ -67,8 +70,9 @@ def addSession(event_id, session_id, user_id):
     return ''
 
 
-@agenda.route('/addContribution/<event_id>/contribution/<contribution_id>/user/<user_id>/', methods=['GET'])
-def addContribution(event_id, contribution_id, user_id):
+@agenda.route('/addContribution/<event_id>/contribution/<contribution_id>/', methods=['GET'])
+def addContribution(event_id, contribution_id):
+    user_id = flask_session['indico_user']
     if contribution_id:
         if db.AgendaContribution.find_one({'user_id': user_id,
                                         'contribution.contributionId': contribution_id,
@@ -106,16 +110,18 @@ def addContribution(event_id, contribution_id, user_id):
                     new_contribution.save()
     return ''
 
-@agenda.route('/removeEvent/<event_id>/user/<user_id>/', methods=['GET'])
-def removeEvent(event_id, user_id):
+@agenda.route('/removeEvent/<event_id>/', methods=['GET'])
+def removeEvent(event_id):
+    user_id = flask_session['indico_user']
     db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
     db.agenda_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
     db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
     return ''
 
 
-@agenda.route('/removeSession/<event_id>/session/<session_id>/user/<user_id>/', methods=['GET'])
-def removeSession(event_id, session_id, user_id):
+@agenda.route('/removeSession/<event_id>/session/<session_id>/', methods=['GET'])
+def removeSession(event_id, session_id):
+    user_id = flask_session['indico_user']
     eventInAgenda = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id})
     sessionInAgenda = db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id})
     if eventInAgenda:
@@ -141,8 +147,9 @@ def removeSession(event_id, session_id, user_id):
     return ''
 
 
-@agenda.route('/removeContribution/<event_id>/contribution/<contribution_id>/user/<user_id>/', methods=['GET'])
-def removeContribution(event_id, contribution_id, user_id):
+@agenda.route('/removeContribution/<event_id>/contribution/<contribution_id>/', methods=['GET'])
+def removeContribution(event_id, contribution_id):
+    user_id = flask_session['indico_user']
     agenda_contribution = db.AgendaContribution.find_one({'user_id': user_id, 'contribution.contributionId': contribution_id, 'contribution.conferenceId': event_id})
     contribution_db = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contribution_id})
     session_id = None
@@ -195,8 +202,9 @@ def createListAgendaEvents(events, user_id):
     return json.dumps(events_in_db)
 
 
-@agenda.route('/agenda/event/<event_id>/allsessions/user/<user_id>/', methods=['GET'])
-def getAgendaAllSessions(event_id, user_id):
+@agenda.route('/agenda/event/<event_id>/allsessions/', methods=['GET'])
+def getAgendaAllSessions(event_id):
+    user_id = flask_session['indico_user']
     event_in_db = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id})
     sessions_in_db = db.AgendaSessionSlot.find({'user_id': user_id,
                                                 'session_slot.conferenceId': event_id})
@@ -219,8 +227,9 @@ def getAgendaAllSessions(event_id, user_id):
         return json.dumps(sorted(sessions, key=lambda x:x['title']))
 
 
-@agenda.route('/agenda/event/<event_id>/days/user/<user_id>/', methods=['GET'])
-def getAgendaDays(event_id, user_id):
+@agenda.route('/agenda/event/<event_id>/days/', methods=['GET'])
+def getAgendaDays(event_id):
+    user_id = flask_session['indico_user']
     if db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id}):
         return eventDays(event_id)
     else:
@@ -249,8 +258,9 @@ def getAgendaDays(event_id, user_id):
         return json.dumps(sorted(results, key=lambda x:x['date']))
 
 
-@agenda.route('/agenda/event/<event_id>/speakers/user/<user_id>/', methods=['GET'])
-def getAgendaSpeakers(event_id, user_id):
+@agenda.route('/agenda/event/<event_id>/speakers/', methods=['GET'])
+def getAgendaSpeakers(event_id):
+    user_id = flask_session['indico_user']
     if db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id}):
         return eventSpeakers(event_id)
     else:
@@ -276,8 +286,9 @@ def getAgendaSpeakers(event_id, user_id):
         return json.dumps(sorted(speakers, key=lambda x:x['name']))
 
 
-@agenda.route('/agenda/event/<event_id>/session/<session_id>/entries/user/<user_id>/', methods=['GET'])
-def getAgendaDaysSession(event_id, session_id, user_id):
+@agenda.route('/agenda/event/<event_id>/session/<session_id>/entries/', methods=['GET'])
+def getAgendaDaysSession(event_id, session_id):
+    user_id = flask_session['indico_user']
     event_in_db = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id})
     session_in_db = db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id,
                                                 'session_slot.conferenceId': event_id})
@@ -298,14 +309,16 @@ def getAgendaDaysSession(event_id, session_id, user_id):
         return json.dumps(sorted(sessions, key=lambda x:x['startDate']))
 
 
-@agenda.route('/agenda/event/<event_id>/day/<day>/contributions/user/<user_id>/', methods=['GET'])
-def getAgendaDayContributions(event_id, day, user_id):
+@agenda.route('/agenda/event/<event_id>/day/<day>/contributions/', methods=['GET'])
+def getAgendaDayContributions(event_id, day):
+    user_id = flask_session['indico_user']
     contributions = json.loads(dayContributions(event_id, day))
     return createListAgendaContributions(contributions, user_id)
 
 
-@agenda.route('/agenda/event/<event_id>/sessions/user/<user_id>/', methods=['GET'])
-def getAgendaSessions(event_id, user_id):
+@agenda.route('/agenda/event/<event_id>/sessions/', methods=['GET'])
+def getAgendaSessions(event_id):
+    user_id = flask_session['indico_user']
     sessions = json.loads(eventSessions(event_id))
     sessions_in_db = []
     for session in sessions:
@@ -318,44 +331,64 @@ def getAgendaSessions(event_id, user_id):
     return json.dumps(sessions_in_db)
 
 
-@agenda.route('/agenda/event/<event_id>/session/<session_id>/day/<day>/contribs/user/<user_id>/', methods=['GET'])
-def getAgendaSessionContributions(event_id, session_id, day, user_id):
+@agenda.route('/agenda/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
+def getAgendaSessionContributions(event_id, session_id, day):
+    user_id = flask_session['indico_user']
     contributions = json.loads(sessionDayContributions(event_id, session_id, day))
     return createListAgendaContributions(contributions, user_id)
 
 
-@agenda.route('/agenda/event/<event_id>/speaker/<speaker_id>/contributions/user/<user_id>/', methods=['GET'])
-def getAgendaSpeakerContributions(event_id, speaker_id, user_id):
+@agenda.route('/agenda/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
+def getAgendaSpeakerContributions(event_id, speaker_id):
+    user_id = flask_session['indico_user']
     contributions = json.loads(speakerContributions(event_id, speaker_id))
     return createListAgendaContributions(contributions, user_id)
 
 
-@agenda.route('/agenda/searchEvent/<search>/user/<user_id>/', methods=['GET'])
-def getAgendaSearchEvent(search, user_id):
+@agenda.route('/agenda/searchEvent/<search>/', methods=['GET'])
+def getAgendaSearchEvent(search):
+    user_id = flask_session['indico_user']
     events = json.loads(search_event(search, everything=True))
     return createListAgendaEvents(events, user_id)
 
 
-@agenda.route('/agenda/ongoingEvents/user/<user_id>/', methods=['GET'])
-def getAgendaOngoingEvents(user_id):
+@agenda.route('/agenda/searchContrib/event/<event_id>/day/<day>/search/<search>/', methods=['GET'])
+def getAgendaSearchContrib(event_id, day, search):
+    user_id = flask_session['indico_user']
+    contributions = json.loads(search_contrib(event_id, day, search))
+    return createListAgendaContributions(contributions, user_id)
+
+
+@agenda.route('/agenda/searchContrib/event/<event_id>/session/<session_id>/day/<day>/search/<search>/', methods=['GET'])
+def getAgendaSearchContribSession(event_id, session_id, day, search):
+    user_id = flask_session['indico_user']
+    contributions = json.loads(search_contrib_in_session(event_id, session_id, day, search))
+    return createListAgendaContributions(contributions, user_id)
+
+@agenda.route('/agenda/ongoingEvents/', methods=['GET'])
+def getAgendaOngoingEvents():
+    user_id = flask_session['indico_user']
     events = json.loads(getOngoingEvents())
     return createListAgendaEvents(events, user_id)
 
 
-@agenda.route('/agenda/futureEvents/user/<user_id>/', methods=['GET'])
-def getAgendaFutureEvents(user_id):
+@agenda.route('/agenda/futureEvents/', methods=['GET'])
+def getAgendaFutureEvents():
+    user_id = flask_session['indico_user']
     events = json.loads(getFutureEvents())
     return createListAgendaEvents(events, user_id)
 
 
-@agenda.route('/agenda/ongoingContributions/user/<user_id>/', methods=['GET'])
-def getAgendaOngoingContributions(user_id):
+@agenda.route('/agenda/ongoingContributions/', methods=['GET'])
+def getAgendaOngoingContributions():
+    user_id = flask_session['indico_user']
     contributions = json.loads(getOngoingContributions())
     return createListAgendaContributions(contributions, user_id)
 
 
-@agenda.route('/agenda/history/user/<user_id>/', methods=['GET'])
-def getAgendaHistory(user_id):
+@agenda.route('/agenda/history/', methods=['GET'])
+def getAgendaHistory():
+    user_id = flask_session['indico_user']
     events = []
     event_ids = json.loads(request.args.get('events'))
     for event in event_ids:
@@ -365,8 +398,9 @@ def getAgendaHistory(user_id):
     return json.dumps(events)
 
 
-@agenda.route('/agenda/nextEvent/user/<user_id>/', methods=['GET'])
-def getNextEvent(user_id):
+@agenda.route('/agenda/nextEvent/', methods=['GET'])
+def getNextEvent():
+    user_id = flask_session['indico_user']
     events = []
     now = datetime.utcnow()
     agenda_events = db.AgendaEvent.find({'user_id': user_id})
@@ -375,7 +409,8 @@ def getNextEvent(user_id):
     for event in agenda_events:
         current_event = event['event']
         if current_event['type'] == 'simple_event':
-            events.append(current_event)
+            if current_event['startDate'] > now:
+                events.append(current_event)
         else:
             contributions = db.Contribution.find({'conferenceId': current_event['id'],
                                                 'startDate': {'$gte': now}}).sort('startDate',1)

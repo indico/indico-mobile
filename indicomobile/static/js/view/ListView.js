@@ -458,7 +458,9 @@ var HistoryListView = ListView.extend({
             element.set('inAgenda', false);
             if (lastTime == null || lastTime != element.get('viewedAt')){
                 lastTime = element.get('viewedAt');
-                listView.append('<li data-role="list-divider">'+new Date(lastTime)+'</li>')
+                console.log(lastTime)
+                var date = new Date(lastTime);
+                listView.append('<li data-role="list-divider">'+date.toLocaleDateString()+', '+date.toLocaleTimeString()+'</li>')
             }
             var isInAgenda = self.agendaCollection.find(function(event){
                 return event.get('id') == element.get('id');

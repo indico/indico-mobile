@@ -1,60 +1,81 @@
 <script type="text/template" id="contribution">
 <li>
     <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
-        <% if (color){print('<span  style="background: <%=color%>;" class="sessionColor"></span>');}%>
-        <%= title %></a>
+    <% if (color){ %> 
+        <span  style="background: <%=color%>;" class="sessionColor"></span>
+    <% } %>
+    <%= title %></a>
     <a href="" id="addRemoveContribution"
-    <%  if (inAgenda){print('action="remove" data-icon="delete"');}
-        else{print('action="add" data-icon="star"');}
-    %>
+    <%  if (inAgenda){ %>
+        action="remove" data-icon="delete"
+    <% } else{ %>
+    action="add" data-icon="star"
+    <% } %>
+    eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
+</li>
+</script>
+
+<script type="text/template" id="contributionHappening">
+<li>
+    <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
+    <% if (color){ %> 
+        <span  style="background: <%=color%>;" class="sessionColor"></span>
+    <% } %>
+    <%= title %>
+    <% if (hasAnyProtection) {%>
+        <span class="protected">(protected)</span>
+    <% } %>
+    </a>
+    <a href="" id="addRemoveContribution"
+    <%  if (inAgenda){ %>
+        action="remove" data-icon="delete"
+    <% } else{ %>
+    action="add" data-icon="star"
+    <% } %>
     eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
 </li>
 </script>
 
 <script type="text/template" id="eventList">
 <li>
-    <%
-    if (inAgenda){
-        print('<a href="#event_agenda_<%=id%>" rel="external" style="padding-right: 45px;">');
-    }
-    else{
-        print('<a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">');
-    }
-    %>
-        <%if (title!='') { print(title); } else { print('Event'+id); }%>
+    <% if (inAgenda){ %>
+        <a href="#event_agenda_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% } else { %>
+        <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% } %>
+    <%=title%>
+    <% if (hasAnyProtection) {%>
+        <span class="protected">(protected)</span>
+    <% } %>
     </a>
-    <%
-    if (inAgenda){
-        print('<a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>');
-    }
-    else{
-        print('<a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>');
-    }
-    %>
+    <% if (inAgenda){ %>
+        <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+    <% }  else{ %>
+        <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
+    <% } %>
 </li>
 </script>
 
 <script type="text/template" id="eventListInAgenda">
 <li>
-    <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
-        <%if (title!='') { print(title); } else { print('Event'+id); }%>
-    </a>
+    <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;"><%= title %></a>
     <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
 </li>
 </script>
 
 <script type="text/template" id="nextEvent">
 <li>
-    <a href="#<% if(type == 'simple_event'){print('event_'+id);} else{print('contribution_'+conferenceId+'_'+contributionId)}%>" rel="external">
+    <a href="#<% if(type == 'simple_event'){print('event_agenda_'+id);} else{print('contribution_agenda_'+conferenceId+'_'+contributionId)}%>" rel="external">
         <h3><%=title%></h3>
-        <p><%
-        var month = ["January", "February", "March", "April",
+        <p>
+        <% var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var newDate = startDate.date.split('-');
-        print(month[newDate[1]-1]+' '+newDate[2]+', '+newDate[0]);
-    %>, at <%var splittedTime = startDate.time.split(':');
-            print(splittedTime[0]+'h'+splittedTime[1]);%></p>
+        %>
+        <%=month[newDate[1]-1]%> <%=newDate[2]%>, <%=newDate[0]%>
+        , at <%var splittedTime = startDate.time.split(':');%>
+        <%= splittedTime[0]%>h<%=splittedTime[1]%></p>
         <p><%=location%>, <%=room%></p>
     </a>
 </li>
@@ -75,31 +96,25 @@
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var date = startDate.date.split('-');
-        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
     %>
+    <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%>
     </a>
 </li>
 </script>
 
 <script type="text/template" id="sessionsList">
 <li>
-<%
-if (inAgenda){
-    print('<a href="#session_agenda_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">');
-}
-else{
-    print('<a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">');
-}
-%>
-        <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-<%
-if (inAgenda){
-    print('<a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="c"></a>');
-}
-else{
-    print('<a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c"></a>');
-}
-%>
+<% if (inAgenda){ %>
+    <a href="#session_agenda_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
+<% } else{ %>
+    <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
+<% } %>
+    <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
+<% if (inAgenda){ %>
+    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="c"></a>
+<% } else{ %>
+    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c"></a>
+<% } %>
 </li>
 </script>
 
@@ -113,31 +128,24 @@ else{
 
 <script type="text/template" id="simpleEventList">
 <li>
-    <%
-    if (inAgenda){
-        print('<a href="#simpleEvent_agenda_<%=id%>" rel="external" style="padding-right: 45px;">');
-    }
-    else{
-        print('<a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">');
-    }
-    %>
-        <%if (title!='') { print(title); } else { print('Event'+id); }%>
-    </a>
-    <%
-    if (inAgenda){
-        print('<a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>');
-    }
-    else{
-        print('<a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>');
-    }
-    %>
+    <% if (inAgenda){ %>
+        <a href="#simpleEvent_agenda_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% } else{ %>
+        <a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% } %>
+    <%=title%></a>
+    <% if (inAgenda){ %>
+        <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+    <% } else{ %>
+        <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
+    <% } %>
 </li>
 </script>
 
 <script type="text/template" id="simpleEventListInAgenda">
 <li>
     <a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">
-        <%if (title!='') { print(title); } else { print('Event'+id); }%>
+        <%=title%>
     </a>
     <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
 </li>
@@ -145,7 +153,7 @@ else{
 
 <script type="text/template" id="speakersList">
 <li>
-    <a href="#speaker_<%=conferenceId%>_<%print(id.replace('_',':'));%>" rel="external"><%=name%></a>
+    <a href="#speaker_<%=conferenceId%>_<%=id.replace('_',':')%>" rel="external"><%=name%></a>
 </li>
 </script>
 
@@ -157,8 +165,8 @@ else{
                  "May", "June", "July", "August",
                  "September", "October", "November", "December"];
         var date = date.split('-');
-        print(month[date[1]-1]+' '+date[2]+', '+date[0]);
     %>
+    <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%>
     </a>
 </li>
 </script>

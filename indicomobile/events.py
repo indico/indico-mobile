@@ -1,11 +1,12 @@
 import urllib2
 import urllib
 import time
+import hashlib
+import hmac
 
 from datetime import datetime, timedelta, date
 from pytz import timezone, utc
-from flask import request, json, current_app, request, jsonify
-
+from flask import request, json, current_app, request, jsonify, render_template, session as flask_session
 from indicomobile.db.schema import *
 from indicomobile.db.logic import store_event, convert_dates
 from indicomobile.util.date_time import dt_from_indico
@@ -16,11 +17,37 @@ events = Blueprint('events', __name__, template_folder='templates')
 
 CACHE_TTL = 3600
 
+def sign_request(path, params, at_key=None, at_secret=None, only_public=False):
+    at_key = at_key.encode('ascii')
+    at_secret = at_secret.encode('ascii')
+    items = params.items() if hasattr(params, 'items') else list(params)
+    if at_key:
+        items.append(('atk', at_key))
+    if only_public:
+        items.append(('onlypublic', 'yes'))
+    if at_secret:
+        items.append(('timestamp', str(int(time.time()))))
+        items = sorted(items, key=lambda x: x[0].lower())
+        url = '%s?%s' % (path, urllib.urlencode(items))
+        signature = hmac.new(at_secret, url, hashlib.sha1).hexdigest()
+        items.append(('signature', signature))
+    if not items:
+        return path
+    return '%s?%s' % (path, urllib.urlencode(items))
 
 def get_event_info(event_id):
     url = current_app.config['SERVER_URL'] + \
-                            '/export/event/' + event_id + \
-                            '.json?ak=' + current_app.config['API_KEY'] + '&nocache=yes'
+                                '/export/event/' + event_id + \
+                                '.json?ak=' + current_app.config['API_KEY']
+    if 'access_token' in flask_session:
+        if flask_session['access_token']:
+            at_key = flask_session['access_token'].get('key')
+            at_secret = flask_session['access_token'].get('secret')
+            path = '/export/event/' + event_id + '.json'
+            params = {
+                'nocache': 'yes'
+            }
+            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
     f1 = urllib2.urlopen(url)
     event_info = json.loads(f1.read().decode('utf-8'))['results'][0]
     return event_info
@@ -28,9 +55,18 @@ def get_event_info(event_id):
 
 def fetch_timetable(event_id):
     url = current_app.config['SERVER_URL'] + \
-                       '/export/timetable/' + event_id + \
-                       '.json?ak=' + \
-                       current_app.config['API_KEY']
+                   '/export/timetable/' + event_id + \
+                   '.json?ak=' + \
+                   current_app.config['API_KEY']
+    if 'access_token' in flask_session:
+        if flask_session['access_token']:
+            at_key = flask_session['access_token'].get('key')
+            at_secret = flask_session['access_token'].get('secret')
+            path = '/export/timetable/' + event_id + '.json'
+            params = {
+                'nocache': 'yes'
+            }
+            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
     f2 = urllib2.urlopen(url)
     return json.loads(f2.read().decode('utf-8'))['results']
 
@@ -55,7 +91,7 @@ def with_event(event_id=None):
 
 def update_ongoing_events():
     url = '{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
-        current_app.config['SERVER_URL'], current_app.config['API_KEY'])  
+            current_app.config['SERVER_URL'], current_app.config['API_KEY'])
     f = urllib2.urlopen(url)
     events = json.loads(f.read().decode('utf-8'))['results']
 
@@ -224,9 +260,18 @@ def search_event(search, everything=False):
     search = urllib.quote(search)
     pageNumber = int(request.args.get('page',1))
     url = current_app.config['SERVER_URL'] + \
-          '/export/event/search/' + search + \
-          '.json?ak=' + \
-          current_app.config['API_KEY']
+              '/export/event/search/' + search + \
+              '.json?ak=' + \
+              current_app.config['API_KEY']
+    if 'access_token' in flask_session:
+        if flask_session['access_token']:
+            at_key = flask_session['access_token'].get('key')
+            at_secret = flask_session['access_token'].get('secret')
+            path = '/export/event/search/' + search + '.json'
+            params = {
+                'nocache': 'yes'
+            }
+            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)
@@ -280,15 +325,13 @@ def generic_search_contrib(search, event_id, day_date, session_id):
     return json.dumps(contributions)
 
 
-@events.route('/searchContrib/event/<event_id>/day/<day_date>/', methods=['GET'])
-def search_contrib(event_id, day_date):
-    search = urllib.quote(request.args.get('search'))
+@events.route('/searchContrib/event/<event_id>/day/<day_date>/search/<search>/', methods=['GET'])
+def search_contrib(event_id, day_date, search):
     return generic_search_contrib(search, event_id, day_date, None)
 
 
-@events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>/', methods=['GET'])
-def search_contrib_in_session(event_id, session_id, day_date):
-    search = urllib.quote(request.args.get('search'))
+@events.route('/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>/search/<search>/', methods=['GET'])
+def search_contrib_in_session(event_id, session_id, day_date, search):
     return generic_search_contrib(search, event_id, day_date, session_id)
 
 
@@ -298,17 +341,18 @@ def getFutureEvents():
     print 'not cached'
     update_future_events()
     tomorrow = datetime.utcnow() + timedelta(days=1)
-    future_events = list(db.Event.find({'startDate': {'$gt': tomorrow}}).sort([('startDate',1)]).sort('startDate',-1).limit(15))
+    future_events = list(db.Event.find({'startDate': {'$gt': tomorrow},
+                                        'hasAnyProtection': False}).sort([('startDate',1)]).sort('startDate',-1).limit(15))
     return json.dumps(future_events)
 
 
 @events.route('/ongoingEvents/', methods=['GET'])
 @cache.cached(timeout=CACHE_TTL)
 def getOngoingEvents():
-    print 'not cached'
     update_ongoing_events()
     now = datetime.utcnow()
     ongoing_events = list(db.Event.find({'$and':[{'startDate' :{'$lte': now}},
+                                        {'hasAnyProtection': False},
                                         {'endDate': {'$gte': now}}]}).sort('startDate',-1).limit(15))
     return json.dumps(ongoing_events)
 
@@ -316,13 +360,13 @@ def getOngoingEvents():
 @events.route('/ongoingContributions/', methods=['GET'])
 @cache.cached(timeout=CACHE_TTL)
 def getOngoingContributions():
-    print 'not cached'
     update_ongoing_events()
     now = datetime.utcnow()
-    tomorrow = now + timedelta(hours=2)
+    tomorrow = now + timedelta(hours=6)
     results = []
     ongoing_contributions = list(db.Contribution.find({'$and':[{'startDate' :{'$gte': now}},
                                     {'startDate' :{'$lt': tomorrow}},
+                                    {'hasAnyProtection': False},
                                     {'_fossil': 'contribSchEntryDisplay'}]}).sort([('startDate',1)]))
 
     results = list(db.Event.find({'$and':[{'startDate' :{'$gte': now}},
@@ -333,3 +377,19 @@ def getOngoingContributions():
             contribution['slot'] = db.dereference(contribution['slot'])
         results.append(contribution)
     return json.dumps(sorted(results, key=lambda x:x['startDate']))
+
+
+@events.route('/user_id/', methods=['GET'])
+def get_user_id():
+    user_id = None
+    if 'indico_user' in flask_session:
+        user_id = flask_session['indico_user']
+    return json.dumps(user_id)
+
+
+@events.route('/logout/', methods=['GET'])
+def logout():
+    flask_session['access_token'] = None
+    flask_session['indico_user'] = None
+    flask_session['indico_user_name'] = 'None'
+    return render_template('index.html')

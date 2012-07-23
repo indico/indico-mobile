@@ -5,9 +5,9 @@ $('#eventHome').live('pagecreate', function(){
     var ongoingContributionsView = new SimpleEventsAndContributions({
         collection: new Events(),
         url: '/ongoingContributions/',
-        agendaUrl: '/agenda/ongoingContributions/user/'+getUserId()+'/',
+        agendaUrl: '/agenda/ongoingContributions/',
         container: '#contribList',
-        template_name: '#contribution',
+        template_name: '#contributionHappening',
         template_name2: '#eventList',
         empty_message: 'No contributions happening now.',
         sessionDay: false

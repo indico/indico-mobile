@@ -71,7 +71,8 @@ class Event(Document):
         'room': unicode,
         'category': unicode,
         'categoryId': unicode,
-        'modificationDate': datetime
+        'modificationDate': datetime,
+        'hasAnyProtection': bool
     }
     def cleanup(event_id):
         db.contributions.remove({'conferenceId': event_id})
@@ -142,7 +143,8 @@ class Contribution(Document):
         '_fossil': unicode,
         'uniqueId': unicode,
         'room': unicode,
-        'isPoster': bool
+        'isPoster': bool,
+        'hasAnyProtection': bool
     }
 
 

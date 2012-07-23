@@ -130,15 +130,15 @@
 }
 
 .ui-btn-active .ui-icon-agenda {
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/agenda-selected.png');
 }
 
 .ui-icon-event {
     background-color: transparent !important;
-    background-image: url(/static/style/images/event.png);
+    background-image: url('/static/style/images/event.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -147,15 +147,15 @@
 }
 
 .ui-btn-active .ui-icon-event {
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/event-selected.png');
 }
 
 .ui-icon-new {
     background-color: transparent !important;
-    background-image: url(/static/style/images/new.png);
+    background-image: url('/static/style/images/new.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -164,15 +164,15 @@
 }
 
 .ui-btn-active .ui-icon-new {
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/new-selected.png');
 }
 
 .ui-icon-history {
     background-color: transparent !important;
-    background-image: url(/static/style/images/history.png);
+    background-image: url('/static/style/images/history.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -181,9 +181,9 @@
 }
 
 .ui-btn-active .ui-icon-history {
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/history-selected.png');
 }
 
@@ -198,9 +198,9 @@
 }
 
 .ui-btn-active .ui-icon-sessions {
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/session-selected.png');
 }
 
@@ -215,9 +215,9 @@
 }
 
 .ui-btn-active .ui-icon-timetable {
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/timetable-selected.png');
 }
 
@@ -232,9 +232,9 @@
 }
 
 .ui-btn-active .ui-icon-speakers {
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/user-selected.png');
 }
 
@@ -249,9 +249,9 @@
 }
 
 .ui-btn-active .ui-icon-about {
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
     background-image: url('/static/style/images/info-selected.png');
 }
 
@@ -262,6 +262,11 @@
     height: 10px;
     margin-top: 2px;
     margin-right: 8px;
+}
+
+.protected {
+    font-size: 12px;
+    color: red;
 }
 
 @media all and (min-width: 500px){

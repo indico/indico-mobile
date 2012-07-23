@@ -26,6 +26,7 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
     contribution.pop('sessionSlotId')
     contribution.pop('sessionCode')
     contribution['event'] = ref(event)
+    contribution['hasAnyProtection'] = event['hasAnyProtection']
     store_material(contribution)
     store_presenters(contribution)
     db_contribution = db.Contribution()
@@ -125,6 +126,7 @@ def store_event(event_http, event_tt):
     event_db = db.Event()
     event_db.update(event_http)
     event_db.pop('_type')
+    event_db.pop('visibility')
     event_db.save()
 
     for day, day_content in event_tt.get(event_id, {}).iteritems():
