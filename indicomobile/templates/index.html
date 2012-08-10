@@ -5,6 +5,7 @@
         {% assets "style_css" %}
             <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
         {% endassets %}
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
         {% assets "core_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
@@ -32,6 +33,9 @@
 		<div data-role="content">
             {% if session['unauthorized'] %}
             <h3 style="color: red; text-align: center;">You didn't authorize Indico Mobile.</h3>
+            {% endif %}
+            {%if access_token_expired %}
+            <h3 style="color: red; text-align: center;">Your session has expired, you've been logged out.</h3>
             {% endif %}
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">

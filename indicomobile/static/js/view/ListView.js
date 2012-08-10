@@ -81,8 +81,6 @@ var SessionsList = ListView.extend({
 
         var self = this,
         lastTitle = null;
-        console.log(collection)
-        console.log(self.agendaCollection)
 
         collection.each(function(element){
             element.set('inAgenda', self.options.agenda);
@@ -189,7 +187,6 @@ var SimpleEventsAndContributions = ListView.extend({
         self = this;
 
         collection.each(function(element){
-            console.log(element)
             element.set('inAgenda', self.options.agenda);
             var day = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).day +
@@ -364,10 +361,15 @@ var SpeakerListView = InfiniteListView.extend({
 
     render: function(){
         if (this.collection.size() > 0){
-            if (this.options.agenda){
-                $(this.el).attr('data-filter', true)
+            if (this.collection.at(0).get('error')){
+                window.location.href = '/logout?expired=True';
             }
-            this.renderItems(this.collection, this.template, this.options.term);
+            else{
+                if (this.options.agenda){
+                    $(this.el).attr('data-filter', true);
+                }
+                this.renderItems(this.collection, this.template, this.options.term);
+            }
         }
         else {
             $(this.options.container).parent().find('.loader').hide();
@@ -388,7 +390,6 @@ var SearchResultsView = SpeakerListView.extend({
         container.data('view', this);
         collection.each(function(element){
             element.set('inAgenda', false);
-            console.log(element)
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
             if (lastDate === '' || lastDate != month){
@@ -445,7 +446,6 @@ var HistoryListView = ListView.extend({
         this.collection.comparator = function(event){return -event.get('viewedAt');};
         this.collection.sort();
         var agendaList = getHistoryInAgenda();
-        console.log(agendaList)
         this.agendaCollection = new Events(getHistoryInAgenda());
         this.render();
     },
@@ -453,12 +453,10 @@ var HistoryListView = ListView.extend({
     renderItems: function(collection, template, listView){
         var self = this,
         lastTime = null;
-        console.log(self.agendaCollection)
         collection.each(function(element){
             element.set('inAgenda', false);
             if (lastTime == null || lastTime != element.get('viewedAt')){
                 lastTime = element.get('viewedAt');
-                console.log(lastTime)
                 var date = new Date(lastTime);
                 listView.append('<li data-role="list-divider">'+date.toLocaleDateString()+', '+date.toLocaleTimeString()+'</li>')
             }
@@ -499,7 +497,6 @@ var NextEventView = ListView.extend({
     },
 
     render: function(){
-        console.log(this.model)
 
         var container = $(this.options.container),
         listView = $(this.el);

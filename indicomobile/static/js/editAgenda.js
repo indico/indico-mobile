@@ -2,7 +2,6 @@ function addRemoveEventAction(button, collection){
     var eventId = button.attr('eventId');
     var action = button.attr('action');
     var userId = getUserId();
-    console.log(userId);
     if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({
@@ -50,7 +49,6 @@ function addRemoveSessionAction(button, collection){
     var sessionId = button.attr('sessionId');
     var action = button.attr('action');
     var userId = getUserId();
-    console.log(userId);
     if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({
@@ -85,7 +83,6 @@ function addRemoveContributionAction(button, collection){
     var contributionId = button.attr('contributionId');
     var action = button.attr('action');
     var userId = getUserId();
-    console.log(userId);
     if (userId != 'null'){ 
         if (action == 'add'){
             $.ajax({

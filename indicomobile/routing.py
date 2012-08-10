@@ -33,3 +33,8 @@ def now():
 @routing.route('/history/')
 def history():
     return render_template('history.html')
+
+
+@routing.route('/forbidden/')
+def forbidden():
+    return render_template('forbidden.html')
