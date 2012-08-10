@@ -30,8 +30,9 @@ import httplib
 import urlparse
 import urllib2
 import time
-from flask import Blueprint, request, redirect, session, url_for, render_template
+from flask import Blueprint, request, redirect, session, url_for, render_template, current_app
 from flaskext.oauth import *
+from indicomobile.events import sign_request
 import oauth2
 
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
@@ -63,10 +64,24 @@ def login():
         next=request.args.get('next') or request.referrer or None, _external=True)))
 
 
+def get_user_info(user_id):
+    at_key = session['access_token'].get('key')
+    at_secret = session['access_token'].get('secret')
+    path = '/export/user/' + user_id + '.json'
+    params = {
+        'nocache': 'yes'
+    }
+    url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+    req = urllib2.Request(url)
+    opener = urllib2.build_opener()
+    f = opener.open(req)
+    return json.load(f)['results']
+
+
+
 @oauth_client.route('/oauth_authorized/', methods=['GET'])
 @oauth_indico_mobile.authorized_handler
 def oauth_authorized(resp):
-    print session.keys()
     next_url = request.args.get('next') or url_for('index')
     if resp is None:
         session['unauthorized'] = True
@@ -78,7 +93,7 @@ def oauth_authorized(resp):
         'key': resp['oauth_token'],
         'secret': resp['oauth_token_secret']
     }
-    print session['access_token']
     session['indico_user'] = resp['user_id']
-    session['indico_user_name'] = resp['user_name']
+    user_info = get_user_info(resp['user_id'])
+    session['indico_user_name'] = user_info.get('title') + ' ' + user_info.get('familyName')
     return redirect('/')

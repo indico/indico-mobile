@@ -8,7 +8,6 @@ function addToHistory(url){
         };
         myHistory.sort();
         var now = new Date();
-        console.log(now.getTime())
         var eventInHistory = myHistory.find(function(currentEvent){
             return currentEvent.get('id') == eventToAdd.get('id');
         });

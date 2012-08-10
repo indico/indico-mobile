@@ -1,12 +1,13 @@
 import urllib2
 import urllib
+import httplib
 import time
 import hashlib
 import hmac
 
 from datetime import datetime, timedelta, date
 from pytz import timezone, utc
-from flask import request, json, current_app, request, jsonify, render_template, session as flask_session
+from flask import abort, redirect, request, json, current_app, request, jsonify, render_template, session as flask_session
 from indicomobile.db.schema import *
 from indicomobile.db.logic import store_event, convert_dates
 from indicomobile.util.date_time import dt_from_indico
@@ -48,9 +49,16 @@ def get_event_info(event_id):
                 'nocache': 'yes'
             }
             url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+
+    try:
+        f1 = urllib2.urlopen(url)
+    except urllib2.HTTPError, err:
+        return {'error': err.code}
     f1 = urllib2.urlopen(url)
-    event_info = json.loads(f1.read().decode('utf-8'))['results'][0]
-    return event_info
+    event_info = json.loads(f1.read().decode('utf-8'))['results']
+    if len(event_info) > 0:
+        return event_info[0]
+    return {'error': 401}
 
 
 def fetch_timetable(event_id):
@@ -79,14 +87,18 @@ def with_event(event_id=None):
     event_id = request.view_args.get('event_id')
     if event_id:
         event_http = get_event_info(event_id)
-        event_db = db.Event.find_one({'id': event_id})
-        if not event_db:
-            event_tt = fetch_timetable(event_id)
-            store_event(event_http, event_tt)
-        elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
-            Event.cleanup(event_id)
-            event_tt = fetch_timetable(event_id)
-            store_event(event_http, event_tt)
+        if not 'error' in event_http:
+            event_db = db.Event.find_one({'id': event_id})
+            if not event_db:
+                event_tt = fetch_timetable(event_id)
+                store_event(event_http, event_tt)
+            elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
+                Event.cleanup(event_id)
+                event_tt = fetch_timetable(event_id)
+                store_event(event_http, event_tt)
+        else:
+            abort(401) 
+
 
 
 def update_ongoing_events():
@@ -274,7 +286,10 @@ def search_event(search, everything=False):
             url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
-    f = opener.open(req)
+    try:
+        f = opener.open(req)
+    except urllib2.HTTPError, err:
+        return json.dumps({'error': err.code})
     results = json.load(f)['results']
     results= sorted(results,
                     key=lambda k: datetime.combine(datetime.strptime(k['startDate']['date'], "%Y-%m-%d"),
@@ -338,7 +353,6 @@ def search_contrib_in_session(event_id, session_id, day_date, search):
 @events.route('/futureEvents/', methods=['GET'])
 @cache.cached(timeout=CACHE_TTL)
 def getFutureEvents():
-    print 'not cached'
     update_future_events()
     tomorrow = datetime.utcnow() + timedelta(days=1)
     future_events = list(db.Event.find({'startDate': {'$gt': tomorrow},
@@ -379,6 +393,28 @@ def getOngoingContributions():
     return json.dumps(sorted(results, key=lambda x:x['startDate']))
 
 
+@events.route('/map/location/CERN/room/<room_name>/', methods=['GET'])
+def get_map(room_name):
+    room_name = urllib.quote(room_name)
+    
+    url = current_app.config['SERVER_URL'] + '/export/roomName/CERN/' + room_name + '.json?ak=' + current_app.config['API_KEY']
+    req = urllib2.Request(url)
+    opener = urllib2.build_opener()
+    f = opener.open(req)
+    results = json.load(f)['results']
+    if len(results) > 0:
+        results = results[0]
+    else:
+        results = {'longitude': '1', 'latitude': '1'}
+    return render_template('cern_map.html', room=urllib.unquote(room_name), latitude=results['latitude'], longitude=results['longitude'])
+
+
+
+@events.route('/map/search/<search>/', methods=['GET'])
+def search_map(search):
+    return render_template('map.html', search=search)
+
+
 @events.route('/user_id/', methods=['GET'])
 def get_user_id():
     user_id = None
@@ -389,7 +425,8 @@ def get_user_id():
 
 @events.route('/logout/', methods=['GET'])
 def logout():
+    expired = request.args.get('expired', False)
     flask_session['access_token'] = None
     flask_session['indico_user'] = None
     flask_session['indico_user_name'] = 'None'
-    return render_template('index.html')
+    return render_template('index.html', access_token_expired=expired)

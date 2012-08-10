@@ -36,13 +36,21 @@
 </div>
 <div class="headerTitle">
     <div class="headerElement"><h3><%=title%></h3>
+        <p>
         <% if (location!=''&&room!=''){ %>
-               <p><%=location%> - <%=room%></p>
+            <%=location%> - <%=room%>
+            <% if (location == 'CERN'){ %>
+               <a href="/map/location/<%=location%>/room/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+            <% } else { %>
+               <a href="/map/search/<%=location%> <%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+            <% } %>
         <% } else if (location!=''&&room==''){ %>
-               <p><%=location%></p>
+               <%=location%>
+               <a href="/map/search/<%=location%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
         <% } else if (location==''&&room!=''){ %>
-               <p><%=room%></p>
-        <% } %>
+               <%=room%>
+               <a href="/map/search/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+        <% } %></p>
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
@@ -267,13 +275,17 @@
     <div class="headerTitle">
         <div class="headerElement">
             <h3><%=title%></h3>
+            <p>
             <% if (location!=''&&room!=''){ %>
-                <p><%=location%> - <%=room%></p>
+                <%=location%> - <%=room%>
+                <% if (location == 'CERN'){ %>
+                   <a href="/map/location/<%=location%>/room/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+                <% } %>
             <% } else if (location!=''&&room==''){ %>
-                <p><%=location%></p>
+                <%=location%>
             <% } else if (location==''&&room!=''){ %>
-                <p><%=room%></p>
-            <% } %>
+                <%=room%>
+            <% } %></p>
             <%
             var month = ["January", "February", "March", "April",
                      "May", "June", "July", "August",

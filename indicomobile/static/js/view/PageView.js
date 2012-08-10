@@ -13,7 +13,12 @@ var PageView = Backbone.View.extend({
         this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
         this.model.url = this.options.url;
         this.model.on('change', this.render, this);
+        this.model.on('error', this.showError, this);
         this.model.fetch();
+    },
+
+    showError: function() {
+        window.location.href = '/forbidden/'
     },
 
     render: function() {
@@ -21,7 +26,6 @@ var PageView = Backbone.View.extend({
         container = $(this.options.container),
         pageView = $(this.el),
         link = this.options.link;
-        console.log(model)
         pageView.trigger('create');
         if (pageView.html() === ''){
             pageView.attr('id', link);
@@ -30,7 +34,6 @@ var PageView = Backbone.View.extend({
                 model.set('conferenceId', this.options.event_id);
             }
             if(this.options.agenda){
-                console.log(model)
                 if (model.get('conferenceId') === undefined){
                     model.set('id', 'agenda_'+model.get('id'));
                 }
@@ -75,7 +78,6 @@ var ContributionsPageView = PageView.extend({
         prevDay = null,
         nextDay = null,
         link = this.options.link;
-        console.log(collection)
         if (pageView.html() === ''){
             pageView.attr('id', link);
             if (collection.at(0).get('sessionId') === undefined){
@@ -123,7 +125,6 @@ var ContributionsPageView = PageView.extend({
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.footerTemplate(thisDay.toJSON()));
             $('body').append(pageView);
-            console.log('div[id="'+link+'"]')
             $.mobile.changePage($('div[id="'+link+'"]'));
         }
         return this;
@@ -139,7 +140,6 @@ var ContributionsPageView = PageView.extend({
         if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
-            console.log(splittedId)
             var url, container, sessionDay, agenda;
             var term = $(e.currentTarget).val();
             if (splittedId.length > 4){

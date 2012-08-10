@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% assets "style_css" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
+        {% endassets %}
+        {% assets "core_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=places&sensor=true"></script>
+        <script type="text/javascript" src="/static/js/lib/gmaps.js"></script>
+        <script type="text/javascript">
+        var map;
+        var myposition = [46.23, 6.05];
+        var latitude = {{ latitude }};
+        var longitude = {{ longitude }};
+        var room = '{{ room }}'
+        $('#eventHome').live('pagecreate', function(){
+            $('#map').css({'height': screen.height-400+'px'});
+            if (latitude == 1 && longitude == 1){
+                alert('Sorry the location cannot be found.');
+                map = new GMaps({
+                    div: '#map',
+                    lat: myposition[0],
+                    lng: myposition[1]
+                });
+            }
+            else{
+                map = new GMaps({
+                    div: '#map',
+                    lat: latitude,
+                    lng: longitude
+                });
+                map.addMarker({
+                    lat: latitude,
+                    lng: longitude,
+                    title: room,
+                    icon: '/static/style/images/dest.png'
+                });
+            }
+        });
+        $('#route').live('click', function(){
+            GMaps.geolocate({
+                success: function(position) {
+                    myposition = [position.coords.latitude, position.coords.longitude];
+                    map.drawRoute({
+                        origin: myposition,
+                        destination: [latitude, longitude],
+                        travelMode: 'walking',
+                        strokeColor: '#131540',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 6
+                    });
+                    map.addMarker({
+                        lat: myposition[0],
+                        lng: myposition[1],
+                        title: 'You are here.',
+                        icon: '/static/style/images/orig.png'
+                    })
+                },
+                error: function(error) {
+                    alert('Geolocation failed: '+error.message);
+                },
+                not_supported: function() {
+                    alert("Your browser does not support geolocation");
+                }
+            });
+        });
+        </script>
+    <title>Indico Mobile - Map</title>
+    </head>
+    <body id="allpages">
+        <div data-role="page" id="eventHome">
+            <div data-role="header" data-theme="c">
+                <a href="javascript:history.go(-1)" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+                <h3>Indico Mobile</h3>
+                <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+            </div>
+            <div class="headerTitle">
+                <div class="headerElement">
+                    <h3>Room: {{ room }}<a style="display: inline-block;"data-role="button" data-icon="route" data-iconpos="notext" id="route"></a></h3>
+                </div>
+            </div>
+            <div data-role="content" id="map">
+            </div>
+        </div>
+    </body>
+</html>
