@@ -73,7 +73,8 @@ class Event(Document):
         'category': unicode,
         'categoryId': unicode,
         'modificationDate': datetime,
-        'hasAnyProtection': bool
+        'hasAnyProtection': bool,
+        'roomMapURL': unicode
     }
     def cleanup(self, event_id):
         db.events.remove({'id': event_id})
@@ -208,15 +209,6 @@ class CachedLatestEvent(Document):
     }
 
 
-class CachedLatestContribution(Document):
-    __collection__ = 'cached_latest_contributions'
-    structure = {
-        'user_id': unicode,
-        'timestamp': datetime,
-        'contributions': [dict]
-    }
-
-
 db.register([Presenter, Resource, Material, Chair, Event, Contribution,
             SessionSlot, Day, AgendaContribution, AgendaSessionSlot,
-            AgendaEvent, HistoryEvent, CachedLatestEvent, CachedLatestContribution])
+            AgendaEvent, HistoryEvent, CachedLatestEvent])
