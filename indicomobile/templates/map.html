@@ -13,31 +13,37 @@
         <script type="text/javascript">
         var map;
         var latitude, longitude;
+        var myposition = null;
         var search = '{{ search }}';
         $('#eventHome').live('pagecreate', function(){
             $('#map').css({'height': screen.height-400+'px'});
-            map = new GMaps({
-                div: '#map',
-                lat: 46.23,
-                lng: 6.05
-            });
             GMaps.geocode({
                 address: search,
                 callback: function(results, status) {
                     if (status == 'OK') {
-                        var latlng = results[0].geometry.location;
-                        latitude = latlng.lat();
-                        longitude = latlng.lng();
-                        map.setCenter(latitude, longitude);
-                        map.addMarker({
-                            lat: latitude,
-                            lng: longitude,
-                            title: results[0].formatted_address,
-                            icon: '/static/style/images/dest.png'
+                        map = new GMaps({
+                            div: '#map',
+                            lat: 46.23,
+                            lng: 6.05
                         });
+                        if (results.length > 1){
+                            map.setZoom(4);
+                        }
+                        for (var i = 0; i < results.length; i++){
+                            var latlng = results[i].geometry.location;
+                            latitude = latlng.lat();
+                            longitude = latlng.lng();
+                            map.setCenter(latitude, longitude);
+                            map.addMarker({
+                                lat: latitude,
+                                lng: longitude,
+                                title: results[i].formatted_address,
+                                icon: '/static/style/images/dest.png'
+                            });
+                        }
                     }
                     else{
-                        alert('Sorry the location cannot be found.')
+                        $('.emptyMessage').show();
                     }
                 }
             });
@@ -45,21 +51,47 @@
         $('#route').live('click', function(){
             GMaps.geolocate({
                 success: function(position) {
-                    myposition = [position.coords.latitude, position.coords.longitude];
-                    map.drawRoute({
-                        origin: myposition,
-                        destination: [latitude, longitude],
-                        travelMode: 'walking',
-                        strokeColor: '#131540',
-                        strokeOpacity: 0.6,
-                        strokeWeight: 6
-                    });
-                    map.addMarker({
-                        lat: myposition[0],
-                        lng: myposition[1],
-                        title: 'You are here.',
-                        icon: '/static/style/images/orig.png'
-                    })
+                    if (!myposition){
+                        myposition = [position.coords.latitude, position.coords.longitude];
+                        center = [(myposition[0]+latitude)/2, (myposition[1]+longitude)/2];
+                        distanceY = 0;
+                        if (myposition[0] > latitude){
+                            distanceY = myposition[0] - latitude;
+                        }
+                        else{
+                            distanceY = latitude - myposition[0];
+                        }
+                        distanceX = 0;
+                        if (myposition[1] > longitude){
+                            distanceX = myposition[1] - longitude;
+                        }
+                        else{
+                            distanceX = longitude - myposition[1];
+                        }
+                        zoom = 10 - Math.floor(Math.log(Math.max(distanceX, distanceY)));
+                        map.setZoom(zoom); 
+                        map.setCenter(center[0], center[1]);
+                        map.drawRoute({
+                            origin: myposition,
+                            destination: [latitude, longitude],
+                            travelMode: 'walking',
+                            strokeColor: '#131540',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 6,
+                            callback: function(e){
+                                $('#routeDistance').html(map.routes[0].legs[0].distance.text);
+                                $('#routeDuration').html(map.routes[0].legs[0].duration.text);
+                                $('#mapTitle').css({'margin-bottom': '0px'});
+                                $('#infoRoute').show();
+                            }
+                        });
+                        map.addMarker({
+                            lat: myposition[0],
+                            lng: myposition[1],
+                            title: 'You are here.',
+                            icon: '/static/style/images/orig.png'
+                        });
+                    }
                 },
                 error: function(error) {
                     alert('Geolocation failed: '+error.message);
@@ -69,7 +101,6 @@
                 }
             });
         });
-        $
         </script>
     <title>Indico Mobile - Map</title>
     </head>
@@ -82,10 +113,15 @@
             </div>
             <div class="headerTitle">
                 <div class="headerElement">
-                    <h3>Map result for: {{ search }}<a style="display: inline-block;"data-role="button" data-icon="route" data-iconpos="notext" id="route"></a></h3>
+                    <h3 id="mapTitle">Map result for: {{ search }}
+                        <a id="route" data-role="button" rel="external" style="background-image: url(/static/style/images/walk.png);" class="smallButtonIcon"></a>
+                    </h3>
+                    <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
+                        Duration: <span id="routeDuration"></span></span>
                 </div>
             </div>
             <div data-role="content" id="map">
+                <h3 class="emptyMessage" style="display: none;">Sorry the location cannot be found.</h3>
             </div>
         </div>
     </body>

@@ -23,7 +23,7 @@
         <% } %>
         <% if (url != ''){ %>
             <h3>Indico Webpage</h3>
-            <p><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" href="'+url+'" target="_blank"><%=title%></a></p>
+            <p><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" href="<%=url%>" target="_blank"><%=title%></a></p>
         <% } %>
     </div>
 </script>
@@ -36,20 +36,30 @@
 </div>
 <div class="headerTitle">
     <div class="headerElement"><h3><%=title%></h3>
-        <p>
-        <% if (location!=''&&room!=''){ %>
+        <p style="vertical-align: middle;">
+        <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-               <a href="/map/location/<%=location%>/room/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } else if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else { %>
-               <a href="/map/search/<%=location%> <%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } %>
-        <% } else if (location!=''&&room==''){ %>
+        <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
-               <a href="/map/search/<%=location%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
-        <% } else if (location==''&&room!=''){ %>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } %>
+        <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
-               <a href="/map/search/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } %>
         <% } %></p>
         <%
         var month = ["January", "February", "March", "April",
@@ -166,7 +176,30 @@
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3><%=title%></h3>
-        <p><%=location%><br>
+        <p><% if (location != '' && location != null && room != '' && room != null){ %>
+            <%=location%> - <%=room%>
+            <% if (location == 'CERN'){ %>
+                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } else if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } else { %>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } %>
+        <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
+               <%=location%>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } %>
+        <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
+               <%=room%>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } %>
+        <% } %><br>
         <%
         var month = ["January", "February", "March", "April",
                  "May", "June", "July", "August",
@@ -275,17 +308,31 @@
     <div class="headerTitle">
         <div class="headerElement">
             <h3><%=title%></h3>
-            <p>
-            <% if (location!=''&&room!=''){ %>
-                <%=location%> - <%=room%>
-                <% if (location == 'CERN'){ %>
-                   <a href="/map/location/<%=location%>/room/<%=room%>/" rel="external" style="display: inline-block;" data-role="button" data-iconpos="notext" data-icon="map"></a>
+            <p style="vertical-align: middle;">
+        <% if (location != '' && location != null && room != '' && room != null){ %>
+            <%=location%> - <%=room%>
+            <% if (location == 'CERN'){ %>
+                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } else if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } else { %>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+            <% } %>
+        <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
+               <%=location%>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
-            <% } else if (location!=''&&room==''){ %>
-                <%=location%>
-            <% } else if (location==''&&room!=''){ %>
-                <%=room%>
-            <% } %></p>
+        <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
+               <%=room%>
+               <% if (address != '' && address != null) { %>
+                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } else { %>
+                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <% } %>
+        <% } %></p>
             <%
             var month = ["January", "February", "March", "April",
                      "May", "June", "July", "August",

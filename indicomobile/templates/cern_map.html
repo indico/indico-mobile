@@ -12,19 +12,14 @@
         <script type="text/javascript" src="/static/js/lib/gmaps.js"></script>
         <script type="text/javascript">
         var map;
-        var myposition = [46.23, 6.05];
+        var myposition = null;
         var latitude = {{ latitude }};
         var longitude = {{ longitude }};
         var room = '{{ room }}'
         $('#eventHome').live('pagecreate', function(){
             $('#map').css({'height': screen.height-400+'px'});
             if (latitude == 1 && longitude == 1){
-                alert('Sorry the location cannot be found.');
-                map = new GMaps({
-                    div: '#map',
-                    lat: myposition[0],
-                    lng: myposition[1]
-                });
+                $('.emptyMessage').show();
             }
             else{
                 map = new GMaps({
@@ -43,21 +38,51 @@
         $('#route').live('click', function(){
             GMaps.geolocate({
                 success: function(position) {
-                    myposition = [position.coords.latitude, position.coords.longitude];
-                    map.drawRoute({
-                        origin: myposition,
-                        destination: [latitude, longitude],
-                        travelMode: 'walking',
-                        strokeColor: '#131540',
-                        strokeOpacity: 0.6,
-                        strokeWeight: 6
-                    });
-                    map.addMarker({
-                        lat: myposition[0],
-                        lng: myposition[1],
-                        title: 'You are here.',
-                        icon: '/static/style/images/orig.png'
-                    })
+                    if (!myposition){
+                        myposition = [position.coords.latitude, position.coords.longitude];
+                        center = [(myposition[0]+latitude)/2, (myposition[1]+longitude)/2];
+                        distance = 0;
+                        if (myposition[0] > latitude){
+                            distance = myposition[0] - latitude;
+                        }
+                        else{
+                            distance = latitude - myposition[0];
+                        }
+                        if (myposition[1] > longitude){
+                            if (myposition[1] - longitude > distance){
+                                distance = myposition[1] - longitude;
+                            }
+                        }
+                        else{
+                            if (longitude - myposition[1] > distance){
+                                distance = longitude - myposition[1];
+                            }
+                        }
+                        zoom = 10 - Math.floor(Math.log(distance));
+                        map.setZoom(zoom); 
+                        map.setCenter(center[0], center[1]);
+                        map.drawRoute({
+                            origin: myposition,
+                            destination: [latitude, longitude],
+                            travelMode: 'walking',
+                            strokeColor: '#131540',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 6,
+                                callback: function(e){
+                                    $('#routeDistance').html(map.routes[0].legs[0].distance.text);
+                                    $('#routeDuration').html(map.routes[0].legs[0].duration.text);
+                                    $('#roomTitle').css({'margin-bottom': '0px'});
+                                    $('#infoRoute').show();
+                                }
+                        });
+                        map.addMarker({
+                            lat: myposition[0],
+                            lng: myposition[1],
+                            title: 'You are here.',
+                            icon: '/static/style/images/orig.png'
+                        });
+                    }
+                    
                 },
                 error: function(error) {
                     alert('Geolocation failed: '+error.message);
@@ -79,10 +104,13 @@
             </div>
             <div class="headerTitle">
                 <div class="headerElement">
-                    <h3>Room: {{ room }}<a style="display: inline-block;"data-role="button" data-icon="route" data-iconpos="notext" id="route"></a></h3>
+                    <h3 id="roomTitle">Room: {{ room }}<a id="route" data-role="button" rel="external" style="background-image: url(/static/style/images/walk.png);" class="smallButtonIcon"></a></h3>
+                    <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
+                        Duration: <span id="routeDuration"></span></span>
                 </div>
             </div>
             <div data-role="content" id="map">
+                <h3 class="emptyMessage" style="display: none;">Sorry this room cannot be found.</h3>
             </div>
         </div>
     </body>

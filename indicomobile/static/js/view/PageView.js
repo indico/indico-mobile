@@ -1,5 +1,5 @@
 var PageView = Backbone.View.extend({
-    
+
     tagName: 'div',
 
     attributes: {
@@ -18,7 +18,7 @@ var PageView = Backbone.View.extend({
     },
 
     showError: function() {
-        window.location.href = '/forbidden/'
+        window.location.href = '/forbidden/';
     },
 
     render: function() {
@@ -105,14 +105,14 @@ var ContributionsPageView = PageView.extend({
                                             'sessionId': session.get('sessionId')});
                     }
                 });
-                for (var i = 0; i < new_collection.size(); i++){
-                    if (new_collection.at(i).get('date') == this.options.day){
-                        thisDay = new_collection.at(i);
-                        if (new_collection.at(i-1) !== undefined){
-                            prevDay = new_collection.at(i-1).get('date');
+                for (var j = 0; j < new_collection.size(); j++){
+                    if (new_collection.at(j).get('date') == this.options.day){
+                        thisDay = new_collection.at(j);
+                        if (new_collection.at(j-1) !== undefined){
+                            prevDay = new_collection.at(j-1).get('date');
                         }
-                        if (new_collection.at(i+1) !== undefined){
-                            nextDay = new_collection.at(i+1).get('date');
+                        if (new_collection.at(j+1) !== undefined){
+                            nextDay = new_collection.at(j+1).get('date');
                         }
                     }
                 }
@@ -140,10 +140,10 @@ var ContributionsPageView = PageView.extend({
         if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
-            var url, container, sessionDay, agenda;
+            var url, container, sessionDay, agenda, user_id;
             var term = $(e.currentTarget).val();
             if (splittedId.length > 4){
-                var user_id = getUserId();
+                user_id = getUserId();
                 agenda = true;
                 container = '#sessionDay_list_agenda_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
                 sessionDay = true;
@@ -162,7 +162,7 @@ var ContributionsPageView = PageView.extend({
                 '/search/'+term+'/';
             }
             else if (splittedId.length > 3){
-                var user_id = getUserId();
+                user_id = getUserId();
                 agenda = true;
                 container = '#day_list_agenda_' + splittedId[2] + '_' + splittedId[3];
                 url = '/agenda/searchContrib/event/'+splittedId[2]+
@@ -193,7 +193,7 @@ var ContributionsPageView = PageView.extend({
         }
 
     }
-    
+
 });
 
 var SpeakersPage = PageView.extend({
@@ -211,7 +211,7 @@ var SpeakersPage = PageView.extend({
             var term = $(e.currentTarget).val();
             var container = $('#speakersContent_' + splittedId[1]);
             container.parent().find('.loader').show();
-            container.parent().find('.emptyMessage').hide()
+            container.parent().find('.emptyMessage').hide();
             container.data('view').remove();
             container.data('view').infiniScroll.disableFetch();
             var view = new SpeakerListView({
