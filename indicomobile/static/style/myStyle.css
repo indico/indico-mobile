@@ -1,11 +1,27 @@
+/* map.png & walk.png http://thenounproject.com/
+   others http://keyamoon.com/icomoon/app/ */
+
 .buttonIcon {
     width: 74px;
     height: 74px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
     background: #FCFCFC;
     background-size: 64px 64px;
+    background-repeat: no-repeat;
+    background-position:center;
+}
+
+.smallButtonIcon {
+    width: 28px;
+    height: 28px;
+    margin-left: 10px;
+    vertical-align: middle;
+    display: inline-block;
+    background: #FCFCFC;
+    border-radius: 5px;
+    background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position:center;
 }
@@ -23,34 +39,6 @@
 
 .highlight { background-color: #80e0ff }
 
-.nouser {
-    background-image: url(images/nouser.png);
-    min-width: 250px;
-    min-height: 250px;
-    background-size: 200px 200px;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-    vertical-align: bottom;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.notimetable {
-    background-image: url(images/notimetable.png);
-    min-width: 250px;
-    min-height: 250px;
-    background-size: 200px 200px;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-    vertical-align: bottom;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .loader {
     display: block;
     margin: 0 auto;
@@ -60,6 +48,14 @@
 
 .emptyMessage {
     text-align: center;
+}
+
+.forbiddenError {
+    text-align: center;
+}
+
+.forbiddenError h4 {
+    color: red;
 }
 
 .headerTitle {
@@ -112,7 +108,23 @@
 }
 
 .ui-icon-download{
-    background-image: url(images/download.png);
+    background-image: url('/static/style/images/download.png');
+    background-size: 16px 16px;
+    background-position: center;
+    width: 18px;
+    height: 18px;
+}
+
+.ui-icon-map{
+    background-image: url('/static/style/images/target.png');
+    background-size: 16px 16px;
+    background-position: center;
+    width: 18px;
+    height: 18px;
+}
+
+.ui-icon-route{
+    background-image: url('/static/style/images/map.png');
     background-size: 16px 16px;
     background-position: center;
     width: 18px;
@@ -121,7 +133,7 @@
 
 .ui-icon-agenda {
     background-color: transparent !important;
-    background-image: url(images/agenda.png);
+    background-image: url('/static/style/images/agenda.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -130,16 +142,15 @@
 }
 
 .ui-btn-active .ui-icon-agenda {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/agenda-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/agenda-selected.png');
 }
 
 .ui-icon-event {
     background-color: transparent !important;
-    background-image: url(images/event.png);
+    background-image: url('/static/style/images/event.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -148,16 +159,15 @@
 }
 
 .ui-btn-active .ui-icon-event {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/event-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/event-selected.png');
 }
 
 .ui-icon-new {
     background-color: transparent !important;
-    background-image: url(images/new.png);
+    background-image: url('/static/style/images/new.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -166,16 +176,15 @@
 }
 
 .ui-btn-active .ui-icon-new {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/new-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/new-selected.png');
 }
 
 .ui-icon-history {
     background-color: transparent !important;
-    background-image: url(images/history.png);
+    background-image: url('/static/style/images/history.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -184,16 +193,15 @@
 }
 
 .ui-btn-active .ui-icon-history {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/history-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/history-selected.png');
 }
 
 .ui-icon-sessions {
     background-color: transparent !important;
-    background-image: url(images/session.png);
+    background-image: url('/static/style/images/session.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -202,16 +210,15 @@
 }
 
 .ui-btn-active .ui-icon-sessions {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/session-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/session-selected.png');
 }
 
 .ui-icon-timetable {
     background-color: transparent !important;
-    background-image: url(images/timetable.png);
+    background-image: url(/static/style/images/timetable.png);
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -220,16 +227,15 @@
 }
 
 .ui-btn-active .ui-icon-timetable {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/timetable-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/timetable-selected.png');
 }
 
 .ui-icon-speakers {
     background-color: transparent !important;
-    background-image: url(images/user.png);
+    background-image: url('/static/style/images/user.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -238,16 +244,15 @@
 }
 
 .ui-btn-active .ui-icon-speakers {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/user-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/user-selected.png');
 }
 
 .ui-icon-about {
     background-color: transparent !important;
-    background-image: url(images/info.png);
+    background-image: url('/static/style/images/info.png');
     background-size: 24px 24px;
     width: 24px;
     height: 24px;
@@ -256,11 +261,10 @@
 }
 
 .ui-btn-active .ui-icon-about {
-    background: none;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    background-image: url(images/info-selected.png);
+    -moz-box-shadow: 0px 0px 0px #aaa;
+    -webkit-box-shadow: 0px 0px 0px #aaa;
+    box-shadow: 0px 0px 0px #aaa;
+    background-image: url('/static/style/images/info-selected.png');
 }
 
 .sessionColor{
@@ -272,7 +276,12 @@
     margin-right: 8px;
 }
 
-@media all and (min-width: 500px){
+.protected {
+    font-size: 12px;
+    color: red;
+}
+
+@media all and (min-width: 800px){
 
 	.leftSide {
 		float: left !important;

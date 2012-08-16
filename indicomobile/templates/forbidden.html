@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% assets "style_css" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
+        {% endassets %}
+        {% assets "core_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+    <title>Indico Mobile - Error</title>
+    </head>
+    <body id="allpages">
+        <div data-role="page" id="eventHome">
+            <div data-role="header" data-theme="c">
+                <a href="/" data-role="button" data-icon="home" rel="external" data-iconpos="notext"></a>
+                <h3>Indico Mobile</h3>
+                <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+            </div>
+            <div class="headerTitle">
+                <div class="headerElement"><h3>Error</h3></div>
+            </div>
+            <div data-role="content" id="forbiddenError">
+                <h4 style="text-align: center;">You don't have access to this page.</h4>
+            </div>
+        </div>
+    </body>
+</html>

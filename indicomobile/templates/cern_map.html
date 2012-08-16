@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% assets "style_css" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
+        {% endassets %}
+        {% assets "core_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=places&sensor=true"></script>
+        <script type="text/javascript" src="/static/js/lib/gmaps.js"></script>
+        <script type="text/javascript">
+        var map;
+        var myposition = null;
+        var latitude = {{ latitude }};
+        var longitude = {{ longitude }};
+        var room = '{{ room }}'
+        $('#eventHome').live('pagecreate', function(){
+            $('#map').css({'height': screen.height-400+'px'});
+            if (latitude == 1 && longitude == 1){
+                $('.emptyMessage').show();
+            }
+            else{
+                map = new GMaps({
+                    div: '#map',
+                    lat: latitude,
+                    lng: longitude
+                });
+                map.addMarker({
+                    lat: latitude,
+                    lng: longitude,
+                    title: room,
+                    icon: '/static/style/images/dest.png'
+                });
+            }
+        });
+        $('#route').live('click', function(){
+            GMaps.geolocate({
+                success: function(position) {
+                    if (!myposition){
+                        myposition = [position.coords.latitude, position.coords.longitude];
+                        center = [(myposition[0]+latitude)/2, (myposition[1]+longitude)/2];
+                        distance = 0;
+                        if (myposition[0] > latitude){
+                            distance = myposition[0] - latitude;
+                        }
+                        else{
+                            distance = latitude - myposition[0];
+                        }
+                        if (myposition[1] > longitude){
+                            if (myposition[1] - longitude > distance){
+                                distance = myposition[1] - longitude;
+                            }
+                        }
+                        else{
+                            if (longitude - myposition[1] > distance){
+                                distance = longitude - myposition[1];
+                            }
+                        }
+                        zoom = 10 - Math.floor(Math.log(distance));
+                        map.setZoom(zoom); 
+                        map.setCenter(center[0], center[1]);
+                        map.drawRoute({
+                            origin: myposition,
+                            destination: [latitude, longitude],
+                            travelMode: 'walking',
+                            strokeColor: '#131540',
+                            strokeOpacity: 0.6,
+                            strokeWeight: 6,
+                                callback: function(e){
+                                    $('#routeDistance').html(map.routes[0].legs[0].distance.text);
+                                    $('#routeDuration').html(map.routes[0].legs[0].duration.text);
+                                    $('#roomTitle').css({'margin-bottom': '0px'});
+                                    $('#infoRoute').show();
+                                }
+                        });
+                        map.addMarker({
+                            lat: myposition[0],
+                            lng: myposition[1],
+                            title: 'You are here.',
+                            icon: '/static/style/images/orig.png'
+                        });
+                    }
+                    
+                },
+                error: function(error) {
+                    alert('Geolocation failed: '+error.message);
+                },
+                not_supported: function() {
+                    alert("Your browser does not support geolocation");
+                }
+            });
+        });
+        </script>
+    <title>Indico Mobile - Map</title>
+    </head>
+    <body id="allpages">
+        <div data-role="page" id="eventHome">
+            <div data-role="header" data-theme="c">
+                <a href="javascript:history.go(-1)" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
+                <h3>Indico Mobile</h3>
+                <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+            </div>
+            <div class="headerTitle">
+                <div class="headerElement">
+                    <h3 id="roomTitle">Room: {{ room }}<a id="route" data-role="button" rel="external" style="background-image: url(/static/style/images/walk.png);" class="smallButtonIcon"></a></h3>
+                    <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
+                        Duration: <span id="routeDuration"></span></span>
+                </div>
+            </div>
+            <div data-role="content" id="map">
+                <h3 class="emptyMessage" style="display: none;">Sorry this room cannot be found.</h3>
+            </div>
+        </div>
+    </body>
+</html>

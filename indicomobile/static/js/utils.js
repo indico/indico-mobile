@@ -1,3 +1,10 @@
+function addToHistory(eventId){
+    $.ajax({
+        type: "POST",
+        url: "/addHistoryEvent/" + eventId + "/"
+    });
+}
+
 function filterDate(date){
 
     var newFormat = [];

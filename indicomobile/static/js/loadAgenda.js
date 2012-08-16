@@ -47,13 +47,3 @@ function loadAgendaEvents(){
     return myAgendaEvents;
 
 }
-
-function loadHistory(){
-
-    var myHistory = new Events();
-    if(localStorage.getItem('myHistory')) {
-        myHistory = new Events(JSON.parse(localStorage.getItem('myHistory')));
-    }
-    return myHistory;
-
-}

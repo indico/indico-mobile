@@ -1,11 +1,10 @@
 $('#eventHome').live('pageinit', function(){
 
-    myHistory = loadHistory();
-    visited = false;
-    var eventsView = new ListView({
-        collection: myHistory,
+    var eventsView = new HistoryListView({
+        collection: new Events(),
+        url: '/historyEvents/',
+        agendaUrl: '/agenda/historyEvents/',
         container: '#eventList',
-        template_file: 'events.html',
         template_name: '#eventList',
         empty_message: 'No history stored yet.'
     });
