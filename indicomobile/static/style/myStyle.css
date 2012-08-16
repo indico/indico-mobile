@@ -5,8 +5,8 @@
     width: 74px;
     height: 74px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
     background: #FCFCFC;
     background-size: 64px 64px;
     background-repeat: no-repeat;
@@ -38,34 +38,6 @@
 }
 
 .highlight { background-color: #80e0ff }
-
-.nouser {
-    background-image: url('/static/style/images/nouser.png');
-    min-width: 250px;
-    min-height: 250px;
-    background-size: 200px 200px;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-    vertical-align: bottom;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.notimetable {
-    background-image: url('/static/style/images/notimetable.png');
-    min-width: 250px;
-    min-height: 250px;
-    background-size: 200px 200px;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-    vertical-align: bottom;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
 
 .loader {
     display: block;
