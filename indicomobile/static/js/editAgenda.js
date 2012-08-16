@@ -2,14 +2,14 @@ function addRemoveEventAction(button, collection){
     var eventId = button.attr('eventId');
     var action = button.attr('action');
     var userId = getUserId();
-    if (userId != 'null'){ 
+    if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
                 type: "GET",
                 url: "/addEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
-                    if (collection != null){
+                    if (collection !== null){
                         collection.trigger('reload');
                     }
                     else{
@@ -26,7 +26,7 @@ function addRemoveEventAction(button, collection){
                 url: "/removeEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
-                    if (collection != null){
+                    if (collection !== null){
                         collection.trigger('reload');
                     }
                     else{
@@ -49,7 +49,7 @@ function addRemoveSessionAction(button, collection){
     var sessionId = button.attr('sessionId');
     var action = button.attr('action');
     var userId = getUserId();
-    if (userId != 'null'){ 
+    if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
                 type: "GET",
@@ -75,7 +75,7 @@ function addRemoveSessionAction(button, collection){
         alert('Please login first.');
         $.mobile.hidePageLoadingMsg();
     }
-    
+
 }
 
 function addRemoveContributionAction(button, collection){
@@ -83,7 +83,7 @@ function addRemoveContributionAction(button, collection){
     var contributionId = button.attr('contributionId');
     var action = button.attr('action');
     var userId = getUserId();
-    if (userId != 'null'){ 
+    if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
                 type: "GET",

@@ -39,26 +39,31 @@
             {% endif %}
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
-                    {% if session['indico_user'] %}
-                    <a data-role="button" href="/agenda/" rel="external" style="background-image: url(/static/style/images/agenda.png);" class="buttonIcon"></a>
-                    <p style="text-align: center;">Agenda</p>
-                    {% else %}
-                    <div data-role="button" style="background-image: url(/static/style/images/agenda.png); opacity: 0.4;" class="buttonIcon"></div>
-                    <p style="text-align: center; opacity: 0.4;">Agenda</p>
-                    {% endif %}
+                    <a data-role="button" href="/now/" rel="external" style="background-image: url(/static/style/images/new.png);" class="buttonIcon"></a>
+                    <p style="text-align: center;">Currently happening</p>
                 </div>
                 <div class="ui-block-b">
                     <a data-role="button" href="/events/" rel="external" style="background-image: url(/static/style/images/event.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">Events</p>
                 </div>
                 <div class="ui-block-a">
-                    <a data-role="button" href="/now/" rel="external" style="background-image: url(/static/style/images/new.png);" class="buttonIcon"></a>
-                    <p style="text-align: center;">Currently happening</p>
+                    {% if session['indico_user'] %}
+                    <a data-role="button" href="/agenda/" rel="external" style="background-image: url(/static/style/images/agenda.png);" class="buttonIcon"></a>
+                    <p style="text-align: center;">Agenda</p>
                 </div>
                 <div class="ui-block-b">
                     <a data-role="button" href="/history/" rel="external" style="background-image: url(/static/style/images/history.png);" class="buttonIcon"></a>
                     <p style="text-align: center;">History</p>
                 </div>
+                    {% else %}
+                    <div data-role="button" style="background-image: url(/static/style/images/agenda.png); opacity: 0.4;" class="buttonIcon"></div>
+                    <p style="text-align: center; opacity: 0.4;">Agenda</p>
+                </div>
+                <div class="ui-block-b">
+                    <a data-role="button" style="background-image: url(/static/style/images/history.png); opacity: 0.4;" class="buttonIcon"></a>
+                    <p style="text-align: center; opacity: 0.4;">History</p>
+                </div>
+                    {% endif %}
             </div>
             <div id="nextEvent" style="margin-top: 20px;">             
             </div>

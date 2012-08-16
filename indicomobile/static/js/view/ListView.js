@@ -45,19 +45,25 @@ var ListView = Backbone.View.extend({
         listView.empty();
 
         if (collection.size() > 0){
+            if (this.collection.at(0).get('error')){
+                window.location.href = '/logout?expired=True';
+            }
+            else{
 
-            self.renderItems(collection, template, listView);
+                self.renderItems(collection, template, listView);
 
-            container.append(listView);
+                container.append(listView);
 
-            container.trigger('create');
-            listView.listview('refresh');
-            container.parent().find('.loader').hide();
+                container.trigger('create');
+                listView.listview('refresh');
+                container.parent().find('.loader').hide();
 
-            if (term != '' && term != ' ' && term !== undefined){
-                for (word in term.split(' ')){
-                    container.find('li').highlight(term.split(' ')[word]);
+                if (term !== '' && term != ' ' && term !== undefined){
+                    for (word in term.split(' ')){
+                        container.find('li').highlight(term.split(' ')[word]);
+                    }
                 }
+
             }
 
         }
@@ -238,7 +244,7 @@ var SimpleEventsAndContributions = ListView.extend({
         else{
             addRemoveEventAction($(e.currentTarget), this.collection);
         }
-        
+
         page_id = $.mobile.activePage.attr('id');
         $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
@@ -250,7 +256,8 @@ var ContributionListView = ListView.extend({
     renderItems: function(collection, template, listView){
 
         var lastTime = null,
-        lastPosterTime = null
+        lastPosterTime = null,
+        listItem,
         self = this;
 
         collection.each(function(element){
@@ -266,7 +273,7 @@ var ContributionListView = ListView.extend({
                     if (self.options.agenda){
                         element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
                     }
-                    var listItem = template2(element.toJSON());
+                    listItem = template2(element.toJSON());
                     listView.append(listItem);
                 }
             }
@@ -274,7 +281,7 @@ var ContributionListView = ListView.extend({
                 var isInAgenda = self.agendaCollection.find(function(contrib){
                     return contrib.get('contributionId') == element.get('contributionId');
                 });
-                var listItem = template(element.toJSON());
+                listItem = template(element.toJSON());
                 if (isInAgenda){
                     listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
                 }
@@ -337,7 +344,7 @@ var SpeakerListView = InfiniteListView.extend({
                 listView.append('<li data-role="list-divider">'+element.get('name')[0]+'</li>');
             }
             if (self.options.agenda){
-                element.set('conferenceId', 'agenda_'+element.get('conferenceId'))
+                element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
             }
             listView.append(template(element.toJSON()));
         });
@@ -347,7 +354,7 @@ var SpeakerListView = InfiniteListView.extend({
         container.trigger('create');
         listView.listview('refresh');
 
-        if (highlight_term != '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
+        if (highlight_term !== '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
             for (word in highlight_term.split(' ')){
                 container.find('li').highlight(highlight_term.split(' ')[word]);
             }
@@ -411,7 +418,7 @@ var SearchResultsView = SpeakerListView.extend({
         container.trigger('create');
         listView.listview('refresh');
 
-        if (highlight_term != '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
+        if (highlight_term !== '' && highlight_term != ' ' && typeof highlight_term !== 'undefined'){
             for (word in highlight_term.split(' ')){
                 container.find('li').highlight(highlight_term.split(' ')[word]);
             }
@@ -439,26 +446,15 @@ var SearchResultsView = SpeakerListView.extend({
 
 var HistoryListView = ListView.extend({
 
-    initialize: function(){
-        this.template_file = getHTMLTemplate('lists.html');
-        this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
-        this.collection = loadHistory();
-        this.collection.comparator = function(event){return -event.get('viewedAt');};
-        this.collection.sort();
-        var agendaList = getHistoryInAgenda();
-        this.agendaCollection = new Events(getHistoryInAgenda());
-        this.render();
-    },
-
     renderItems: function(collection, template, listView){
         var self = this,
         lastTime = null;
         collection.each(function(element){
             element.set('inAgenda', false);
-            if (lastTime == null || lastTime != element.get('viewedAt')){
-                lastTime = element.get('viewedAt');
+            if (lastTime === null || lastTime != element.get('viewed_at')){
+                lastTime = element.get('viewed_at');
                 var date = new Date(lastTime);
-                listView.append('<li data-role="list-divider">'+date.toLocaleDateString()+', '+date.toLocaleTimeString()+'</li>')
+                listView.append('<li data-role="list-divider">'+lastTime.date+', '+lastTime.time+'</li>');
             }
             var isInAgenda = self.agendaCollection.find(function(event){
                 return event.get('id') == element.get('id');

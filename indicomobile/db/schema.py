@@ -65,6 +65,7 @@ class Event(Document):
         'chairs': [Chair],
         'url': unicode,
         'location': unicode,
+        'address': unicode,
         '_fossil': unicode,
         'timezone': unicode,
         'type': unicode,
@@ -74,7 +75,8 @@ class Event(Document):
         'modificationDate': datetime,
         'hasAnyProtection': bool
     }
-    def cleanup(event_id):
+    def cleanup(self, event_id):
+        db.events.remove({'id': event_id})
         db.contributions.remove({'conferenceId': event_id})
         db.session_slots.remove({'conferenceId': event_id})
         db.days.remove({'conferenceId': event_id})
@@ -144,7 +146,8 @@ class Contribution(Document):
         'uniqueId': unicode,
         'room': unicode,
         'isPoster': bool,
-        'hasAnyProtection': bool
+        'hasAnyProtection': bool,
+        'address': unicode
     }
 
 
@@ -185,6 +188,35 @@ class AgendaEvent(Document):
     }
 
 
+class HistoryEvent(Document):
+    __collection__ = 'history_events'
+    structure = {
+        'user_id': unicode,
+        'id': unicode,
+        'title': unicode,
+        'hasAnyProtection': bool,
+        'viewed_at': datetime,
+    }
+
+
+class CachedLatestEvent(Document):
+    __collection__ = 'cached_latest_events'
+    structure = {
+        'user_id': unicode,
+        'timestamp': datetime,
+        'events': [dict]
+    }
+
+
+class CachedLatestContribution(Document):
+    __collection__ = 'cached_latest_contributions'
+    structure = {
+        'user_id': unicode,
+        'timestamp': datetime,
+        'contributions': [dict]
+    }
+
+
 db.register([Presenter, Resource, Material, Chair, Event, Contribution,
             SessionSlot, Day, AgendaContribution, AgendaSessionSlot,
-            AgendaEvent])
+            AgendaEvent, HistoryEvent, CachedLatestEvent, CachedLatestContribution])

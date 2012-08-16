@@ -1,3 +1,6 @@
+/* map.png & walk.png http://thenounproject.com/
+   others http://keyamoon.com/icomoon/app/ */
+
 .buttonIcon {
     width: 74px;
     height: 74px;
@@ -6,6 +9,19 @@
     margin-right: auto;
     background: #FCFCFC;
     background-size: 64px 64px;
+    background-repeat: no-repeat;
+    background-position:center;
+}
+
+.smallButtonIcon {
+    width: 28px;
+    height: 28px;
+    margin-left: 10px;
+    vertical-align: middle;
+    display: inline-block;
+    background: #FCFCFC;
+    border-radius: 5px;
+    background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position:center;
 }
@@ -293,7 +309,7 @@
     color: red;
 }
 
-@media all and (min-width: 500px){
+@media all and (min-width: 800px){
 
 	.leftSide {
 		float: left !important;

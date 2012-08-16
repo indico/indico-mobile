@@ -52,7 +52,7 @@ def addSession(event_id, session_id):
     event_sessions = db.SessionSlot.find({'conferenceId': event_id}).distinct('sessionId')
     session = db.SessionSlot.find_one({'conferenceId': event_id, 'sessionId': session_id})
     if len(event_sessions)-agenda_sessions.count() == 1:
-        addEvent(event_id, user_id)
+        addEvent(event_id)
     elif db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id}):
         print 'already in agenda'
     else:
@@ -94,7 +94,7 @@ def addContribution(event_id, contribution_id):
                 for session in sessions_in_db:
                     num_contrib_in_session_db += len(session['entries'])
                 if num_contrib_in_session_db - num_contrib_in_session_agenda == 1:
-                    addSession(event_id, session_id, user_id)
+                    addSession(event_id, session_id)
                 else:
                     new_contribution = db.AgendaContribution()
                     new_contribution.update({'user_id': user_id, 'contribution': agenda_contribution})
@@ -103,7 +103,7 @@ def addContribution(event_id, contribution_id):
                 num_contrib_in_event = db.Contribution.find({'conferenceId': event_id, 'contributionId': {'$ne': None}}).count()
                 num_contrib_in_agenda = db.AgendaContribution.find({'contribution.conferenceId': event_id, 'user_id': user_id}).count()
                 if num_contrib_in_event - num_contrib_in_agenda == 1:
-                    addEvent(event_id, user_id)
+                    addEvent(event_id)
                 else:
                     new_contribution = db.AgendaContribution()
                     new_contribution.update({'user_id': user_id, 'contribution': agenda_contribution})
@@ -143,7 +143,7 @@ def removeSession(event_id, session_id):
             if current_contribution['slot']:
                 current_slot = db.dereference(current_contribution['slot'])
                 if current_slot['sessionId'] == session_id:
-                    removeContribution(event_id, current_contribution['contributionId'], user_id)
+                    removeContribution(event_id, current_contribution['contributionId'])
     return ''
 
 
@@ -161,14 +161,14 @@ def removeContribution(event_id, contribution_id):
         db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
         contributions = db.Contribution.find({'conferenceId': event_id, 'contributionId': {'$ne': contribution_id}})
         for contribution in contributions:
-            addContribution(event_id, contribution['contributionId'], user_id)
+            addContribution(event_id, contribution['contributionId'])
     elif session_id:
         if db.AgendaSessionSlot.find_one({'user_id': user_id, 'session_slot.sessionId': session_id}):
             contributions = db.Contribution.find({'conferenceId': event_id, 'slot':{'$ne': None}, 'contributionId': {'$ne': contribution_id}})
             db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.sessionId': session_id})
             for contribution in contributions:
                 if db.dereference(contribution['slot'])['sessionId'] == session_id:
-                    addContribution(event_id, contribution['contributionId'], user_id)
+                    addContribution(event_id, contribution['contributionId'])
     return ''
 
 
@@ -178,12 +178,13 @@ def createListAgendaContributions(contributions, user_id):
         if 'conferenceId' in contribution:
             if db.AgendaEvent.find_one({'user_id': user_id, 'event.id': contribution['conferenceId']}):
                 contribs_in_db.append(contribution)
-            if contribution['slot']:
-                session = contribution['slot']
-                if db.AgendaSessionSlot.find_one({'user_id': user_id,
-                                                'session_slot.sessionId': session['sessionId'],
-                                                'session_slot.conferenceId': contribution['conferenceId']}):
-                    contribs_in_db.append(contribution)
+            if 'slot' in contribution:
+                if contribution['slot']:
+                    session = contribution['slot']
+                    if db.AgendaSessionSlot.find_one({'user_id': user_id,
+                                                    'session_slot.sessionId': session['sessionId'],
+                                                    'session_slot.conferenceId': contribution['conferenceId']}):
+                        contribs_in_db.append(contribution)
             if db.AgendaContribution.find_one({'user_id': user_id,
                                                 'contribution.contributionId': contribution['contributionId'],
                                                 'contribution.conferenceId': contribution['conferenceId']}):
@@ -386,15 +387,15 @@ def getAgendaOngoingContributions():
     return createListAgendaContributions(contributions, user_id)
 
 
-@agenda.route('/agenda/history/', methods=['GET'])
+@agenda.route('/agenda/historyEvents/', methods=['GET'])
 def getAgendaHistory():
     user_id = flask_session['indico_user']
     events = []
-    event_ids = json.loads(request.args.get('events'))
+    event_ids = json.loads(get_history())
     for event in event_ids:
-        eventInAgenda = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event})
-        if eventInAgenda:
-            events.append(eventInAgenda['event'])
+        eventInHistory = db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event['id']})
+        if eventInHistory:
+            events.append(eventInHistory['event'])
     return json.dumps(events)
 
 

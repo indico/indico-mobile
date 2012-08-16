@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from indicomobile.app import app
 from indicomobile.util.json import patch_json
 from indicomobile.cache import setup_caching

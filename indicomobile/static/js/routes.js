@@ -1,38 +1,3 @@
-function addToHistory(url){
-    var newEvent = new Event();
-    newEvent.url = url;
-    newEvent.on('change', function (eventToAdd){
-        var myHistory = loadHistory();
-        myHistory.comparator = function(event){
-            return parseInt(event.get('viewedAt'), 10);
-        };
-        myHistory.sort();
-        var now = new Date();
-        var eventInHistory = myHistory.find(function(currentEvent){
-            return currentEvent.get('id') == eventToAdd.get('id');
-        });
-
-        if (eventInHistory){
-            myHistory.remove(eventInHistory);
-            eventInHistory.set('viewedAt', now.getTime());
-            myHistory.add(eventInHistory);
-        }
-        else{
-            if (myHistory.size() >= 10){
-                myHistory.remove(myHistory.at(0));
-                eventToAdd.set('viewedAt', now.getTime());
-                myHistory.add(eventToAdd);
-            }
-            else{
-                eventToAdd.set('viewedAt', now.getTime());
-                myHistory.add(eventToAdd);
-            }
-        }
-        localStorage.setItem('myHistory', JSON.stringify(myHistory.toJSON()));
-    });
-    newEvent.fetch();
-}
-
 var Router = Backbone.Router.extend({
 
     routes: {
@@ -62,7 +27,7 @@ var Router = Backbone.Router.extend({
             eventId = infoSplitted[0];
         }
 
-        addToHistory("/event/" + eventId);
+        addToHistory(eventId);
 
         var eventView = new PageView({
                 model: new Event(),
@@ -88,7 +53,7 @@ var Router = Backbone.Router.extend({
             eventId = infoSplitted[0];
         }
 
-        addToHistory("/event/" + eventId);
+        addToHistory(eventId);
 
         var eventView = new PageView({
                 model: new Event(),
@@ -199,8 +164,8 @@ var Router = Backbone.Router.extend({
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
             day = infoSplitted[3];
-            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/'
-                + day + '/contribs/';
+            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/' +
+                day + '/contribs/';
             url1 = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
@@ -331,7 +296,7 @@ var Router = Backbone.Router.extend({
         }
         else {
             $.mobile.changePage('#timetableDay_' + info);
-            
+
         }
 
     },
@@ -430,7 +395,7 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        addToHistory('/event/'+infoSplitted[0]);
+        addToHistory(infoSplitted[0]);
 
         if ($('#contribution_' + info).length === 0){
 
@@ -516,10 +481,14 @@ function logout() {
             url: '/logout/',
             async: false,
             success: function(resp){
-                window.location.href = resp
+                window.location.href = resp;
             }
         });
 }
+
+$('a[href^="#event_"]').live('click', function(){
+    $.mobile.showPageLoadingMsg('c', 'Loading page...', true);
+});
 
 
 $.mobile.defaultPageTransition = 'none';

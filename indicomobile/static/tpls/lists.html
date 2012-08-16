@@ -65,7 +65,12 @@
 
 <script type="text/template" id="nextEvent">
 <li>
-    <a href="#<% if(type == 'simple_event'){print('event_agenda_'+id);} else{print('contribution_agenda_'+conferenceId+'_'+contributionId)}%>" rel="external">
+    
+    <% if (type == 'simple_event') { %>
+        <a href="#event_agenda_<%=id%>" rel="external">
+    <% } else if (contributionId != null){ %>
+        <a href="#contribution_agenda_<%=conferenceId%>_<%=contributionId%>" rel="external">
+    <% } %>
         <h3><%=title%></h3>
         <p>
         <% var month = ["January", "February", "March", "April",
