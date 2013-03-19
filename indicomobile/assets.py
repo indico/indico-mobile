@@ -6,9 +6,9 @@ def register_assets(app):
     assets = Environment(app)
 
     ALL_ASSETS = {
-        'core_js': Bundle('js/lib/jquery-1.7.2.js',
-                          'js/lib/jquery.highlight-3.js',
-                          'js/lib/jquery.mobile-1.1.1.js',
+        'core_js': Bundle('js/lib/jquery.js',
+                          'js/lib/jquery.highlight.js',
+                          'js/lib/jquery.mobile.js',
                           'js/lib/underscore.js',
                           'js/lib/backbone.js',
                           'js/lib/inifiniScroll.js',
@@ -19,7 +19,7 @@ def register_assets(app):
                           'js/editAgenda.js',
                           'js/routes.js',
                           output='core_js.js'),
-        'style_css': Bundle('style/jquery.mobile-1.1.1.css',
+        'style_css': Bundle('style/jquery.mobile.css',
                             'style/myStyle.css',
                            output='style/style_css.css')
         }
