@@ -1,5 +1,5 @@
 from flask.ext.assets import Environment, Bundle
-
+from indicomobile.app import app
 
 def register_assets(app):
 
@@ -23,6 +23,7 @@ def register_assets(app):
                             'style/myStyle.css',
                            output='style/style_css.css')
         }
+    assets.debug = app.config["DEBUG"]
 
     for bundle_id, bundle in ALL_ASSETS.iteritems():
         assets.register(bundle_id, bundle)

@@ -18,4 +18,4 @@ if __name__ == '__main__':
     setup_caching(app)
     setup_blueprints(app)
     assets = register_assets(app)
-    app.run(debug=True, host=app.config['HOST'], port=app.config['PORT'])
+    app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
