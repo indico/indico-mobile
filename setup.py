@@ -4,7 +4,7 @@ setup(
     version = "0.1",
     packages = find_packages(),
 
-    install_requires = ['flask', 'Flask-mongoalchemy', 'Flask-assets', 'pytz'],
+    install_requires = ['flask', 'Flask-mongoalchemy', 'Flask-assets', 'flask-mongokit', 'Flask-Cache', 'Flask-OAuth', 'pytz'],
 
     package_data = {
         '': ['*.txt', '*.rst', '*.html']
