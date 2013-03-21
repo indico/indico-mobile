@@ -1,5 +1,4 @@
 from flask.ext.assets import Environment, Bundle
-from indicomobile.app import app
 
 def register_assets(app):
 

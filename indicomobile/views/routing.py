@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, json, session as flask_session
 
 routing = Blueprint('routing',
                     __name__,
@@ -38,3 +38,10 @@ def history():
 @routing.route('/forbidden/')
 def forbidden():
     return render_template('forbidden.html')
+
+@routing.route('/user_id/', methods=['GET'])
+def get_user_id():
+    user_id = None
+    if 'indico_user' in flask_session:
+        user_id = flask_session['indico_user']
+    return json.dumps(user_id)

@@ -1,0 +1,7 @@
+flask
+Flask-mongoalchemy
+Flask-assets
+flask-mongokit
+Flask-Cache
+Flask-OAuth
+pytz

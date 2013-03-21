@@ -1,9 +1,7 @@
 from datetime import datetime
-from flask import Flask, Blueprint
 from flask.ext.mongokit import Document
-from bson.dbref import DBRef
 
-from indicomobile.db.base import db
+from indicomobile.db import db
 
 
 class Presenter(Document):
@@ -23,6 +21,7 @@ class Presenter(Document):
 
 class Resource(Document):
     __collection__ = 'resources'
+    skip_validation = True
     structure = {
         'url': unicode,
         '_fossil': unicode,
@@ -33,6 +32,7 @@ class Resource(Document):
 
 class Material(Document):
     __collection__ = 'materials'
+    skip_validation = True
     structure = {
         '_fossil': unicode,
         'id': unicode,
@@ -151,8 +151,6 @@ class Contribution(Document):
         'address': unicode
     }
 
-
-
 class Day(Document):
     __collection__ = 'days'
     structure = {
@@ -187,6 +185,11 @@ class AgendaEvent(Document):
         'user_id': unicode,
         'event': Event
     }
+
+    def cleanup(self, user_id, event_id):
+        db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
+        db.agenda_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
+        db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
 
 
 class HistoryEvent(Document):

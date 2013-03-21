@@ -46,7 +46,7 @@ var ListView = Backbone.View.extend({
 
         if (collection.size() > 0){
             if (this.collection.at(0).get('error')){
-                window.location.href = '/logout?expired=True';
+                container.append('<h4 class="emptyMessage">An error has occured retrieving the list</h4>');
             }
             else{
 
@@ -56,8 +56,6 @@ var ListView = Backbone.View.extend({
 
                 container.trigger('create');
                 listView.listview('refresh');
-                container.parent().find('.loader').hide();
-
                 if (term !== '' && term != ' ' && term !== undefined){
                     for (word in term.split(' ')){
                         container.find('li').highlight(term.split(' ')[word]);
@@ -74,8 +72,8 @@ var ListView = Backbone.View.extend({
             else{
                 container.append('<h4 class="emptyMessage">'+empty_message+'</h4>');
             }
-            container.parent().find('.loader').hide();
         }
+        container.parent().find('.loader').hide();
         $.mobile.hidePageLoadingMsg();
         return this;
     }
@@ -369,7 +367,7 @@ var SpeakerListView = InfiniteListView.extend({
     render: function(){
         if (this.collection.size() > 0){
             if (this.collection.at(0).get('error')){
-                window.location.href = '/logout?expired=True';
+                $(this.options.container).append('<h4 class="emptyMessage">An error has occured retrieving the list</h4>');
             }
             else{
                 if (this.options.agenda){

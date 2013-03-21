@@ -26,14 +26,10 @@ Instead, you'll want to create your own subclass of OAuthClient
 or find one that works with your web framework.
 """
 
-import httplib
-import urlparse
 import urllib2
-import time
-from flask import Blueprint, request, redirect, session, url_for, render_template, current_app
-from flaskext.oauth import *
-from indicomobile.events import sign_request
-import oauth2
+from flask import Blueprint, request, redirect, session, url_for, json, current_app, render_template, session as flask_session
+from flaskext.oauth import OAuth
+from indicomobile.core.indico_api import sign_request
 
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
 
@@ -63,6 +59,14 @@ def login():
     return oauth_indico_mobile.authorize(callback=urllib2.unquote(url_for('.oauth_authorized',
         next=request.args.get('next') or request.referrer or None, _external=True)))
 
+@oauth_client.route('/logout/', methods=['GET'])
+def logout():
+    expired = request.args.get('expired', False)
+    flask_session['access_token'] = None
+    flask_session['indico_user'] = None
+    flask_session['indico_user_name'] = 'None'
+    return render_template('index.html', access_token_expired=expired)
+
 
 def get_user_info(user_id):
     at_key = session['access_token'].get('key')
@@ -86,7 +90,7 @@ def oauth_authorized(resp):
     if resp is None:
         session['unauthorized'] = True
         return redirect('/')
-        
+
     session['unauthorized'] = False
 
     session['access_token'] = {
