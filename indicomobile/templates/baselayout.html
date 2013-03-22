@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Indico Mobile - {% block pagetitle %}{% endblock %}</title>
+        {% assets "style_css" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
+        {% endassets %}
+        {% assets "core_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body id="allpages">
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>

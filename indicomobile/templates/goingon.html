@@ -1,47 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% assets "style_css" %}
-            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
-        {% endassets %}
-        {% assets "core_js" %}
-            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-        {% endassets %}
-            <script src="/static/js/nowList.js"></script>
-    <title>Indico Mobile - Currently Happening</title>
-    </head>
-    <body id="allpages">
-        <div data-role="page" id="eventHome">
-            <div data-role="header" data-theme="c">
-                <a href="/" data-role="button" data-icon="home" rel="external" data-iconpos="notext"></a>
-                <h3>Indico Mobile</h3>
-                <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-            </div>
-            <div class="headerTitle">
-                <div class="headerElement"><h3>Currently happening</h3></div>
-            </div>
-            <div data-role="content">
-                <div id="contribList">
-                    <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
-                </div>
-            </div>
-            <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
-                <div data-role="navbar">
-                    {% if session['indico_user'] %}
-                    <ul class="ui-grid-c">
-                    {% else %}
-                    <ul class="ui-grid-a">
-                    {% endif %}
-                        <li class="ui-block-a"><a data-iconpos="top" data-icon="new" data-icon href="/now/" class="ui-btn-active ui-state-persist">Happening</a></li>
-                        <li class="ui-block-b"><a data-iconpos="top" data-icon="event" rel="external" data-icon href="/events/">Events</a></li>
-                    {% if session['indico_user'] %}
-                        <li class="ui-block-c"><a data-iconpos="top" data-icon="agenda" rel="external" data-icon href="/agenda/">Agenda</a></li>
-                        <li class="ui-block-d"><a data-iconpos="top" data-icon="history" rel="external" data-icon href="/history/">History</a></li>
-                    {% endif %}
-                    </ul>
-                </div>
-            </div>
+{% extends "baseeventlist.html" %}
+{% block pagetitle %}Currently Happening{% endblock %}
+{% block head %}
+    {% assets "goingon_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+{% endblock %}
+{% block header %}Currently Happening{% endblock %}
+{% block content %}
+    <div data-role="content">
+        <div id="contribList">
+            <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
         </div>
-    </body>
-</html>
+    </div>
+{% endblock %}

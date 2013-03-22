@@ -1,5 +1,7 @@
 $('#eventHome').live('pageinit', function(){
 
+    $("a#agenda").addClass("ui-btn-active ui-state-persist")
+
     var eventsView = new ListByMonthView({
         collection : new Events(),
         url: '/agenda/events/',

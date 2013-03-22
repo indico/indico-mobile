@@ -16,7 +16,7 @@ def agenda():
 
 
 @routing.route('/events/')
-def event():
+def events():
     return render_template('events.html')
 
 

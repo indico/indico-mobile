@@ -1,5 +1,7 @@
 $('#eventHome').live('pagecreate', function(){
 
+    $("a#ongoing").addClass("ui-btn-active ui-state-persist")
+
     visited = false;
 
     var ongoingContributionsView = new SimpleEventsAndContributions({
