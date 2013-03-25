@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from indicomobile.core.cache import setup_caching
 from indicomobile.views.assets import register_assets
+from indicomobile.views.errors import register_errors
 from indicomobile.util.json import patch_json
 
 def setup_blueprints(app):
@@ -26,3 +27,4 @@ app.config.from_pyfile('default_settings.cfg')
 setup_caching(app)
 setup_blueprints(app)
 register_assets(app)
+register_errors(app)

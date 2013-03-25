@@ -1,0 +1,21 @@
+{% extends "baselayout.html" %}
+{% block title %}{{name}}{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+    <div data-role="page" id="eventHome">
+        <div data-role="header" data-theme="c">
+            <a href="/" data-role="button" data-icon="home" rel="external" data-iconpos="notext"></a>
+            <h3>Indico Mobile</h3>
+        </div>
+        <div class="headerTitle">
+            <div class="headerElement"><h3>{{name}}</h3></div>
+        </div>
+        <div data-role="content" id="forbiddenError">
+            {% block content_error %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+
