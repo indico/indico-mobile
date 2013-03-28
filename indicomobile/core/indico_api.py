@@ -28,7 +28,7 @@ def search_event(search, pageNumber):
         search = urllib.quote(search)
     except Exception:
         return []
-    url = current_app.config['SERVER_URL'] + \
+    url = current_app.config['INDICO_URL'] + \
               '/export/event/search/' + search + \
               '.json?ak=' + \
               current_app.config['API_KEY']
@@ -39,7 +39,7 @@ def search_event(search, pageNumber):
             path = '/export/event/search/' + search + '.json'
             params = {
             }
-            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     try:
@@ -52,7 +52,7 @@ def search_event(search, pageNumber):
     return json.load(f)['results']
 
 def get_event_info(event_id):
-    url = current_app.config['SERVER_URL'] + \
+    url = current_app.config['INDICO_URL'] + \
                                 '/export/event/' + event_id + \
                                 '.json?ak=' + current_app.config['API_KEY'] + '&nocache=yes'
     if 'access_token' in flask_session:
@@ -63,7 +63,7 @@ def get_event_info(event_id):
             params = {
                 'nocache': 'yes'
             }
-            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
 
     try:
         f1 = urllib2.urlopen(url)
@@ -75,7 +75,7 @@ def get_event_info(event_id):
     return {'error': 401}
 
 def fetch_timetable(event_id):
-    url = current_app.config['SERVER_URL'] + \
+    url = current_app.config['INDICO_URL'] + \
                    '/export/timetable/' + event_id + \
                    '.json?ak=' + \
                    current_app.config['API_KEY']
@@ -87,14 +87,14 @@ def fetch_timetable(event_id):
             params = {
                 'nocache': 'yes'
             }
-            url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
     f2 = urllib2.urlopen(url)
     return json.loads(f2.read().decode('utf-8'))['results']
 
 
 def get_latest_events_from_indico(user_id):
     url = '{0}/export/categ/0.json?ak={1}&from=today&limit=100&detail=contributions&order=start&descending=yes&nocache=yes'.format(
-            current_app.config['SERVER_URL'], current_app.config['API_KEY'])
+            current_app.config['INDICO_URL'], current_app.config['API_KEY'])
     if user_id != 'all_public':
         at_key = flask_session['access_token'].get('key')
         at_secret = flask_session['access_token'].get('secret')
@@ -106,7 +106,7 @@ def get_latest_events_from_indico(user_id):
             'descending': 'yes',
             'detail': 'contributions'
         }
-        url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+        url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
     try:
         f = urllib2.urlopen(url)
     except urllib2.HTTPError, err:
@@ -117,13 +117,13 @@ def get_latest_events_from_indico(user_id):
 
 def get_ongoing_events():
     url = '{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
-            current_app.config['SERVER_URL'], current_app.config['API_KEY'])
+            current_app.config['INDICO_URL'], current_app.config['API_KEY'])
     f = urllib2.urlopen(url)
     return json.loads(f.read().decode('utf-8'))['results']
 
 
 def get_future_events():
     url = '{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
-        current_app.config['SERVER_URL'], current_app.config['API_KEY'])
+        current_app.config['INDICO_URL'], current_app.config['API_KEY'])
     f = urllib2.urlopen(url)
     return json.loads(f.read().decode('utf-8'))['results']

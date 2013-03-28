@@ -7,7 +7,7 @@ maps = Blueprint('map', __name__, template_folder='templates')
 def get_map(room_name):
     room_name = urllib.quote(room_name)
 
-    url = current_app.config['SERVER_URL'] + '/export/roomName/CERN/' + room_name + '.json?ak=' + current_app.config['API_KEY']
+    url = current_app.config['INDICO_URL'] + '/export/roomName/CERN/' + room_name + '.json?ak=' + current_app.config['API_KEY']
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)

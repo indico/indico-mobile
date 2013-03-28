@@ -23,7 +23,7 @@ patch_json()
 app = Flask(__name__, instance_path=os.getcwd(),
             instance_relative_config=True)
 
-app.config.from_pyfile('default_settings.cfg')
+app.config.from_pyfile('settings.conf')
 setup_caching(app)
 setup_blueprints(app)
 register_assets(app)

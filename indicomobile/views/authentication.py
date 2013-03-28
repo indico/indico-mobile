@@ -29,24 +29,18 @@ or find one that works with your web framework.
 import urllib2
 from flask import Blueprint, request, redirect, session, url_for, json, current_app, render_template, session as flask_session
 from flaskext.oauth import OAuth
+from indicomobile import app
 from indicomobile.core.indico_api import sign_request
 
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
-
-REQUEST_TOKEN_URL='http://pcuds43.cern.ch/indico/oauth.py/request_token'
-ACCESS_TOKEN_URL='http://pcuds43.cern.ch/indico/oauth.py/access_token'
-AUTHORIZE_URL='http://pcuds43.cern.ch/indico/oauth.py/authorize'
-CONSUMER_KEY='tjjOA7kYWJ0SUNBAVX3yCqke65DSjd1ZA1fIt8vK'
-CONSUMER_SECRET='0NhCRMMZcJzYQPz82otCZp4TdxXkveJ0dLSbdFrF'
-
 oauth = OAuth()
 oauth_indico_mobile = oauth.remote_app('indico_mobile',
-    base_url='http://pcuds43.cern.ch/indico/',
-    request_token_url=REQUEST_TOKEN_URL,
-    access_token_url=ACCESS_TOKEN_URL,
-    authorize_url=AUTHORIZE_URL,
-    consumer_key=CONSUMER_KEY,
-    consumer_secret=CONSUMER_SECRET
+    base_url=app.config['INDICO_URL'],
+    request_token_url=app.config['REQUEST_TOKEN_URL'],
+    access_token_url=app.config['ACCESS_TOKEN_URL'],
+    authorize_url=app.config['AUTHORIZE_URL'],
+    consumer_key=app.config['CONSUMER_KEY'],
+    consumer_secret=app.config['CONSUMER_SECRET']
 )
 
 @oauth_indico_mobile.tokengetter
@@ -75,7 +69,7 @@ def get_user_info(user_id):
     params = {
         'nocache': 'yes'
     }
-    url = current_app.config['SERVER_URL'] + sign_request(path, params, at_key, at_secret)
+    url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
     req = urllib2.Request(url)
     opener = urllib2.build_opener()
     f = opener.open(req)

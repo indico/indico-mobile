@@ -7,4 +7,5 @@ if __name__ == '__main__':
         config_dir = os.getcwd()
     else:
         config_dir = sys.argv[0]
-    app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
+
+    app.run(debug=app.config['DEBUG'], host=app.config['SERVER'], port=app.config['SERVER_PORT'])

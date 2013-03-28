@@ -1,0 +1,59 @@
+#--------------------------
+# Indico mobile configuration file
+#--------------------------
+#
+# This file is read on the Flask Application startup. If you change any value you will need to
+# restart the Application afterwards to have its changes take effect.
+#
+# Lines starting with "#" are comments and they will be ignored by Indico Mobile.
+
+#------------------------------------------------------------------------------
+# BASIC SERVER CONFIGURATION
+#------------------------------------------------------------------------------
+
+# SERVER: It is needed only for the standalone server
+
+SERVER = 'localhost'
+SERVER_PORT = 5000
+
+# DEBUG: it is used when standalone server and used for the assets
+
+DEBUG = True
+
+# Default Timezone of the server
+
+TIMEZONE = 'Europe/Zurich'
+
+# Time to Live in seconds of the Flask cache.
+
+CACHE_TTL = 3600
+
+# MongoDB Database name
+
+MONGODB_DATABASE = 'indicomobile'
+
+#------------------------------------------------------------------------------
+# INDICO INSTANCE RELATED CONFIGURATION
+#
+# We specified the Indico instance URL, API Key and other related Indico config
+#------------------------------------------------------------------------------
+
+# Base URL of Indico instance
+
+INDICO_URL = 'http://yourindicoserver/path/to/indico/'
+
+# API Key to fetch data from the Indico API
+
+API_KEY = 'your_api_key'
+
+#------------------------------------------------------------------------------
+# OAUTH CONFIGURATION
+#
+# We specified the OAUTH configuration
+#------------------------------------------------------------------------------
+
+REQUEST_TOKEN_URL='http://yourindicoserver/path/to/indico/oauth.py/request_token'
+ACCESS_TOKEN_URL='http://yourindicoserver/path/to/indico/oauth.py/access_token'
+AUTHORIZE_URL='http://yourindicoserver/path/to/indico/oauth.py/authorize'
+CONSUMER_KEY=''
+CONSUMER_SECRET=''
