@@ -6,6 +6,11 @@
         {% assets "style_css" %}
             <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
         {% endassets %}
+        <script type="text/javascript">
+              var TPL_DIR = "{{ url_for('static', filename='tpls/') }}";
+              var IMAGE_DIR = "{{ url_for('static', filename='style/images/') }}";
+              var BASE_URL = "{{ url_for('routing.index', _external=True ) }}";
+        </script>
         {% assets "core_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}

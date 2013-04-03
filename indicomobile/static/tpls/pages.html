@@ -2,7 +2,7 @@
     <div data-role="header" data-theme="c">
         <a href="#event_<%=id%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3>About</h3></div>
@@ -32,7 +32,7 @@
 <div data-role="header" data-theme="c">
         <a href="javascript:history.go(-1)" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
     <div class="headerElement"><h3><%=title%></h3>
@@ -40,25 +40,25 @@
         <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } %></p>
         <%
@@ -84,7 +84,7 @@
                 No description</h4>
         <% } %>
         <p style="white-space: normal; text-align: justify;"><%= description %></p>
-        
+
         <% if (typeof(presenters)!="undefined"){ %>
             <%if (presenters.length>0){ %>
                 <h4>Presenters</h4>
@@ -120,7 +120,7 @@
 <div data-role="header" data-theme="c">
     <a href="#timetable_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
     <h3>Indico Mobile</h3>
-    <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+    <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
     <div class="headerElement">
@@ -172,32 +172,32 @@
         <% } %>
         data-icon="back" data-iconpos="notext" rel="external">Back</a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3><%=title%></h3>
         <p><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } %><br>
         <%
@@ -242,7 +242,7 @@
     <div data-role="header" data-theme="c">
         <a href="#session_<%=conferenceId%>_<%= sessionId %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
         <div class="headerElement">
@@ -274,7 +274,7 @@
     <div data-role="header" data-theme="c">
             <a href="#sessions_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
             <h3>Indico Mobile</h3>
-            <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+            <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
@@ -288,7 +288,7 @@
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3 class="headerTitleMargin">Sessions</h3></div>
@@ -303,7 +303,7 @@
     <div data-role="header" data-theme="c">
         <a href="javascript:history.back(1)" rel="external" data-icon="back" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
         <div class="headerElement">
@@ -312,25 +312,25 @@
         <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="/map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="/map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } else { %>
-                <a data-role="button" href="/map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
                 <% } %>
         <% } %></p>
             <%
@@ -388,7 +388,7 @@
 <div data-theme="c" data-role="header">
     <a href="#speakers_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
     <h3>Indico Mobile</h3>
-    <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+    <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
 </div>
 <div class="headerTitle">
     <div class="headerElement"><h3><%=name%></h3></div>
@@ -402,7 +402,7 @@
     <div data-theme="c" data-role="header">
         <a href="#event_<%=id%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
+        <a href="<%=base_url%>search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
     </div>
         <div class="headerTitle">
         <div class="headerElement"><h3>Speakers</h3></div>
@@ -412,7 +412,7 @@
     <% if (!id.match('^agenda_')){ %>
         <input type="text" data-type="search" id="searchSpeaker_<%=id%>">
     <% } %>
-        
+
         <div id="speakersContent_<%=id%>"></div>
         <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
         <div class="emptyMessage" style="display:none;"><h4>No speakers found.</h4></div>
@@ -423,7 +423,7 @@
     <div data-role="header" data-theme="c">
         <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
         <h3>Indico Mobile</h3>
-        <a href="/search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
+        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
     </div>
     <div class="headerTitle">
         <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>

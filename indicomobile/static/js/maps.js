@@ -11,7 +11,7 @@ function addMarker(map, latitude, longitude, title){
         lat: latitude,
         lng: longitude,
         title: title,
-        icon: '/static/style/images/dest.png'
+        icon: IMAGE_DIR + 'dest.png'
     });
 }
 
@@ -104,7 +104,7 @@ $('#route').live('click', function(){
                     lat: myposition[0],
                     lng: myposition[1],
                     title: 'You are here.',
-                    icon: '/static/style/images/orig.png'
+                    icon: IMAGE_DIR + 'orig.png'
                 });
             }
         },

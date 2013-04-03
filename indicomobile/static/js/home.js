@@ -1,7 +1,7 @@
-$('#home').live('pageinit', function(){
+$('#home').live('pagecreate', function(){
 	var nextEventInAgendaView = new NextEventView({
 		model: new Backbone.Model(),
-		url: '/agenda/nextEvent/',
+		url: BASE_URL + 'agenda/nextEvent/',
 		container: '#nextEvent',
         template_name: '#nextEvent'
 	});

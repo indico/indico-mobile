@@ -10,7 +10,7 @@
     <div data-role="content">
         <input type="text" data-type="search" id="searchEvent">
         <div id="searchResults"></div>
-        <div class="loader" style="display:none;"><h4>Searching, please wait...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
+        <div class="loader" style="display:none;"><h4>Searching, please wait...</h4><img src="{{ url_for('static', filename='style/images/ajax-loader2.gif') }}"/></div>
         <div class="emptyMessage" style="display:none;"><h4>Nothing found.</h4></div>
         <div class="forbiddenError" style="display:none;"><h4>Error.</h4>You may have logged in elsewhere. Try to log out and in again.</div>
     </div>

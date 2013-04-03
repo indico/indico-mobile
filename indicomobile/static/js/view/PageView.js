@@ -18,13 +18,13 @@ var PageView = Backbone.View.extend({
     },
 
     showError: function() {
-        window.location.href = '/forbidden/';
+        window.location.href = BASE_URL + 'forbidden/';
     },
 
     render: function() {
-        var model = this.model,
-        container = $(this.options.container),
-        pageView = $(this.el),
+        var model = this.model;
+        container = $(this.options.container);
+        pageView = $(this.el);
         link = this.options.link;
         pageView.trigger('create');
         if (pageView.html() === ''){
@@ -44,6 +44,7 @@ var PageView = Backbone.View.extend({
             if (model.get('type') == 'simple_event'){
                 this.template = this.template2;
             }
+            model.set("base_url", BASE_URL);
             pageView.append(this.template(model.toJSON()));
             if (this.options.selectedTab !== undefined){
                 pageView.append(this.footerTemplate(model.toJSON()));
@@ -122,6 +123,7 @@ var ContributionsPageView = PageView.extend({
             }
             thisDay.set('prevDay', prevDay);
             thisDay.set('nextDay', nextDay);
+            thisDay.set("base_url", BASE_URL);
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.footerTemplate(thisDay.toJSON()));
             $('body').append(pageView);
@@ -147,7 +149,7 @@ var ContributionsPageView = PageView.extend({
                 agenda = true;
                 container = '#sessionDay_list_agenda_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
                 sessionDay = true;
-                url = '/agenda/searchContrib/event/'+splittedId[2]+
+                url = BASE_URL + 'agenda/searchContrib/event/'+splittedId[2]+
                 '/session/'+splittedId[3]+
                 '/day/'+splittedId[4]+
                 '/search/'+term+'/';
@@ -156,7 +158,7 @@ var ContributionsPageView = PageView.extend({
                 container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
                 sessionDay = true;
                 agenda = false;
-                url = '/searchContrib/event/'+splittedId[1]+
+                url = BASE_URL + 'searchContrib/event/'+splittedId[1]+
                 '/session/'+splittedId[2]+
                 '/day/'+splittedId[3]+
                 '/search/'+term+'/';
@@ -165,7 +167,7 @@ var ContributionsPageView = PageView.extend({
                 user_id = getUserId();
                 agenda = true;
                 container = '#day_list_agenda_' + splittedId[2] + '_' + splittedId[3];
-                url = '/agenda/searchContrib/event/'+splittedId[2]+
+                url = BASE_URL + 'agenda/searchContrib/event/'+splittedId[2]+
                 '/day/'+splittedId[3]+
                 '/search/'+term+'/';
                 sessionDay = false;
@@ -173,7 +175,7 @@ var ContributionsPageView = PageView.extend({
             else{
                 agenda = false;
                 container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
-                url = '/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
+                url = BASE_URL + 'searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
                 sessionDay = false;
             }
             $(e.currentTarget).parent().parent().find('.loader').show();
@@ -217,7 +219,7 @@ var SpeakersPage = PageView.extend({
             var view = new SpeakerListView({
                 container: '#speakersContent_' + splittedId[1],
                 collection: new Speakers(),
-                url: '/searchSpeaker/event/'+eventId+'/search/'+term+'/',
+                url: BASE_URL + 'searchSpeaker/event/'+eventId+'/search/'+term+'/',
                 template_file: 'speakers.html',
                 template_name: '#speakersList',
                 term: term

@@ -6,7 +6,7 @@ function addRemoveEventAction(button, collection){
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addEvent/" + eventId + "/",
+                url: BASE_URL + "addEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
                     if (collection !== null){
@@ -23,7 +23,7 @@ function addRemoveEventAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeEvent/" + eventId + "/",
+                url: BASE_URL + "removeEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
                     if (collection !== null){
@@ -53,7 +53,7 @@ function addRemoveSessionAction(button, collection){
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addSession/" + eventId + "/session/" + sessionId + "/",
+                url: BASE_URL + "addSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
@@ -63,7 +63,7 @@ function addRemoveSessionAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeSession/" + eventId + "/session/" + sessionId + "/",
+                url: BASE_URL + "removeSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
@@ -87,7 +87,7 @@ function addRemoveContributionAction(button, collection){
         if (action == 'add'){
             $.ajax({
                 type: "GET",
-                url: "/addContribution/" + eventId + "/contribution/" + contributionId + "/",
+                url: BASE_URL + "addContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
@@ -97,7 +97,7 @@ function addRemoveContributionAction(button, collection){
         else{
             $.ajax({
                 type: "GET",
-                url: "/removeContribution/" + eventId + "/contribution/" + contributionId + "/",
+                url: BASE_URL + "removeContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');

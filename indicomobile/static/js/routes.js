@@ -31,7 +31,7 @@ var Router = Backbone.Router.extend({
 
         var eventView = new PageView({
                 model: new Event(),
-                url: '/event/'+eventId+'/',
+                url: BASE_URL + 'event/'+eventId+'/',
                 link: 'event_' + info,
                 template_name: '#eventPage',
                 template_name2: '#simpleEventPage',
@@ -57,7 +57,7 @@ var Router = Backbone.Router.extend({
 
         var eventView = new PageView({
                 model: new Event(),
-                url: "/event/" + eventId + '/',
+                url: BASE_URL + "event/" + eventId + '/',
                 link: 'event_' + info,
                 template_name: '#simpleEventPage',
                 agenda: agenda
@@ -72,13 +72,13 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
-            url = '/agenda/event/' + eventId + '/allsessions/';
+            url = BASE_URL + 'agenda/event/' + eventId + '/allsessions/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
-            url = '/event/' + eventId + '/sessions/';
-            agendaUrl = '/agenda/event/' + eventId + '/sessions/';
+            url = BASE_URL + 'event/' + eventId + '/sessions/';
+            agendaUrl = BASE_URL + 'agenda/event/' + eventId + '/sessions/';
         }
 
         if ($('#sessions_' + info).length === 0){
@@ -86,7 +86,7 @@ var Router = Backbone.Router.extend({
             var pageContainer = $('body');
             var sessionsPageView = new PageView({
                 model: new Event(),
-                url: "/event/" + eventId + '/',
+                url: BASE_URL + "event/" + eventId + '/',
                 link: 'sessions_' + info,
                 template_name: '#sessionsPage',
                 selectedTab: '#sessionsTab',
@@ -118,13 +118,13 @@ var Router = Backbone.Router.extend({
             agenda = true;
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
-            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
-            url = '/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
         if ($('#session_' + info).length === 0){
@@ -132,7 +132,7 @@ var Router = Backbone.Router.extend({
             var pageContainer = $('body');
             var sessionView = new PageView({
                 model: new Slot(),
-                url: '/event/' + eventId + '/session/' + sessionId + '/',
+                url: BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/',
                 link: 'session_' + info,
                 template_name: '#sessionPage',
                 selectedTab: null,
@@ -164,19 +164,19 @@ var Router = Backbone.Router.extend({
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
             day = infoSplitted[3];
-            url = '/agenda/event/' + eventId + '/session/' + sessionId + '/day/' +
+            url = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/day/' +
                 day + '/contribs/';
-            url1 = '/agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url1 = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
             day = infoSplitted[2];
-            url = '/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
+            url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
             agendaUrl = '/agenda/event/' + eventId + '/session/' +
                             sessionId + '/day/' + day + '/contribs/';
-            url1 = '/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url1 = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
         if ($('#sessionDay_' + info).length === 0){
@@ -216,19 +216,19 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'agenda'){
             agenda = true;
             eventId = infoSplitted[1];
-            url = '/agenda/event/' + eventId + '/days/';
+            url = BASE_URL + 'agenda/event/' + eventId + '/days/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
-            url = '/event/' + eventId + '/days/';
+            url = BASE_URL + 'event/' + eventId + '/days/';
         }
 
         if ($('#timetable_' + info).length === 0){
 
             var timetableDaysView = new PageView({
                 model: new Event(),
-                url: '/event/' + eventId + '/',
+                url: BASE_URL + 'event/' + eventId + '/',
                 template_name: '#timetableDays',
                 link: 'timetable_' + info,
                 selectedTab: '#timetableTab',
@@ -259,16 +259,16 @@ var Router = Backbone.Router.extend({
             agenda = true;
             eventId = infoSplitted[1];
             day = infoSplitted[2];
-            url = '/agenda/event/'+eventId+'/day/'+day+'/contributions/';
-            url1 = '/agenda/event/' + eventId + '/days/';
+            url = BASE_URL + 'agenda/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = BASE_URL + 'agenda/event/' + eventId + '/days/';
         }
         else{
             agenda = false;
             eventId = infoSplitted[0];
             day = infoSplitted[1];
-            url = '/event/'+eventId+'/day/'+day+'/contributions/';
-            agendaUrl = '/agenda/event/'+eventId+'/day/'+day+'/contributions/';
-            url1 = '/event/' + eventId + '/days/';
+            url = BASE_URL + 'event/'+eventId+'/day/'+day+'/contributions/';
+            agendaUrl = BASE_URL + 'agenda/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = BASE_URL + 'event/' + eventId + '/days/';
         }
 
         if ($('#timetableDay_' + info).length === 0){
@@ -311,17 +311,17 @@ var Router = Backbone.Router.extend({
             if (infoSplitted[0] == 'agenda'){
                 agenda = true;
                 eventId = infoSplitted[1];
-                url = '/agenda/event/' + eventId + '/speakers/';
+                url = BASE_URL + 'agenda/event/' + eventId + '/speakers/';
             }
             else{
                 agenda = false;
                 eventId = infoSplitted[0];
-                url = '/event/' + eventId + '/speakers/';
+                url = BASE_URL + 'event/' + eventId + '/speakers/';
             }
 
             var speakersPageView = new SpeakersPage({
                 model: new Event(),
-                url: '/event/' + eventId + '/',
+                url: BASE_URL + 'event/' + eventId + '/',
                 template_name: '#speakersPage',
                 link: 'speakers_' + info,
                 selectedTab: '#speakersTab',
@@ -354,20 +354,20 @@ var Router = Backbone.Router.extend({
                 agenda = true;
                 eventId = infoSplitted[1];
                 speakerId = infoSplitted[2].replace(':','_');
-                url = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                url = BASE_URL + "agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
             else{
                 agenda = false;
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
                 url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
-                agendaUrl = "/agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                agendaUrl = BASE_URL + "agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
-                url: "/event/" + eventId + "/speaker/" + speakerId + '/',
-                agendaUrl: "/agenda/event/" + eventId + "/speaker/" +
+                url: BASE_URL + "event/" + eventId + "/speaker/" + speakerId + '/',
+                agendaUrl: BASE_URL + "agenda/event/" + eventId + "/speaker/" +
                     speakerId + "/contributions/",
                 event_id: eventId,
                 template_name: '#speakerPage',
@@ -414,7 +414,7 @@ var Router = Backbone.Router.extend({
 
             var contributionPageView = new PageView({
                 model: new Contribution(),
-                url: '/event/' + eventId + '/contrib/' + contributionId + '/',
+                url: BASE_URL + 'event/' + eventId + '/contrib/' + contributionId + '/',
                 template_name: '#contributionDetail',
                 link: 'contribution_' + info,
                 selectedTab: '#any',
@@ -447,7 +447,7 @@ var Router = Backbone.Router.extend({
 
             var aboutPageView = new PageView({
                 model: new Event(),
-                url: '/event/'+eventId,
+                url: BASE_URL + 'event/'+eventId,
                 template_name: '#about',
                 link: 'about_' + info,
                 selectedTab: '#aboutTab',
@@ -466,7 +466,7 @@ function getUserId() {
     var user_id = null;
     $.ajax({
             type: 'GET',
-            url: '/user_id/',
+            url: BASE_URL + 'user_id/',
             async: false,
             success: function(resp){
                 user_id = resp;
@@ -478,7 +478,7 @@ function getUserId() {
 function logout() {
     $.ajax({
             type: 'GET',
-            url: '/logout/',
+            url: BASE_URL + 'logout/',
             async: false,
             success: function(resp){
                 window.location.href = resp;

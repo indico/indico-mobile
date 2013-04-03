@@ -1,7 +1,7 @@
 function addToHistory(eventId){
     $.ajax({
         type: "POST",
-        url: "/addHistoryEvent/" + eventId + "/"
+        url: BASE_URL + "addHistoryEvent/" + eventId + "/"
     });
 }
 
@@ -24,7 +24,7 @@ function getHTMLTemplate(link) {
     var template;
         $.ajax({
             type: 'GET',
-            url: '/static/tpls/' + link,
+            url: TPL_DIR + link,
             async: false,
             success: function(text){
                 template = text;
