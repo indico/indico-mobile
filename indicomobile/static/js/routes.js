@@ -395,22 +395,22 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        addToHistory(infoSplitted[0]);
+        var eventId, contributionId, agenda;
+
+        if (infoSplitted[0] == 'agenda'){
+            agenda = true;
+            eventId = infoSplitted[1];
+            contributionId = infoSplitted[2];
+        }
+        else{
+            agenda = false;
+            eventId = infoSplitted[0];
+            contributionId = infoSplitted[1];
+        }
+
+        addToHistory(eventId);
 
         if ($('#contribution_' + info).length === 0){
-
-            var eventId, contributionId, agenda;
-
-            if (infoSplitted[0] == 'agenda'){
-                agenda = true;
-                eventId = infoSplitted[1];
-                contributionId = infoSplitted[2];
-            }
-            else{
-                agenda = false;
-                eventId = infoSplitted[0];
-                contributionId = infoSplitted[1];
-            }
 
             var contributionPageView = new PageView({
                 model: new Contribution(),
