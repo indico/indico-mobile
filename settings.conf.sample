@@ -32,6 +32,9 @@ CACHE_TTL = 3600
 
 MONGODB_DATABASE = 'indicomobile'
 
+# SECRET KEY needed for Flask Sessions
+
+SECRET_KEY = ''
 #------------------------------------------------------------------------------
 # INDICO INSTANCE RELATED CONFIGURATION
 #

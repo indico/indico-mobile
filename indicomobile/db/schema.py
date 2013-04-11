@@ -61,6 +61,7 @@ class Event(Document):
         'endDate': datetime,
         'title': unicode,
         'description': unicode,
+        'material': [Material],
         'id': unicode,
         'chairs': [Chair],
         'url': unicode,

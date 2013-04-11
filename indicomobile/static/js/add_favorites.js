@@ -1,3 +1,13 @@
+
+function handleError(resp){
+    $.mobile.hidePageLoadingMsg();
+    if (resp.status == 401){
+        alert("You are not authorized or your authorization has expired, please logout and login again.");
+    } else {
+        alert("An unexpected error has occured.");
+    }
+}
+
 function addRemoveEventAction(button, collection){
     var eventId = button.attr('eventId');
     var action = button.attr('action');
@@ -17,6 +27,9 @@ function addRemoveEventAction(button, collection){
                         button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
                         $.mobile.hidePageLoadingMsg();
                     }
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }
@@ -34,6 +47,9 @@ function addRemoveEventAction(button, collection){
                         button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
                         $.mobile.hidePageLoadingMsg();
                     }
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }
@@ -57,6 +73,9 @@ function addRemoveSessionAction(button, collection){
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }
@@ -67,6 +86,9 @@ function addRemoveSessionAction(button, collection){
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }
@@ -91,6 +113,9 @@ function addRemoveContributionAction(button, collection){
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }
@@ -101,6 +126,9 @@ function addRemoveContributionAction(button, collection){
                 async: false,
                 success: function(resp){
                     collection.trigger('reload');
+                },
+                error: function(resp){
+                    handlerError(resp);
                 }
             });
         }

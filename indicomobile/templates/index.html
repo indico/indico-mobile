@@ -27,9 +27,9 @@
             {% if session['unauthorized'] %}
             <h3 style="color: red; text-align: center;">You didn't authorize Indico Mobile.</h3>
             {% endif %}
-            {%if access_token_expired %}
-            <h3 style="color: red; text-align: center;">Your session has expired, you've been logged out.</h3>
-            {% endif %}
+            {% for message in get_flashed_messages() %}
+            <h3 style="color: red; text-align: center;">{{ message }}</h3>
+            {% endfor %}
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
                     <a data-role="button" href="{{url_for('routing.now')}}" rel="external" style="background-image: url(/static/style/images/new.png);" class="buttonIcon"></a>

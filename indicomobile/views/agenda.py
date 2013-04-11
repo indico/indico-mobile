@@ -187,7 +187,7 @@ def get_agenda_event_all_sessions(event_id):
 def get_agenda_event_days(event_id):
     user_id = flask_session['indico_user']
     if db_event.get_agenda_event(user_id, event_id):
-        return json.dumps(db_event.get_event_days(event_id))
+        return json.dumps(list(db_event.get_event_days(event_id)))
     else:
         days = []
         agenda_sessions = db_session.get_agenda_event_sessions(user_id, event_id)

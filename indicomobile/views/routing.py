@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, json, session as flask_session
+from flask import Blueprint, render_template, json, abort, session as flask_session
 
 routing = Blueprint('routing',
                     __name__,
@@ -12,8 +12,16 @@ def index():
 
 @routing.route('/agenda/')
 def agenda():
+    if not flask_session.get('indico_user', None):
+        abort(401)
     return render_template('agenda.html')
 
+
+@routing.route('/history/')
+def history():
+    if not flask_session.get('indico_user', None):
+        abort(401)
+    return render_template('history.html')
 
 @routing.route('/events/')
 def events():
@@ -30,14 +38,6 @@ def now():
     return render_template('goingon.html')
 
 
-@routing.route('/history/')
-def history():
-    return render_template('history.html')
-
-
-@routing.route('/forbidden/')
-def forbidden():
-    return render_template('forbidden.html')
 
 @routing.route('/user_id/', methods=['GET'])
 def get_user_id():

@@ -17,8 +17,13 @@ var PageView = Backbone.View.extend({
         this.model.fetch();
     },
 
-    showError: function() {
-        window.location.href = BASE_URL + 'forbidden/';
+    showError: function(model, error) {
+        $.mobile.hidePageLoadingMsg();
+        if(error.status == 401){
+            window.location.href = BASE_URL + 'login/';
+        } else{
+            alert('An error has occured');
+        }
     },
 
     render: function() {

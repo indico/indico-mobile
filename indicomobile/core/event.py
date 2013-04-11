@@ -26,17 +26,14 @@ def search_event(search, everything, pageNumber):
 def update_event_info(event_id):
     if event_id:
         event_http = api.get_event_info(event_id)
-        if not 'error' in event_http:
-            event_db = db_event.get_event(event_id)
-            if not event_db:
-                event_tt = api.fetch_timetable(event_id)
-                db_event.store_event(event_http, event_tt)
-            elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
-                db_event.remove_event(event_id)
-                event_tt = api.fetch_timetable(event_id)
-                db_event.store_event(event_http, event_tt)
-        else:
-            abort(401)
+        event_db = db_event.get_event(event_id)
+        if not event_db:
+            event_tt = api.fetch_timetable(event_id)
+            db_event.store_event(event_http, event_tt)
+        elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
+            db_event.remove_event(event_id)
+            event_tt = api.fetch_timetable(event_id)
+            db_event.store_event(event_http, event_tt)
 
 def _get_events():
     user_id = unicode('all_public')
@@ -64,7 +61,7 @@ def get_ongoing_events():
         if utc.localize(now) > dt_from_indico(event['startDate']):
             if event['type'] == 'simple_event' or len(event['contributions']) > 0:
                 results.append(event)
-    return results[0:min(len(results), 15)]
+    return sorted(results[0:min(len(results), 15)], key=lambda x: x["startDate"])
 
 def get_future_events():
     now = datetime.utcnow()
@@ -76,7 +73,7 @@ def get_future_events():
         if dt_from_indico(event['startDate']) - utc.localize(now) > timedelta(days=1):
             if event['type'] == 'simple_event' or len(event['contributions']) > 0:
                 results.append(event)
-    return results[max(0, len(results))-16:len(results)-1]
+    return sorted(results[max(0, len(results))-16:len(results)-1], key=lambda x: x["startDate"])
 
 def get_event_days(event_id):
     return [day for day in db_event.get_event_days(event_id)]
@@ -111,7 +108,7 @@ def get_future_contributions():
     now = datetime.utcnow()
     tomorrow = now + timedelta(hours=6)
     results = list(db_contribution.get_contributions(now, tomorrow, [{'hasAnyProtection': False},
-                                                                             {'_fossil': 'contribSchEntryDisplay'}])) \
+                                                                     {'_fossil': 'contribSchEntryDisplay'}])) \
             + list(db_event.get_ongoing_lectures(now, tomorrow))
     return sorted(results, key=lambda x: x['startDate'])
 

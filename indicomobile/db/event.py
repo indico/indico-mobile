@@ -1,6 +1,7 @@
 from datetime import datetime
 from indicomobile.db import ref
 from indicomobile.db.schema import db, Event
+from indicomobile.db.common import store_material
 from indicomobile.db.session import store_slot
 from indicomobile.db.contribution import store_contribution
 from indicomobile.util.date_time import convert_dates
@@ -47,7 +48,7 @@ def store_event(event_http, event_tt):
     convert_dates(event_http)
 
     event_id = event_http['id']
-
+    store_material(event_http)
     store_chairs(event_http)
 
     event_db = db.Event()

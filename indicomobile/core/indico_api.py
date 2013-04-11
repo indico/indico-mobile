@@ -1,129 +1,82 @@
 import urllib2
 import urllib
-import time
-import hashlib
-import hmac
-from flask import json, current_app, session as flask_session, abort
+from flask import json, session as flask_session, abort
+from indicomobile.views.authentication import oauth_indico_mobile
+from indicomobile import app
 
-def sign_request(path, params, at_key=None, at_secret=None, only_public=False):
-    at_key = at_key.encode('ascii')
-    at_secret = at_secret.encode('ascii')
+def attach_params(path, params):
     items = params.items() if hasattr(params, 'items') else list(params)
-    if at_key:
-        items.append(('atk', at_key))
-    if only_public:
-        items.append(('onlypublic', 'yes'))
-    if at_secret:
-        items.append(('timestamp', str(int(time.time()))))
-        items = sorted(items, key=lambda x: x[0].lower())
-        url = '%s?%s' % (path, urllib.urlencode(items))
-        signature = hmac.new(at_secret, url, hashlib.sha1).hexdigest()
-        items.append(('signature', signature))
     if not items:
         return path
     return '%s?%s' % (path, urllib.urlencode(items))
+
+def perform_signed_request(url):
+    response = oauth_indico_mobile.get(url)
+    if response.status != 200:
+        abort(response.status)
+    return response.raw_data
+
+def perform_public_request(url):
+    try:
+        f = urllib2.urlopen(url)
+        return f.read()
+    except urllib2.HTTPError, err:
+        abort(err.code)
 
 def search_event(search, pageNumber):
     try:
         search = urllib.quote(search)
     except Exception:
         return []
-    url = current_app.config['INDICO_URL'] + \
-              '/export/event/search/' + search + \
-              '.json?ak=' + \
-              current_app.config['API_KEY']
-    if 'access_token' in flask_session:
-        if flask_session['access_token']:
-            at_key = flask_session['access_token'].get('key')
-            at_secret = flask_session['access_token'].get('secret')
-            path = '/export/event/search/' + search + '.json'
-            params = {
-            }
-            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
-    req = urllib2.Request(url)
-    opener = urllib2.build_opener()
-    try:
-        f = opener.open(req)
-    except urllib2.HTTPError, err:
-        if err.code == 401:
-            abort(401)
-        else:
-            return []
-    return json.load(f)['results']
+    path = '/export/event/search/' + search + '.json'
+    if 'indico_mobile_oauthtok' in flask_session:
+        result = perform_signed_request(app.config['INDICO_URL'] + path)
+    else:
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'ak': app.config['API_KEY']}))
+    return json.loads(result.decode('utf-8'))["results"]
 
 def get_event_info(event_id):
-    url = current_app.config['INDICO_URL'] + \
-                                '/export/event/' + event_id + \
-                                '.json?ak=' + current_app.config['API_KEY'] + '&nocache=yes'
-    if 'access_token' in flask_session:
-        if flask_session['access_token']:
-            at_key = flask_session['access_token'].get('key')
-            at_secret = flask_session['access_token'].get('secret')
-            path = '/export/event/' + event_id + '.json'
-            params = {
-                'nocache': 'yes'
-            }
-            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
+    path = '/export/event/' + event_id + '.json'
+    if 'indico_mobile_oauthtok' in flask_session:
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes'}))
+    else:
+        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes', 'ak': app.config['API_KEY']}))
+    event_info = json.loads(result.decode('utf-8'))["results"]
+    if len(event_info)== 0:
+        abort(404)
+    return event_info[0]
 
-    try:
-        f1 = urllib2.urlopen(url)
-    except urllib2.HTTPError, err:
-        return {'error': err.code}
-    event_info = json.loads(f1.read().decode('utf-8'))['results']
-    if len(event_info) > 0:
-        return event_info[0]
-    return {'error': 401}
 
 def fetch_timetable(event_id):
-    url = current_app.config['INDICO_URL'] + \
-                   '/export/timetable/' + event_id + \
-                   '.json?ak=' + \
-                   current_app.config['API_KEY']
-    if 'access_token' in flask_session:
-        if flask_session['access_token']:
-            at_key = flask_session['access_token'].get('key')
-            at_secret = flask_session['access_token'].get('secret')
-            path = '/export/timetable/' + event_id + '.json'
-            params = {
-                'nocache': 'yes'
-            }
-            url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
-    f2 = urllib2.urlopen(url)
-    return json.loads(f2.read().decode('utf-8'))['results']
-
+    path = '/export/timetable/' + event_id + '.json'
+    if 'indico_mobile_oauthtok' in flask_session:
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes'}))
+    else:
+        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {"ak": app.config['API_KEY']}))
+    return json.loads(result.decode('utf-8'))["results"]
 
 def get_latest_events_from_indico(user_id):
-    url = '{0}/export/categ/0.json?ak={1}&from=today&limit=100&detail=contributions&order=start&descending=yes&nocache=yes'.format(
-            current_app.config['INDICO_URL'], current_app.config['API_KEY'])
+    path = '/export/categ/0.json'
+    params = { 'nocache': 'yes',
+              'from': 'today',
+              'order': 'st art',
+              'descending': 'yes',
+              'detail': 'contributions'
+    }
     if user_id != 'all_public':
-        at_key = flask_session['access_token'].get('key')
-        at_secret = flask_session['access_token'].get('secret')
-        path = '/export/categ/0.json'
-        params = {
-            'nocache': 'yes',
-            'from': 'today',
-            'order': 'start',
-            'descending': 'yes',
-            'detail': 'contributions'
-        }
-        url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
-    try:
-        f = urllib2.urlopen(url)
-    except urllib2.HTTPError, err:
-        return {'error': err.code}
-    events = json.loads(f.read().decode('utf-8'))['results']
-    return events
-
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, params))
+    else:
+        params["ak"] = app.config['API_KEY']
+        params["limit"] = 100
+        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, params))
+    return json.loads(result.decode('utf-8'))["results"]
 
 def get_ongoing_events():
-    url = '{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
-            current_app.config['INDICO_URL'], current_app.config['API_KEY'])
-    f = urllib2.urlopen(url)
-    return json.loads(f.read().decode('utf-8'))['results']
-
+    result = perform_public_request('{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
+            app.config['INDICO_URL'], app.config['API_KEY']))
+    return json.loads(result.decode('utf-8'))['results']
 
 def get_future_events():
-    url = '{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
-        current_app.config['INDICO_URL'], current_app.config['API_KEY'])
-    f = urllib2.urlopen(url)
-    return json.loads(f.read().decode('utf-8'))['results']
+    result = perform_public_request('{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
+        app.config['INDICO_URL'], app.config['API_KEY']))
+    return json.loads(result.decode('utf-8'))['results']

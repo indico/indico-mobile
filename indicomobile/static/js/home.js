@@ -1,4 +1,4 @@
-$('#home').live('pagecreate', function(){
+$('#home').live('pageinit', function(){
 	var nextEventInAgendaView = new NextEventView({
 		model: new Backbone.Model(),
 		url: BASE_URL + 'agenda/nextEvent/',

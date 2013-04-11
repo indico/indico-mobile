@@ -19,7 +19,18 @@ var ListView = Backbone.View.extend({
         this.collection.on('hasChanged', this.appendRender, this);
         this.collection.on('reset', this.render, this);
         this.collection.on('reload', this.initialize, this);
+        this.collection.on('error', this.showError, this);
         this.collection.fetch();
+    },
+
+    showError: function(model, error){
+        if(error.status == 401){
+            window.location.href = BASE_URL + 'login/';
+        } else{
+            $(this.options.container).parent().find('.loader').hide();
+            $(this.options.container).html('<h4 class="emptyMessage">An error has occured retrieving the list</h4>');
+            $.mobile.hidePageLoadingMsg();
+        }
     },
 
     renderItems: function(collection, template, listView){

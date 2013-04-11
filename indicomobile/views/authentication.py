@@ -27,10 +27,9 @@ or find one that works with your web framework.
 """
 
 import urllib2
-from flask import Blueprint, request, redirect, session, url_for, json, current_app, render_template, session as flask_session
-from flaskext.oauth import OAuth
+from flask import Blueprint, request, redirect, session, url_for, flash
+from flask_oauth import OAuth
 from indicomobile import app
-from indicomobile.core.indico_api import sign_request
 
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
 oauth = OAuth()
@@ -55,43 +54,29 @@ def login():
 
 @oauth_client.route('/logout/', methods=['GET'])
 def logout():
-    expired = request.args.get('expired', False)
-    flask_session['access_token'] = None
-    flask_session['indico_user'] = None
-    flask_session['indico_user_name'] = 'None'
-    return render_template('index.html', access_token_expired=expired)
-
+    session.pop('indico_user', None)
+    session.pop('indico_user_name', None)
+    session.pop('indico_mobile_oauthtok', None)
+    session.pop('unauthorized', None)
+    if request.args.get("expired", False):
+        flash("Your session has expired, you've been logged out.")
+    return redirect(request.referrer or url_for("routing.index"))
 
 def get_user_info(user_id):
-    at_key = session['access_token'].get('key')
-    at_secret = session['access_token'].get('secret')
-    path = '/export/user/' + user_id + '.json'
-    params = {
-        'nocache': 'yes'
-    }
-    url = current_app.config['INDICO_URL'] + sign_request(path, params, at_key, at_secret)
-    req = urllib2.Request(url)
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    return json.load(f)['results']
-
-
+    url = app.config['INDICO_URL'] + '/export/user/' + user_id + '.json'
+    return oauth_indico_mobile.get(url).data["results"]
 
 @oauth_client.route('/oauth_authorized/', methods=['GET'])
 @oauth_indico_mobile.authorized_handler
 def oauth_authorized(resp):
     next_url = request.args.get('next') or url_for('index')
-    if resp is None:
+    if not resp:
         session['unauthorized'] = True
-        return redirect('/')
+        return redirect(url_for("routing.index"))
 
+    session["indico_mobile_oauthtok"] = (resp['oauth_token'], resp['oauth_token_secret'])
     session['unauthorized'] = False
-
-    session['access_token'] = {
-        'key': resp['oauth_token'],
-        'secret': resp['oauth_token_secret']
-    }
     session['indico_user'] = resp['user_id']
     user_info = get_user_info(resp['user_id'])
     session['indico_user_name'] = user_info.get('title') + ' ' + user_info.get('familyName')
-    return redirect('/')
+    return redirect(next_url)

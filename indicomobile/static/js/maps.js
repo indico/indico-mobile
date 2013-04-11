@@ -15,7 +15,7 @@ function addMarker(map, latitude, longitude, title){
     });
 }
 
-$('#eventHome').live('pagecreate', function(){
+$('#eventHome').live('pageinit', function(){
             $('#map').css({'height': screen.height-400+'px'});
             if (latitude == null && longitude == null){
                 GMaps.geolocate({
@@ -51,9 +51,11 @@ $('#eventHome').live('pagecreate', function(){
                         });
                     }
                   });
-            } else if (latitude == 1 && longitude == 1){
+            } else if (latitude == "1" && longitude == "1"){
                 $('.emptyMessage').show();
             } else {
+                latitude = parseFloat(latitude);
+                longitude = parseFloat(longitude);
                 map = createMap('#map', latitude, longitude);
                 addMarker(map, latitude, longitude, room);
             }
@@ -65,8 +67,8 @@ $('#route').live('click', function(){
         success: function(position) {
             if (!myposition){
                 myposition = [position.coords.latitude, position.coords.longitude];
-                center = [(myposition[0]+latitude)/2, (myposition[1]+longitude)/2];
-                distance = 0;
+                var center = [(myposition[0]+latitude)/2.0, (myposition[1]+longitude)/2.0];
+                var distance = 0;
                 if (myposition[0] > latitude){
                     distance = myposition[0] - latitude;
                 }

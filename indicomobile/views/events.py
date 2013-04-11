@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from flask import json, request, Blueprint, session as flask_session
+from flask import json, Blueprint, abort, session as flask_session, request
 
 import indicomobile.db.session as db_session
 import indicomobile.db.event as db_event

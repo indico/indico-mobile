@@ -1,4 +1,4 @@
-$('#eventHome').live('pagecreate', function(){
+$('#eventHome').live('pageinit', function(){
 
     $("a#ongoing").addClass("ui-btn-active ui-state-persist")
 
