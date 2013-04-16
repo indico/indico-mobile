@@ -34,7 +34,8 @@ def register_assets(app):
                           'js/maps.js',
                           output='maps_js.js'),
         'style_css': Bundle('style/jquery.mobile.css',
-                            'style/myStyle.css',
+                            'style/icons.css',
+                            'style/core.css',
                            output='style/style_css.css')
         }
     assets.debug = app.config["DEBUG"]

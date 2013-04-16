@@ -40,25 +40,25 @@
         <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } %></p>
         <%
@@ -105,7 +105,7 @@
                     <ul data-role="listview" data-inset="true">
                     <% for (var j=0; j<material[i].resources.length; j++){ %>
                         <% var ext = material[i].resources[j].name.substr(material[i].resources[j].name.lastIndexOf('.') + 1); %>
-                        <li data-icon="download" data-theme="c"><a data-inline="true" href="<%=material[i].resources[j].url%>" target="_blank" ><%=material[i].resources[j].name%></a></li>
+                        <li data-theme="c" data-icon="arrow-d" ><a href="<%=material[i].resources[j].url%>" target="_blank" ><%=material[i].resources[j].name%></a></li>
                     <% } %>
                     </ul>
                     </div>
@@ -153,10 +153,10 @@
 <div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
     <div data-role="navbar">
         <ul class="ui-grid-c">
-            <li class="ui-block-a"><a id="sessionsTab" data-iconpos="top" data-icon="sessions" rel="external" data-icon href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>">Sessions</a></li>
-            <li class="ui-block-b"><a id="timetableTab" data-iconpos="top" data-icon="timetable" rel="external" data-icon href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>">Timetable</a></li>
-            <li class="ui-block-c"><a id="speakersTab" data-iconpos="top" data-icon="speakers" rel="external" data-icon href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>">Speakers</a></li>
-            <li class="ui-block-d"><a id="aboutTab" data-iconpos="top" data-icon="about" rel="external" data-icon href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>">About</a></li>
+            <li class="ui-block-a"><a id="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-sessions" aria-hidden="true"></div>Sessions</a></li>
+            <li class="ui-block-b"><a id="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-timetable"  aria-hidden="true"></div>Timetable</a></li>
+            <li class="ui-block-c"><a id="speakersTab" rel="external" href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-user"  aria-hidden="true"></div>Speakers</a></li>
+            <li class="ui-block-d"><a id="aboutTab" rel="external" href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-info" aria-hidden="true"></div>About</a></li>
         </ul>
     </div>
 </div>
@@ -179,25 +179,25 @@
         <p><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } %><br>
         <%
@@ -219,19 +219,19 @@
     <div data-role="content">
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
-                        <a href="#sessions_<%=id%>" rel="external" data-role="button" style="background-image: url(/static/style/images/session.png);" class="buttonIcon"></a>
+                        <a href="#sessions_<%=id%>" rel="external" data-role="button" class="button-icon icon-sessions" aria-hidden="true"></a>
                         <p class="buttonTitle">Sessions</p>
                 </div>
                 <div class="ui-block-b">
-                        <a href="#timetable_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(/static/style/images/timetable.png)"></a>
+                        <a href="#timetable_<%=id%>" rel="external" data-role="button" class="button-icon icon-timetable" aria-hidden="true"></a>
                         <p class="buttonTitle">Timetable</p>
                 </div>
                 <div class="ui-block-a">
-                        <a href="#speakers_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(/static/style/images/user.png)"></a>
+                        <a href="#speakers_<%=id%>" rel="external" data-role="button" class="button-icon icon-user" aria-hidden="true"></a>
                         <p class="buttonTitle">Speakers</p>
                 </div>
                 <div class="ui-block-b">
-                        <a href="#about_<%=id%>" rel="external" data-role="button" class="buttonIcon" style="background-image: url(/static/style/images/info.png)"></a>
+                        <a href="#about_<%=id%>" rel="external" data-role="button" class="button-icon icon-info" aria-hidden="true"></a>
                         <p class="buttonTitle">About</p>
                 </div>
         </div>
@@ -312,25 +312,25 @@
         <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
             <% if (location == 'CERN'){ %>
-                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
                <% if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" style="background-image: url(/static/style/images/map.png);" class="smallButtonIcon"></a>
+                <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
         <% } %></p>
             <%
