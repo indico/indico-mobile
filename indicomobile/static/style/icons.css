@@ -68,3 +68,6 @@ you can use the generic selector below, but it's slower:
 .icon-direction:before {
     content: "\e010";
 }
+.icon-protected:before {
+    content: "\e011";
+}

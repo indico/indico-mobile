@@ -1,7 +1,7 @@
 <script type="text/template" id="contribution">
 <li>
     <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
-    <% if (color){ %> 
+    <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
     <%= title %></a>
@@ -18,13 +18,13 @@
 <script type="text/template" id="contributionHappening">
 <li>
     <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
-    <% if (color){ %> 
+    <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
-    <%= title %>
     <% if (hasAnyProtection) {%>
-        <span class="protected">(protected)</span>
+        <span class="icon-protected protected" aria-hidden="true"></span>
     <% } %>
+    <%= title %>
     </a>
     <a href="" id="addRemoveContribution"
     <%  if (inAgenda){ %>
@@ -43,10 +43,10 @@
     <% } else { %>
         <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
     <% } %>
-    <%=title%>
     <% if (hasAnyProtection) {%>
-        <span class="protected">(protected)</span>
+        <span class="protected icon-protected" aria-hidden="true"></span>
     <% } %>
+    <%=title%>
     </a>
     <% if (inAgenda){ %>
         <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
@@ -65,7 +65,7 @@
 
 <script type="text/template" id="nextEvent">
 <li>
-    
+
     <% if (type == 'simple_event') { %>
         <a href="#event_agenda_<%=id%>" rel="external">
     <% } else if (contributionId != null){ %>
@@ -81,7 +81,9 @@
         <%=month[newDate[1]-1]%> <%=newDate[2]%>, <%=newDate[0]%>
         , at <%var splittedTime = startDate.time.split(':');%>
         <%= splittedTime[0]%>h<%=splittedTime[1]%></p>
-        <p><%=location%>, <%=room%></p>
+        <% if (location != '') { %>
+            <p><%=location%>, <%=room%></p>
+        <% } %>
     </a>
 </li>
 </script>
