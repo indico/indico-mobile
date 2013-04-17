@@ -7,7 +7,7 @@ $('#eventHome').live('pageinit', function(){
     var ongoingContributionsView = new SimpleEventsAndContributions({
         collection: new Events(),
         url: BASE_URL + 'ongoingContributions/',
-        agendaUrl: BASE_URL + 'agenda/ongoingContributions/',
+        favoritesUrl: BASE_URL + 'favorites/ongoingContributions/',
         container: '#contribList',
         template_name: '#contributionHappening',
         template_name2: '#eventList',

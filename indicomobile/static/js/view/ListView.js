@@ -10,10 +10,10 @@ var ListView = Backbone.View.extend({
     initialize: function() {
         this.template_file = getHTMLTemplate('lists.html');
         this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
-        this.agendaCollection = new Backbone.Collection();
-        if (this.options.agendaUrl !== undefined){
-            this.agendaCollection.url = this.options.agendaUrl;
-            this.agendaCollection.fetch();
+        this.favoritesCollection = new Backbone.Collection();
+        if (this.options.favoritesUrl !== undefined){
+            this.favoritesCollection.url = this.options.favoritesUrl;
+            this.favoritesCollection.fetch();
         }
         this.collection.url = this.options.url;
         this.collection.on('hasChanged', this.appendRender, this);
@@ -36,8 +36,8 @@ var ListView = Backbone.View.extend({
     renderItems: function(collection, template, listView){
         var self = this;
         collection.each(function(element){
-            if (self.options.agenda){
-                element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
+            if (self.options.favorites){
+                element.set('conferenceId', 'favorites_'+element.get('conferenceId'));
             }
             listView.append(template(element.toJSON()));
         });
@@ -98,14 +98,14 @@ var SessionsList = ListView.extend({
         lastTitle = null;
 
         collection.each(function(element){
-            element.set('inAgenda', self.options.agenda);
+            element.set('inFavorites', self.options.favorites);
             if (lastTitle === null || lastTitle != element.get('title')){
                 lastTitle = element.get('title');
-                var isInAgenda = self.agendaCollection.find(function(session){
+                var isInFavorites = self.favoritesCollection.find(function(session){
                     return session.get('sessionId') == element.get('sessionId');
                 });
                 var listItem = template(element.toJSON());
-                if (isInAgenda){
+                if (isInFavorites){
                     listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
                 }
                 listView.append(listItem);
@@ -138,8 +138,8 @@ var SessionDaysList = ListView.extend({
         collection.each(function(element){
             if (lastDate === null || lastDate != element.get('startDate').date){
                 lastDate = element.get('startDate').date;
-                if (self.options.agenda){
-                    element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
+                if (self.options.favorites){
+                    element.set('conferenceId', 'favorites_'+element.get('conferenceId'));
                 }
                 listView.append(template(element.toJSON()));
             }
@@ -156,7 +156,7 @@ var ListByMonthView = ListView.extend({
         var lastDate = null,
         self = this;
         collection.each(function(element){
-            element.set('inAgenda', self.options.agenda);
+            element.set('inFavorites', self.options.favorites);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
             if (lastDate === null || lastDate != month){
@@ -164,10 +164,10 @@ var ListByMonthView = ListView.extend({
                 listView.append('<li data-role="list-divider">'+month+'</li>');
             }
             var listItem = template(element.toJSON());
-            var isInAgenda = self.agendaCollection.find(function(event){
+            var isInFavorites = self.favoritesCollection.find(function(event){
                 return event.get('id') == element.get('id');
             });
-            if (isInAgenda){
+            if (isInFavorites){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
             }
             listView.append(listItem);
@@ -202,7 +202,7 @@ var SimpleEventsAndContributions = ListView.extend({
         self = this;
 
         collection.each(function(element){
-            element.set('inAgenda', self.options.agenda);
+            element.set('inFavorites', self.options.favorites);
             var day = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).day +
                 ', ' + filterDate(element.get('startDate').date).year;
@@ -215,7 +215,7 @@ var SimpleEventsAndContributions = ListView.extend({
                 lastTime = element.get('startDate').time;
                 listView.append('<li data-role="list-divider">'+hourToText(element.get('startDate').time)+'</li>');
             }
-            var isInAgenda = self.agendaCollection.find(function(contrib){
+            var isInFavorites = self.favoritesCollection.find(function(contrib){
                 if (contrib.get('contributionId') !== undefined){
                     return contrib.get('contributionId') == element.get('contributionId') &&
                     contrib.get('conferenceId') == element.get('conferenceId');
@@ -231,7 +231,7 @@ var SimpleEventsAndContributions = ListView.extend({
             else{
                 listItem = self.template2(element.toJSON());
             }
-            if (isInAgenda){
+            if (isInFavorites){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
             }
             listView.append(listItem);
@@ -270,7 +270,7 @@ var ContributionListView = ListView.extend({
         self = this;
 
         collection.each(function(element){
-            element.set('inAgenda', self.options.agenda);
+            element.set('inFavorites', self.options.favorites);
             if (lastTime === null || lastTime != element.get('startDate').time){
                 lastTime = element.get('startDate').time;
                 listView.append('<li data-role="list-divider">'+hourToText(lastTime)+'</li>');
@@ -279,19 +279,19 @@ var ContributionListView = ListView.extend({
                 if (lastPosterTime === null || lastPosterTime != element.get('startDate').time){
                     lastPosterTime = element.get('startDate').time;
                     var template2 = _.template($(self.template_file).siblings('#poster').html());
-                    if (self.options.agenda){
-                        element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
+                    if (self.options.favorites){
+                        element.set('conferenceId', 'favorites_'+element.get('conferenceId'));
                     }
                     listItem = template2(element.toJSON());
                     listView.append(listItem);
                 }
             }
             else{
-                var isInAgenda = self.agendaCollection.find(function(contrib){
+                var isInFavorites = self.favoritesCollection.find(function(contrib){
                     return contrib.get('contributionId') == element.get('contributionId');
                 });
                 listItem = template(element.toJSON());
-                if (isInAgenda){
+                if (isInFavorites){
                     listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
                 }
                 listView.append(listItem);
@@ -352,8 +352,8 @@ var SpeakerListView = InfiniteListView.extend({
                 self.options.lastIndex = element.get('name')[0];
                 listView.append('<li data-role="list-divider">'+element.get('name')[0]+'</li>');
             }
-            if (self.options.agenda){
-                element.set('conferenceId', 'agenda_'+element.get('conferenceId'));
+            if (self.options.favorites){
+                element.set('conferenceId', 'favorites_'+element.get('conferenceId'));
             }
             listView.append(template(element.toJSON()));
         });
@@ -369,7 +369,7 @@ var SpeakerListView = InfiniteListView.extend({
             }
         }
         $(this.options.container).parent().find('.emptyMessage').hide();
-        if (collection.size() < 20 || this.options.agenda){
+        if (collection.size() < 20 || this.options.favorites){
             $(this.options.container).parent().find('.loader').hide();
         }
         return this;
@@ -381,7 +381,7 @@ var SpeakerListView = InfiniteListView.extend({
                 $(this.options.container).append('<h4 class="emptyMessage">An error has occured retrieving the list</h4>');
             }
             else{
-                if (this.options.agenda){
+                if (this.options.favorites){
                     $(this.el).attr('data-filter', true);
                 }
                 this.renderItems(this.collection, this.template, this.options.term);
@@ -405,18 +405,18 @@ var SearchResultsView = SpeakerListView.extend({
         listView = $(this.el);
         container.data('view', this);
         collection.each(function(element){
-            element.set('inAgenda', false);
+            element.set('inFavorites', false);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
             if (lastDate === '' || lastDate != month){
                 lastDate = month;
                 listView.append('<li data-role="list-divider">'+month+'</li>');
             }
-            var isInAgenda = self.agendaCollection.find(function(event){
+            var isInFavorites = self.favoritesCollection.find(function(event){
                 return event.get('id') == element.get('id');
             });
             listItem = template(element.toJSON());
-            if (isInAgenda){
+            if (isInFavorites){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"','"b"');
             }
             listView.append(listItem);
@@ -459,17 +459,17 @@ var HistoryListView = ListView.extend({
         var self = this,
         lastTime = null;
         collection.each(function(element){
-            element.set('inAgenda', false);
+            element.set('inFavorites', false);
             if (lastTime === null || lastTime != element.get('viewed_at')){
                 lastTime = element.get('viewed_at');
                 var date = new Date(lastTime);
                 listView.append('<li data-role="list-divider">'+lastTime.date+', '+lastTime.time+'</li>');
             }
-            var isInAgenda = self.agendaCollection.find(function(event){
+            var isInFavorites = self.favoritesCollection.find(function(event){
                 return event.get('id') == element.get('id');
             });
             var listItem = template(element.toJSON());
-            if (isInAgenda){
+            if (isInFavorites){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"','"b"');
             }
             listView.append(listItem);
@@ -508,7 +508,7 @@ var NextEventView = ListView.extend({
         if(this.model.get('type') === undefined){
             this.model.set('type', null);
         }
-        listView.append('<li data-role="list-divider">Next event in your agenda</li>');
+        listView.append('<li data-role="list-divider">Next event in your favorites</li>');
         listView.append(this.template(this.model.toJSON()));
         container.append(listView);
 

@@ -53,7 +53,7 @@ you can use the generic selector below, but it's slower:
 .icon-info:before {
     content: "\e005";
 }
-.icon-favourites:before {
+.icon-favorites:before {
     content: "\e006";
 }
 .icon-sessions:before {

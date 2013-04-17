@@ -97,22 +97,22 @@ def get_event_speakers(event_id, pageNumber, offset):
 
 # AGENDA
 
-def get_agenda_event(user_id, event_id):
-    return db.AgendaEvent.find_one({'user_id': user_id, 'event.id': event_id})
+def get_favorites_event(user_id, event_id):
+    return db.FavoritesEvent.find_one({'user_id': user_id, 'event.id': event_id})
 
-def get_agenda_events(user_id):
-    return db.AgendaEvent.find({'user_id': user_id})
+def get_favorites_events(user_id):
+    return db.FavoritesEvent.find({'user_id': user_id})
 
-def add_event_to_agenda(user_id, event):
-    agenda_event = db.AgendaEvent()
-    agenda_event.update({'user_id': user_id, 'event': event})
-    agenda_event.save()
+def add_event_to_favorites(user_id, event):
+    favorites_event = db.FavoritesEvent()
+    favorites_event.update({'user_id': user_id, 'event': event})
+    favorites_event.save()
 
-def remove_full_event_from_agenda(user_id, event_id):
-    db.AgendaEvent.cleanup(user_id, event_id)
+def remove_full_event_from_favorites(user_id, event_id):
+    db.FavoritesEvent.cleanup(user_id, event_id)
 
-def remove_event_from_agenda(user_id, event_id):
-    db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
+def remove_event_from_favorites(user_id, event_id):
+    db.favorites_events.remove({'user_id': user_id, 'event.id': event_id})
 
 # HISTORY DB LOGIC
 def get_history(user_id, order = 1):

@@ -8,13 +8,13 @@ from indicomobile.util.json import patch_json
 def setup_blueprints(app):
     from indicomobile.views.routing import routing
     from indicomobile.views.events import events
-    from indicomobile.views.agenda import agenda
+    from indicomobile.views.favorites import favorites
     from indicomobile.views.authentication import oauth_client
     from indicomobile.views.maps import maps
 
     app.register_blueprint(routing)
     app.register_blueprint(events)
-    app.register_blueprint(agenda)
+    app.register_blueprint(favorites)
     app.register_blueprint(oauth_client)
     app.register_blueprint(maps)
 

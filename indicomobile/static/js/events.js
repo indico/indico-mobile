@@ -5,7 +5,7 @@ $('#eventHome').live('pageinit', function(){
     var futureEventsView = new ListByMonthView({
         collection: new Events(),
         url: BASE_URL + 'futureEvents/',
-        agendaUrl: BASE_URL + 'agenda/futureEvents/',
+        favoritesUrl: BASE_URL + 'favorites/futureEvents/',
         container: '#futureEventList',
         template_name: '#eventList',
         empty_message: 'No future events found.'
@@ -13,7 +13,7 @@ $('#eventHome').live('pageinit', function(){
     var ongoingEventsView = new ListByMonthView({
         collection: new Events(),
         url: BASE_URL + 'ongoingEvents/',
-        agendaUrl: BASE_URL + 'agenda/ongoingEvents/',
+        favoritesUrl: BASE_URL + 'favorites/ongoingEvents/',
         container: '#ongoingEventList',
         template_name: '#eventList',
         empty_message: 'No ongoing events found.'

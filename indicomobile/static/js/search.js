@@ -2,7 +2,7 @@ function searchInDB(term){
     var resultEventsView = new SearchResultsView({
         collection: new Events(),
         url: BASE_URL + 'searchEvent/'+term+'/',
-        agendaUrl: BASE_URL + 'agenda/searchEvent/'+term+'/',
+        favoritesUrl: BASE_URL + 'favorites/searchEvent/'+term+'/',
         container : '#searchResults',
         template_name: '#eventList',
         template_name2: '#simpleEventList',

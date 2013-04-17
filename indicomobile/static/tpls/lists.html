@@ -1,12 +1,12 @@
 <script type="text/template" id="contribution">
 <li>
-    <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
+    <a href="#contribution_<%if (inFavorites) {print('favorites_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
     <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
     <%= title %></a>
     <a href="" id="addRemoveContribution"
-    <%  if (inAgenda){ %>
+    <%  if (inFavorites){ %>
         action="remove" data-icon="delete"
     <% } else{ %>
     action="add" data-icon="star"
@@ -17,7 +17,7 @@
 
 <script type="text/template" id="contributionHappening">
 <li>
-    <a href="#contribution_<%if (inAgenda) {print('agenda_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
+    <a href="#contribution_<%if (inFavorites) {print('favorites_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
     <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
@@ -27,7 +27,7 @@
     <%= title %>
     </a>
     <a href="" id="addRemoveContribution"
-    <%  if (inAgenda){ %>
+    <%  if (inFavorites){ %>
         action="remove" data-icon="delete"
     <% } else{ %>
     action="add" data-icon="star"
@@ -38,8 +38,8 @@
 
 <script type="text/template" id="eventList">
 <li>
-    <% if (inAgenda){ %>
-        <a href="#event_agenda_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% if (inFavorites){ %>
+        <a href="#event_favorites_<%=id%>" rel="external" style="padding-right: 45px;">
     <% } else { %>
         <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
     <% } %>
@@ -48,7 +48,7 @@
     <% } %>
     <%=title%>
     </a>
-    <% if (inAgenda){ %>
+    <% if (inFavorites){ %>
         <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
     <% }  else{ %>
         <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
@@ -56,7 +56,7 @@
 </li>
 </script>
 
-<script type="text/template" id="eventListInAgenda">
+<script type="text/template" id="eventListInFavorites">
 <li>
     <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;"><%= title %></a>
     <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
@@ -67,9 +67,9 @@
 <li>
 
     <% if (type == 'simple_event') { %>
-        <a href="#event_agenda_<%=id%>" rel="external">
+        <a href="#event_favorites_<%=id%>" rel="external">
     <% } else if (contributionId != null){ %>
-        <a href="#contribution_agenda_<%=conferenceId%>_<%=contributionId%>" rel="external">
+        <a href="#contribution_favorites_<%=conferenceId%>_<%=contributionId%>" rel="external">
     <% } %>
         <h3><%=title%></h3>
         <p>
@@ -111,13 +111,13 @@
 
 <script type="text/template" id="sessionsList">
 <li>
-<% if (inAgenda){ %>
-    <a href="#session_agenda_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
+<% if (inFavorites){ %>
+    <a href="#session_favorites_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
 <% } else{ %>
     <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
 <% } %>
     <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-<% if (inAgenda){ %>
+<% if (inFavorites){ %>
     <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="c"></a>
 <% } else{ %>
     <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c"></a>
@@ -125,7 +125,7 @@
 </li>
 </script>
 
-<script type="text/template" id="sessionsListInAgenda">
+<script type="text/template" id="sessionsListInFavorites">
 <li>
     <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
         <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
@@ -135,13 +135,13 @@
 
 <script type="text/template" id="simpleEventList">
 <li>
-    <% if (inAgenda){ %>
-        <a href="#simpleEvent_agenda_<%=id%>" rel="external" style="padding-right: 45px;">
+    <% if (inFavorites){ %>
+        <a href="#simpleEvent_favorites_<%=id%>" rel="external" style="padding-right: 45px;">
     <% } else{ %>
         <a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">
     <% } %>
     <%=title%></a>
-    <% if (inAgenda){ %>
+    <% if (inFavorites){ %>
         <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
     <% } else{ %>
         <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
@@ -149,7 +149,7 @@
 </li>
 </script>
 
-<script type="text/template" id="simpleEventListInAgenda">
+<script type="text/template" id="simpleEventListInFavorites">
 <li>
     <a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">
         <%=title%>

@@ -162,8 +162,8 @@ class Day(Document):
 
 
 
-class AgendaContribution(Document):
-    __collection__ = 'agenda_contributions'
+class FavoritesContribution(Document):
+    __collection__ = 'favorites_contributions'
     structure = {
         'user_id': unicode,
         'contribution': Contribution
@@ -171,8 +171,8 @@ class AgendaContribution(Document):
 
 
 
-class AgendaSessionSlot(Document):
-    __collection__ = 'agenda_session_slots'
+class FavoritesSessionSlot(Document):
+    __collection__ = 'favorites_session_slots'
     structure = {
         'user_id': unicode,
         'session_slot': SessionSlot
@@ -180,17 +180,17 @@ class AgendaSessionSlot(Document):
 
 
 
-class AgendaEvent(Document):
-    __collection__ = 'agenda_events'
+class FavoritesEvent(Document):
+    __collection__ = 'favorites_events'
     structure = {
         'user_id': unicode,
         'event': Event
     }
 
     def cleanup(self, user_id, event_id):
-        db.agenda_events.remove({'user_id': user_id, 'event.id': event_id})
-        db.agenda_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
-        db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
+        db.favorites_events.remove({'user_id': user_id, 'event.id': event_id})
+        db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
+        db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
 
 
 class HistoryEvent(Document):
@@ -214,5 +214,5 @@ class CachedLatestEvent(Document):
 
 
 db.register([Presenter, Resource, Material, Chair, Event, Contribution,
-            SessionSlot, Day, AgendaContribution, AgendaSessionSlot,
-            AgendaEvent, HistoryEvent, CachedLatestEvent])
+            SessionSlot, Day, FavoritesContribution, FavoritesSessionSlot,
+            FavoritesEvent, HistoryEvent, CachedLatestEvent])

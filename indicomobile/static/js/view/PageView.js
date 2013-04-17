@@ -38,12 +38,12 @@ var PageView = Backbone.View.extend({
             if (typeof this.options.event_id !== 'undefined'){
                 model.set('conferenceId', this.options.event_id);
             }
-            if(this.options.agenda){
+            if(this.options.favorites){
                 if (model.get('conferenceId') === undefined){
-                    model.set('id', 'agenda_'+model.get('id'));
+                    model.set('id', 'favorites_'+model.get('id'));
                 }
                 else{
-                    model.set('conferenceId', 'agenda_'+model.get('conferenceId'));
+                    model.set('conferenceId', 'favorites_'+model.get('conferenceId'));
                 }
             }
             if (model.get('type') == 'simple_event'){
@@ -123,8 +123,8 @@ var ContributionsPageView = PageView.extend({
                     }
                 }
             }
-            if (this.options.agenda){
-                thisDay.set('conferenceId', 'agenda_'+thisDay.get('conferenceId'));
+            if (this.options.favorites){
+                thisDay.set('conferenceId', 'favorites_'+thisDay.get('conferenceId'));
             }
             thisDay.set('prevDay', prevDay);
             thisDay.set('nextDay', nextDay);
@@ -147,22 +147,22 @@ var ContributionsPageView = PageView.extend({
         if (e.keyCode == 13){
             e.preventDefault();
             var splittedId = $(e.currentTarget).attr('id').split('_');
-            var url, container, sessionDay, agenda, user_id;
+            var url, container, sessionDay, favorites, user_id;
             var term = $(e.currentTarget).val();
             if (splittedId.length > 4){
                 user_id = getUserId();
-                agenda = true;
-                container = '#sessionDay_list_agenda_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
+                favorites = true;
+                container = '#sessionDay_list_favorites_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
                 sessionDay = true;
-                url = BASE_URL + 'agenda/searchContrib/event/'+splittedId[2]+
+                url = BASE_URL + 'favorites/searchContrib/event/'+splittedId[2]+
                 '/session/'+splittedId[3]+
                 '/day/'+splittedId[4]+
                 '/search/'+term+'/';
             }
-            else if (splittedId.length > 3 && splittedId[1] != 'agenda'){
+            else if (splittedId.length > 3 && splittedId[1] != 'favorites'){
                 container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
                 sessionDay = true;
-                agenda = false;
+                favorites = false;
                 url = BASE_URL + 'searchContrib/event/'+splittedId[1]+
                 '/session/'+splittedId[2]+
                 '/day/'+splittedId[3]+
@@ -170,15 +170,15 @@ var ContributionsPageView = PageView.extend({
             }
             else if (splittedId.length > 3){
                 user_id = getUserId();
-                agenda = true;
-                container = '#day_list_agenda_' + splittedId[2] + '_' + splittedId[3];
-                url = BASE_URL + 'agenda/searchContrib/event/'+splittedId[2]+
+                favorites = true;
+                container = '#day_list_favorites_' + splittedId[2] + '_' + splittedId[3];
+                url = BASE_URL + 'favorites/searchContrib/event/'+splittedId[2]+
                 '/day/'+splittedId[3]+
                 '/search/'+term+'/';
                 sessionDay = false;
             }
             else{
-                agenda = false;
+                favorites = false;
                 container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
                 url = BASE_URL + 'searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
                 sessionDay = false;
@@ -194,7 +194,7 @@ var ContributionsPageView = PageView.extend({
                 template_name: '#contribution',
                 sessionDay: sessionDay,
                 term: term,
-                agenda: agenda,
+                favorites: favorites,
                 empty_message: 'No contributions found.'
             });
         }

@@ -22,7 +22,7 @@
             <% } %>
         <% } %>
         <% if (url != ''){ %>
-            <h3>Indico Webpage</h3>
+            <h3>Indico Desktop</h3>
             <p><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" href="<%=url%>" target="_blank"><%=title%></a></p>
         <% } %>
     </div>
@@ -409,7 +409,7 @@
     </div>
     <div data-role="content">
 
-    <% if (!id.match('^agenda_')){ %>
+    <% if (!id.match('^favorites_')){ %>
         <input type="text" data-type="search" id="searchSpeaker_<%=id%>">
     <% } %>
 

@@ -103,19 +103,19 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
 
 # AGENDA
 
-def get_agenda_contribution(user_id, event_id, contrib_id):
-    return db.AgendaContribution.find_one({'user_id': user_id,
+def get_favorites_contribution(user_id, event_id, contrib_id):
+    return db.FavoritesContribution.find_one({'user_id': user_id,
                                                 'contribution.contributionId': contrib_id,
                                                 'contribution.conferenceId': event_id})
 
-def get_agenda_contributions(user_id, distinct = False):
+def get_favorites_contributions(user_id, distinct = False):
     if distinct:
-        return db.AgendaContribution.find({'user_id': user_id}).distinct('contribution.conferenceId')
-    return db.AgendaContribution.find({'user_id': user_id})
+        return db.FavoritesContribution.find({'user_id': user_id}).distinct('contribution.conferenceId')
+    return db.FavoritesContribution.find({'user_id': user_id})
 
 
-def get_agenda_event_contributions(user_id, event_id, include_slots = False):
-    contributions = db.AgendaContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id})
+def get_favorites_event_contributions(user_id, event_id, include_slots = False):
+    contributions = db.FavoritesContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id})
     results = []
     for contribution in contributions:
         if include_slots and contribution['slot']:
@@ -124,17 +124,17 @@ def get_agenda_event_contributions(user_id, event_id, include_slots = False):
     return results
 
 
-def get_num_agenda_event_contributions(user_id, event_id):
-    return db.AgendaContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id}).count()
+def get_num_favorites_event_contributions(user_id, event_id):
+    return db.FavoritesContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id}).count()
 
-def add_contribution_to_agenda(user_id, contribution):
-    new_contribution = db.AgendaContribution()
+def add_contribution_to_favorites(user_id, contribution):
+    new_contribution = db.FavoritesContribution()
     new_contribution.update({'user_id': user_id, 'contribution': contribution})
     new_contribution.save()
 
-def remove_contribution_from_agenda(user_id, event_id, contrib_id):
-    db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'contribution.sessionId': contrib_id})
+def remove_contribution_from_favorites(user_id, event_id, contrib_id):
+    db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'contribution.sessionId': contrib_id})
 
 
-def remove_event_contributions_from_agenda(user_id, event_id):
-    db.agenda_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
+def remove_event_contributions_from_favorites(user_id, event_id):
+    db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})

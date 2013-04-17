@@ -10,11 +10,11 @@ def index():
     return render_template('index.html')
 
 
-@routing.route('/agenda/')
-def agenda():
+@routing.route('/favorites/')
+def favorites():
     if not flask_session.get('indico_user', None):
         abort(401)
-    return render_template('agenda.html')
+    return render_template('favorites.html')
 
 
 @routing.route('/history/')

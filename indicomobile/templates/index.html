@@ -33,29 +33,29 @@
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
                     <a data-role="button" href="{{url_for('routing.now')}}" " rel="external" class="button-icon icon-happening" aria-hidden="true"></a>
-                    <p style="text-align: center;">Currently happening</p>
+                    <p class="buttonTitle">Currently happening</p>
                 </div>
                 <div class="ui-block-b">
                     <a data-role="button" href="{{url_for('routing.events')}}" rel="external" class="button-icon icon-calendar" aria-hidden="true"></a>
-                    <p style="text-align: center;">Events</p>
+                    <p class="buttonTitle">Events</p>
                 </div>
                 {% if session['indico_user'] %}
                 <div class="ui-block-a">
-                    <a data-role="button" href="{{url_for('routing.agenda')}}" rel="external" class="button-icon icon-favourites" aria-hidden="true"></a>
-                    <p style="text-align: center;">Agenda</p>
+                    <a data-role="button" href="{{url_for('routing.favorites')}}" rel="external" class="button-icon icon-favorites" aria-hidden="true"></a>
+                    <p class="buttonTitle">Favorites</p>
                 </div>
                 <div class="ui-block-b">
                     <a data-role="button" href="{{url_for('routing.history')}}" rel="external" class="button-icon icon-history" aria-hidden="true"></a>
-                    <p style="text-align: center;">History</p>
+                    <p class="buttonTitle">History</p>
                 </div>
                 {% else %}
                 <div class="ui-block-a">
-                    <div data-role="button" style="opacity: 0.4;" class="button-icon icon-favourites" aria-hidden="true"></div>
-                    <p style="text-align: center; opacity: 0.4;">Agenda</p>
+                    <div data-role="button" style="opacity: 0.4;" class="button-icon icon-favorites" aria-hidden="true"></div>
+                    <p  class="buttonTitle" style="opacity: 0.4;">Favorites</p>
                 </div>
                 <div class="ui-block-b">
                     <div data-role="button" style="opacity: 0.4;" class="button-icon icon-history" aria-hidden="true"></div>
-                    <p style="text-align: center; opacity: 0.4;">History</p>
+                    <p class="buttonTitle" style="opacity: 0.4;">History</p>
                 </div>
                 {% endif %}
             </div>

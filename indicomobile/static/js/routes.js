@@ -17,13 +17,13 @@ var Router = Backbone.Router.extend({
     getEventView: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, agenda;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, favorites;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
         }
 
@@ -35,7 +35,7 @@ var Router = Backbone.Router.extend({
                 link: 'event_' + info,
                 template_name: '#eventPage',
                 template_name2: '#simpleEventPage',
-                agenda: agenda
+                favorites: favorites
             });
 
     },
@@ -43,13 +43,13 @@ var Router = Backbone.Router.extend({
     getSimpleEventView: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, agenda;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, favorites;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
         }
 
@@ -60,7 +60,7 @@ var Router = Backbone.Router.extend({
                 url: BASE_URL + "event/" + eventId + '/',
                 link: 'event_' + info,
                 template_name: '#simpleEventPage',
-                agenda: agenda
+                favorites: favorites
             });
 
     },
@@ -68,17 +68,17 @@ var Router = Backbone.Router.extend({
     getSessionsView: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, agenda, url, agendaUrl;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, favorites, url, favoritesUrl;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
-            url = BASE_URL + 'agenda/event/' + eventId + '/allsessions/';
+            url = BASE_URL + 'favorites/event/' + eventId + '/allsessions/';
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             url = BASE_URL + 'event/' + eventId + '/sessions/';
-            agendaUrl = BASE_URL + 'agenda/event/' + eventId + '/sessions/';
+            favoritesUrl = BASE_URL + 'favorites/event/' + eventId + '/sessions/';
         }
 
         if ($('#sessions_' + info).length === 0){
@@ -90,17 +90,17 @@ var Router = Backbone.Router.extend({
                 link: 'sessions_' + info,
                 template_name: '#sessionsPage',
                 selectedTab: '#sessionsTab',
-                agenda: agenda
+                favorites: favorites
             });
 
             var sessionsListView = new SessionsList({
                 collection: new Slots(),
                 url: url,
-                agendaUrl: agendaUrl,
+                favoritesUrl: favoritesUrl,
                 container: '#sessionsList_' + info,
                 template_name: '#sessionsList',
                 empty_message: 'No sessions in this event.',
-                agenda: agenda
+                favorites: favorites
             });
 
         }
@@ -113,15 +113,15 @@ var Router = Backbone.Router.extend({
     getSessionView: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, sessionId, agenda, url;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, sessionId, favorites, url;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
-            url = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
             url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
@@ -136,7 +136,7 @@ var Router = Backbone.Router.extend({
                 link: 'session_' + info,
                 template_name: '#sessionPage',
                 selectedTab: null,
-                agenda: agenda
+                favorites: favorites
             });
 
             var sessionDaysView = new SessionDaysList({
@@ -145,7 +145,7 @@ var Router = Backbone.Router.extend({
                 container: '#sessionDays_' + info,
                 template_name: '#sessionDaysList',
                 empty_message: 'There is nothing in this session.',
-                agenda: agenda
+                favorites: favorites
             });
 
         }
@@ -158,23 +158,23 @@ var Router = Backbone.Router.extend({
     getSessionDay: function(info){
 
         var infoSplitted = info.split('_');
-        var eventId, sessionId, agenda, url, url1, day, agendaUrl;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, sessionId, favorites, url, url1, day, favoritesUrl;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
             day = infoSplitted[3];
-            url = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/day/' +
+            url = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/day/' +
                 day + '/contribs/';
-            url1 = BASE_URL + 'agenda/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url1 = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
             day = infoSplitted[2];
             url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
-            agendaUrl = '/agenda/event/' + eventId + '/session/' +
+            favoritesUrl = '/favorites/event/' + eventId + '/session/' +
                             sessionId + '/day/' + day + '/contribs/';
             url1 = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
         }
@@ -188,18 +188,18 @@ var Router = Backbone.Router.extend({
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
                 selectedTab: null,
-                agenda: agenda
+                favorites: favorites
             });
 
             var contributionsView = new ContributionListView({
                 collection: new Contributions(),
                 url: url,
-                agendaUrl: agendaUrl,
+                favoritesUrl: favoritesUrl,
                 container: '#sessionDay_list_' + info,
                 template_name: '#contribution',
                 sessionDay: true,
                 empty_message: 'There is nothing in this day.',
-                agenda: agenda
+                favorites: favorites
             });
 
         }
@@ -212,14 +212,14 @@ var Router = Backbone.Router.extend({
 
     getTimetableView: function(info){
         var infoSplitted = info.split('_');
-        var eventId, agenda;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var eventId, favorites;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
-            url = BASE_URL + 'agenda/event/' + eventId + '/days/';
+            url = BASE_URL + 'favorites/event/' + eventId + '/days/';
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             url = BASE_URL + 'event/' + eventId + '/days/';
         }
@@ -232,7 +232,7 @@ var Router = Backbone.Router.extend({
                 template_name: '#timetableDays',
                 link: 'timetable_' + info,
                 selectedTab: '#timetableTab',
-                agenda: agenda
+                favorites: favorites
             });
 
             var timetableDaysListView = new ListView({
@@ -241,7 +241,7 @@ var Router = Backbone.Router.extend({
                 container: '#timetable_days_' + info,
                 template_name: '#timetableDaysList',
                 empty_message: 'No contributions in this event.',
-                agenda: agenda
+                favorites: favorites
             });
 
         }
@@ -254,20 +254,20 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var agenda, eventId, day, url, url1, agendaUrl;
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        var favorites, eventId, day, url, url1, favoritesUrl;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
             day = infoSplitted[2];
-            url = BASE_URL + 'agenda/event/'+eventId+'/day/'+day+'/contributions/';
-            url1 = BASE_URL + 'agenda/event/' + eventId + '/days/';
+            url = BASE_URL + 'favorites/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = BASE_URL + 'favorites/event/' + eventId + '/days/';
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             day = infoSplitted[1];
             url = BASE_URL + 'event/'+eventId+'/day/'+day+'/contributions/';
-            agendaUrl = BASE_URL + 'agenda/event/'+eventId+'/day/'+day+'/contributions/';
+            favoritesUrl = BASE_URL + 'favorites/event/'+eventId+'/day/'+day+'/contributions/';
             url1 = BASE_URL + 'event/' + eventId + '/days/';
         }
 
@@ -280,18 +280,18 @@ var Router = Backbone.Router.extend({
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,
                 selectedTab: null,
-                agenda: agenda
+                favorites: favorites
             });
 
             var timetableDayContributionsView = new ContributionListView({
                 container: '#day_list_' + info,
                 collection: new Contributions(),
                 url: url,
-                agendaUrl: agendaUrl,
+                favoritesUrl: favoritesUrl,
                 template_name: '#contribution',
                 sessionDay: false,
                 empty_message: 'There is nothing in this day.',
-                agenda: agenda
+                favorites: favorites
             });
         }
         else {
@@ -307,14 +307,14 @@ var Router = Backbone.Router.extend({
 
         if ($('#speakers_' + info).length === 0){
 
-            var eventId, agenda;
-            if (infoSplitted[0] == 'agenda'){
-                agenda = true;
+            var eventId, favorites;
+            if (infoSplitted[0] == 'favorites'){
+                favorites = true;
                 eventId = infoSplitted[1];
-                url = BASE_URL + 'agenda/event/' + eventId + '/speakers/';
+                url = BASE_URL + 'favorites/event/' + eventId + '/speakers/';
             }
             else{
-                agenda = false;
+                favorites = false;
                 eventId = infoSplitted[0];
                 url = BASE_URL + 'event/' + eventId + '/speakers/';
             }
@@ -325,7 +325,7 @@ var Router = Backbone.Router.extend({
                 template_name: '#speakersPage',
                 link: 'speakers_' + info,
                 selectedTab: '#speakersTab',
-                agenda: agenda
+                favorites: favorites
             });
 
             var speakersListView = new SpeakerListView({
@@ -334,7 +334,7 @@ var Router = Backbone.Router.extend({
                 container: '#speakersContent_' + info,
                 lastIndex: null,
                 template_name: '#speakersList',
-                agenda: agenda
+                favorites: favorites
             });
         }
         else{
@@ -348,42 +348,42 @@ var Router = Backbone.Router.extend({
 
         if ($('div[id="speaker_' + info +'"]').length === 0){
 
-            var eventId, speakerId, agenda, url, agendaUrl;
+            var eventId, speakerId, favorites, url, favoritesUrl;
 
-            if (infoSplitted[0] == 'agenda'){
-                agenda = true;
+            if (infoSplitted[0] == 'favorites'){
+                favorites = true;
                 eventId = infoSplitted[1];
                 speakerId = infoSplitted[2].replace(':','_');
-                url = BASE_URL + "agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                url = BASE_URL + "favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
             else{
-                agenda = false;
+                favorites = false;
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
                 url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
-                agendaUrl = BASE_URL + "agenda/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                favoritesUrl = BASE_URL + "favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
                 url: BASE_URL + "event/" + eventId + "/speaker/" + speakerId + '/',
-                agendaUrl: BASE_URL + "agenda/event/" + eventId + "/speaker/" +
+                favoritesUrl: BASE_URL + "favorites/event/" + eventId + "/speaker/" +
                     speakerId + "/contributions/",
                 event_id: eventId,
                 template_name: '#speakerPage',
                 link: 'speaker_' + info,
                 selectedTab: null,
-                agenda: agenda
+                favorites: favorites
             });
 
             var speakerContributionsView = new SimpleEventsAndContributions({
                 container: 'div[id="speaker_contribs_' + info +'"]',
                 collection: new Contributions(),
                 url: url,
-                agendaUrl: agendaUrl,
+                favoritesUrl: favoritesUrl,
                 template_name: '#contribution',
                 empty_message: 'This speaker is in no contribution.',
-                agenda: agenda
+                favorites: favorites
             });
         }
         else{
@@ -395,15 +395,15 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var eventId, contributionId, agenda;
+        var eventId, contributionId, favorites;
 
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = infoSplitted[1];
             contributionId = infoSplitted[2];
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = infoSplitted[0];
             contributionId = infoSplitted[1];
         }
@@ -418,7 +418,7 @@ var Router = Backbone.Router.extend({
                 template_name: '#contributionDetail',
                 link: 'contribution_' + info,
                 selectedTab: '#any',
-                agenda: agenda
+                favorites: favorites
             });
 
         }
@@ -432,14 +432,14 @@ var Router = Backbone.Router.extend({
 
         var infoSplitted = info.split('_');
 
-        var eventId, agenda;
+        var eventId, favorites;
 
-        if (infoSplitted[0] == 'agenda'){
-            agenda = true;
+        if (infoSplitted[0] == 'favorites'){
+            favorites = true;
             eventId = info.split('_')[1];
         }
         else{
-            agenda = false;
+            favorites = false;
             eventId = info.split('_')[0];
         }
 
@@ -451,7 +451,7 @@ var Router = Backbone.Router.extend({
                 template_name: '#about',
                 link: 'about_' + info,
                 selectedTab: '#aboutTab',
-                agenda: agenda
+                favorites: favorites
             });
         }
         else{

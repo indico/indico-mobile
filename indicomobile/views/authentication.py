@@ -78,5 +78,5 @@ def oauth_authorized(resp):
     session['unauthorized'] = False
     session['indico_user'] = resp['user_id']
     user_info = get_user_info(resp['user_id'])
-    session['indico_user_name'] = user_info.get('title') + ' ' + user_info.get('familyName')
+    session['indico_user_name'] = "%s %s %s"%(user_info.get('title'), user_info.get('firstName'), user_info.get('familyName'))
     return redirect(next_url)

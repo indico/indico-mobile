@@ -83,27 +83,27 @@ def store_slot(slot, event):
 
 # AGENDA
 
-def get_agenda_session(user_id, event_id, session_id):
-    return db.AgendaSessionSlot.find_one({'user_id': user_id,
+def get_favorites_session(user_id, event_id, session_id):
+    return db.FavoritesSessionSlot.find_one({'user_id': user_id,
                                                     'session_slot.sessionId':session_id,
                                                     'session_slot.conferenceId': event_id})
 
-def get_agenda_sessions(user_id, distinct = False):
+def get_favorites_sessions(user_id, distinct = False):
     if distinct:
-        return db.AgendaSessionSlot.find({'user_id': user_id}).distinct('session_slot.conferenceId')
-    return db.AgendaSessionSlot.find({'user_id': user_id})
+        return db.FavoritesSessionSlot.find({'user_id': user_id}).distinct('session_slot.conferenceId')
+    return db.FavoritesSessionSlot.find({'user_id': user_id})
 
 
-def get_agenda_event_sessions(user_id, event_id):
-    return db.AgendaSessionSlot.find({'user_id': user_id, 'session_slot.conferenceId': event_id})
+def get_favorites_event_sessions(user_id, event_id):
+    return db.FavoritesSessionSlot.find({'user_id': user_id, 'session_slot.conferenceId': event_id})
 
-def add_session_to_agenda(user_id, session_slot):
-    agenda_session = db.AgendaSessionSlot()
-    agenda_session.update({'user_id': user_id, 'session_slot': session_slot})
-    agenda_session.save()
+def add_session_to_favorites(user_id, session_slot):
+    favorites_session = db.FavoritesSessionSlot()
+    favorites_session.update({'user_id': user_id, 'session_slot': session_slot})
+    favorites_session.save()
 
-def remove_session_from_agenda(user_id, event_id, session_id):
-    db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id})
+def remove_session_from_favorites(user_id, event_id, session_id):
+    db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id})
 
-def remove_event_sessions_from_agenda(user_id, event_id):
-    db.agenda_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
+def remove_event_sessions_from_favorites(user_id, event_id):
+    db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})

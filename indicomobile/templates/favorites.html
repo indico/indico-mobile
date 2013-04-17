@@ -1,12 +1,12 @@
 {% extends "baseeventlist.html" %}
-{% block pagetitle %}Agenda{% endblock %}
+{% block pagetitle %}Favorites{% endblock %}
 {% block head %}
-    {% assets "agenda_js" %}
+    {% assets "favorites_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 {% endblock %}
-{% block header %}Agenda{% endblock %}
+{% block header %}Favorites{% endblock %}
 {% block content %}
-    <div data-role="content" id="agendaEventList">
+    <div data-role="content" id="favoritesEventList">
     </div>
 {% endblock %}
