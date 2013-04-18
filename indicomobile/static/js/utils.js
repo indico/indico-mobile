@@ -1,7 +1,7 @@
 function addToHistory(eventId){
     $.ajax({
         type: "POST",
-        url: BASE_URL + "addHistoryEvent/" + eventId + "/"
+        url: BASE_URL + "services/addHistoryEvent/" + eventId + "/"
     });
 }
 

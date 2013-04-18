@@ -4,7 +4,7 @@ $('#eventHome').live('pageinit', function(){
 
     var eventsView = new ListByMonthView({
         collection : new Events(),
-        url: BASE_URL + 'favorites/events/',
+        url: BASE_URL + 'services/favorites/events/',
         template_name: '#eventList',
         template_name2: '#simpleEventList',
         container : '#favoritesEventList',

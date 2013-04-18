@@ -31,7 +31,7 @@ var Router = Backbone.Router.extend({
 
         var eventView = new PageView({
                 model: new Event(),
-                url: BASE_URL + 'event/'+eventId+'/',
+                url: BASE_URL + 'services/event/'+eventId+'/',
                 link: 'event_' + info,
                 template_name: '#eventPage',
                 template_name2: '#simpleEventPage',
@@ -57,7 +57,7 @@ var Router = Backbone.Router.extend({
 
         var eventView = new PageView({
                 model: new Event(),
-                url: BASE_URL + "event/" + eventId + '/',
+                url: BASE_URL + "services/event/" + eventId + '/',
                 link: 'event_' + info,
                 template_name: '#simpleEventPage',
                 favorites: favorites
@@ -72,13 +72,13 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'favorites'){
             favorites = true;
             eventId = infoSplitted[1];
-            url = BASE_URL + 'favorites/event/' + eventId + '/allsessions/';
+            url = BASE_URL + 'services/favorites/event/' + eventId + '/allsessions/';
         }
         else{
             favorites = false;
             eventId = infoSplitted[0];
-            url = BASE_URL + 'event/' + eventId + '/sessions/';
-            favoritesUrl = BASE_URL + 'favorites/event/' + eventId + '/sessions/';
+            url = BASE_URL + 'services/event/' + eventId + '/sessions/';
+            favoritesUrl = BASE_URL + 'services/favorites/event/' + eventId + '/sessions/';
         }
 
         if ($('#sessions_' + info).length === 0){
@@ -86,7 +86,7 @@ var Router = Backbone.Router.extend({
             var pageContainer = $('body');
             var sessionsPageView = new PageView({
                 model: new Event(),
-                url: BASE_URL + "event/" + eventId + '/',
+                url: BASE_URL + "services/event/" + eventId + '/',
                 link: 'sessions_' + info,
                 template_name: '#sessionsPage',
                 selectedTab: '#sessionsTab',
@@ -118,13 +118,13 @@ var Router = Backbone.Router.extend({
             favorites = true;
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
-            url = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url = BASE_URL + 'services/favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             favorites = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
-            url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
+            url = BASE_URL + 'services/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
         if ($('#session_' + info).length === 0){
@@ -132,7 +132,7 @@ var Router = Backbone.Router.extend({
             var pageContainer = $('body');
             var sessionView = new PageView({
                 model: new Slot(),
-                url: BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/',
+                url: BASE_URL + 'services/event/' + eventId + '/session/' + sessionId + '/',
                 link: 'session_' + info,
                 template_name: '#sessionPage',
                 selectedTab: null,
@@ -164,19 +164,19 @@ var Router = Backbone.Router.extend({
             eventId = infoSplitted[1];
             sessionId = infoSplitted[2];
             day = infoSplitted[3];
-            url = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/day/' +
+            url = BASE_URL + 'services/favorites/event/' + eventId + '/session/' + sessionId + '/day/' +
                 day + '/contribs/';
-            url1 = BASE_URL + 'favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
+            url1 = BASE_URL + 'services/favorites/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
         else{
             favorites = false;
             eventId = infoSplitted[0];
             sessionId = infoSplitted[1];
             day = infoSplitted[2];
-            url = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
-            favoritesUrl = '/favorites/event/' + eventId + '/session/' +
+            url = BASE_URL + 'services/event/' + eventId + '/session/' + sessionId + '/day/' + day + '/contribs/';
+            favoritesUrl = '/services/favorites/event/' + eventId + '/session/' +
                             sessionId + '/day/' + day + '/contribs/';
-            url1 = BASE_URL + 'event/' + eventId + '/session/' + sessionId + '/entries/';
+            url1 = BASE_URL + 'services/event/' + eventId + '/session/' + sessionId + '/entries/';
         }
 
         if ($('#sessionDay_' + info).length === 0){
@@ -216,19 +216,19 @@ var Router = Backbone.Router.extend({
         if (infoSplitted[0] == 'favorites'){
             favorites = true;
             eventId = infoSplitted[1];
-            url = BASE_URL + 'favorites/event/' + eventId + '/days/';
+            url = BASE_URL + 'services/favorites/event/' + eventId + '/days/';
         }
         else{
             favorites = false;
             eventId = infoSplitted[0];
-            url = BASE_URL + 'event/' + eventId + '/days/';
+            url = BASE_URL + 'services/event/' + eventId + '/days/';
         }
 
         if ($('#timetable_' + info).length === 0){
 
             var timetableDaysView = new PageView({
                 model: new Event(),
-                url: BASE_URL + 'event/' + eventId + '/',
+                url: BASE_URL + 'services/event/' + eventId + '/',
                 template_name: '#timetableDays',
                 link: 'timetable_' + info,
                 selectedTab: '#timetableTab',
@@ -259,16 +259,16 @@ var Router = Backbone.Router.extend({
             favorites = true;
             eventId = infoSplitted[1];
             day = infoSplitted[2];
-            url = BASE_URL + 'favorites/event/'+eventId+'/day/'+day+'/contributions/';
-            url1 = BASE_URL + 'favorites/event/' + eventId + '/days/';
+            url = BASE_URL + 'services/favorites/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = BASE_URL + 'services/favorites/event/' + eventId + '/days/';
         }
         else{
             favorites = false;
             eventId = infoSplitted[0];
             day = infoSplitted[1];
-            url = BASE_URL + 'event/'+eventId+'/day/'+day+'/contributions/';
-            favoritesUrl = BASE_URL + 'favorites/event/'+eventId+'/day/'+day+'/contributions/';
-            url1 = BASE_URL + 'event/' + eventId + '/days/';
+            url = BASE_URL + 'services/event/'+eventId+'/day/'+day+'/contributions/';
+            favoritesUrl = BASE_URL + 'services/favorites/event/'+eventId+'/day/'+day+'/contributions/';
+            url1 = BASE_URL + 'services/event/' + eventId + '/days/';
         }
 
         if ($('#timetableDay_' + info).length === 0){
@@ -311,17 +311,17 @@ var Router = Backbone.Router.extend({
             if (infoSplitted[0] == 'favorites'){
                 favorites = true;
                 eventId = infoSplitted[1];
-                url = BASE_URL + 'favorites/event/' + eventId + '/speakers/';
+                url = BASE_URL + 'services/favorites/event/' + eventId + '/speakers/';
             }
             else{
                 favorites = false;
                 eventId = infoSplitted[0];
-                url = BASE_URL + 'event/' + eventId + '/speakers/';
+                url = BASE_URL + 'services/event/' + eventId + '/speakers/';
             }
 
             var speakersPageView = new SpeakersPage({
                 model: new Event(),
-                url: BASE_URL + 'event/' + eventId + '/',
+                url: BASE_URL + 'services/event/' + eventId + '/',
                 template_name: '#speakersPage',
                 link: 'speakers_' + info,
                 selectedTab: '#speakersTab',
@@ -354,20 +354,20 @@ var Router = Backbone.Router.extend({
                 favorites = true;
                 eventId = infoSplitted[1];
                 speakerId = infoSplitted[2].replace(':','_');
-                url = BASE_URL + "favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                url = BASE_URL + "services/favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
             else{
                 favorites = false;
                 eventId = infoSplitted[0];
                 speakerId = infoSplitted[1].replace(':','_');
-                url = "/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
-                favoritesUrl = BASE_URL + "favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                url = "/services/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
+                favoritesUrl = BASE_URL + "services/favorites/event/" + eventId + "/speaker/" + speakerId + "/contributions/";
             }
 
             var speakerPageView = new PageView({
                 model: new Speaker(),
-                url: BASE_URL + "event/" + eventId + "/speaker/" + speakerId + '/',
-                favoritesUrl: BASE_URL + "favorites/event/" + eventId + "/speaker/" +
+                url: BASE_URL + "services/event/" + eventId + "/speaker/" + speakerId + '/',
+                favoritesUrl: BASE_URL + "services/favorites/event/" + eventId + "/speaker/" +
                     speakerId + "/contributions/",
                 event_id: eventId,
                 template_name: '#speakerPage',
@@ -414,7 +414,7 @@ var Router = Backbone.Router.extend({
 
             var contributionPageView = new PageView({
                 model: new Contribution(),
-                url: BASE_URL + 'event/' + eventId + '/contrib/' + contributionId + '/',
+                url: BASE_URL + 'services/event/' + eventId + '/contrib/' + contributionId + '/',
                 template_name: '#contributionDetail',
                 link: 'contribution_' + info,
                 selectedTab: '#any',
@@ -447,7 +447,7 @@ var Router = Backbone.Router.extend({
 
             var aboutPageView = new PageView({
                 model: new Event(),
-                url: BASE_URL + 'event/'+eventId,
+                url: BASE_URL + 'services/event/'+eventId,
                 template_name: '#about',
                 link: 'about_' + info,
                 selectedTab: '#aboutTab',
