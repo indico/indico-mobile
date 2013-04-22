@@ -5,3 +5,5 @@ flask-mongokit
 Flask-Cache
 Flask-OAuth
 pytz
+lxml
+uwsgi

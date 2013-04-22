@@ -28,6 +28,10 @@ TIMEZONE = 'Europe/Zurich'
 
 CACHE_TTL = 3600
 
+# Cache type, can be memcached. simple by default
+
+CACHE_TYPE = 'simple'
+
 # MongoDB Database name
 
 MONGODB_DATABASE = 'indicomobile'

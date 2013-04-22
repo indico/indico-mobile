@@ -1,4 +1,4 @@
-from flaskext.cache import Cache
+from flask_cache import Cache
 
 cache = None
 
