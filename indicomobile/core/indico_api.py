@@ -38,9 +38,9 @@ def search_event(search, pageNumber):
 def get_event_info(event_id):
     path = '/export/event/' + event_id + '.json'
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes'}))
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no"}))
     else:
-        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes', 'ak': app.config['API_KEY']}))
+        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no", 'ak': app.config['API_KEY']}))
     event_info = json.loads(result.decode('utf-8'))["results"]
     if len(event_info)== 0:
         abort(404)
@@ -50,14 +50,14 @@ def get_event_info(event_id):
 def fetch_timetable(event_id):
     path = '/export/timetable/' + event_id + '.json'
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes'}))
+        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no"}))
     else:
         result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {"ak": app.config['API_KEY']}))
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_latest_events_from_indico(user_id):
     path = '/export/categ/0.json'
-    params = { 'nocache': 'yes',
+    params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
               'from': 'today',
               'order': 'st art',
               'descending': 'yes',
