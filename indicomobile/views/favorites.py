@@ -262,7 +262,7 @@ def get_favorites_event_days_session(event_id, session_id):
 
 
 @favorites.route('/services/favorites/event/<event_id>/day/<day>/contributions/', methods=['GET'])
-def get_favorites_event_day_Contributions(event_id, day):
+def get_favorites_event_day_contributions(event_id, day):
     user_id = flask_session['indico_user']
     contributions = event_logic.get_event_day_contributions(event_id, day)
     return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))

@@ -184,6 +184,7 @@ var Router = Backbone.Router.extend({
             var sessionDayView = new ContributionsPageView({
                 collection: new Slots(),
                 url: url1,
+                contextUrl: BASE_URL + 'services/event/'+eventId+'/',
                 day: day,
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
@@ -276,6 +277,7 @@ var Router = Backbone.Router.extend({
             var timetableDayView = new ContributionsPageView({
                 collection: new Days(),
                 url: url1,
+                contextUrl: BASE_URL + 'services/event/'+eventId+'/',
                 day: day,
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,

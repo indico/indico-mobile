@@ -1,10 +1,12 @@
 from datetime import timedelta, datetime
 from flask import json, Blueprint, abort, session as flask_session, request
 
+from indicomobile import app
 import indicomobile.db.session as db_session
 import indicomobile.db.event as db_event
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.event as event
+from indicomobile.core.cache import cache
 
 events = Blueprint('events', __name__, template_folder='templates')
 
@@ -74,12 +76,18 @@ def get_event_speakers(event_id):
 
 @events.route('/services/event/<event_id>/speaker/<speaker_id>/', methods=['GET'])
 def get_event_speaker(event_id, speaker_id):
-    return json.dumps(db_event.get_event_speaker(event_id, speaker_id))
+    result = db_event.get_event_speaker(event_id, speaker_id)
+    event = db_event.get_event(event_id)
+    result["title"] = event["title"]
+    return json.dumps(result)
 
 
 @events.route('/services/event/<event_id>/', methods=['GET'])
 def get_event(event_id):
-    return json.dumps(db_event.get_event(event_id))
+    event = db_event.get_event(event_id)
+    if event == None:
+        abort(404)
+    return json.dumps(event)
 
 
 @events.route('/services/searchEvent/<search>/', methods=['GET'])
@@ -112,7 +120,7 @@ def get_future_events():
 def get_ongoing_events():
     return json.dumps(event.get_ongoing_events())
 
-
+@cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 @events.route('/services/ongoingContributions/', methods=['GET'])
 def get_ongoing_contributions():
     return json.dumps(event.get_ongoing_contributions())

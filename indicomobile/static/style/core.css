@@ -31,8 +31,18 @@
 }
 
 .small-icon {
-    font-size: 1.7em;
-    display: block;
+    color: #2f3e46;
+    font-size: 18px;
+    margin-top: -9px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+.small-icon.left {
+    left: 10px;
+}
+.small-icon.right {
+    right: 10px;
 }
 
 .nextEvent {
@@ -96,21 +106,21 @@
     padding-right: 5px;
 }
 
-.ui-footer {
+.ui-panel {
     -moz-box-shadow: 0px -1px 8px #aaa;
     -webkit-box-shadow: 0px -1px 8px #aaa;
     box-shadow: 0px -1px 8px #aaa;
 }
 
-.ui-footer .ui-btn-active .ui-btn-text {
-    color: #f9f9f9;
+.ui-panel .ui-btn-active .ui-btn-text {
+    color: #f9f9f9 !important;
     text-shadow: 0 1px 1px #4f82b4;
     -moz-text-shadow: 0 1px 1px #4f82b4;
     -webkit-text-shadow: 0 1px 1px #4f82b4;
 }
 
-.ui-footer .ui-btn-text {
-    color: #4f82b4;
+.ui-panel .ui-btn-text {
+    color: #4f82b4 !important;
     text-shadow: 0 1px 1px #f9f9f9;
     -moz-text-shadow: 0 1px 1px #f9f9f9;
     -webkit-text-shadow: 0 1px 1px #f9f9f9;

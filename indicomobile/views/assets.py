@@ -11,6 +11,7 @@ def register_assets(app):
                           'js/lib/underscore.js',
                           'js/lib/backbone.js',
                           'js/lib/inifiniScroll.js',
+                          'js/lib/moment.js',
                           'js/model/modelsForEvents.js',
                           'js/utils.js',
                           'js/view/PageView.js',

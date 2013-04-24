@@ -71,3 +71,27 @@ you can use the generic selector below, but it's slower:
 .icon-protected:before {
     content: "\e011";
 }
+.icon-close:before {
+    content: "\e00a";
+}
+.icon-home:before {
+    content: "\e00b";
+}
+.icon-settings:before {
+    content: "\e00c";
+}
+.icon-login:before {
+    content: "\e00d";
+}
+.icon-logout:before {
+    content: "\e00e";
+}
+.icon-search:before {
+    content: "\e00f";
+}
+.icon-menu:before {
+    content: "\e000";
+}
+.icon-desktop:before {
+    content: "\e012";
+}

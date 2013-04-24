@@ -1,9 +1,4 @@
 <script type="text/template" id="about">
-    <div data-role="header" data-theme="c">
-        <a href="#event_<%=id%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-    </div>
     <div class="headerTitle">
         <div class="headerElement"><h3>About</h3></div>
     </div>
@@ -29,16 +24,11 @@
 </script>
 
 <script type="text/template" id="contributionDetail">
-<div data-role="header" data-theme="c">
-        <a href="javascript:history.go(-1)" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-</div>
-<div class="headerTitle">
-    <div class="headerElement"><h3><%=title%></h3>
-        <p style="vertical-align: middle;">
-        <% if (location != '' && location != null && room != '' && room != null){ %>
+    <div class="headerTitle">
+        <div class="headerElement"><h3 style="margin:5px"><%=title%></h3>
+        <div><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
+            <span style="display: inline-block; vertical-align: middle;">
             <% if (location == 'CERN'){ %>
                 <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
@@ -46,33 +36,30 @@
             <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
+            </span>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
+               <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
+                </span>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
+               <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
-        <% } %></p>
-        <%
-        var month = ["January", "February", "March", "April",
-                 "May", "June", "July", "August",
-                 "September", "October", "November", "December"];
-        var date = startDate.date.split('-');
-        %>
-        <p><%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
-        <%
-        var time = startDate.time.split(':');
-        %>
-        <%=time[0]%>h<%=time[1]%></p></div>
-</div>
+                </span>
+        <% } %><br>
+        <%=human_start_date%> - <%=human_end_date%>
+        </div>
+        </div>
+    </div>
     <div data-role="content">
         <% if (slot){ %>
             <a data-role="button" data-mini="true" href="#session_<%= conferenceId %>_<%= slot.sessionId %>" rel="external" style="padding-right: 45px;">
@@ -117,24 +104,13 @@
 </script>
 
 <script type="text/template" id="dayPage">
-<div data-role="header" data-theme="c">
-    <a href="#timetable_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-    <h3>Indico Mobile</h3>
-    <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-</div>
 <div class="headerTitle">
     <div class="headerElement">
     <%if (prevDay) { %>
         <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float: left;" href="#timetableDay_<%=conferenceId%>_<%=prevDay%>" rel="external"></a>
     <% } %>
-    <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
-    <%
-        var month = ["January", "February", "March", "April",
-                 "May", "June", "July", "August",
-                 "September", "October", "November", "December"];
-        var newDate = date.split('-');
-    %>
-    <%=month[newDate[1]-1]%> <%=newDate[2]%>, <%=newDate[0]%>
+    <div style="display:inline-block; margin: 11px 0; font-weight: bold;">
+    <%=human_date%>
     </div>
 
     <%if (nextDay) { %>
@@ -149,35 +125,57 @@
     </div>
 </script>
 
-<script type="text/template" id="eventFooter">
-<div data-role="footer" data-id="bar" data-position="fixed" data-theme="c">
-    <div data-role="navbar">
-        <ul class="ui-grid-c">
-            <li class="ui-block-a"><a id="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-sessions" aria-hidden="true"></div>Sessions</a></li>
-            <li class="ui-block-b"><a id="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-timetable"  aria-hidden="true"></div>Timetable</a></li>
-            <li class="ui-block-c"><a id="speakersTab" rel="external" href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-user"  aria-hidden="true"></div>Speakers</a></li>
-            <li class="ui-block-d"><a id="aboutTab" rel="external" href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><div class="small-icon icon-info" aria-hidden="true"></div>About</a></li>
+<script type="text/template" id="eventPanels">
+    <div data-role="panel" id="settings-panel" data-position-fixed="true" data-theme="c" data-display="overlay" data-position="right">
+            <ul data-role="listview" data-theme="c" class="nav-search">
+                <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon" aria-hidden="true"></span></a></li>
+                <li data-role="list-divider">Options</li>
+                <li data-icon="false"><a href="<%=base_url%>search" rel="external"><span class="icon-search small-icon" aria-hidden="true"></span>Search</a>
+                <li data-icon="false">
+                    <%if (user) { %>
+                    <a href="<%=base_url%>logout" rel="external"><span class="icon-logout small-icon" aria-hidden="true"></span>Logout</a>
+                    <% } else  { %>
+                    <a href="<%=base_url%>login" rel="external"><span class="icon-login small-icon" aria-hidden="true"></span>Login</a>
+                    <% } %>
+                </li>
+                <li data-icon="false"><a href="" rel="external"><span class="icon-desktop small-icon" aria-hidden="true"></span>Indico Desktop</a>
+            </ul>
+    </div>
+    <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="overlay">
+        <ul data-role="listview" data-theme="c" class="nav-search">
+            <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon" aria-hidden="true"></span></a></li>
+            <li data-icon="false"><a href="<%=base_url%>" rel="external"><span class="icon-home small-icon" aria-hidden="true"></span>Home</a></li>
+            <li data-role="list-divider"><%=title%></li>
+            <li data-icon="false"><a id ="desktopTab" rel="external" href="#event_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-happening small-icon" aria-hidden="true"></span>Desktop</a></li>
+            <li data-icon="false"><a id ="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-sessions small-icon" aria-hidden="true"></span>Sessions</a></li>
+            <li data-icon="false"><a id ="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-timetable small-icon" aria-hidden="true"></span>Timetable</a></li>
+            <li data-icon="false"><a id ="speakersTab" rel="external" href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-user small-icon" aria-hidden="true"></span>Speakers</a></li>
+            <li data-icon="false"><a id ="aboutTab" rel="external" href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-info small-icon" aria-hidden="true"></span>About</a></li>
+
+            <li data-role="list-divider">Options</li>
+            <li data-icon="false"><a id ="ongoing" rel="external" href="<%=base_url%>now"><span class="icon-happening small-icon" aria-hidden="true"></span>Happening</a></li>
+            <li data-icon="false"><a id ="events" rel="external" href="<%=base_url%>events"><span class="icon-calendar small-icon" aria-hidden="true"></span>Events</a></li>
+            <%if (user) { %>
+                <li data-icon="false"><a id ="favorites" rel="external" href="<%=base_url%>favorites"><span class="icon-favorites small-icon" aria-hidden="true"></span>Favorites</a></li>
+                <li data-icon="false"><a id ="history" rel="external" href="<%=base_url%>history"><span class="icon-history small-icon" aria-hidden="true"></span>History</a></li>
+            <% } %>
         </ul>
     </div>
-</div>
+</script>
+<script type="text/template" id="eventHeader">
+    <div data-role="header" data-theme="c" data-position="fixed">
+        <div><a href="#nav-panel" aria-hidden="true"><span class="icon-menu small-icon left"></span></a></div>
+        <h3 role="heading" aria-level="1">Indico Mobile</h3>
+        <div><a href="#settings-panel" rel="external"><span class="icon-settings small-icon right"></span></a></div>
+    </div>
 </script>
 
 <script type="text/template" id="eventPage">
-    <div data-role="header" data-theme="c">
-        <a data-role="button" href=
-        <%if (window.location.pathname == '/'){ %>
-            "#home"
-        <% } else{ %>
-            "#eventHome"
-        <% } %>
-        data-icon="back" data-iconpos="notext" rel="external">Back</a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-    </div>
     <div class="headerTitle">
-        <div class="headerElement"><h3><%=title%></h3>
-        <p><% if (location != '' && location != null && room != '' && room != null){ %>
+        <div class="headerElement"><h3 style="margin:5px"><%=title%></h3>
+        <div><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
+            <span style="display: inline-block; vertical-align: middle;">
             <% if (location == 'CERN'){ %>
                 <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
@@ -185,35 +183,28 @@
             <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
+            </span>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
+               <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
+                </span>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
+               <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
+                </span>
         <% } %><br>
-        <%
-        var month = ["January", "February", "March", "April",
-                 "May", "June", "July", "August",
-                 "September", "October", "November", "December"];
-        var date = startDate.date.split('-');
-        %>
-        <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
-        <%
-        var month = ["January", "February", "March", "April",
-                 "May", "June", "July", "August",
-                 "September", "October", "November", "December"];
-        var date = endDate.date.split('-');
-        %>
-        <%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%></p>
+        <%=human_start_date%> - <%=human_end_date%>
+        </div>
         </div>
     </div>
     <div data-role="content">
@@ -239,27 +230,16 @@
 </script>
 
 <script type="text/template" id="sessionDay">
-    <div data-role="header" data-theme="c">
-        <a href="#session_<%=conferenceId%>_<%= sessionId %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-    </div>
     <div class="headerTitle">
         <div class="headerElement">
         <% if (prevDay) { %>
-            <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=prevDay%>" rel="external"></a>
+            <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left;" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=prevDay%>" rel="external"></a>
         <% } %>
-        <div style="display:inline-block; margin-top: 11px; font-weight: bold;">
-        <%
-        var month = ["January", "February", "March", "April",
-                 "May", "June", "July", "August",
-                 "September", "October", "November", "December"];
-        var new_date = date.split('-');
-        %>
-        <%=month[new_date[1]-1]%> <%=new_date[2]%>, <%=new_date[0]%>
+        <div style="display:inline-block; margin: 11px 0; font-weight: bold;">
+            <%=human_date%>
         </div>
         <% if (nextDay) { %>
-            <a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=nextDay%>" rel="external"></a>
+            <a data-role="button" data-iconpos="notext" data-icon="arrow-r" style="float:right;" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=nextDay%>" rel="external"></a>
         <% } %>
         </div>
     </div>
@@ -267,17 +247,12 @@
         <input type="text" data-type="search" id="searchContrib_<%=conferenceId%>_<%=sessionId%>_<%=date%>">
         <div id="sessionDay_list_<%=conferenceId%>_<%= sessionId %>_<%= date %>"></div>
         <div class="loader"><h4>Loading...</h4><img src="/static/style/images/ajax-loader2.gif"/></div>
-        </div>
+    </div>
 </script>
 
 <script type="text/template" id="sessionPage">
-    <div data-role="header" data-theme="c">
-            <a href="#sessions_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-            <h3>Indico Mobile</h3>
-            <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-    </div>
     <div class="headerTitle">
-        <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
+        <div class="headerElement"><h3><%= title %></h3></div>
     </div>
     <div data-role="content">
         <div id="sessionDays_<%=conferenceId%>_<%= sessionId %>"></div>
@@ -285,13 +260,8 @@
 </script>
 
 <script type="text/template" id="sessionsPage">
-    <div data-role="header" data-theme="c">
-        <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-    </div>
     <div class="headerTitle">
-        <div class="headerElement"><h3 class="headerTitleMargin">Sessions</h3></div>
+        <div class="headerElement"><h3>Sessions</h3></div>
     </div>
     <div data-role="content">
         <div id="sessionsList_<%= id %>"></div>
@@ -299,18 +269,13 @@
 </script>
 
 <script type="text/template" id="simpleEventPage">
-<div data-role="page" id="event_<%=id%>">
-    <div data-role="header" data-theme="c">
-        <a href="javascript:history.back(1)" rel="external" data-icon="back" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-    </div>
     <div class="headerTitle">
         <div class="headerElement">
-            <h3><%=title%></h3>
-            <p style="vertical-align: middle;">
+            <h3 style="margin:5px"><%=title%></h3>
+            <div style="vertical-align: middle;">
         <% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
+            <span style="display: inline-block; vertical-align: middle;">
             <% if (location == 'CERN'){ %>
                 <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } else if (address != '' && address != null) { %>
@@ -318,30 +283,27 @@
             <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
             <% } %>
+            </span>
         <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
                <%=location%>
+               <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
+                </span>
         <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
                <%=room%>
+                <span style="display: inline-block; vertical-align: middle;">
                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
-        <% } %></p>
-            <%
-            var month = ["January", "February", "March", "April",
-                     "May", "June", "July", "August",
-                     "September", "October", "November", "December"];
-            var date = startDate.date.split('-');
-            %>
-            <p><%=month[date[1]-1]%> <%=date[2]%>, <%=date[0]%> -
-            <% var time = startDate.time.split(':'); %>
-            <%=time[0]%>h<%=time[1]%></p>
+                </span>
+        <% } %></div>
+        <%=human_start_date%> - <%=human_start_time%>
         </div>
     </div>
     <div data-role="content">
@@ -381,30 +343,19 @@
             <% } %>
         <% } %>
     </div>
-</div>
 </script>
 
 <script type="text/template" id="speakerPage">
-<div data-theme="c" data-role="header">
-    <a href="#speakers_<%=conferenceId%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-    <h3>Indico Mobile</h3>
-    <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-</div>
-<div class="headerTitle">
-    <div class="headerElement"><h3><%=name%></h3></div>
-</div>
+    <div class="headerTitle">
+        <div class="headerElement"><h3><%= name %></h3></div>
+    </div>
     <div data-role="content">
         <div data-theme="c"  id="speaker_contribs_<%=conferenceId%>_<%print(id.replace('_',':'));%>"></div>
     </div>
 </script>
 
 <script type="text/template" id="speakersPage">
-    <div data-theme="c" data-role="header">
-        <a href="#event_<%=id%>" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-    </div>
-        <div class="headerTitle">
+    <div class="headerTitle">
         <div class="headerElement"><h3>Speakers</h3></div>
     </div>
     <div data-role="content">
@@ -420,13 +371,8 @@
 </script>
 
 <script type="text/template" id="timetableDays">
-    <div data-role="header" data-theme="c">
-        <a href="#event_<%= id %>" rel="external" data-icon="back" data-role="button" data-iconpos="notext"></a>
-        <h3>Indico Mobile</h3>
-        <a href="<%=base_url%>search/" data-role="button" data-icon="search" data-iconpos="notext" rel="external">Search</a>
-    </div>
     <div class="headerTitle">
-        <div class="headerElement"><h3 class="headerTitleMargin"><%= title %></h3></div>
+        <div class="headerElement"><h3><%= title %></h3></div>
     </div>
     <div data-role="content">
         <div id="timetable_days_<%=id%>"></div>

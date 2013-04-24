@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, json, abort, session as flask_session
+from flask import Blueprint, render_template, json, redirect, abort, url_for, session as flask_session
 
 routing = Blueprint('routing',
                     __name__,
@@ -26,6 +26,10 @@ def history():
 @routing.route('/events/')
 def events():
     return render_template('events.html')
+
+@routing.route('/event/<event_id>')
+def event(event_id):
+    return redirect(url_for("routing.events") + "#event_" + event_id)
 
 
 @routing.route('/search/')

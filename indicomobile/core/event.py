@@ -2,12 +2,10 @@ from pytz import utc
 import urllib
 from datetime import timedelta, datetime
 from flask import session as flask_session, abort
-from indicomobile import app
 import indicomobile.db.event as db_event
 import indicomobile.db.session as db_session
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.indico_api as api
-from indicomobile.core.cache import cache
 from indicomobile.util.date_time import dt_from_indico
 
 # EVENTS
@@ -26,14 +24,15 @@ def search_event(search, everything, pageNumber):
 def update_event_info(event_id):
     if event_id:
         event_http = api.get_event_info(event_id)
-        event_db = db_event.get_event(event_id)
-        if not event_db:
-            event_tt = api.fetch_timetable(event_id)
-            db_event.store_event(event_http, event_tt)
-        elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
-            db_event.remove_event(event_id)
-            event_tt = api.fetch_timetable(event_id)
-            db_event.store_event(event_http, event_tt)
+        if event_http:
+            event_db = db_event.get_event(event_id)
+            if not event_db:
+                event_tt = api.fetch_timetable(event_id)
+                db_event.store_event(event_http, event_tt)
+            elif utc.localize(event_db['modificationDate']) < dt_from_indico(event_http['modificationDate']):
+                db_event.remove_event(event_id)
+                event_tt = api.fetch_timetable(event_id)
+                db_event.store_event(event_http, event_tt)
 
 def _get_events():
     user_id = unicode('all_public')
@@ -80,7 +79,6 @@ def get_event_days(event_id):
 
 # CONTRIBUTIONS
 
-@cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 def get_ongoing_contributions():
     events = api.get_ongoing_events()
     for event in events:
@@ -96,7 +94,6 @@ def get_ongoing_contributions():
             + list(db_event.get_ongoing_lectures(now, tomorrow))
     return sorted(results, key=lambda x: x['startDate'])
 
-@cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 def get_future_contributions():
     events = api.get_future_events()
     for event in events:

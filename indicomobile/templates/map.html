@@ -14,24 +14,22 @@
         var room = '{{ room }}';
     </script>
 {% endblock %}
+{% block pageId %}eventHome{% endblock %}
+{% block menuheader%}
+{% endblock %}
+{% block pageheader%}
+    <div class="headerTitle">
+        <div class="headerElement">
+            <h3 id="mapTitle">{{map_title}}
+                <a id="route" data-role="button" rel="external" class="icon-direction small-button-icon" aria-hidden="true"></a>
+            </h3>
+            <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
+                Duration: <span id="routeDuration"></span></span>
+        </div>
+    </div>
+{% endblock %}
 {% block body %}
-    <div data-role="page" id="eventHome">
-        <div data-role="header" data-theme="c">
-            <a href="javascript:history.go(-1)" data-role="button" data-icon="back" rel="external" data-iconpos="notext"></a>
-            <h3>Indico Mobile</h3>
-            <a href="{{url_for('routing.search')}}" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-        </div>
-        <div class="headerTitle">
-            <div class="headerElement">
-                <h3 id="mapTitle">{{map_title}}
-                    <a id="route" data-role="button" rel="external" class="icon-direction small-button-icon" aria-hidden="true"></a>
-                </h3>
-                <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
-                    Duration: <span id="routeDuration"></span></span>
-            </div>
-        </div>
-        <div data-role="content" id="map">
+    <div data-role="content" id="map">
             <h3 class="emptyMessage" style="display: none;">{{not_found_msg}}</h3>
-        </div>
     </div>
 {% endblock %}

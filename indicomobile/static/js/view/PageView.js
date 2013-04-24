@@ -1,5 +1,7 @@
 var PageView = Backbone.View.extend({
 
+    userLoggedUrl: BASE_URL +'user/',
+
     tagName: 'div',
 
     attributes: {
@@ -10,7 +12,11 @@ var PageView = Backbone.View.extend({
         this.template_file = getHTMLTemplate('pages.html');
         this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
         this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
-        this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
+        this.panelsTemplate = _.template($(this.template_file).siblings('#eventPanels').html());
+        this.headerTemplate = _.template($(this.template_file).siblings('#eventHeader').html());
+        this.user = new User();
+        this.user.url = this.userLoggedUrl;
+        this.user.fetch();
         this.model.url = this.options.url;
         this.model.on('change', this.render, this);
         this.model.on('error', this.showError, this);
@@ -21,6 +27,8 @@ var PageView = Backbone.View.extend({
         $.mobile.hidePageLoadingMsg();
         if(error.status == 401){
             window.location.href = BASE_URL + 'login/';
+        } else if (error.status == 404) {
+            alert('The event does not exist');
         } else{
             alert('An error has occured');
         }
@@ -49,12 +57,17 @@ var PageView = Backbone.View.extend({
             if (model.get('type') == 'simple_event'){
                 this.template = this.template2;
             }
-            model.set("base_url", BASE_URL);
-            pageView.append(this.template(model.toJSON()));
-            if (this.options.selectedTab !== undefined){
-                pageView.append(this.footerTemplate(model.toJSON()));
-                pageView.find(this.options.selectedTab).addClass('ui-btn-active ui-state-persist').removeAttr('rel');
+            if(model.get("startDate")!==undefined){
+                var startDate = moment(model.get("startDate").date + " " + model.get("startDate").time) ;
+                model.set("human_start_date", startDate.format("MMMM DD, YYYY"));
+                model.set("human_start_time", startDate.format("HH mm"));
+                model.set("human_end_date", moment(model.get("endDate").date).format("MMMM DD, YYYY"));
             }
+            model.set("base_url", BASE_URL);
+            model.set("user", this.user.get("username"));
+            pageView.append(this.headerTemplate(model.toJSON()));
+            pageView.append(this.template(model.toJSON()));
+            pageView.append(this.panelsTemplate(model.toJSON()));
 
             $('body').append(pageView);
 
@@ -70,19 +83,27 @@ var ContributionsPageView = PageView.extend({
     initialize: function(){
         this.template_file = getHTMLTemplate('pages.html');
         this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
-        this.footerTemplate = _.template($(this.template_file).siblings('#eventFooter').html());
+        this.headerTemplate = _.template($(this.template_file).siblings('#eventHeader').html());
+        this.panelsTemplate = _.template($(this.template_file).siblings('#eventPanels').html());
         this.collection.url = this.options.url;
+        this.context = new Event();
+        this.context.url = this.options.contextUrl;
+        this.context.fetch();
+        this.user = new User();
+        this.user.url = this.userLoggedUrl;
+        this.user.fetch();
         this.collection.on('reset', this.render, this);
         this.collection.fetch();
     },
 
     render: function() {
-        var collection = this.collection,
-        container = $(this.options.container),
-        pageView = $(this.el),
-        thisDay = null,
-        prevDay = null,
-        nextDay = null,
+        var collection = this.collection;
+        var context = this.context;
+        container = $(this.options.container);
+        pageView = $(this.el);
+        thisDay = null;
+        prevDay = null;
+        nextDay = null;
         link = this.options.link;
         if (pageView.html() === ''){
             pageView.attr('id', link);
@@ -126,11 +147,24 @@ var ContributionsPageView = PageView.extend({
             if (this.options.favorites){
                 thisDay.set('conferenceId', 'favorites_'+thisDay.get('conferenceId'));
             }
+            thisDay.set('conferenceTitle', thisDay.get('conferenceTitle'));
             thisDay.set('prevDay', prevDay);
             thisDay.set('nextDay', nextDay);
-            thisDay.set("base_url", BASE_URL);
+
+            if(thisDay.get("startDate")!==undefined){
+                var startDate = moment(thisDay.get("startDate").date + " " + thisDay.get("startDate").time);
+                thisDay.set("human_end_date", moment(thisDay.get("endDate").date).format("MMMM DD, YYYY"));
+                thisDay.set("human_start_date", startDate.format("MMMM DD, YYYY"));
+                thisDay.set("human_start_time", startDate.format("HH mm"));
+            } else {
+                var date = moment(thisDay.get("date"));
+                thisDay.set("human_date", date.format("MMMM DD, YYYY"));
+            }
+            context.set("base_url", BASE_URL);
+            context.set("user", this.user.get("username"));
+            pageView.append(this.headerTemplate(thisDay.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));
-            pageView.append(this.footerTemplate(thisDay.toJSON()));
+            pageView.append(this.panelsTemplate(context.toJSON()));
             $('body').append(pageView);
             $.mobile.changePage($('div[id="'+link+'"]'));
         }

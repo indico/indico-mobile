@@ -27,7 +27,7 @@ or find one that works with your web framework.
 """
 
 import urllib2
-from flask import Blueprint, request, redirect, session, url_for, flash
+from flask import Blueprint, request, redirect, session, url_for, flash, json
 from flask_oauth import OAuth
 from indicomobile import app
 
@@ -69,7 +69,7 @@ def get_user_info(user_id):
 @oauth_client.route('/oauth_authorized/', methods=['GET'])
 @oauth_indico_mobile.authorized_handler
 def oauth_authorized(resp):
-    next_url = request.args.get('next') or url_for('index')
+    next_url = request.args.get('next') or url_for('routing.index')
     if not resp:
         session['unauthorized'] = True
         return redirect(url_for("routing.index"))
@@ -80,3 +80,10 @@ def oauth_authorized(resp):
     user_info = get_user_info(resp['user_id'])
     session['indico_user_name'] = "%s %s %s"%(user_info.get('title'), user_info.get('firstName'), user_info.get('familyName'))
     return redirect(next_url)
+
+@oauth_client.route('/user/', methods=['GET'])
+def user():
+    return json.dumps({"username":session.get('indico_user_name', "")})
+
+
+

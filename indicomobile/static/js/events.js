@@ -1,7 +1,5 @@
 $('#eventHome').live('pageinit', function(){
 
-    $("a#events").addClass("ui-btn-active ui-state-persist")
-
     var futureEventsView = new ListByMonthView({
         collection: new Events(),
         url: BASE_URL + 'services/futureEvents/',

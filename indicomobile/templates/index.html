@@ -5,62 +5,56 @@
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 {% endblock %}
-{% block body %}
-    <div data-role="page" id="home">
-        <div data-role="header" data-theme="c">
-            {% if session['indico_user'] %}
-            <a href="{{url_for('oauth_client.logout')}}" data-role="button" data-inline="true" data-mini="true" rel="external">Logout</a>
-            {% else %}
-            <a href="{{url_for('oauth_client.login')}}" data-role="button" data-inline="true" data-mini="true" rel="external">Login</a>
-            {% endif %}
-            <h3>Indico Mobile</h3>
-            <a href="{{url_for('routing.search')}}" data-role="button" data-icon="search" data-iconpos="notext" rel="external"></a>
-        </div>
-        {% if session['indico_user_name'] %}
+{% block pageId %}home{% endblock %}
+
+{% block pageHeader %}
+    {% if session['indico_user_name'] %}
         {% if session['indico_user_name'] != 'None' %}
-        <div class="headerTitle">
-            <div class="headerElement"><h3>Welcome, {{ session['indico_user_name'] }}</h3></div>
-        </div>
+            <div class="headerTitle">
+                <div class="headerElement"><h3>Welcome, {{ session['indico_user_name'] }}</h3></div>
+            </div>
         {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div data-role="content">
+        {% if session['unauthorized'] %}
+        <h3 style="color: red; text-align: center;">You didn't authorize Indico Mobile.</h3>
         {% endif %}
-        <div data-role="content">
-            {% if session['unauthorized'] %}
-            <h3 style="color: red; text-align: center;">You didn't authorize Indico Mobile.</h3>
+        {% for message in get_flashed_messages() %}
+        <h3 style="color: red; text-align: center;">{{ message }}</h3>
+        {% endfor %}
+        <div class="ui-grid-a" data-inset="true">
+            <div class="ui-block-a">
+                <a data-role="button" href="{{url_for('routing.now')}}" " rel="external" class="button-icon icon-happening" aria-hidden="true"></a>
+                <p class="buttonTitle">Currently happening</p>
+            </div>
+            <div class="ui-block-b">
+                <a data-role="button" href="{{url_for('routing.events')}}" rel="external" class="button-icon icon-calendar" aria-hidden="true"></a>
+                <p class="buttonTitle">Events</p>
+            </div>
+            {% if session['indico_user'] %}
+            <div class="ui-block-a">
+                <a data-role="button" href="{{url_for('routing.favorites')}}" rel="external" class="button-icon icon-favorites" aria-hidden="true"></a>
+                <p class="buttonTitle">Favorites</p>
+            </div>
+            <div class="ui-block-b">
+                <a data-role="button" href="{{url_for('routing.history')}}" rel="external" class="button-icon icon-history" aria-hidden="true"></a>
+                <p class="buttonTitle">History</p>
+            </div>
+            {% else %}
+            <div class="ui-block-a">
+                <div data-role="button" style="opacity: 0.4;" class="button-icon icon-favorites" aria-hidden="true"></div>
+                <p  class="buttonTitle" style="opacity: 0.4;">Favorites</p>
+            </div>
+            <div class="ui-block-b">
+                <div data-role="button" style="opacity: 0.4;" class="button-icon icon-history" aria-hidden="true"></div>
+                <p class="buttonTitle" style="opacity: 0.4;">History</p>
+            </div>
             {% endif %}
-            {% for message in get_flashed_messages() %}
-            <h3 style="color: red; text-align: center;">{{ message }}</h3>
-            {% endfor %}
-            <div class="ui-grid-a" data-inset="true">
-                <div class="ui-block-a">
-                    <a data-role="button" href="{{url_for('routing.now')}}" " rel="external" class="button-icon icon-happening" aria-hidden="true"></a>
-                    <p class="buttonTitle">Currently happening</p>
-                </div>
-                <div class="ui-block-b">
-                    <a data-role="button" href="{{url_for('routing.events')}}" rel="external" class="button-icon icon-calendar" aria-hidden="true"></a>
-                    <p class="buttonTitle">Events</p>
-                </div>
-                {% if session['indico_user'] %}
-                <div class="ui-block-a">
-                    <a data-role="button" href="{{url_for('routing.favorites')}}" rel="external" class="button-icon icon-favorites" aria-hidden="true"></a>
-                    <p class="buttonTitle">Favorites</p>
-                </div>
-                <div class="ui-block-b">
-                    <a data-role="button" href="{{url_for('routing.history')}}" rel="external" class="button-icon icon-history" aria-hidden="true"></a>
-                    <p class="buttonTitle">History</p>
-                </div>
-                {% else %}
-                <div class="ui-block-a">
-                    <div data-role="button" style="opacity: 0.4;" class="button-icon icon-favorites" aria-hidden="true"></div>
-                    <p  class="buttonTitle" style="opacity: 0.4;">Favorites</p>
-                </div>
-                <div class="ui-block-b">
-                    <div data-role="button" style="opacity: 0.4;" class="button-icon icon-history" aria-hidden="true"></div>
-                    <p class="buttonTitle" style="opacity: 0.4;">History</p>
-                </div>
-                {% endif %}
-            </div>
-            <div id="nextEvent" style="margin-top: 20px;">
-            </div>
+        </div>
+        <div id="nextEvent" style="margin-top: 20px;">
         </div>
     </div>
 {% endblock %}

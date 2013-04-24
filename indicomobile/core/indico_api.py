@@ -43,7 +43,7 @@ def get_event_info(event_id):
         result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no", 'ak': app.config['API_KEY']}))
     event_info = json.loads(result.decode('utf-8'))["results"]
     if len(event_info)== 0:
-        abort(404)
+        return None
     return event_info[0]
 
 
@@ -59,7 +59,7 @@ def get_latest_events_from_indico(user_id):
     path = '/export/categ/0.json'
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
               'from': 'today',
-              'order': 'st art',
+              'order': 'start',
               'descending': 'yes',
               'detail': 'contributions'
     }
