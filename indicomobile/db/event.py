@@ -60,7 +60,7 @@ def store_event(event_http, event_tt):
     for day, day_content in event_tt.get(event_id, {}).iteritems():
         entries = []
 
-        for block, block_content in day_content.iteritems():
+        for _, block_content in day_content.iteritems():
             if block_content['_type'] == 'LinkedTimeSchEntry':
                 entry = store_slot(block_content, event_db)
             else:

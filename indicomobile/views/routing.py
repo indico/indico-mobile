@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, json, redirect, abort, url_for, session as flask_session
+from flask import Blueprint, render_template, json, redirect, abort, url_for, session
 
 routing = Blueprint('routing',
                     __name__,
@@ -12,14 +12,14 @@ def index():
 
 @routing.route('/favorites/')
 def favorites():
-    if not flask_session.get('indico_user', None):
+    if not session.get('indico_user', None):
         abort(401)
     return render_template('favorites.html')
 
 
 @routing.route('/history/')
 def history():
-    if not flask_session.get('indico_user', None):
+    if not session.get('indico_user', None):
         abort(401)
     return render_template('history.html')
 
@@ -46,6 +46,6 @@ def now():
 @routing.route('/user_id/', methods=['GET'])
 def get_user_id():
     user_id = None
-    if 'indico_user' in flask_session:
-        user_id = flask_session['indico_user']
+    if 'indico_user' in session:
+        user_id = session['indico_user']
     return json.dumps(user_id)
