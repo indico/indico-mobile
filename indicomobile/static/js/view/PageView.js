@@ -64,6 +64,7 @@ var PageView = Backbone.View.extend({
                 model.set("human_end_date", moment(model.get("endDate").date).format("MMMM DD, YYYY"));
             }
             model.set("base_url", BASE_URL);
+            model.set("indico_desktop", INDICO_DESKTOP);
             model.set("user", this.user.get("username"));
             pageView.append(this.headerTemplate(model.toJSON()));
             pageView.append(this.template(model.toJSON()));
@@ -161,6 +162,7 @@ var ContributionsPageView = PageView.extend({
                 thisDay.set("human_date", date.format("MMMM DD, YYYY"));
             }
             context.set("base_url", BASE_URL);
+            context.set("indico_desktop", INDICO_DESKTOP);
             context.set("user", this.user.get("username"));
             pageView.append(this.headerTemplate(thisDay.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));

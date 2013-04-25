@@ -16,8 +16,9 @@
 {% endblock %}
 {% block pageId %}eventHome{% endblock %}
 {% block menuheader%}
+    <div><a href="#nav-panel" rel="external"><span class="icon-menu small-icon left" aria-hidden="true"></span></a></div>
 {% endblock %}
-{% block pageheader%}
+{% block body %}
     <div class="headerTitle">
         <div class="headerElement">
             <h3 id="mapTitle">{{map_title}}
@@ -27,8 +28,6 @@
                 Duration: <span id="routeDuration"></span></span>
         </div>
     </div>
-{% endblock %}
-{% block body %}
     <div data-role="content" id="map">
             <h3 class="emptyMessage" style="display: none;">{{not_found_msg}}</h3>
     </div>

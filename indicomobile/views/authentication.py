@@ -28,8 +28,10 @@ or find one that works with your web framework.
 
 import urllib2
 from flask import Blueprint, request, redirect, session, url_for, flash, json
-from flask_oauth import OAuth
+from werkzeug.exceptions import BadRequest, Unauthorized
+from flask_oauth import OAuth, OAuthException
 from indicomobile import app
+from indicomobile.views.errors import generic_error_handler
 
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
 oauth = OAuth()
@@ -63,8 +65,8 @@ def logout():
     return redirect(request.referrer or url_for("routing.index"))
 
 def get_user_info(user_id):
-    url = app.config['INDICO_URL'] + '/export/user/' + user_id + '.json'
-    return oauth_indico_mobile.get(url).data["results"]
+    from indicomobile.core.indico_api import get_user_info
+    return get_user_info(user_id)
 
 @oauth_client.route('/oauth_authorized/', methods=['GET'])
 @oauth_indico_mobile.authorized_handler
@@ -85,5 +87,13 @@ def oauth_authorized(resp):
 def user():
     return json.dumps({"username":session.get('indico_user_name', "")})
 
+@oauth_client.errorhandler(OAuthException)
+def error(error):
+    code = error.data["code"]
+    if code == 401:
+        exception = Unauthorized(error.data["message"])
+    else:
+        exception = BadRequest(error.data["message"])
+    return generic_error_handler(exception)
 
 

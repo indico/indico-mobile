@@ -10,6 +10,7 @@
               var TPL_DIR = "{{ url_for('static', filename='tpls/') }}";
               var IMAGE_DIR = "{{ url_for('static', filename='style/images/') }}";
               var BASE_URL = "{{ url_for('routing.index', _external=True ) }}";
+              var INDICO_DESKTOP = "{{config.get('INDICO_URL')}}";
         </script>
         {% assets "core_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
@@ -34,16 +35,29 @@
         <div data-role="panel" id="settings-panel" data-position-fixed="true" data-theme="c" data-display="overlay" data-position="right">
             <ul data-role="listview" data-theme="c" class="nav-search">
                 <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon" aria-hidden="true"></span></a></li>
-                <li data-role="list-divider">Options</li>
-                <li data-icon="false"><a href="{{url_for('routing.search')}}" rel="external"><span class="icon-search small-icon" aria-hidden="true"></span>Search</a>
+                <li data-role="list-divider" class="panel-divider"></li>
+                <li data-icon="false"><a href="{{url_for('routing.search')}}" rel="external"><span class="icon-search small-icon right" aria-hidden="true"></span>Search</a>
                 <li data-icon="false">
                     {% if session['indico_user'] %}
-                    <a href="{{url_for('oauth_client.logout')}}" rel="external"><span class="icon-logout small-icon" aria-hidden="true"></span>Logout</a>
+                    <a href="{{url_for('oauth_client.logout')}}" rel="external"><span class="icon-logout small-icon right" aria-hidden="true"></span>Logout</a>
                     {% else %}
-                    <a href="{{url_for('oauth_client.login')}}" rel="external"><span class="icon-login small-icon" aria-hidden="true"></span>Login</a>
+                    <a href="{{url_for('oauth_client.login')}}" rel="external"><span class="icon-login small-icon right" aria-hidden="true"></span>Login</a>
                     {% endif %}
                 </li>
-                <li data-icon="false"><a href="{{config.get('INDICO_URL')}}" rel="external"><span class="icon-desktop small-icon" aria-hidden="true"></span>Indico Desktop</a>
+                <li data-icon="false"><a href="{{config.get('INDICO_URL')}}" rel="external"><span class="icon-desktop small-icon right" aria-hidden="true"></span>Indico Desktop</a>
+            </ul>
+        </div>
+        <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="overlay" data-position="left">
+            <ul data-role="listview" data-theme="c" class="nav-search">
+                <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon right" aria-hidden="true"></span></a></li>
+                <li data-icon="false"><a href="{{url_for('routing.index')}}" rel="external"><span class="icon-home small-icon right" aria-hidden="true"></span>Home</a></li>
+                <li data-role="list-divider" class="panel-divider"></li>
+                <li data-icon="false"><a id ="ongoing" rel="external" href="{{url_for('routing.now')}}"><span class="icon-happening small-icon right" aria-hidden="true"></span>Happening</a></li>
+                <li data-icon="false"><a id ="events" rel="external" href="{{url_for('routing.events')}}"><span class="icon-calendar small-icon right" aria-hidden="true"></span>Events</a></li>
+                {% if session['indico_user'] %}
+                    <li data-icon="false"><a id ="favorites" rel="external" href="{{url_for('routing.favorites')}}"><span class="icon-favorites small-icon right" aria-hidden="true"></span>Favorites</a></li>
+                    <li data-icon="false"><a id ="history" rel="external" href="{{url_for('routing.history')}}"><span class="icon-history small-icon right" aria-hidden="true"></span>History</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

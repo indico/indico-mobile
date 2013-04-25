@@ -2,13 +2,15 @@
 {% block pagetitle %}{{name}}{% endblock %}
 {% block head %}
 {% endblock %}
+{% block menuheader%}
+    <div><a href="#nav-panel" rel="external"><span class="icon-menu small-icon left" aria-hidden="true"></span></a></div>
+{% endblock %}
 {% block body %}
         <div class="headerTitle">
             <div class="headerElement"><h3>{{name}}</h3></div>
         </div>
         <div data-role="content" id="errorMsg">
-            {% block content_error %}
-            {% endblock %}
+            <h4 style="text-align: center;">{{description | safe}}</h4>
         </div>
 {% endblock %}
 

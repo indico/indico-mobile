@@ -1,14 +1,24 @@
 import urllib2
 import urllib
+from urlparse import urlparse, urlunparse
+
 from flask import json, session as flask_session, abort
 from indicomobile.views.authentication import oauth_indico_mobile
 from indicomobile import app
 
-def attach_params(path, params):
+def construct_url(path, params):
+    url_fragments = urlparse(app.config['INDICO_URL'])
+    url_path = url_fragments.path
+    if url_path[-1] == "/":
+        url_path = url_path[:-1]
+    url_path += path
+    return urlunparse((url_fragments.scheme, url_fragments.netloc, url_path , "", params, ""))
+
+def attach_params(params):
     items = params.items() if hasattr(params, 'items') else list(params)
     if not items:
-        return path
-    return '%s?%s' % (path, urllib.urlencode(items))
+        return ""
+    return urllib.urlencode(items)
 
 def perform_signed_request(url):
     response = oauth_indico_mobile.get(url)
@@ -30,17 +40,17 @@ def search_event(search, pageNumber):
         return []
     path = '/export/event/search/' + search + '.json'
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(app.config['INDICO_URL'] + path)
+        result = perform_signed_request(construct_url(path, {}))
     else:
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'ak': app.config['API_KEY']}))
+        result = perform_public_request(construct_url(path, attach_params({'ak': app.config['API_KEY']})))
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_event_info(event_id):
     path = '/export/event/' + event_id + '.json'
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no"}))
+        result = perform_signed_request(construct_url(path, attach_params({'nocache': 'yes' if app.config.get("DEBUG", False) else "no"})))
     else:
-        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no", 'ak': app.config['API_KEY']}))
+        result = perform_public_request(construct_url(path, attach_params({'nocache': 'yes' if app.config.get("DEBUG", False) else "no", 'ak': app.config['API_KEY']})))
     event_info = json.loads(result.decode('utf-8'))["results"]
     if len(event_info)== 0:
         return None
@@ -50,9 +60,9 @@ def get_event_info(event_id):
 def fetch_timetable(event_id):
     path = '/export/timetable/' + event_id + '.json'
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, {'nocache': 'yes' if app.config.get("DEBUG", False) else "no"}))
+        result = perform_signed_request(construct_url(path, attach_params({'nocache': 'yes' if app.config.get("DEBUG", False) else "no"})))
     else:
-        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, {"ak": app.config['API_KEY']}))
+        result = perform_public_request(construct_url(path, attach_params({"ak": app.config['API_KEY']})))
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_latest_events_from_indico(user_id):
@@ -64,11 +74,11 @@ def get_latest_events_from_indico(user_id):
               'detail': 'contributions'
     }
     if user_id != 'all_public':
-        result = perform_signed_request(app.config['INDICO_URL'] + attach_params(path, params))
+        result = perform_signed_request(construct_url(path, attach_params(params)))
     else:
         params["ak"] = app.config['API_KEY']
         params["limit"] = 100
-        result = perform_public_request(app.config['INDICO_URL'] + attach_params(path, params))
+        result = perform_public_request(construct_url(path, attach_params(params)))
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_ongoing_events():
@@ -80,3 +90,14 @@ def get_future_events():
     result = perform_public_request('{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
         app.config['INDICO_URL'], app.config['API_KEY']))
     return json.loads(result.decode('utf-8'))['results']
+
+def get_user_info(user_id):
+    return oauth_indico_mobile.get(construct_url("/export/user/%s.json"%user_id, {})).data["results"]
+
+def get_room(room_name):
+    path = '/export/roomName/CERN/' + urllib.quote(room_name) + '.json'
+    if 'indico_mobile_oauthtok' in flask_session:
+        result = perform_signed_request(construct_url(path, attach_params({})))
+    else:
+        result = perform_public_request(construct_url(path, attach_params({"ak": app.config['API_KEY']})))
+    return json.loads(result.decode('utf-8'))["results"]

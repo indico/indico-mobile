@@ -6,7 +6,7 @@
 {% endblock %}
 {% block pageId %}eventHome{% endblock %}
 {% block menuheader%}
-    <div><a href="#nav-panel" aria-hidden="true"><span class="icon-menu small-icon left"></span></a></div>
+    <div><a href="#nav-panel" rel="external"><span class="icon-menu small-icon left" aria-hidden="true"></span></a></div>
 {% endblock %}
 {% block pageheader%}
 {% endblock %}
@@ -16,17 +16,4 @@
     </div>
     {% block content %}
     {% endblock %}
-    <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="overlay" data-position="left">
-        <ul data-role="listview" data-theme="c" class="nav-search">
-            <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon" aria-hidden="true"></span></a></li>
-            <li data-icon="false"><a href="{{url_for('routing.index')}}" rel="external"><span class="icon-home small-icon" aria-hidden="true"></span>Home</a></li>
-            <li data-role="list-divider">Options</li>
-            <li data-icon="false"><a id ="ongoing" rel="external" href="{{url_for('routing.now')}}"><span class="icon-happening small-icon" aria-hidden="true"></span>Happening</a></li>
-            <li data-icon="false"><a id ="events" rel="external" href="{{url_for('routing.events')}}"><span class="icon-calendar small-icon" aria-hidden="true"></span>Events</a></li>
-            {% if session['indico_user'] %}
-                <li data-icon="false"><a id ="favorites" rel="external" href="{{url_for('routing.favorites')}}"><span class="icon-favorites" aria-hidden="true"></span>Favorites</a></li>
-                <li data-icon="false"><a id ="history" rel="external" href="{{url_for('routing.history')}}"><span class="icon-history" aria-hidden="true"></span>History</a></li>
-            {% endif %}
-        </ul>
-    </div>
 {% endblock %}

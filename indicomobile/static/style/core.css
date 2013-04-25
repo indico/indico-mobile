@@ -35,7 +35,6 @@
     font-size: 18px;
     margin-top: -9px;
     position: absolute;
-    right: 10px;
     top: 50%;
 }
 .small-icon.left {
@@ -110,6 +109,10 @@
     -moz-box-shadow: 0px -1px 8px #aaa;
     -webkit-box-shadow: 0px -1px 8px #aaa;
     box-shadow: 0px -1px 8px #aaa;
+}
+
+.ui-panel li.panel-divider {
+    font-size: 5px !important;
 }
 
 .ui-panel .ui-btn-active .ui-btn-text {
