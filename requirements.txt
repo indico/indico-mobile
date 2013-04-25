@@ -7,3 +7,5 @@ Flask-OAuth
 pytz
 lxml
 uwsgi
+jsmin
+cssmin

@@ -5,7 +5,7 @@ setup(
     packages = find_packages(),
 
     install_requires = ['flask', 'Flask-mongoalchemy', 'Flask-assets', 'flask-mongokit', 'Flask-Cache', 'Flask-OAuth',
-                        'pytz', 'lxml', 'uwsgi'],
+                        'pytz', 'lxml', 'uwsgi', 'jsmin', 'cssmin'],
 
     package_data = {
         '': ['*.txt', '*.rst', '*.html']
