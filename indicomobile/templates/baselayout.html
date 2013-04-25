@@ -10,6 +10,9 @@
               var TPL_DIR = "{{ url_for('static', filename='tpls/') }}";
               var IMAGE_DIR = "{{ url_for('static', filename='style/images/') }}";
               var BASE_URL = "{{ url_for('routing.index', _external=True ) }}";
+              if(location.protocol === "https:") {
+                  BASE_URL = BASE_URL.replace("http", "https");
+              }
               var INDICO_DESKTOP = "{{config.get('INDICO_URL')}}";
         </script>
         {% assets "core_js" %}
