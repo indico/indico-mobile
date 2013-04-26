@@ -5,6 +5,7 @@ from indicomobile.db.common import store_material
 from indicomobile.db.session import store_slot
 from indicomobile.db.contribution import store_contribution
 from indicomobile.util.date_time import convert_dates
+from indicomobile.util.tools import clean_html_tags
 
 
 def get_event(event_id):
@@ -46,6 +47,7 @@ def store_chairs(event):
 
 def store_event(event_http, event_tt):
     convert_dates(event_http)
+    clean_html_tags(event_http)
 
     event_id = event_http['id']
     store_material(event_http)
@@ -75,6 +77,8 @@ def store_event(event_http, event_tt):
             day.save()
 
 def store_cached_events(user_id, date, events):
+    for event in events:
+        clean_html_tags(event)
     new_cached_events = db.CachedLatestEvent()
     new_cached_events.update({'user_id': user_id, 'timestamp': date, 'events': events})
     new_cached_events.save()

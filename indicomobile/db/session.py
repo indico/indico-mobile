@@ -2,7 +2,7 @@ from indicomobile.db import ref
 from indicomobile.db.schema import db
 from indicomobile.db.contribution import store_contribution, store_material
 from indicomobile.util.date_time import convert_dates
-
+from indicomobile.util.tools import clean_html_tags
 
 def get_event_session(event_id, session_id):
     return db.SessionSlot.find_one({'conferenceId': event_id, 'sessionId': session_id})
@@ -55,6 +55,8 @@ def get_session_day_contributions(event_id, session_id, start_date, end_date):
 
 def store_slot(slot, event):
     convert_dates(slot)
+    clean_html_tags(slot)
+
     session_id = slot['sessionId']
     is_poster = slot['isPoster']
     slot_id = slot['id']

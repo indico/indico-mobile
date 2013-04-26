@@ -2,6 +2,8 @@ from indicomobile.db import ref
 from indicomobile.db.schema import db
 from indicomobile.db.common import store_material
 from indicomobile.util.date_time import convert_dates
+from indicomobile.util.tools import clean_html_tags
+
 
 def get_contribution(event_id, contrib_id):
     contribution = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
@@ -81,6 +83,7 @@ def store_presenters(contribution):
 
 def store_contribution(contribution, event, color=None, is_poster=False, slot=None):
     convert_dates(contribution)
+    clean_html_tags(contribution)
 
     contribution.update({
             'isPoster': is_poster,
