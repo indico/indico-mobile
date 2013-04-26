@@ -208,6 +208,7 @@ class CachedLatestEvent(Document):
     __collection__ = 'cached_latest_events'
     structure = {
         'user_id': unicode,
+        'type': unicode, #ongoing or future
         'timestamp': datetime,
         'events': [dict]
     }

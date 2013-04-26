@@ -30,8 +30,8 @@ def get_ongoing_lectures(now, tomorrow):
                                     {'startDate': {'$lt': tomorrow}},
                                     {'type': 'simple_event'}]}).sort([('startDate', 1)])
 
-def get_cached_events(user_id):
-    return db.CachedLatestEvent.find_one({'user_id': user_id})
+def get_cached_events(user_id, type_events):
+    return db.CachedLatestEvent.find_one({'user_id': user_id, 'type': type_events})
 
 
 def store_chairs(event):
@@ -76,15 +76,15 @@ def store_event(event_http, event_tt):
             day['entries'] = entries
             day.save()
 
-def store_cached_events(user_id, date, events):
+def store_cached_events(user_id, type_events, date, events):
     for event in events:
         clean_html_tags(event)
     new_cached_events = db.CachedLatestEvent()
-    new_cached_events.update({'user_id': user_id, 'timestamp': date, 'events': events})
+    new_cached_events.update({'user_id': user_id, "type": type_events, 'timestamp': date, 'events': events})
     new_cached_events.save()
 
-def remove_cached_events(user_id):
-    db.cached_latest_events.remove({'user_id': user_id})
+def remove_cached_events(user_id, type_events):
+    db.cached_latest_events.remove({'user_id': user_id, "type": type_events})
 
 
 # SPEAKERS

@@ -70,8 +70,7 @@ def get_latest_events_from_indico(user_id):
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
               'from': 'today',
               'order': 'start',
-              'descending': 'yes',
-              'detail': 'contributions'
+              'descending': 'yes'
     }
     if user_id != 'all_public':
         result = perform_signed_request(construct_url(path, attach_params(params)))
@@ -86,10 +85,36 @@ def get_ongoing_events():
             app.config['INDICO_URL'], app.config['API_KEY']))
     return json.loads(result.decode('utf-8'))['results']
 
-def get_future_events():
-    result = perform_public_request('{0}/export/categ/0.json?ak={1}&from=1d&limit=50'.format(
-        app.config['INDICO_URL'], app.config['API_KEY']))
-    return json.loads(result.decode('utf-8'))['results']
+def get_today_events(user_id, offset):
+    path = '/export/categ/0.json'
+    params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
+              'from': 'today',
+              'to': 'today',
+              'order': 'start',
+              'offset': offset,
+              'limit': 15
+    }
+    if user_id != 'all_public':
+        result = perform_signed_request(construct_url(path, attach_params(params)))
+    else:
+        params["ak"] = app.config['API_KEY']
+        result = perform_public_request(construct_url(path, attach_params(params)))
+    return json.loads(result.decode('utf-8'))["results"]
+
+def get_future_events(user_id, offset):
+    path = '/export/categ/0.json'
+    params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
+              'from': '1d',
+              'order': 'start',
+              'offset': offset,
+              'limit': 15
+    }
+    if user_id != 'all_public':
+        result = perform_signed_request(construct_url(path, attach_params(params)))
+    else:
+        params["ak"] = app.config['API_KEY']
+        result = perform_public_request(construct_url(path, attach_params(params)))
+    return json.loads(result.decode('utf-8'))["results"]
 
 def get_user_info(user_id):
     return oauth_indico_mobile.get(construct_url("/export/user/%s.json"%user_id, {})).data["results"]

@@ -190,7 +190,7 @@ var ContributionsPageView = PageView.extend({
                 favorites = true;
                 container = '#sessionDay_list_favorites_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
                 sessionDay = true;
-                url = BASE_URL + 'favorites/searchContrib/event/'+splittedId[2]+
+                url = BASE_URL + 'services/favorites/searchContrib/event/'+splittedId[2]+
                 '/session/'+splittedId[3]+
                 '/day/'+splittedId[4]+
                 '/search/'+term+'/';
@@ -199,7 +199,7 @@ var ContributionsPageView = PageView.extend({
                 container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
                 sessionDay = true;
                 favorites = false;
-                url = BASE_URL + 'searchContrib/event/'+splittedId[1]+
+                url = BASE_URL + 'services/searchContrib/event/'+splittedId[1]+
                 '/session/'+splittedId[2]+
                 '/day/'+splittedId[3]+
                 '/search/'+term+'/';
@@ -208,7 +208,7 @@ var ContributionsPageView = PageView.extend({
                 user_id = getUserId();
                 favorites = true;
                 container = '#day_list_favorites_' + splittedId[2] + '_' + splittedId[3];
-                url = BASE_URL + 'favorites/searchContrib/event/'+splittedId[2]+
+                url = BASE_URL + 'services/favorites/searchContrib/event/'+splittedId[2]+
                 '/day/'+splittedId[3]+
                 '/search/'+term+'/';
                 sessionDay = false;
@@ -216,7 +216,7 @@ var ContributionsPageView = PageView.extend({
             else{
                 favorites = false;
                 container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
-                url = BASE_URL + 'searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
+                url = BASE_URL + 'services/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
                 sessionDay = false;
             }
             $(e.currentTarget).parent().parent().find('.loader').show();
@@ -260,7 +260,7 @@ var SpeakersPage = PageView.extend({
             var view = new SpeakerListView({
                 container: '#speakersContent_' + splittedId[1],
                 collection: new Speakers(),
-                url: BASE_URL + 'searchSpeaker/event/'+eventId+'/search/'+term+'/',
+                url: BASE_URL + 'services/searchSpeaker/event/'+eventId+'/search/'+term+'/',
                 template_file: 'speakers.html',
                 template_name: '#speakersList',
                 term: term
