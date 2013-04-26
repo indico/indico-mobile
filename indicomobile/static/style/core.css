@@ -1,10 +1,10 @@
 
 .button-icon {
     width: 74px;
+    height: 74px;
     line-height: 74px;
     display: block;
     margin: 0.2em auto !important;
-    background: #FCFCFC;
     font-size: 3.5em;
     color: #4F82B4 !important;
     border-radius: 16px !important;
@@ -12,13 +12,16 @@
 
 .small-button-icon {
     width: 28px;
+    height: 28px;
     line-height: 28px;
     display: block;
     margin: 0.2em auto !important;
-    background: #FCFCFC;
     font-size: 1.4em;
     color: #4F82B4 !important;
     border-radius: 5px !important;
+}
+.small-button-icon.panel {
+    color: #2f3e46 !important;
 }
 
 .button-icon .ui-btn-inner, .small-button-icon .ui-btn-inner {
@@ -42,6 +45,18 @@
 }
 .small-icon.right {
     right: 10px;
+}
+
+div.settings-panel {
+    position:absolute;
+    top:0;
+    right:10px;
+}
+
+div.nav-panel {
+    position:absolute;
+    top:0;
+    left:10px;
 }
 
 .nextEvent {
