@@ -6,7 +6,7 @@ $('#eventHome').live('pageinit', function(){
         favoritesUrl: BASE_URL + 'services/favorites/futureEvents/',
         container: '#futureEventList',
         template_name: '#eventList',
-        empty_message: 'No future events found.'
+        empty_message: 'No future events found'
     });
     var ongoingEventsView = new ListByMonthView({
         collection: new Events(),
@@ -14,7 +14,14 @@ $('#eventHome').live('pageinit', function(){
         favoritesUrl: BASE_URL + 'services/favorites/ongoingEvents/',
         container: '#ongoingEventList',
         template_name: '#eventList',
-        empty_message: 'No ongoing events found.'
+        empty_message: 'No ongoing events found'
+    });
+
+    $("#more-ongoing-events").click(function(){
+        ongoingEventsView.nextItems();
+    });
+    $("#more-future-events").click(function(){
+        futureEventsView.nextItems();
     });
 
 });
