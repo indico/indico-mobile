@@ -85,14 +85,14 @@ def get_ongoing_events():
             app.config['INDICO_URL'], app.config['API_KEY']))
     return json.loads(result.decode('utf-8'))['results']
 
-def get_today_events(user_id, offset):
+def get_today_events(user_id, offset, limit=15):
     path = '/export/categ/0.json'
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
               'from': 'today',
               'to': 'today',
               'order': 'start',
               'offset': offset,
-              'limit': 15
+              'limit': limit
     }
     if user_id != 'all_public':
         result = perform_signed_request(construct_url(path, attach_params(params)))
@@ -101,13 +101,14 @@ def get_today_events(user_id, offset):
         result = perform_public_request(construct_url(path, attach_params(params)))
     return json.loads(result.decode('utf-8'))["results"]
 
-def get_future_events(user_id, offset):
+def get_future_events(user_id, offset, limit=15):
     path = '/export/categ/0.json'
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
               'from': '1d',
+              'to': '10d',
               'order': 'start',
               'offset': offset,
-              'limit': 15
+              'limit': limit
     }
     if user_id != 'all_public':
         result = perform_signed_request(construct_url(path, attach_params(params)))
