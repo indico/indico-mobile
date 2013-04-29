@@ -1,0 +1,19 @@
+{% extends "baselayout.html" %}
+{% block head %}
+    {% assets "goingon_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+{% endblock %}
+{% block pageId %}eventHome{% endblock %}
+{% block menuheader%}
+    <div class="nav-panel"><a data-role="button" href="#nav-panel" rel="external" class="icon-menu small-button-icon panel" aria-hidden="true"></a></div>
+{% endblock %}
+{% block pageheader%}
+{% endblock %}
+{% block body %}
+    <div class="headerTitle">
+        <div class="headerElement"><h3>{% block header %}{% endblock %}</h3></div>
+    </div>
+    {% block content %}
+    {% endblock %}
+{% endblock %}

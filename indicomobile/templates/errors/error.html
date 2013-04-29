@@ -1,0 +1,17 @@
+{% extends "baselayout.html" %}
+{% block pagetitle %}{{name}}{% endblock %}
+{% block head %}
+{% endblock %}
+{% block menuheader%}
+    <div class="nav-panel"><a data-role="button" href="#nav-panel" rel="external" class="icon-menu small-button-icon panel" aria-hidden="true"></a></div>
+{% endblock %}
+{% block body %}
+        <div class="headerTitle">
+            <div class="headerElement"><h3>{{name}}</h3></div>
+        </div>
+        <div data-role="content" id="errorMsg">
+            <h4 style="text-align: center;">{{description | safe}}</h4>
+        </div>
+{% endblock %}
+
+
