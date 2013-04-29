@@ -37,3 +37,7 @@ var Speaker = Backbone.Model.extend({
 var Speakers = Backbone.Collection.extend({
     model: Speaker
 });
+
+var User = Backbone.Model.extend({
+
+});

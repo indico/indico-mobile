@@ -1,9 +1,7 @@
 from datetime import datetime
-from flask import Flask, Blueprint
 from flask.ext.mongokit import Document
-from bson.dbref import DBRef
 
-from indicomobile.db.base import db
+from indicomobile.db import db
 
 
 class Presenter(Document):
@@ -23,20 +21,24 @@ class Presenter(Document):
 
 class Resource(Document):
     __collection__ = 'resources'
+    skip_validation = True
     structure = {
         'url': unicode,
         '_fossil': unicode,
-        'name': unicode
+        'name': unicode,
+        'conferenceId': unicode
     }
 
 
 class Material(Document):
     __collection__ = 'materials'
+    skip_validation = True
     structure = {
         '_fossil': unicode,
         'id': unicode,
         'title': unicode,
-        'resources': [Document]
+        'resources': [Document],
+        'conferenceId': unicode
     }
 
 
@@ -47,7 +49,8 @@ class Chair(Document):
         'affiliation': unicode,
         '_fossil': unicode,
         'fullName': unicode,
-        'email': unicode
+        'email': unicode,
+        'conferenceId': unicode
     }
 
 
@@ -58,29 +61,31 @@ class Event(Document):
         'endDate': datetime,
         'title': unicode,
         'description': unicode,
+        'material': [Material],
         'id': unicode,
         'chairs': [Chair],
         'url': unicode,
         'location': unicode,
+        'address': unicode,
         '_fossil': unicode,
         'timezone': unicode,
         'type': unicode,
         'room': unicode,
         'category': unicode,
         'categoryId': unicode,
-        'modificationDate': datetime
+        'modificationDate': datetime,
+        'hasAnyProtection': bool,
+        'roomMapURL': unicode
     }
-
-
-    # @classmethod
-    # def cleanup(cls, query_session, event_id):
-    #     query_session.remove_query(Contribution).filter(Contribution.eventId == event_id).execute()
-    #     query_session.remove_query(Session).filter(Session.eventId == event_id).execute()
-    #     query_session.remove_query(Day).filter(Day.eventId == event_id).execute()
-    #     query_session.remove_query(Presenter).filter(Presenter.eventId == event_id).execute()
-    #     query_session.remove_query(Chair).filter(Chair.eventId == event_id).execute()
-    #     query_session.remove_query(Material).filter(Material.eventId == event_id).execute()
-    #     query_session.remove_query(Resource).filter(Resource.eventId == event_id).execute()
+    def cleanup(self, event_id):
+        db.events.remove({'id': event_id})
+        db.contributions.remove({'conferenceId': event_id})
+        db.session_slots.remove({'conferenceId': event_id})
+        db.days.remove({'conferenceId': event_id})
+        db.presenters.remove({'conferenceId': event_id})
+        db.materials.remove({'conferenceId': event_id})
+        db.resources.remove({'conferenceId': event_id})
+        db.chairs.remove({'conferenceId': event_id})
 
 class Contribution(Document):
     pass
@@ -124,6 +129,7 @@ class Contribution(Document):
     __collection__ = 'contributions'
     structure = {
         'startDate': datetime,
+        'event': Event,
         'contributionId': unicode,
         'endDate': datetime,
         'description': unicode,
@@ -141,10 +147,10 @@ class Contribution(Document):
         '_fossil': unicode,
         'uniqueId': unicode,
         'room': unicode,
-        'isPoster': bool
+        'isPoster': bool,
+        'hasAnyProtection': bool,
+        'address': unicode
     }
-
-
 
 class Day(Document):
     __collection__ = 'days'
@@ -155,4 +161,59 @@ class Day(Document):
     }
 
 
-db.register([Presenter, Resource, Material, Chair, Event, Contribution, SessionSlot, Day])
+
+class FavoritesContribution(Document):
+    __collection__ = 'favorites_contributions'
+    structure = {
+        'user_id': unicode,
+        'contribution': Contribution
+    }
+
+
+
+class FavoritesSessionSlot(Document):
+    __collection__ = 'favorites_session_slots'
+    structure = {
+        'user_id': unicode,
+        'session_slot': SessionSlot
+    }
+
+
+
+class FavoritesEvent(Document):
+    __collection__ = 'favorites_events'
+    structure = {
+        'user_id': unicode,
+        'event': Event
+    }
+
+    def cleanup(self, user_id, event_id):
+        db.favorites_events.remove({'user_id': user_id, 'event.id': event_id})
+        db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id})
+        db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id})
+
+
+class HistoryEvent(Document):
+    __collection__ = 'history_events'
+    structure = {
+        'user_id': unicode,
+        'id': unicode,
+        'title': unicode,
+        'hasAnyProtection': bool,
+        'viewed_at': datetime,
+    }
+
+
+class CachedLatestEvent(Document):
+    __collection__ = 'cached_latest_events'
+    structure = {
+        'user_id': unicode,
+        'type': unicode, #ongoing or future
+        'timestamp': datetime,
+        'events': [dict]
+    }
+
+
+db.register([Presenter, Resource, Material, Chair, Event, Contribution,
+            SessionSlot, Day, FavoritesContribution, FavoritesSessionSlot,
+            FavoritesEvent, HistoryEvent, CachedLatestEvent])

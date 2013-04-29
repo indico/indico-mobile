@@ -1,0 +1,12 @@
+{% extends "baseeventlist.html" %}
+{% block pagetitle %}Favorites{% endblock %}
+{% block head %}
+    {% assets "favorites_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+{% endblock %}
+{% block header %}Favorites{% endblock %}
+{% block content %}
+    <div data-role="content" id="favoritesEventList">
+    </div>
+{% endblock %}
