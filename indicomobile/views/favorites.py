@@ -89,7 +89,7 @@ def add_contribution(event_id, contribution_id):
                     if current_contribution['slot']:
                         if current_contribution['slot']['sessionId'] == session_id:
                             num_contrib_in_session_favorites += 1
-                sessions_in_db = db_session.get_event_session(event_id, session_id)
+                sessions_in_db = db_session.get_event_same_sessions(event_id, session_id)
                 for session in sessions_in_db:
                     num_contrib_in_session_db += len(session['entries'])
                 if num_contrib_in_session_db - num_contrib_in_session_favorites == 1:

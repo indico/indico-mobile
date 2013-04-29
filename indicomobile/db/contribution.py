@@ -117,7 +117,7 @@ def add_contribution_to_favorites(user_id, contribution):
     new_contribution.save()
 
 def remove_contribution_from_favorites(user_id, event_id, contrib_id):
-    db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'contribution.sessionId': contrib_id})
+    db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id, 'contribution.contributionId': contrib_id})
 
 
 def remove_event_contributions_from_favorites(user_id, event_id):

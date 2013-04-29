@@ -117,7 +117,7 @@ def get_future_events(user_id, offset):
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_user_info(user_id):
-    return oauth_indico_mobile.get(construct_url("/export/user/%s.json"%user_id, {})).data["results"]
+    return oauth_indico_mobile.get(construct_url("/export/user/%s.json"%user_id, {})).data["results"][0]
 
 def get_room(room_name):
     path = '/export/roomName/CERN/' + urllib.quote(room_name) + '.json'
