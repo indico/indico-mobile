@@ -1,5 +1,5 @@
 <script type="text/template" id="contribution">
-<li>
+<li class="contribItem">
     <a href="#contribution_<%if (inFavorites) {print('favorites_')}%><%=conferenceId%>_<%=contributionId%>" style="padding-right: 45px;" rel="external">
     <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
@@ -45,6 +45,9 @@
     <% } %>
     <% if (hasAnyProtection) {%>
         <span class="protected icon-protected" aria-hidden="true"></span>
+    <% } %>
+    <% if (typeof short_start_date != 'undefined'){ %>
+    <span style="color: #666; margin-right: 4px"><%=short_start_date%></span>
     <% } %>
     <%=title%>
     </a>
@@ -159,7 +162,7 @@
 </script>
 
 <script type="text/template" id="speakersList">
-<li>
+<li class="speakerItem">
     <a href="#speaker_<%=conferenceId%>_<%=id.replace('_',':')%>" rel="external"><%=name%></a>
 </li>
 </script>

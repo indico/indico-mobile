@@ -175,98 +175,75 @@ var ContributionsPageView = PageView.extend({
     },
 
     events: {
-        "keyup input": "searchContribution"
+        "keyup input": "searchContribution",
+        "click a.ui-input-clear": "resetSearch"
+    },
+
+    _getContainer: function(info){
+        var container = null;
+        if (info.length > 4){
+            return '#sessionDay_list_favorites_' + info[2] + '_' + info[3] + '_' + info[4];
+        } else if (info.length > 3 && info[1] != 'favorites'){
+            return '#sessionDay_list_' + info[1] + '_' + info[2] + '_' + info[3];
+        } else if (info.length > 3){
+            return '#day_list_favorites_' + info[2] + '_' + info[3];
+        } else{
+            return '#day_list_' + info[1] + '_' + info[2];
+        }
+
+    },
+
+    resetSearch: function(e) {
+        var info = $(e.currentTarget).siblings().attr("id").split("_");
+        var container = this._getContainer(info);
+        var term = $(e.currentTarget).val();
+        $(container + " .ui-listview > li").show();
     },
 
     searchContribution: function(e){
-
-        if (e.keyCode == 13){
-            e.preventDefault();
-            var splittedId = $(e.currentTarget).attr('id').split('_');
-            var url, container, sessionDay, favorites, user_id;
-            var term = $(e.currentTarget).val();
-            if (splittedId.length > 4){
-                user_id = getUserId();
-                favorites = true;
-                container = '#sessionDay_list_favorites_' + splittedId[2] + '_' + splittedId[3] + '_' + splittedId[4];
-                sessionDay = true;
-                url = BASE_URL + 'services/favorites/searchContrib/event/'+splittedId[2]+
-                '/session/'+splittedId[3]+
-                '/day/'+splittedId[4]+
-                '/search/'+term+'/';
-            }
-            else if (splittedId.length > 3 && splittedId[1] != 'favorites'){
-                container = '#sessionDay_list_' + splittedId[1] + '_' + splittedId[2] + '_' + splittedId[3];
-                sessionDay = true;
-                favorites = false;
-                url = BASE_URL + 'services/searchContrib/event/'+splittedId[1]+
-                '/session/'+splittedId[2]+
-                '/day/'+splittedId[3]+
-                '/search/'+term+'/';
-            }
-            else if (splittedId.length > 3){
-                user_id = getUserId();
-                favorites = true;
-                container = '#day_list_favorites_' + splittedId[2] + '_' + splittedId[3];
-                url = BASE_URL + 'services/favorites/searchContrib/event/'+splittedId[2]+
-                '/day/'+splittedId[3]+
-                '/search/'+term+'/';
-                sessionDay = false;
-            }
-            else{
-                favorites = false;
-                container = '#day_list_' + splittedId[1] + '_' + splittedId[2];
-                url = BASE_URL + 'services/searchContrib/event/'+splittedId[1]+'/day/'+splittedId[2]+'/search/'+term+'/';
-                sessionDay = false;
-            }
-            $(e.currentTarget).parent().parent().find('.loader').show();
-            $(container).empty();
-
-            var contributionsView = new ContributionListView({
-                container: container,
-                collection: new Contributions(),
-                url: url,
-                template_file: 'contributions.html',
-                template_name: '#contribution',
-                sessionDay: sessionDay,
-                term: term,
-                favorites: favorites,
-                empty_message: 'No contributions found.'
-            });
-        }
-
+        var info = $(e.currentTarget).attr('id').split("_");
+        var container = this._getContainer(info);
+        var term = $(e.currentTarget).val();
+        $(container + " .ui-listview > li").hide();
+        var items = $(container + " .ui-listview li.contribItem:contains('"+ term +"')");
+        items.each(function(){
+            $(this).prevAll(".ui-li-divider:first").show();
+        });
+        items.show();
     }
-
 });
 
 var SpeakersPage = PageView.extend({
 
     events: {
-        "keyup input": "searchSpeaker"
+        "keyup input": "searchSpeaker",
+        "click a.ui-input-clear": "resetSearch"
+    },
+
+    _getContainer: function(info){
+        if (info.length > 2){
+            return '#speakersContent_favorites_' + info[2];
+        } else{
+            return '#speakersContent_' + info[1];
+        }
+    },
+
+    resetSearch: function(e) {
+        var info = $(e.currentTarget).siblings().attr("id").split("_");
+        var container = this._getContainer(info);
+        var term = $(e.currentTarget).val();
+        $(container + " .ui-listview > li").show();
     },
 
     searchSpeaker: function(e){
-
-        if (e.keyCode == 13){
-            e.preventDefault();
-            var splittedId = $(e.currentTarget).attr('id').split('_');
-            var eventId = splittedId[1];
-            var term = $(e.currentTarget).val();
-            var container = $('#speakersContent_' + splittedId[1]);
-            container.parent().find('.loader').show();
-            container.parent().find('.emptyMessage').hide();
-            container.data('view').remove();
-            container.data('view').infiniScroll.disableFetch();
-            var view = new SpeakerListView({
-                container: '#speakersContent_' + splittedId[1],
-                collection: new Speakers(),
-                url: BASE_URL + 'services/searchSpeaker/event/'+eventId+'/search/'+term+'/',
-                template_file: 'speakers.html',
-                template_name: '#speakersList',
-                term: term
-            });
-        }
-
+        var info = $(e.currentTarget).attr('id').split("_");
+        var container = this._getContainer(info);
+        var term = $(e.currentTarget).val();
+        $(container + " .ui-listview > li").hide();
+        var items = $(container + " .ui-listview li.speakerItem:contains('"+ term +"')");
+        items.each(function(){
+            $(this).prevAll(".ui-li-divider:first").show();
+        });
+        items.show();
     }
-
 });

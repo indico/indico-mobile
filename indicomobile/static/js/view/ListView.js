@@ -156,6 +156,8 @@ var ListByMonthView = ListView.extend({
         var lastDate = null,
         self = this;
         collection.each(function(element){
+            var startDate = moment(element.get("startDate").date);
+            element.set("short_start_date", startDate.format("DD MMM"));
             element.set('inFavorites', self.options.favorites);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
