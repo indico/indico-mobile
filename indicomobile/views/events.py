@@ -97,12 +97,12 @@ def search_event(search, everything=False):
 
 @events.route('/services/futureEvents/', methods=['GET'])
 def get_future_events():
-    return json.dumps(event.get_future_events())
+    return json.dumps(event.get_future_events(int(request.args.get('page', 1))))
 
 
 @events.route('/services/ongoingEvents/', methods=['GET'])
 def get_ongoing_events():
-    return json.dumps(event.get_ongoing_events())
+    return json.dumps(event.get_ongoing_events(int(request.args.get('page', 1))))
 
 @cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 @events.route('/services/ongoingContributions/', methods=['GET'])

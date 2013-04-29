@@ -305,14 +305,14 @@ def search_favorites_event(search):
 @favorites.route('/services/favorites/ongoingEvents/', methods=['GET'])
 def get_favorites_ongoing_events():
     user_id = flask_session['indico_user']
-    events = event_logic.get_ongoing_events()
+    events = event_logic.get_ongoing_events(int(request.args.get('page', 1)))
     return json.dumps(my_favorites.get_favorites_events(events, user_id))
 
 
 @favorites.route('/services/favorites/futureEvents/', methods=['GET'])
 def get_favorites_future_events():
     user_id = flask_session['indico_user']
-    events = event_logic.get_future_events()
+    events = event_logic.get_future_events(int(request.args.get('page', 1)))
     return json.dumps(my_favorites.get_favorites_events(events, user_id))
 
 

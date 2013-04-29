@@ -30,8 +30,14 @@ def get_ongoing_lectures(now, tomorrow):
                                     {'startDate': {'$lt': tomorrow}},
                                     {'type': 'simple_event'}]}).sort([('startDate', 1)])
 
-def get_cached_events(user_id, type_events):
-    return db.CachedLatestEvent.find_one({'user_id': user_id, 'type': type_events})
+def get_cached_events(user_id, type_events, pageNumber, offset):
+    return db.CachedLatestEvent.find({'user_id': user_id, 'type': type_events}).skip((pageNumber - 1) * offset).limit(offset)
+
+def get_last_offset_cached(user_id, type_events):
+    last_offset = db.CachedLatestOffsetAPI.find_one({'user_id': user_id, 'type': type_events})
+    if last_offset:
+        return last_offset["offset"]
+    return 0
 
 
 def store_chairs(event):
@@ -76,16 +82,22 @@ def store_event(event_http, event_tt):
             day['entries'] = entries
             day.save()
 
-def store_cached_events(user_id, type_events, date, events):
-    for event in events:
-        clean_html_tags(event)
+def store_cached_event(user_id, type_events, date, event):
+    clean_html_tags(event)
     new_cached_events = db.CachedLatestEvent()
-    new_cached_events.update({'user_id': user_id, "type": type_events, 'timestamp': date, 'events': events})
+    new_cached_events.update({'user_id': user_id, 'event_id': event['id'], "type": type_events, 'timestamp': date, 'event': event})
     new_cached_events.save()
 
 def remove_cached_events(user_id, type_events):
     db.cached_latest_events.remove({'user_id': user_id, "type": type_events})
 
+def store_last_offset_cached(user_id, type_events, offset):
+    last_offset_cached = db.CachedLatestOffsetAPI()
+    last_offset_cached.update({'user_id': user_id, "type": type_events, 'offset': offset})
+    last_offset_cached.save()
+
+def remove_last_offset_cached(user_id, type_events):
+    db.cached_latest_offset.remove({'user_id': user_id, "type": type_events})
 
 # SPEAKERS
 

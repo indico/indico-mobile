@@ -20,6 +20,7 @@ var ListView = Backbone.View.extend({
         this.collection.on('reset', this.render, this);
         this.collection.on('reload', this.initialize, this);
         this.collection.on('error', this.showError, this);
+        this.options.page = 1;
         this.collection.fetch();
     },
 
@@ -53,7 +54,7 @@ var ListView = Backbone.View.extend({
         term = this.options.term,
         listView = $(this.el);
 
-        listView.empty();
+        //listView.empty();
 
         if (collection.size() > 0){
             if (this.collection.at(0).get('error')){
@@ -151,9 +152,27 @@ var SessionDaysList = ListView.extend({
 
 var ListByMonthView = ListView.extend({
 
+    nextItems: function() {
+        var container = $(this.options.container);
+        container.parent().find('.loader').show();
+        this.options.page +=1;
+
+        this.favoritesCollection.fetch({data: {page: this.options.page}});
+        this.collection.fetch({data: {page: this.options.page}});
+    },
+
+    appendRender: function(newitems) {
+        var container = $(this.options.container);
+        if (newitems[0].length > 0){
+            this.renderItems(new Events(newitems[0]), this.template, this.options.term);
+        }
+        else{
+            container.parent().find('.loader').hide();
+        }
+    },
+
     renderItems: function(collection, template, listView){
 
-        var lastDate = null,
         self = this;
         collection.each(function(element){
             var startDate = moment(element.get("startDate").date);
@@ -161,8 +180,8 @@ var ListByMonthView = ListView.extend({
             element.set('inFavorites', self.options.favorites);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
-            if (lastDate === null || lastDate != month){
-                lastDate = month;
+            if (self.options.lastDate === null || self.options.lastDate != month){
+                self.options.lastDate = month;
                 listView.append('<li data-role="list-divider">'+month+'</li>');
             }
             var listItem = template(element.toJSON());
