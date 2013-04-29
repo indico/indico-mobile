@@ -46,25 +46,6 @@ def get_speaker_contributions(event_id, speaker):
         contributions.append(contrib)
     return contributions
 
-def search_contributions(event_id, session_id, start_date, end_date, regex):
-    contributions = []
-    results = db.Contribution.find({'$and': [{'title': {'$regex': regex, '$options': 'i'}},
-                                        {'conferenceId': event_id},
-                                        {'startDate': {'$gte': start_date}},
-                                        {'startDate': {'$lt': end_date}}]}).sort([('startDate', 1)])
-    for contrib in results:
-        if contrib['slot']:
-            contrib['slot'] = db.dereference(contrib['slot'])
-            if session_id:
-                if contrib['slot']['sessionId'] == session_id:
-                    contributions.append(contrib)
-            else:
-                contributions.append(contrib)
-        elif not session_id:
-            contributions.append(contrib)
-    return contributions
-
-
 def store_presenters(contribution):
     presenters = []
     for presenter in contribution.get('presenters', []):

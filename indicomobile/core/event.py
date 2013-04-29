@@ -144,19 +144,3 @@ def get_event_speakers(event_id, pageNumber):
 def get_speaker_contributions(event_id, speaker_id):
     speaker = db_event.get_event_speaker(event_id, speaker_id)
     return db_contribution.get_speaker_contributions(event_id, speaker)
-
-def search_speaker(event_id, search, pageNumber, offset):
-    words = urllib.quote(search).split('%20')
-    regex = ''
-    for word in words:
-        regex += '(?=.*' + word + ')'
-    return list(db_event.search_speakers(event_id, regex, pageNumber, offset))
-
-def generic_search_contrib(search, event_id, day_date, session_id):
-    start_date = datetime.strptime(day_date, '%Y-%m-%d')
-    end_date = start_date + timedelta(days=1)
-    words = search.split('%20')
-    regex = ''
-    for word in words:
-        regex += '(?=.*' + word + ')'
-    return db_contribution.search_contributions(event_id, session_id, start_date, end_date, regex)

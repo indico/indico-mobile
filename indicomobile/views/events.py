@@ -95,22 +95,6 @@ def search_event(search, everything=False):
     return json.dumps(event.search_event(search, everything, int(request.args.get('page', 1))))
 
 
-@events.route('/services/searchSpeaker/event/<event_id>/search/<search>/', methods=['GET'])
-def search_speaker(event_id, search):
-    speakers = event.search_speaker(event_id, search, int(request.args.get('page', 1)), int(request.args.get('offset', 20)))
-    return json.dumps(speakers)
-
-
-@events.route('/services/searchContrib/event/<event_id>/day/<day_date>/search/<search>/', methods=['GET'])
-def search_contrib(event_id, day_date, search):
-    return json.dumps(event.generic_search_contrib(search, event_id, day_date, None))
-
-
-@events.route('/services/searchContrib/event/<event_id>/session/<session_id>/day/<day_date>/search/<search>/', methods=['GET'])
-def search_contrib_in_session(event_id, session_id, day_date, search):
-    return json.dumps(event.generic_search_contrib(search, event_id, day_date, session_id))
-
-
 @events.route('/services/futureEvents/', methods=['GET'])
 def get_future_events():
     return json.dumps(event.get_future_events())

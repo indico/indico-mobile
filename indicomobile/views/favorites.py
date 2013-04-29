@@ -302,19 +302,6 @@ def search_favorites_event(search):
     return json.dumps(my_favorites.get_favorites_events(events, user_id))
 
 
-@favorites.route('/services/favorites/searchContrib/event/<event_id>/day/<day>/search/<search>/', methods=['GET'])
-def search_favorites_contribution(event_id, day, search):
-    user_id = flask_session['indico_user']
-    contributions = event_logic.generic_search_contrib(search, event_id, day, None)
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
-
-
-@favorites.route('/services/favorites/searchContrib/event/<event_id>/session/<session_id>/day/<day>/search/<search>/', methods=['GET'])
-def search_favorites_contrib_in_session(event_id, session_id, day, search):
-    user_id = flask_session['indico_user']
-    contributions = event_logic.generic_search_contrib(search, event_id, day, session_id)
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
-
 @favorites.route('/services/favorites/ongoingEvents/', methods=['GET'])
 def get_favorites_ongoing_events():
     user_id = flask_session['indico_user']

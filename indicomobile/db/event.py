@@ -92,10 +92,6 @@ def remove_cached_events(user_id, type_events):
 def get_event_speaker(event_id, speaker_id):
     return db.Presenter.find_one({'id': speaker_id, 'conferenceId': event_id})
 
-def search_speakers(event_id, regex, pageNumber, offset):
-    return db.Presenter.find({'name': {'$regex': regex, '$options': 'i'},
-                                'conferenceId': event_id}).sort([('name', 1)]).skip((pageNumber - 1) * offset).limit(offset)
-
 def get_event_speakers(event_id, pageNumber, offset):
     return db.Presenter.find({'conferenceId': event_id}).sort([('name', 1)]).skip((pageNumber - 1) * offset).limit(offset)
 
