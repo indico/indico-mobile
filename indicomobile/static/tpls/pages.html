@@ -126,21 +126,6 @@
 </script>
 
 <script type="text/template" id="eventPanels">
-    <div data-role="panel" id="settings-panel" data-position-fixed="true" data-theme="c" data-display="overlay" data-position="right">
-            <ul data-role="listview" data-theme="c" class="nav-search">
-                <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon" aria-hidden="true"></span></a></li>
-                <li data-role="list-divider" class="panel-divider"></li>
-                <li data-icon="false"><a href="<%=base_url%>search" rel="external"><span class="icon-search small-icon right" aria-hidden="true"></span>Search</a>
-                <li data-icon="false">
-                    <%if (user) { %>
-                    <a href="<%=base_url%>logout" rel="external"><span class="icon-logout small-icon right" aria-hidden="true"></span>Logout</a>
-                    <% } else  { %>
-                    <a href="<%=base_url%>login" rel="external"><span class="icon-login small-icon right" aria-hidden="true"></span>Login</a>
-                    <% } %>
-                </li>
-                <li data-icon="false"><a href="<%=indico_desktop%>/event/<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>" rel="external"><span class="icon-desktop small-icon right" aria-hidden="true"></span>Indico Desktop</a>
-            </ul>
-    </div>
     <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="overlay">
         <ul data-role="listview" data-theme="c" class="nav-search">
             <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon right" aria-hidden="true"></span></a></li>
@@ -159,14 +144,25 @@
                 <li data-icon="false"><a id ="favorites" rel="external" href="<%=base_url%>favorites"><span class="icon-favorites small-icon right" aria-hidden="true"></span>Favorites</a></li>
                 <li data-icon="false"><a id ="history" rel="external" href="<%=base_url%>history"><span class="icon-history small-icon right" aria-hidden="true"></span>History</a></li>
             <% } %>
+            <li data-role="list-divider" class="panel-divider"></li>
+            <li data-icon="false"><a href="<%=indico_desktop%>/event/<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>" rel="external"><span class="icon-desktop small-icon right" aria-hidden="true"></span>Indico Desktop</a>
         </ul>
     </div>
 </script>
 <script type="text/template" id="eventHeader">
     <div data-role="header" data-theme="c" data-position="fixed">
-        <div class="nav-panel"><a data-role="button" href="#nav-panel" rel="external" class="icon-menu small-button-icon panel" aria-hidden="true"></a></div>
+        <div class="nav-panel">
+            <a data-role="button" href="#nav-panel" rel="external" class="icon-menu panel-button-icon" aria-hidden="true"></a>
+    </div>
         <h3 role="heading" aria-level="1">Indico Mobile</h3>
-        <div class="settings-panel"><a data-role="button" href="#settings-panel" rel="external" class="icon-settings small-button-icon panel" aria-hidden="true"></a></div>
+        <div class="settings-panel">
+            <a data-role="button" href="<%=base_url%>search" rel="external" class="icon-search panel-button-icon" aria-hidden="true"></a>
+            <%if (user) { %>
+                <a data-role="button" href="<%=base_url%>logout" rel="external" class="icon-logout panel-button-icon" aria-hidden="true"></a>
+            <% } else  { %>
+                <a data-role="button" href="<%=base_url%>login" rel="external" class="icon-login panel-button-icon" aria-hidden="true"></a>
+            <% } %>
+        </div>
     </div>
 </script>
 

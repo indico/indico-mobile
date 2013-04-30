@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from flask import json, Blueprint, abort, session as flask_session, request
+from flask import json, Blueprint, Response, abort, session as flask_session, request
 
 from indicomobile import app
 import indicomobile.db.session as db_session
@@ -102,7 +102,7 @@ def get_future_events():
 
 @events.route('/services/ongoingEvents/', methods=['GET'])
 def get_ongoing_events():
-    return json.dumps(event.get_ongoing_events(int(request.args.get('page', 1))))
+    return Response(json.dumps(event.get_ongoing_events(int(request.args.get('page', 1)))), mimetype='application/json')
 
 @cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 @events.route('/services/ongoingContributions/', methods=['GET'])

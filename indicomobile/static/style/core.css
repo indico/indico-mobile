@@ -20,8 +20,16 @@
     color: #4F82B4 !important;
     border-radius: 5px !important;
 }
-.small-button-icon.panel {
+
+.panel-button-icon {
     color: #2f3e46 !important;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    display: inline-block;
+    margin: 0.2em auto !important;
+    font-size: 1.6em;
+    border-radius: 5px !important;
 }
 
 .button-icon .ui-btn-inner, .small-button-icon .ui-btn-inner {
@@ -98,6 +106,7 @@ div.nav-panel {
     background-image: -ms-linear-gradient(bottom, rgb(224,224,224) 14%, rgb(249,249,249) 57%);
     text-align: center;
     padding: 1px;
+    border: none !important;
 }
 
 .headerElement {

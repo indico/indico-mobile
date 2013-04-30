@@ -39,7 +39,7 @@ function hourToText(time){
     return splittedTime[0]+'h'+splittedTime[1];
 }
 
-$(document).on( "pageinit", "body", function() {
+/*$(document).on( "pageinit", "body", function() {
     $( document ).on( "swipeleft swiperight", "body", function( e ) {
         // We check if there is no open panel on the page because otherwise
         // a swipe to close the left panel would also open the right panel (and v.v.).
@@ -52,7 +52,7 @@ $(document).on( "pageinit", "body", function() {
             }
         }
     });
-});
+});*/
 
 $.extend($.expr[':'], {
     'contains': function (elem, i, match, array) {

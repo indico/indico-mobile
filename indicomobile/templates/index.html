@@ -6,14 +6,16 @@
     {% endassets %}
 {% endblock %}
 {% block pageId %}home{% endblock %}
-{% block body %}
+{% block pageheader %}
     {% if session['indico_user_name'] %}
         {% if session['indico_user_name'] != 'None' %}
-            <div class="headerTitle">
+            <div class="headerTitle" data-role="header" data-theme="c">
                 <div class="headerElement"><h3>Welcome, {{ session['indico_user_name'] }}</h3></div>
             </div>
         {% endif %}
     {% endif %}
+{% endblock %}
+{% block body %}
     <div data-role="content">
         {% if session['unauthorized'] %}
         <h3 style="color: #AF0000; text-align: center;">Login failed because you did not authorize Indico Mobile</h3>

@@ -15,11 +15,8 @@
     </script>
 {% endblock %}
 {% block pageId %}eventHome{% endblock %}
-{% block menuheader%}
-    <div class="nav-panel"><a data-role="button" href="#nav-panel" rel="external" class="icon-menu small-button-icon panel" aria-hidden="true"></a></div>
-{% endblock %}
-{% block body %}
-    <div class="headerTitle">
+{% block header%}
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement">
             <h3 id="mapTitle">{{map_title}}
                 <a id="route" data-role="button" rel="external" class="icon-direction small-button-icon" aria-hidden="true"></a>
@@ -28,6 +25,8 @@
                 Duration: <span id="routeDuration"></span></span>
         </div>
     </div>
+{% endblock %}
+{% block body %}
     <div data-role="content" id="map">
             <h3 class="emptyMessage" style="display: none;">{{not_found_msg}}</h3>
     </div>

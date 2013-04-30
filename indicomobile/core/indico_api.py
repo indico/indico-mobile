@@ -9,7 +9,7 @@ from indicomobile import app
 def construct_url(path, params):
     url_fragments = urlparse(app.config['INDICO_URL'])
     url_path = url_fragments.path
-    if url_path[-1] == "/":
+    if url_path and url_path[-1] == "/":
         url_path = url_path[:-1]
     url_path += path
     return urlunparse((url_fragments.scheme, url_fragments.netloc, url_path , "", params, ""))
