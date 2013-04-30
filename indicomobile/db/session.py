@@ -10,14 +10,17 @@ def get_event_session(event_id, session_id):
 def get_event_sessions(event_id):
     return db.SessionSlot.find({'conferenceId': event_id}).distinct('sessionId')
 
-def get_event_session_slots(event_id, include_contribs):
-    slots = list(db.SessionSlot.find({'conferenceId': event_id}).distinct('sessionId'))
+def get_event_session_slots(event_id, session_id, include_contribs):
+    slots = list(db.SessionSlot.find({'conferenceId': event_id,
+                                 'sessionId': session_id}))
     if include_contribs:
         for slot in slots:
+            contribs = []
             for contrib in slot['entries']:
                 current_contrib = db.dereference(contrib)
                 current_contrib['slot'] = slot
-                contrib = current_contrib
+                contribs.append(current_contrib)
+            slot["entries"] = contribs
     return slots
 
 
