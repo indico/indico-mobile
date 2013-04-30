@@ -19,14 +19,9 @@ function addRemoveEventAction(button, collection){
                 url: BASE_URL + "services/favorites/addEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
-                    if (collection !== null){
-                        collection.trigger('reload');
-                    }
-                    else{
-                        button.attr('action', 'remove');
-                        button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
-                        $.mobile.hidePageLoadingMsg();
-                    }
+                    button.attr('action', 'remove');
+                    button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);
@@ -39,14 +34,9 @@ function addRemoveEventAction(button, collection){
                 url: BASE_URL + "services/favorites/removeEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
-                    if (collection !== null){
-                        collection.trigger('reload');
-                    }
-                    else{
-                        button.attr('action', 'add');
-                        button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
-                        $.mobile.hidePageLoadingMsg();
-                    }
+                    button.attr('action', 'add');
+                    button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);
@@ -72,7 +62,9 @@ function addRemoveSessionAction(button, collection){
                 url: BASE_URL + "services/favorites/addSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
-                    collection.trigger('reload');
+                    button.attr('action', 'remove');
+                    button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);
@@ -85,7 +77,9 @@ function addRemoveSessionAction(button, collection){
                 url: BASE_URL + "services/favorites/removeSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
-                    collection.trigger('reload');
+                    button.attr('action', 'add');
+                    button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);
@@ -112,7 +106,9 @@ function addRemoveContributionAction(button, collection){
                 url: BASE_URL + "services/favorites/addContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
-                    collection.trigger('reload');
+                    button.attr('action', 'remove');
+                    button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);
@@ -125,7 +121,9 @@ function addRemoveContributionAction(button, collection){
                 url: BASE_URL + "services/favorites/removeContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
-                    collection.trigger('reload');
+                    button.attr('action', 'add');
+                    button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+                    $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
                     handlerError(resp);

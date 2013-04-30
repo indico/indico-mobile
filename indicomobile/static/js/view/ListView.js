@@ -153,6 +153,7 @@ var SessionDaysList = ListView.extend({
 var ListByMonthView = ListView.extend({
 
     nextItems: function() {
+        $(this.options.more_button).hide();
         var container = $(this.options.container);
         container.parent().find('.loader').show();
         this.options.page +=1;
@@ -193,7 +194,7 @@ var ListByMonthView = ListView.extend({
             }
             listView.append(listItem);
         });
-
+        $(this.options.more_button).show();
     },
 
     events: {

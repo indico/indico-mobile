@@ -40,7 +40,7 @@ def _get_cached_events(user_id, type_events, now, page):
     if cached_events:
         if now - cached_events[0]['timestamp'] < timedelta(hours=2):
             return [event["event"] for event in cached_events]
-        db_event.remove_cached_events(user_id)
+        db_event.remove_cached_events(user_id, type_events)
         db_event.remove_last_offset_cached(user_id, type_events)
     return []
 
