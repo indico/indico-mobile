@@ -15,7 +15,7 @@
     </script>
 {% endblock %}
 {% block pageId %}eventHome{% endblock %}
-{% block header%}
+{% block pageheader%}
     <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement">
             <h3 id="mapTitle">{{map_title}}
@@ -28,6 +28,6 @@
 {% endblock %}
 {% block body %}
     <div data-role="content" id="map">
-            <h3 class="emptyMessage" style="display: none;">{{not_found_msg}}</h3>
+        <h3 class="emptyMessage" style="display: none;">{{not_found_msg}}</h3>
     </div>
 {% endblock %}

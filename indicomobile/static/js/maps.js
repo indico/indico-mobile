@@ -2,7 +2,9 @@ function createMap(container, latitude, longitude){
     return new GMaps({
         div: container,
         lat: latitude,
-        lng: longitude
+        lng: longitude,
+        height: screen.height - 300 +'px',
+        width: 'inherit',
     });
 }
 
@@ -16,7 +18,6 @@ function addMarker(map, latitude, longitude, title){
 }
 
 $('#eventHome').live('pageinit', function(){
-            $('#map').css({'height': screen.height-400+'px'});
             if (latitude == null && longitude == null){
                 GMaps.geolocate({
                     error: function(error) {
@@ -57,6 +58,7 @@ $('#eventHome').live('pageinit', function(){
                 latitude = parseFloat(latitude);
                 longitude = parseFloat(longitude);
                 map = createMap('#map', latitude, longitude);
+                map.setCenter(latitude, longitude);
                 addMarker(map, latitude, longitude, room);
             }
         });
