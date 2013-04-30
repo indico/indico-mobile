@@ -449,7 +449,7 @@ var Router = Backbone.Router.extend({
 
             var aboutPageView = new PageView({
                 model: new Event(),
-                url: BASE_URL + 'services/event/'+eventId,
+                url: BASE_URL + 'services/event/'+eventId+'/',
                 template_name: '#about',
                 link: 'about_' + info,
                 selectedTab: '#aboutTab',
