@@ -99,6 +99,7 @@ var SessionsList = ListView.extend({
         lastTitle = null;
 
         collection.each(function(element){
+            element.set("user", userLogged);
             element.set('inFavorites', self.options.favorites);
             if (lastTitle === null || lastTitle != element.get('title')){
                 lastTitle = element.get('title');
@@ -179,6 +180,7 @@ var ListByMonthView = ListView.extend({
             var startDate = moment(element.get("startDate").date);
             element.set("short_start_date", startDate.format("DD MMM"));
             element.set('inFavorites', self.options.favorites);
+            element.set("user", userLogged);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
             if (self.options.lastDate === null || self.options.lastDate != month){
@@ -224,6 +226,7 @@ var SimpleEventsAndContributions = ListView.extend({
         self = this;
 
         collection.each(function(element){
+            element.set("user", userLogged);
             element.set('inFavorites', self.options.favorites);
             var day = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).day +
@@ -292,6 +295,7 @@ var ContributionListView = ListView.extend({
         self = this;
 
         collection.each(function(element){
+            element.set("user", userLogged);
             element.set('inFavorites', self.options.favorites);
             if (lastTime === null || lastTime != element.get('startDate').time){
                 lastTime = element.get('startDate').time;
@@ -429,6 +433,7 @@ var SearchResultsView = SpeakerListView.extend({
         collection.each(function(element){
             var startDate = moment(element.get("startDate").date);
             element.set("short_start_date", startDate.format("DD MMM"));
+            element.set("user", userLogged);
             element.set('inFavorites', false);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;

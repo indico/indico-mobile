@@ -129,13 +129,14 @@
     <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="reveal">
         <ul data-role="listview" data-theme="c" class="nav-search">
             <li data-icon="false"><a href="<%=base_url%>" rel="external"><span class="icon-home small-icon right" aria-hidden="true"></span>Home</a></li>
-            <li data-role="list-divider"><%=title%></li>
-            <li data-icon="false"><a id ="desktopTab" rel="external" href="#event_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-happening small-icon right" aria-hidden="true"></span>Desktop</a></li>
-            <li data-icon="false"><a id ="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-sessions small-icon right" aria-hidden="true"></span>Sessions</a></li>
-            <li data-icon="false"><a id ="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-timetable small-icon right" aria-hidden="true"></span>Timetable</a></li>
-            <li data-icon="false"><a id ="speakersTab" rel="external" href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-user small-icon right" aria-hidden="true"></span>Speakers</a></li>
-            <li data-icon="false"><a id ="aboutTab" rel="external" href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-info small-icon right" aria-hidden="true"></span>About</a></li>
-
+            <% if (event_type != "simple_event") { %>
+                <li data-role="list-divider"><%=title%></li>
+                <li data-icon="false"><a id ="desktopTab" rel="external" href="#event_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-happening small-icon right" aria-hidden="true"></span>Desktop</a></li>
+                <li data-icon="false"><a id ="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-sessions small-icon right" aria-hidden="true"></span>Sessions</a></li>
+                <li data-icon="false"><a id ="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-timetable small-icon right" aria-hidden="true"></span>Timetable</a></li>
+                <li data-icon="false"><a id ="speakersTab" rel="external" href="#speakers_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-user small-icon right" aria-hidden="true"></span>Speakers</a></li>
+                <li data-icon="false"><a id ="aboutTab" rel="external" href="#about_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-info small-icon right" aria-hidden="true"></span>About</a></li>
+            <% } %>
             <li data-role="list-divider">All events:</li>
             <li data-icon="false"><a id ="ongoing" rel="external" href="<%=base_url%>now"><span class="icon-happening small-icon right" aria-hidden="true"></span>Ongoing presentations</a></li>
             <li data-icon="false"><a id ="events" rel="external" href="<%=base_url%>events"><span class="icon-calendar small-icon right" aria-hidden="true"></span>Events</a></li>

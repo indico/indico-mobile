@@ -5,13 +5,16 @@
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
     <%= title %></a>
-    <a href="" id="addRemoveContribution"
-    <%  if (inFavorites){ %>
-        action="remove" data-icon="delete"
-    <% } else{ %>
-    action="add" data-icon="star"
+
+    <% if(user != "") { %>
+        <a href="" id="addRemoveContribution"
+        <%  if (inFavorites){ %>
+            action="remove" data-icon="delete"
+        <% } else{ %>
+        action="add" data-icon="star"
+        <% } %>
+        eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
     <% } %>
-    eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
 </li>
 </script>
 
@@ -26,13 +29,15 @@
     <% } %>
     <%= title %>
     </a>
-    <a href="" id="addRemoveContribution"
-    <%  if (inFavorites){ %>
-        action="remove" data-icon="delete"
-    <% } else{ %>
-    action="add" data-icon="star"
+    <% if(user != "") { %>
+        <a href="" id="addRemoveContribution"
+        <%  if (inFavorites){ %>
+            action="remove" data-icon="delete"
+        <% } else{ %>
+        action="add" data-icon="star"
+        <% } %>
+        eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
     <% } %>
-    eventId="<%=conferenceId%>"contributionId="<%=contributionId%>" data-iconpos="notext" data-theme="c"></a>
 </li>
 </script>
 
@@ -51,10 +56,12 @@
     <% } %>
     <%=title%>
     </a>
-    <% if (inFavorites){ %>
-        <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
-    <% }  else{ %>
-        <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
+    <% if(user != "") { %>
+        <% if (inFavorites){ %>
+            <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+        <% }  else{ %>
+            <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
+        <% } %>
     <% } %>
 </li>
 </script>
@@ -120,12 +127,15 @@
     <a href="#session_<%= conferenceId %>_<%= sessionId %>" rel="external" style="padding-right: 45px;">
 <% } %>
     <span  style="background:<%=color%>;" class="sessionColor"></span><%= title %></a>
-<% if (inFavorites){ %>
-    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="c"></a>
-<% } else{ %>
-    <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c"></a>
+
+<% if(user != "") { %>
+    <% if (inFavorites){ %>
+        <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="remove" data-icon="delete" data-iconpos="notext" data-theme="c"></a>
+    <% } else{ %>
+        <a href="" id="addRemoveSession" sessionId="<%= sessionId %>" eventId="<%= conferenceId %>" action="add" data-icon="star" data-iconpos="notext" data-theme="c"></a>
+    <% } %>
+    </li>
 <% } %>
-</li>
 </script>
 
 <script type="text/template" id="sessionsListInFavorites">

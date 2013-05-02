@@ -27,7 +27,7 @@ or find one that works with your web framework.
 """
 
 import urllib2
-from flask import Blueprint, request, redirect, session, url_for, flash, json
+from flask import Blueprint, request, Response, redirect, session, url_for, flash, json
 from werkzeug.exceptions import BadRequest, Unauthorized
 from flask_oauth import OAuth, OAuthException
 from indicomobile import app
@@ -85,7 +85,7 @@ def oauth_authorized(resp):
 
 @oauth_client.route('/user/', methods=['GET'])
 def user():
-    return json.dumps({"username":session.get('indico_user_name', "")})
+    return Response(json.dumps({"username":session.get('indico_user_name', "")}), mimetype='application/json')
 
 @oauth_client.errorhandler(OAuthException)
 def error(error):

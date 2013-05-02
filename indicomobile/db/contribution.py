@@ -7,6 +7,7 @@ from indicomobile.util.tools import clean_html_tags
 
 def get_contribution(event_id, contrib_id):
     contribution = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
+    contribution["event"] = db.dereference(contribution["event"])
     if contribution['slot']:
         contribution['slot'] = db.dereference(contribution['slot'])
     return contribution

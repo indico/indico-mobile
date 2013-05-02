@@ -20,58 +20,58 @@ def with_event(event_id=None):
 
 @events.route('/services/event/<event_id>/days/', methods=['GET'])
 def get_event_days(event_id):
-    return json.dumps(event.get_event_days(event_id))
+    return Response(json.dumps(event.get_event_days(event_id)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/day/<day_date>/', methods=['GET'])
 def get_event_day(event_id, day_date):
-    return json.dumps(db_event.get_event_day(event_id, day_date))
+    return Response(json.dumps(db_event.get_event_day(event_id, day_date)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/session/<session_id>/entries/', methods=['GET'])
 def get_event_same_sessions(event_id, session_id):
-    return json.dumps(event.get_event_same_sessions(event_id, session_id))
+    return Response(json.dumps(event.get_event_same_sessions(event_id, session_id)), mimetype='application/json')
 
 @events.route('/services/event/<event_id>/session/<session_id>/', methods=['GET'])
 def get_event_same_session(event_id, session_id):
-    return json.dumps(db_session.get_event_same_sessions(event_id, session_id)[0])
+    return Response(json.dumps(db_session.get_event_same_sessions(event_id, session_id)[0]), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/day/<day_date>/session/<session_id>/', methods=['GET'])
 def get_event_day_sessions(event_id, session_id, day_date):
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
     end_date = start_date + timedelta(days=1)
-    return json.dumps(db_session.get_event_day_session(event_id, session_id, start_date, end_date)[0])
+    return Response(json.dumps(db_session.get_event_day_session(event_id, session_id, start_date, end_date)[0]), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/contrib/<contrib_id>/', methods=['GET'])
 def get_event_contribution(event_id, contrib_id):
-    return json.dumps(db_contribution.get_contribution(event_id, contrib_id))
+    return Response(json.dumps(db_contribution.get_contribution(event_id, contrib_id)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/day/<day_date>/contributions/', methods=['GET'])
 def get_event_day_contributions(event_id, day_date):
-    return json.dumps(event.get_event_day_contributions(event_id, day_date))
+    return Response(json.dumps(event.get_event_day_contributions(event_id, day_date)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/sessions/', methods=['GET'])
 def get_event_sessions(event_id):
-    return json.dumps(event.get_event_sessions(event_id))
+    return Response(json.dumps(event.get_event_sessions(event_id)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
 def get_session_day_contributions(event_id, session_id, day):
-    return json.dumps(event.get_session_day_contributions(event_id, session_id, day))
+    return Response(json.dumps(event.get_session_day_contributions(event_id, session_id, day)), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def get_speaker_contributions(event_id, speaker_id):
-    return json.dumps(sorted(event.get_speaker_contributions(event_id, speaker_id)))
+    return Response(json.dumps(sorted(event.get_speaker_contributions(event_id, speaker_id))), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speakers/', methods=['GET'])
 def get_event_speakers(event_id):
-    return json.dumps(event.get_event_speakers(event_id, int(request.args.get('page', 1))))
+    return Response(json.dumps(event.get_event_speakers(event_id, int(request.args.get('page', 1)))), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speaker/<speaker_id>/', methods=['GET'])
@@ -79,7 +79,7 @@ def get_event_speaker(event_id, speaker_id):
     result = db_event.get_event_speaker(event_id, speaker_id)
     event = db_event.get_event(event_id)
     result["title"] = event["title"]
-    return json.dumps(result)
+    return Response(json.dumps(result), mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/', methods=['GET'])
@@ -87,17 +87,17 @@ def get_event(event_id):
     event = db_event.get_event(event_id)
     if event == None:
         abort(404)
-    return json.dumps(event)
+    return Response(json.dumps(event), mimetype='application/json')
 
 
 @events.route('/services/searchEvent/<search>/', methods=['GET'])
 def search_event(search, everything=False):
-    return json.dumps(event.search_event(search, everything, int(request.args.get('page', 1))))
+    return Response(json.dumps(event.search_event(search, everything, int(request.args.get('page', 1)))), mimetype='application/json')
 
 
 @events.route('/services/futureEvents/', methods=['GET'])
 def get_future_events():
-    return json.dumps(event.get_future_events(int(request.args.get('page', 1))))
+    return Response(json.dumps(event.get_future_events(int(request.args.get('page', 1)))), mimetype='application/json')
 
 
 @events.route('/services/ongoingEvents/', methods=['GET'])
@@ -107,7 +107,7 @@ def get_ongoing_events():
 @cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 @events.route('/services/ongoingContributions/', methods=['GET'])
 def get_ongoing_contributions():
-    return json.dumps(event.get_ongoing_contributions())
+    return Response(json.dumps(event.get_ongoing_contributions()), mimetype='application/json')
 
 
 @events.route('/services/addHistoryEvent/<event_id>/', methods=['POST'])
@@ -126,7 +126,7 @@ def add_history_event(event_id):
                     oldest = history_events[0]
                     db_event.remove_event_from_history(user_id, oldest["id"])
                 db_event.add_event_to_history(user_id, now, event_db, event_id)
-    return json.dumps({'status': 'ok'})
+    return Response(json.dumps({'status': 'ok'}), mimetype='application/json')
 
 
 @events.route('/services/historyEvents/', methods=['GET'])
@@ -136,4 +136,4 @@ def get_history():
         if flask_session['indico_user']:
             user_id = flask_session['indico_user']
             events_in_history = list(db_event.get_history(user_id, order=-1))
-    return json.dumps(events_in_history)
+    return Response(json.dumps(events_in_history), mimetype='application/json')

@@ -14,6 +14,7 @@
                   BASE_URL = BASE_URL.replace("http", "https");
               }
               var INDICO_DESKTOP = "{{config.get('INDICO_URL')}}";
+              var userLogged = "{{session['indico_user_name']}}";
         </script>
         {% assets "core_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>

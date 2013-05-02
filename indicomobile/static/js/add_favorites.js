@@ -1,5 +1,5 @@
 
-function handleError(resp){
+function handlerError(resp){
     $.mobile.hidePageLoadingMsg();
     if (resp.status == 401){
         alert("You are not authorized or your authorization has expired, please logout and login again.");
@@ -15,7 +15,7 @@ function addRemoveEventAction(button, collection){
     if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/addEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
@@ -30,7 +30,7 @@ function addRemoveEventAction(button, collection){
         }
         else{
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/removeEvent/" + eventId + "/",
                 async: false,
                 success: function(resp){
@@ -58,7 +58,7 @@ function addRemoveSessionAction(button, collection){
     if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/addSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
@@ -73,7 +73,7 @@ function addRemoveSessionAction(button, collection){
         }
         else{
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/removeSession/" + eventId + "/session/" + sessionId + "/",
                 async: false,
                 success: function(resp){
@@ -102,7 +102,7 @@ function addRemoveContributionAction(button, collection){
     if (userId != 'null'){
         if (action == 'add'){
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/addContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){
@@ -117,7 +117,7 @@ function addRemoveContributionAction(button, collection){
         }
         else{
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: BASE_URL + "services/favorites/removeContribution/" + eventId + "/contribution/" + contributionId + "/",
                 async: false,
                 success: function(resp){

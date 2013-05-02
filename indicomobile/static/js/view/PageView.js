@@ -46,6 +46,12 @@ var PageView = Backbone.View.extend({
             if (typeof this.options.event_id !== 'undefined'){
                 model.set('conferenceId', this.options.event_id);
             }
+            if(typeof model.get("type") === 'undefined') {
+                model.set("event_type", model.get("event").type);
+            } else{
+                model.set("event_type", model.get("type"));
+            }
+
             if(this.options.favorites){
                 if (model.get('conferenceId') === undefined){
                     model.set('id', 'favorites_'+model.get('id'));
@@ -148,7 +154,6 @@ var ContributionsPageView = PageView.extend({
             if (this.options.favorites){
                 thisDay.set('conferenceId', 'favorites_'+thisDay.get('conferenceId'));
             }
-            thisDay.set('conferenceTitle', thisDay.get('conferenceTitle'));
             thisDay.set('prevDay', prevDay);
             thisDay.set('nextDay', nextDay);
             if(thisDay.get("startDate")!==undefined){
@@ -163,6 +168,7 @@ var ContributionsPageView = PageView.extend({
             context.set("base_url", BASE_URL);
             context.set("indico_desktop", INDICO_DESKTOP);
             context.set("user", this.user.get("username"));
+            context.set("event_type", context.get("type"));
             pageView.append(this.headerTemplate(context.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.panelsTemplate(context.toJSON()));

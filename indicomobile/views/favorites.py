@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from flask import Blueprint, json, request,  session as flask_session
+from flask import Blueprint, json, request, Response, session as flask_session
 import indicomobile.db.event as db_event
 import indicomobile.db.contribution as db_contribution
 import indicomobile.db.session as db_session
@@ -12,7 +12,7 @@ favorites = Blueprint('favorites', __name__, template_folder='templates')
 @favorites.before_request
 def check_user(event_id=None):
     if 'indico_user' not in flask_session:
-        return json.dumps([])
+        return Response(json.dumps([]), mimetype='application/json')
 
 @favorites.route('/services/favorites/events/', methods=['GET'])
 def my_favorites_events():
@@ -33,10 +33,10 @@ def my_favorites_events():
         events.append(event['event'])
     events = sorted(events, key=lambda x:x['startDate'])
     events.reverse()
-    return json.dumps(events)
+    return Response(json.dumps(events), mimetype='application/json')
 
 
-@favorites.route('/services/favorites/addEvent/<event_id>/', methods=['GET'])
+@favorites.route('/services/favorites/addEvent/<event_id>/', methods=['POST'])
 def add_event(event_id):
     user_id = flask_session['indico_user']
     event_logic.update_event_info(event_id)
@@ -49,8 +49,7 @@ def add_event(event_id):
         db_event.add_event_to_favorites(user_id, event)
     return ''
 
-
-@favorites.route('/services/favorites/addSession/<event_id>/session/<session_id>/', methods=['GET'])
+@favorites.route('/services/favorites/addSession/<event_id>/session/<session_id>/', methods=['POST'])
 def add_session(event_id, session_id):
     user_id = flask_session['indico_user']
     favorites_sessions = db_session.get_favorites_event_sessions(user_id, event_id)
@@ -70,8 +69,7 @@ def add_session(event_id, session_id):
         db_session.add_session_to_favorites(user_id, session)
     return ''
 
-
-@favorites.route('/services/favorites/addContribution/<event_id>/contribution/<contribution_id>/', methods=['GET'])
+@favorites.route('/services/favorites/addContribution/<event_id>/contribution/<contribution_id>/', methods=['POST'])
 def add_contribution(event_id, contribution_id):
     user_id = flask_session['indico_user']
     if contribution_id:
@@ -105,14 +103,14 @@ def add_contribution(event_id, contribution_id):
                     db_contribution.add_contribution_to_favorites(user_id, favorites_contribution)
     return ''
 
-@favorites.route('/services/favorites/removeEvent/<event_id>/', methods=['GET'])
+@favorites.route('/services/favorites/removeEvent/<event_id>/', methods=['POST'])
 def remove_event(event_id):
     user_id = flask_session['indico_user']
     db_event.remove_full_event_from_favorites(user_id, event_id)
     return ''
 
 
-@favorites.route('/services/favorites/removeSession/<event_id>/session/<session_id>/', methods=['GET'])
+@favorites.route('/services/favorites/removeSession/<event_id>/session/<session_id>/', methods=['POST'])
 def remove_session(event_id, session_id):
     user_id = flask_session['indico_user']
     eventInFavorites = db_event.get_favorites_event(user_id, event_id)
@@ -138,7 +136,7 @@ def remove_session(event_id, session_id):
     return ''
 
 
-@favorites.route('/services/favorites/removeContribution/<event_id>/contribution/<contribution_id>/', methods=['GET'])
+@favorites.route('/services/favorites/removeContribution/<event_id>/contribution/<contribution_id>/', methods=['POST'])
 def remove_contribution(event_id, contribution_id):
     user_id = flask_session['indico_user']
     favorites_contribution = db_contribution.get_favorites_contribution(user_id, event_id, contribution_id)
@@ -162,13 +160,14 @@ def remove_contribution(event_id, contribution_id):
                     add_contribution(event_id, contribution['contributionId'])
     return ''
 
+
 @favorites.route('/services/favorites/event/<event_id>/allsessions/', methods=['GET'])
 def get_favorites_event_all_sessions(event_id):
     user_id = flask_session['indico_user']
     event_in_db = db_event.get_favorites_event(user_id, event_id)
     sessions = []
     if event_in_db:
-        return json.dumps(event_logic.get_event_sessions(event_id))
+        return Response(json.dumps(event_logic.get_event_sessions(event_id)), mimetype='application/json')
     else:
         sessions_in_db = db_session.get_favorites_event_sessions(user_id, event_id)
         for session in sessions_in_db:
@@ -180,14 +179,14 @@ def get_favorites_event_all_sessions(event_id):
                 session = current_contribution['slot']
                 if not session in sessions:
                     sessions.append(session)
-        return json.dumps(sorted(sessions, key=lambda x:x['title']))
+        return Response(json.dumps(sorted(sessions, key=lambda x:x['title'])), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/days/', methods=['GET'])
 def get_favorites_event_days(event_id):
     user_id = flask_session['indico_user']
     if db_event.get_favorites_event(user_id, event_id):
-        return json.dumps(list(db_event.get_event_days(event_id)))
+        return Response(json.dumps(list(db_event.get_event_days(event_id))), mimetype='application/json')
     else:
         days = []
         favorites_sessions = db_session.get_favorites_event_sessions(user_id, event_id)
@@ -209,14 +208,14 @@ def get_favorites_event_days(event_id):
         results = []
         for day in days:
             results.append(db_event.create_event_day(event_id, day))
-        return json.dumps(sorted(results, key=lambda x:x['date']))
+        return Response(json.dumps(sorted(results, key=lambda x:x['date'])), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/speakers/', methods=['GET'])
 def get_favorites_event_speakers(event_id):
     user_id = flask_session['indico_user']
     if db_event.get_favorites_event(user_id, event_id):
-        return json.dumps(event_logic.get_event_speakers(event_id, int(request.args.get('page', 1))))
+        return Response(json.dumps(event_logic.get_event_speakers(event_id, int(request.args.get('page', 1)))), mimetype='application/json')
     else:
         speakers = []
         favorites_sessions = db_session.get_favorites_event_sessions(user_id, event_id)
@@ -237,7 +236,7 @@ def get_favorites_event_speakers(event_id):
                 if not speaker in speakers:
                     speakers.append(speaker)
 
-        return json.dumps(sorted(speakers, key=lambda x:x['name']))
+        return Response(json.dumps(sorted(speakers, key=lambda x:x['name'])), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/session/<session_id>/entries/', methods=['GET'])
@@ -246,9 +245,9 @@ def get_favorites_event_days_session(event_id, session_id):
     event_in_db = db_event.get_favorites_event(user_id, event_id)
     session_in_db = db_session.get_favorites_session(user_id, event_id, session_id)
     if event_in_db:
-        return json.dumps(event_logic.get_event_same_sessions(event_id, session_id))
+        return Response(json.dumps(event_logic.get_event_same_sessions(event_id, session_id)), mimetype='application/json')
     elif session_in_db:
-        return json.dumps(event_logic.get_event_same_sessions(event_id, session_id))
+        return Response(json.dumps(event_logic.get_event_same_sessions(event_id, session_id)), mimetype='application/json')
     else:
         sessions = []
         contributions_in_db = db_contribution.get_favorites_event_contributions(user_id, event_id, True)
@@ -258,14 +257,14 @@ def get_favorites_event_days_session(event_id, session_id):
                 session = current_contribution['slot']
                 if not session in sessions and session['sessionId'] == session_id:
                     sessions.append(session)
-        return json.dumps(sorted(sessions, key=lambda x:x['startDate']))
+        return Response(json.dumps(sorted(sessions, key=lambda x:x['startDate'])), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/day/<day>/contributions/', methods=['GET'])
 def get_favorites_event_day_contributions(event_id, day):
     user_id = flask_session['indico_user']
     contributions = event_logic.get_event_day_contributions(event_id, day)
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/sessions/', methods=['GET'])
@@ -278,49 +277,49 @@ def get_favorites_event_sessions(event_id):
             sessions_in_db.append(session)
         elif db_session.get_favorites_session(user_id, session['conferenceId'], session['sessionId']):
             sessions_in_db.append(session)
-    return json.dumps(sessions_in_db)
+    return Response(json.dumps(sessions_in_db), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
 def get_favorites_session_contributions(event_id, session_id, day):
     user_id = flask_session['indico_user']
     contributions = event_logic.get_session_day_contributions(event_id, session_id, day)
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def get_favorites_event_speaker_contributions(event_id, speaker_id):
     user_id = flask_session['indico_user']
     contributions = event_logic.get_speaker_contributions(event_id, speaker_id)
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/searchEvent/<search>/', methods=['GET'])
 def search_favorites_event(search):
     user_id = flask_session['indico_user']
     events = event_logic.search_event(search, True, int(request.args.get('page', 1)))
-    return json.dumps(my_favorites.get_favorites_events(events, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/ongoingEvents/', methods=['GET'])
 def get_favorites_ongoing_events():
     user_id = flask_session['indico_user']
     events = event_logic.get_ongoing_events(int(request.args.get('page', 1)))
-    return json.dumps(my_favorites.get_favorites_events(events, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/futureEvents/', methods=['GET'])
 def get_favorites_future_events():
     user_id = flask_session['indico_user']
     events = event_logic.get_future_events(int(request.args.get('page', 1)))
-    return json.dumps(my_favorites.get_favorites_events(events, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/ongoingContributions/', methods=['GET'])
 def get_favorites_ongoing_contributions():
     user_id = flask_session['indico_user']
     contributions = event_logic.get_ongoing_contributions()
-    return json.dumps(my_favorites.get_favorites_contributions(contributions, user_id))
+    return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/historyEvents/', methods=['GET'])
@@ -332,7 +331,7 @@ def get_favorites_history():
         eventInHistory = db_event.get_favorites_event(user_id, event['id'])
         if eventInHistory:
             events.append(eventInHistory['event'])
-    return json.dumps(events)
+    return Response(json.dumps(events), mimetype='application/json')
 
 
 @favorites.route('/services/favorites/nextEvent/', methods=['GET'])
@@ -373,4 +372,4 @@ def get_favorites_next_event():
     nextEvent = []
     if len(events) > 0:
         nextEvent = sorted(events, key=lambda x:x['startDate'])[0]
-    return json.dumps(nextEvent)
+    return Response(json.dumps(nextEvent), mimetype='application/json')
