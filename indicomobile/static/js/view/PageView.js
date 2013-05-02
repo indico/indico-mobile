@@ -151,7 +151,6 @@ var ContributionsPageView = PageView.extend({
             thisDay.set('conferenceTitle', thisDay.get('conferenceTitle'));
             thisDay.set('prevDay', prevDay);
             thisDay.set('nextDay', nextDay);
-
             if(thisDay.get("startDate")!==undefined){
                 var startDate = moment(thisDay.get("startDate").date + " " + thisDay.get("startDate").time);
                 thisDay.set("human_end_date", moment(thisDay.get("endDate").date).format("MMMM DD, YYYY"));
@@ -164,7 +163,7 @@ var ContributionsPageView = PageView.extend({
             context.set("base_url", BASE_URL);
             context.set("indico_desktop", INDICO_DESKTOP);
             context.set("user", this.user.get("username"));
-            pageView.append(this.headerTemplate(thisDay.toJSON()));
+            pageView.append(this.headerTemplate(context.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.panelsTemplate(context.toJSON()));
             $('body').append(pageView);

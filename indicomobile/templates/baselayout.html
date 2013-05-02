@@ -44,9 +44,10 @@
         {% endblock %}
         {% block body %}
         {% endblock %}
-        <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="push" data-position="left">
+        <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="reveal" data-position="left">
             <ul data-role="listview" data-theme="c" class="nav-search">
-                <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon right" aria-hidden="true"></span></a></li>
+                <!--li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon right" aria-hidden="true"></span></a></li
+            -->
                 <li data-icon="false"><a href="{{url_for('routing.index')}}" rel="external"><span class="icon-home small-icon right" aria-hidden="true"></span>Home</a></li>
                 <li data-role="list-divider" class="panel-divider"></li>
                 <li data-icon="false"><a id ="ongoing" rel="external" href="{{url_for('routing.now')}}"><span class="icon-happening small-icon right" aria-hidden="true"></span>Ongoing presentations</a></li>

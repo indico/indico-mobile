@@ -1,5 +1,5 @@
 <script type="text/template" id="about">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3>About</h3></div>
     </div>
     <div data-role="content">
@@ -24,7 +24,7 @@
 </script>
 
 <script type="text/template" id="contributionDetail">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3 style="margin:5px"><%=title%></h3>
         <div style="padding-bottom:2px"><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
@@ -104,7 +104,7 @@
 </script>
 
 <script type="text/template" id="dayPage">
-<div class="headerTitle">
+<div class="headerTitle" data-role="header" data-theme="c">
     <div class="headerElement">
     <%if (prevDay) { %>
         <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float: left;" href="#timetableDay_<%=conferenceId%>_<%=prevDay%>" rel="external"></a>
@@ -126,9 +126,8 @@
 </script>
 
 <script type="text/template" id="eventPanels">
-    <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="overlay">
+    <div data-role="panel" id="nav-panel" data-position-fixed="true" data-theme="c" data-display="reveal">
         <ul data-role="listview" data-theme="c" class="nav-search">
-            <li data-icon="false"><a href="#" data-rel="close"><span class="icon-close small-icon right" aria-hidden="true"></span></a></li>
             <li data-icon="false"><a href="<%=base_url%>" rel="external"><span class="icon-home small-icon right" aria-hidden="true"></span>Home</a></li>
             <li data-role="list-divider"><%=title%></li>
             <li data-icon="false"><a id ="desktopTab" rel="external" href="#event_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-happening small-icon right" aria-hidden="true"></span>Desktop</a></li>
@@ -167,7 +166,7 @@
 </script>
 
 <script type="text/template" id="eventPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3 style="margin:5px"><%=title%></h3>
         <div style="padding-bottom:2px"><% if (location != '' && location != null && room != '' && room != null){ %>
             <%=location%> - <%=room%>
@@ -226,7 +225,7 @@
 </script>
 
 <script type="text/template" id="sessionDay">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement">
         <% if (prevDay) { %>
             <a data-role="button" data-iconpos="notext" data-icon="arrow-l" style="float:left;" href="#sessionDay_<%=conferenceId%>_<%=sessionId%>_<%=prevDay%>" rel="external"></a>
@@ -247,7 +246,7 @@
 </script>
 
 <script type="text/template" id="sessionPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3><%= title %></h3></div>
     </div>
     <div data-role="content">
@@ -256,7 +255,7 @@
 </script>
 
 <script type="text/template" id="sessionsPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3>Sessions</h3></div>
     </div>
     <div data-role="content">
@@ -265,7 +264,7 @@
 </script>
 
 <script type="text/template" id="simpleEventPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement">
             <h3 style="margin:5px"><%=title%></h3>
             <div style="vertical-align: middle; padding-bottom:2px">
@@ -342,7 +341,7 @@
 </script>
 
 <script type="text/template" id="speakerPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3><%= name %></h3></div>
     </div>
     <div data-role="content">
@@ -351,7 +350,7 @@
 </script>
 
 <script type="text/template" id="speakersPage">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3>Speakers</h3></div>
     </div>
     <div data-role="content">
@@ -367,7 +366,7 @@
 </script>
 
 <script type="text/template" id="timetableDays">
-    <div class="headerTitle">
+    <div class="headerTitle" data-role="header" data-theme="c">
         <div class="headerElement"><h3><%= title %></h3></div>
     </div>
     <div data-role="content">
