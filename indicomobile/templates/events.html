@@ -8,17 +8,8 @@
 {% block header %}Events{% endblock %}
 {% block content %}
     <div data-role="content">
-        <div class="leftSide">
-            <h4>Ongoing events</h4>
-            <ul id="ongoingEventList" data-role="listview" data-inset="true"></ul>
-            <div class="loader"><h4>Loading...</h4><img src="{{ url_for('static', filename='style/images/ajax-loader2.gif') }}"/></div>
-            <div style="text-align: center"><a style="display:none" id="more-ongoing-events" href="#" data-role="button" data-icon="false" data-inline="true" data-theme="b">Show more events</a></div>
-        </div>
-        <div class="rightSide">
-            <h4>Future events</h4>
-            <ul id="futureEventList" data-role="listview" data-inset="true"></ul>
-            <div class="loader"><h4>Loading...</h4><img src="{{ url_for('static', filename='style/images/ajax-loader2.gif') }}"/></div>
-            <div style="text-align: center"><a style="display:none" id="more-future-events" href="#" data-role="button" data-icon="false" data-inline="true" data-theme="b">Show more events</a></div>
-        </div>
+        <ul id="ongoingEventList" data-role="listview" data-inset="true"></ul>
+        <div class="loader"><h4>Loading...</h4><img src="{{ url_for('static', filename='style/images/ajax-loader2.gif') }}"/></div>
+        <div style="text-align: center"><a style="display:none" id="more-events" href="#" data-role="button" data-icon="false" data-inline="true" data-theme="b">Show more events</a></div>
     </div>
 {% endblock %}

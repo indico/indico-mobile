@@ -72,34 +72,17 @@ def fetch_timetable(event_id):
         result = perform_public_request(construct_url(path, attach_params({"ak": app.config['API_KEY']})))
     return json.loads(result.decode('utf-8'))["results"]
 
-def get_latest_events_from_indico(user_id):
-    path = '/export/categ/0.json'
-    params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
-              'from': 'today',
-              'order': 'start',
-              'descending': 'yes'
-    }
-    if user_id != 'all_public':
-        result = perform_signed_request(construct_url(path, attach_params(params)))
-    else:
-        params["ak"] = app.config['API_KEY']
-        params["limit"] = 100
-        result = perform_public_request(construct_url(path, attach_params(params)))
-    return json.loads(result.decode('utf-8'))["results"]
-
 def get_ongoing_events():
     result = perform_public_request('{0}/export/categ/0.json?ak={1}&from=now&to=now'.format(
             app.config['INDICO_URL'], app.config['API_KEY']))
     return json.loads(result.decode('utf-8'))['results']
 
-def get_today_events(user_id, offset, limit=15):
+def get_today_events(user_id):
     path = '/export/categ/0.json'
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
-              'from': 'today',
+              'from': 'now',
               'to': 'today',
-              'order': 'start',
-              'offset': offset,
-              'limit': limit
+              'order': 'start'
     }
     if user_id != 'all_public':
         result = perform_signed_request(construct_url(path, attach_params(params)))
@@ -108,14 +91,12 @@ def get_today_events(user_id, offset, limit=15):
         result = perform_public_request(construct_url(path, attach_params(params)))
     return json.loads(result.decode('utf-8'))["results"]
 
-def get_future_events(user_id, offset, limit=15):
+def get_future_events(user_id, startDate, endDate):
     path = '/export/categ/0.json'
     params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
-              'from': '1d',
-              'to': '10d',
-              'order': 'start',
-              'offset': offset,
-              'limit': limit
+              'from': startDate,
+              'to': endDate,
+              'order': 'start'
     }
     if user_id != 'all_public':
         result = perform_signed_request(construct_url(path, attach_params(params)))

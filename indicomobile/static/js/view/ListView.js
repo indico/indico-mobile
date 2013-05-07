@@ -91,6 +91,21 @@ var ListView = Backbone.View.extend({
     }
 });
 
+
+var InfiniteListView = ListView.extend({
+
+    initialize: function () {
+        InfiniteListView.__super__.initialize.call(this);
+        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
+          success: function(collection, changed) {
+              collection.trigger('hasChanged', [changed]);
+          },
+          includePage : true});
+        this.infiniScroll.enableFetch();
+    }
+
+});
+
 var SessionsList = ListView.extend({
 
     renderItems: function(collection, template, listView){
@@ -151,22 +166,16 @@ var SessionDaysList = ListView.extend({
 
 });
 
-var ListByMonthView = ListView.extend({
-
-    nextItems: function() {
-        $(this.options.more_button).hide();
-        var container = $(this.options.container);
-        container.parent().find('.loader').show();
-        this.options.page +=1;
-
-        this.favoritesCollection.fetch({data: {page: this.options.page}});
-        this.collection.fetch({data: {page: this.options.page}});
-    },
+var ListByMonthView = InfiniteListView.extend({
 
     appendRender: function(newitems) {
         var container = $(this.options.container);
+        var listView = $(this.el);
         if (newitems[0].length > 0){
-            this.renderItems(new Events(newitems[0]), this.template, this.options.term);
+            this.renderItems(new Events(newitems[0]), this.template, listView);
+            container.append(listView);
+            container.trigger('create');
+            listView.listview('refresh');
         }
         else{
             container.parent().find('.loader').hide();
@@ -177,8 +186,15 @@ var ListByMonthView = ListView.extend({
 
         self = this;
         collection.each(function(element){
-            var startDate = moment(element.get("startDate").date);
-            element.set("short_start_date", startDate.format("DD MMM"));
+            var startDate = moment(element.get("startDate").date + " " + element.get("startDate").time);
+            var now = moment();
+            if (startDate < now) {
+                element.set("short_start_date", "Ongoing");
+            } else if (startDate.diff(now, "days") < 1) {
+                element.set("short_start_date", startDate.format("HH:mm"));
+            } else {
+                element.set("short_start_date", startDate.format("DD MMM"));
+            }
             element.set('inFavorites', self.options.favorites);
             element.set("user", userLogged);
             var month = filterDate(element.get('startDate').date).month +
@@ -196,7 +212,6 @@ var ListByMonthView = ListView.extend({
             }
             listView.append(listItem);
         });
-        $(this.options.more_button).show();
     },
 
     events: {
@@ -336,21 +351,6 @@ var ContributionListView = ListView.extend({
         addRemoveContributionAction($(e.currentTarget), this.collection);
         page_id = $.mobile.activePage.attr('id');
         $('div[data-role="page"][id!="'+page_id+'"]').remove();
-    }
-
-});
-
-var InfiniteListView = ListView.extend({
-
-    initialize: function () {
-        InfiniteListView.__super__.initialize.call(this);
-        this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
-          success: function(collection, changed) {
-              collection.trigger('hasChanged', [changed]);
-          },
-          includePage : true,
-          pageSize: 20 });
-        this.infiniScroll.enableFetch();
     }
 
 });

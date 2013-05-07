@@ -4,7 +4,7 @@ from indicomobile.db.schema import db, Event
 from indicomobile.db.common import store_material
 from indicomobile.db.session import store_slot
 from indicomobile.db.contribution import store_contribution
-from indicomobile.util.date_time import convert_dates
+from indicomobile.util.date_time import convert_dates, dt_from_indico
 from indicomobile.util.tools import clean_html_tags
 
 
@@ -34,15 +34,17 @@ def get_ongoing_lectures(now, tomorrow):
                                     {'startDate': {'$lt': tomorrow}},
                                     {'type': 'simple_event'}]}).sort([('startDate', 1)])
 
-def get_cached_events(user_id, type_events, pageNumber, offset):
-    return db.CachedLatestEvent.find({'user_id': user_id, 'type': type_events}).skip((pageNumber - 1) * offset).limit(offset)
+def get_cached_events(user_id, pageNumber, offset):
+    return db.CachedLatestEvent.find({'user_id': user_id}).sort([('event_start_date', 1)]).skip((pageNumber - 1) * offset).limit(offset)
 
-def get_last_offset_cached(user_id, type_events):
-    last_offset = db.CachedLatestOffsetAPI.find_one({'user_id': user_id, 'type': type_events})
-    if last_offset:
-        return last_offset["offset"]
-    return 0
+def get_last_event_cached(user_id):
+    event = list(db.CachedLatestEvent.find({"user_id": user_id}).limit(1).sort([("event_start_date", -1)]))
+    if event:
+        return event[0]
+    return None
 
+def is_cached(user_id, event_id):
+    return db.CachedLatestEvent.find_one({'event_id': event_id, 'user_id': user_id}) is not None
 
 def store_chairs(event):
     chairs = []
@@ -86,22 +88,17 @@ def store_event(event_http, event_tt):
             day['entries'] = entries
             day.save()
 
-def store_cached_event(user_id, type_events, date, event):
+def store_cached_event(user_id, date, event):
     clean_html_tags(event)
     new_cached_events = db.CachedLatestEvent()
-    new_cached_events.update({'user_id': user_id, 'event_id': event['id'], "type": type_events, 'timestamp': date, 'event': event})
+    new_cached_events.update({'user_id': user_id, 'event_id': event['id'], 'event_start_date': dt_from_indico(event["startDate"]), 'timestamp': date, 'event': event})
     new_cached_events.save()
 
-def remove_cached_events(user_id, type_events):
-    db.cached_latest_events.remove({'user_id': user_id, "type": type_events})
+def remove_cached_events(user_id, timestamp):
+    db.cached_latest_events.remove({'user_id': user_id, 'timestamp': {"$lt": timestamp}})
 
-def store_last_offset_cached(user_id, type_events, offset):
-    last_offset_cached = db.CachedLatestOffsetAPI()
-    last_offset_cached.update({'user_id': user_id, "type": type_events, 'offset': offset})
-    last_offset_cached.save()
-
-def remove_last_offset_cached(user_id, type_events):
-    db.cached_latest_offset.remove({'user_id': user_id, "type": type_events})
+def remove_cached_event(user_id, event_id):
+    db.cached_latest_events.remove({'user_id': user_id, 'event_id': event_id})
 
 # SPEAKERS
 

@@ -208,20 +208,12 @@ class CachedLatestEvent(Document):
     __collection__ = 'cached_latest_events'
     structure = {
         'user_id': unicode,
-        'type': unicode, #ongoing or future
         'timestamp': datetime,
         'event_id': unicode,
+        'event_start_date': datetime,
         'event': dict
-    }
-
-class CachedLatestOffsetAPI(Document):
-    __collection__ = 'cached_latest_offset'
-    structure = {
-        'user_id': unicode,
-        'type': unicode, #ongoing or future
-        'offset': int
     }
 
 db.register([Presenter, Resource, Material, Chair, Event, Contribution,
             SessionSlot, Day, FavoritesContribution, FavoritesSessionSlot,
-            FavoritesEvent, HistoryEvent, CachedLatestEvent, CachedLatestOffsetAPI])
+            FavoritesEvent, HistoryEvent, CachedLatestEvent])

@@ -28,53 +28,53 @@ def update_event_info(event_id):
                 event_tt = api.fetch_timetable(event_id)
                 db_event.store_event(event_http, event_tt)
 
-def _get_cached_events(user_id, type_events, now, page):
-    cached_events = list(db_event.get_cached_events(user_id, type_events, page, PAGE_SIZE))
-    if cached_events:
-        if now - cached_events[0]['timestamp'] < timedelta(hours=2):
-            return [event["event"] for event in cached_events]
-        db_event.remove_cached_events(user_id, type_events)
-        db_event.remove_last_offset_cached(user_id, type_events)
-    return []
 
-def _get_events(type_events, fetch_function, filter_function, page=1):
+def _filter_events(user_id, now, events):
+    for event in events:
+        if utc.localize(now) - dt_from_indico(event['startDate']) < timedelta(days=30):
+            db_event.store_cached_event(user_id, now, event)
+
+def _filter_future_events(user_id, now, events):
+    cached = False
+    for event in events:
+        if dt_from_indico(event['startDate']) - utc.localize(now) > timedelta(days=1) and not db_event.is_cached(user_id, event["id"]):
+            cached= True
+            db_event.store_cached_event(user_id, now, event)
+    return cached
+
+def _get_future_events(user_id, now, last_start_date):
+    days = 1
+    date = (last_start_date + timedelta(days=days)).strftime("%Y-%m-%d")
+    while not _filter_future_events(user_id, now, api.get_future_events(user_id, date, date)):
+        days += 1
+        date = (last_start_date + timedelta(days=days)).strftime("%Y-%m-%d")
+
+def _get_cached_events(user_id, now, page):
+    db_event.remove_cached_events(user_id, now - timedelta(hours=2))
+    cached_events = list(db_event.get_cached_events(user_id, page, PAGE_SIZE))
+    if not cached_events:
+        last_event = db_event.get_last_event_cached(user_id)
+        if not last_event:
+            _filter_events(user_id, now, api.get_today_events(user_id))
+        else:
+            _get_future_events(user_id, now, last_event["event_start_date"])
+        cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
+    while len(cached_events) < PAGE_SIZE:
+        last_event = db_event.get_last_event_cached(user_id)
+        _get_future_events(user_id, now, last_event["event_start_date"])
+        cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
+
+    return [event["event"] for event in cached_events]
+
+def get_ongoing_events(page=1):
     user_id = unicode('all_public')
     if 'indico_user' in flask_session:
         if flask_session['indico_user']:
             user_id = flask_session['indico_user']
     now = datetime.utcnow()
-    events = _get_cached_events(user_id, type_events, now, page)
-    if not events:
-        offset = db_event.get_last_offset_cached(user_id, type_events)
-        while len(events) < PAGE_SIZE:
-            appended = 0
-            results = fetch_function(user_id, offset, PAGE_SIZE * 2)
-            if not results:
-                break
-            for event in results:
-                if filter_function(event, now):
-                    events.append(event)
-                    db_event.store_cached_event(user_id,type_events, now, event)
-                    appended += 1
-                if len(events) == PAGE_SIZE:
-                    break
-            if len(events) ==  PAGE_SIZE:
-                break
-            offset += PAGE_SIZE * 2
-        db_event.remove_last_offset_cached(user_id, type_events)
-        db_event.store_last_offset_cached(user_id, type_events, offset + appended)
-
+    events = _get_cached_events(user_id, now, page)
     return events
 
-def get_ongoing_events(page=1):
-    def filter_events(event, now):
-        return utc.localize(now) -dt_from_indico(event['startDate']) < timedelta(days=30)
-    return _get_events(unicode("ongoing"),  api.get_today_events, filter_events, page)
-
-def get_future_events(page=1):
-    def filter_events(event, now):
-        return dt_from_indico(event['startDate']) - utc.localize(now) > timedelta(days=1)
-    return _get_events(unicode("future"),  api.get_future_events, filter_events, page)
 
 def get_event_days(event_id):
     return [day for day in db_event.get_event_days(event_id)]

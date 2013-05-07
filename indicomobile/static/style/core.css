@@ -175,16 +175,3 @@ div.nav-panel {
 .ui-btn-hover-b .ui-icon  {
     background-color: #396b9e;
 }
-
-@media all and (min-width: 800px){
-
-	.leftSide {
-		float: left !important;
-		width: 49% !important;
-	}
-	.rightSide {
-		float: right !important;
-		width: 49% !important;
-	}
-
-}

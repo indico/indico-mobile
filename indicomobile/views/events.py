@@ -97,11 +97,6 @@ def search_event(search):
     return Response(json.dumps(event.search_event(search, int(request.args.get('page', 1)))), mimetype='application/json')
 
 
-@events.route('/services/futureEvents/', methods=['GET'])
-def get_future_events():
-    return Response(json.dumps(event.get_future_events(int(request.args.get('page', 1)))), mimetype='application/json')
-
-
 @events.route('/services/ongoingEvents/', methods=['GET'])
 def get_ongoing_events():
     return Response(json.dumps(event.get_ongoing_events(int(request.args.get('page', 1)))), mimetype='application/json')
