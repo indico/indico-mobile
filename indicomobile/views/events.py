@@ -85,8 +85,10 @@ def get_event_speaker(event_id, speaker_id):
 @events.route('/services/event/<event_id>/', methods=['GET'])
 def get_event(event_id):
     event = db_event.get_event(event_id)
-    if event == None:
+    if event is None:
         abort(404)
+    if flask_session.get("indico_user", ""):
+        event["favorite"] = db_event.is_favorite(event_id, flask_session["indico_user"])
     return Response(json.dumps(event), mimetype='application/json')
 
 

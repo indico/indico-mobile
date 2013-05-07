@@ -11,6 +11,10 @@ from indicomobile.util.tools import clean_html_tags
 def get_event(event_id):
     return db.Event.find_one({'id': event_id})
 
+
+def is_favorite(event_id, user_id):
+    return db.FavoritesEvent.find_one({'event.id': event_id, 'user_id': user_id}) is not None
+
 def remove_event(event_id):
     Event().cleanup(event_id)
 

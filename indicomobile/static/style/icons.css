@@ -95,3 +95,6 @@ you can use the generic selector below, but it's slower:
 .icon-desktop:before {
     content: "\e012";
 }
+.icon-star-full:before {
+    content: "\e013";
+}
