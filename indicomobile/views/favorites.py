@@ -5,7 +5,7 @@ import indicomobile.db.contribution as db_contribution
 import indicomobile.db.session as db_session
 import indicomobile.core.favorites as my_favorites
 import indicomobile.core.event as event_logic
-
+from indicomobile.core.cache import cache, make_cache_key
 
 favorites = Blueprint('favorites', __name__, template_folder='templates')
 
@@ -297,7 +297,7 @@ def get_favorites_event_speaker_contributions(event_id, speaker_id):
 @favorites.route('/services/favorites/searchEvent/<search>/', methods=['GET'])
 def search_favorites_event(search):
     user_id = flask_session['indico_user']
-    events = event_logic.search_event(search, True, int(request.args.get('page', 1)))
+    events = event_logic.search_event(search, int(request.args.get('page', 1)))
     return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
 
 
@@ -316,6 +316,7 @@ def get_favorites_future_events():
 
 
 @favorites.route('/services/favorites/ongoingContributions/', methods=['GET'])
+@cache.cached(key_prefix=make_cache_key)
 def get_favorites_ongoing_contributions():
     user_id = flask_session['indico_user']
     contributions = event_logic.get_ongoing_contributions()

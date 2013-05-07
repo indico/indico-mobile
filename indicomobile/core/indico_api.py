@@ -39,10 +39,17 @@ def search_event(search, pageNumber):
     except Exception:
         return []
     path = '/export/event/search/' + search + '.json'
+    params = { 'nocache': 'yes' if app.config.get("DEBUG", False) else "no",
+              'order': 'start',
+              'descending': 'yes',
+              'limit': 20,
+              'offset': (pageNumber -1 )* 20
+    }
     if 'indico_mobile_oauthtok' in flask_session:
-        result = perform_signed_request(construct_url(path, {}))
+        result = perform_signed_request(construct_url(path, attach_params(params)))
     else:
-        result = perform_public_request(construct_url(path, attach_params({'ak': app.config['API_KEY']})))
+        params["ak"] = app.config['API_KEY']
+        result = perform_public_request(construct_url(path, attach_params(params)))
     return json.loads(result.decode('utf-8'))["results"]
 
 def get_event_info(event_id):

@@ -6,7 +6,7 @@ import indicomobile.db.session as db_session
 import indicomobile.db.event as db_event
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.event as event
-from indicomobile.core.cache import cache
+from indicomobile.core.cache import cache, make_cache_key
 
 events = Blueprint('events', __name__, template_folder='templates')
 
@@ -93,8 +93,8 @@ def get_event(event_id):
 
 
 @events.route('/services/searchEvent/<search>/', methods=['GET'])
-def search_event(search, everything=False):
-    return Response(json.dumps(event.search_event(search, everything, int(request.args.get('page', 1)))), mimetype='application/json')
+def search_event(search):
+    return Response(json.dumps(event.search_event(search, int(request.args.get('page', 1)))), mimetype='application/json')
 
 
 @events.route('/services/futureEvents/', methods=['GET'])
@@ -106,8 +106,8 @@ def get_future_events():
 def get_ongoing_events():
     return Response(json.dumps(event.get_ongoing_events(int(request.args.get('page', 1)))), mimetype='application/json')
 
-@cache.cached(timeout=app.config.get("CACHE_TTL", 3600))
 @events.route('/services/ongoingContributions/', methods=['GET'])
+@cache.cached(key_prefix=make_cache_key)
 def get_ongoing_contributions():
     return Response(json.dumps(event.get_ongoing_contributions()), mimetype='application/json')
 

@@ -348,7 +348,8 @@ var InfiniteListView = ListView.extend({
           success: function(collection, changed) {
               collection.trigger('hasChanged', [changed]);
           },
-          includePage : true});
+          includePage : true,
+          pageSize: 20 });
         this.infiniScroll.enableFetch();
     }
 

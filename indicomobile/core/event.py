@@ -7,20 +7,13 @@ import indicomobile.db.session as db_session
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.indico_api as api
 from indicomobile.util.date_time import dt_from_indico
+from indicomobile.core.cache import cache, make_cache_key
 
 PAGE_SIZE = 15
 # EVENTS
-def search_event(search, everything, pageNumber):
-    results = api.search_event(search, everything)
-
-    results = sorted(results,
-                    key=lambda k: datetime.combine(datetime.strptime(k['startDate']['date'], "%Y-%m-%d"),
-                         datetime.strptime(k['startDate']['time'], "%H:%M:%S").time()))
-    results.reverse()
-    first_element = (pageNumber - 1) * 20
-    if everything:
-        return results
-    return results[first_element:first_element + 20]
+@cache.cached(key_prefix=make_cache_key)
+def search_event(search, pageNumber):
+    return api.search_event(search, pageNumber)
 
 def update_event_info(event_id):
     if event_id:
