@@ -21,6 +21,9 @@ function addRemoveEventAction(button, collection){
                 success: function(resp){
                     button.attr('action', 'remove');
                     button.find('.ui-btn-up-c').removeClass('ui-btn-up-c').addClass('ui-btn-up-b');
+                    if (button.hasClass('icon-favorites')) {
+                        button.removeClass('icon-favorites').addClass('icon-star-full');
+                    }
                     $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){
@@ -36,6 +39,9 @@ function addRemoveEventAction(button, collection){
                 success: function(resp){
                     button.attr('action', 'add');
                     button.find('.ui-btn-up-b').removeClass('ui-btn-up-b').addClass('ui-btn-up-c');
+                    if (button.hasClass('icon-star-full')) {
+                        button.removeClass('icon-star-full').addClass('icon-favorites');
+                    }
                     $.mobile.hidePageLoadingMsg();
                 },
                 error: function(resp){

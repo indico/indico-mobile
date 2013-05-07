@@ -26,4 +26,11 @@ $('#eventHome').live('pageinit', function(){
         futureEventsView.nextItems();
     });
 
+
+});
+
+$("[id*=event_]").live('pageinit', function() {
+    $("#favorite-toggle").click(function(e) {
+        addRemoveEventAction($(e.currentTarget), null);
+    });
 });

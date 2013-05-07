@@ -168,41 +168,51 @@
 
 <script type="text/template" id="eventPage">
     <div class="headerTitle" data-role="header" data-theme="c">
-        <div class="headerElement"><h3 style="margin:5px"><%=title%></h3>
-        <div style="padding-bottom:2px"><% if (location != '' && location != null && room != '' && room != null){ %>
-            <%=location%> - <%=room%>
-            <span style="display: inline-block; vertical-align: middle;">
-            <% if (location == 'CERN'){ %>
-                <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
-            <% } else if (address != '' && address != null) { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
-            <% } else { %>
-                <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
+
+        <div class="headerOptions">
+            <% if (typeof(favorite) != 'undefined') { %>
+                <a id="favorite-toggle" class="small-button-icon <%= (favorite == true) ? 'icon-star-full' : 'icon-favorites'%>" data-role="button" eventId="<%=id%>" action="<%= (favorite == true) ? 'remove' : 'add'%>" aria-hidden="true"></a>
             <% } %>
-            </span>
-        <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
-               <%=location%>
-               <span style="display: inline-block; vertical-align: middle;">
-               <% if (address != '' && address != null) { %>
+            <% if (location != '' && location != null && room != '' && room != null){ %>
+                <% if (location == 'CERN'){ %>
+                    <a data-role="button" href="<%=base_url%>map/location/<%=location.replace(/\//g, ' ')%>/room/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
+                <% } else if (address != '' && address != null) { %>
+                    <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
+                <% } else { %>
+                    <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%> <%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
+                <% } %>
+            <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
+                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=location.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
-                </span>
-        <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
-               <%=room%>
-               <span style="display: inline-block; vertical-align: middle;">
-               <% if (address != '' && address != null) { %>
+            <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
+                <% if (address != '' && address != null) { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=address.replace(/[\r\n]/g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } else { %>
                 <a data-role="button" href="<%=base_url%>map/search/<%=room.replace(/\//g, ' ')%>/" rel="external" class="small-button-icon icon-map" aria-hidden="true"></a>
                 <% } %>
-                </span>
-        <% } %><br>
-        <%=human_start_date%> - <%=human_end_date%>
+            <% } %>
         </div>
+
+        <div class="headerElement">
+            <div class="titleElement">
+                <h3 style="margin:5px; display: inline-block"><%=title%></h3>
+            </div>
+            <div style="padding-bottom:2px">
+                <% if (location != '' && location != null && room != '' && room != null){ %>
+                    <%=location%> - <%=room%>
+                <% } else if (location != '' && location != null && (room == '' || room == null)){ %>
+                    <%=location%>
+                <% } else if ((location == '' || location == null) && room != '' && room != null){ %>
+                    <%=room%>
+                <% } %><br>
+                <%=human_start_date%> - <%=human_end_date%>
+            </div>
         </div>
     </div>
+
     <div data-role="content">
             <div class="ui-grid-a" data-inset="true">
                 <div class="ui-block-a">
