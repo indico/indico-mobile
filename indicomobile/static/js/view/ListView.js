@@ -489,6 +489,7 @@ var HistoryListView = ListView.extend({
         var self = this,
         lastTime = null;
         collection.each(function(element){
+            element.set("user", userLogged);
             element.set('inFavorites', false);
             if (lastTime === null || lastTime != element.get('viewed_at')){
                 lastTime = element.get('viewed_at');

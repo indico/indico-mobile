@@ -1,7 +1,5 @@
 var PageView = Backbone.View.extend({
 
-    userLoggedUrl: BASE_URL +'user/',
-
     tagName: 'div',
 
     attributes: {
@@ -14,9 +12,6 @@ var PageView = Backbone.View.extend({
         this.template2 = _.template($(this.template_file).siblings(this.options.template_name2).html());
         this.panelsTemplate = _.template($(this.template_file).siblings('#eventPanels').html());
         this.headerTemplate = _.template($(this.template_file).siblings('#eventHeader').html());
-        this.user = new User();
-        this.user.url = this.userLoggedUrl;
-        this.user.fetch();
         this.model.url = this.options.url;
         this.model.on('change', this.render, this);
         this.model.on('error', this.showError, this);
@@ -74,7 +69,7 @@ var PageView = Backbone.View.extend({
             }
             model.set("base_url", BASE_URL);
             model.set("indico_desktop", INDICO_DESKTOP);
-            model.set("user", this.user.get("username"));
+            model.set("user", userLogged);
             pageView.append(this.headerTemplate(model.toJSON()));
             pageView.append(this.template(model.toJSON()));
             pageView.append(this.panelsTemplate(model.toJSON()));
@@ -99,9 +94,6 @@ var ContributionsPageView = PageView.extend({
         this.context = new Event();
         this.context.url = this.options.contextUrl;
         this.context.fetch();
-        this.user = new User();
-        this.user.url = this.userLoggedUrl;
-        this.user.fetch();
         this.collection.on('reset', this.render, this);
         this.collection.fetch();
     },
@@ -170,7 +162,7 @@ var ContributionsPageView = PageView.extend({
             }
             context.set("base_url", BASE_URL);
             context.set("indico_desktop", INDICO_DESKTOP);
-            context.set("user", this.user.get("username"));
+            context.set("user", userLogged);
             context.set("event_type", context.get("type"));
             pageView.append(this.headerTemplate(context.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));
