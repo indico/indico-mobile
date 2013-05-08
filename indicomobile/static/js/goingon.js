@@ -9,7 +9,7 @@ $('#eventHome').live('pageinit', function(){
         container: '#contribList',
         template_name: '#contributionHappening',
         template_name2: '#eventList',
-        empty_message: 'No presentations happening now.',
+        empty_message: 'No presentations happening now',
         sessionDay: false
     });
 

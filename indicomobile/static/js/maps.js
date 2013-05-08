@@ -107,7 +107,7 @@ $('#route').live('click', function(){
                 map.addMarker({
                     lat: myposition[0],
                     lng: myposition[1],
-                    title: 'You are here.',
+                    title: 'You are here',
                     icon: IMAGE_DIR + 'orig.png'
                 });
             }

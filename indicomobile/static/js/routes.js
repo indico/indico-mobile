@@ -99,7 +99,7 @@ var Router = Backbone.Router.extend({
                 favoritesUrl: favoritesUrl,
                 container: '#sessionsList_' + info,
                 template_name: '#sessionsList',
-                empty_message: 'No sessions in this event.',
+                empty_message: 'No sessions in this event',
                 favorites: favorites
             });
 
@@ -144,7 +144,7 @@ var Router = Backbone.Router.extend({
                 url: url,
                 container: '#sessionDays_' + info,
                 template_name: '#sessionDaysList',
-                empty_message: 'There is nothing in this session.',
+                empty_message: 'There is nothing in this session',
                 favorites: favorites
             });
 
@@ -199,7 +199,7 @@ var Router = Backbone.Router.extend({
                 container: '#sessionDay_list_' + info,
                 template_name: '#contribution',
                 sessionDay: true,
-                empty_message: 'There is nothing in this day.',
+                empty_message: 'There is nothing in this day',
                 favorites: favorites
             });
 
@@ -241,7 +241,7 @@ var Router = Backbone.Router.extend({
                 url: url,
                 container: '#timetable_days_' + info,
                 template_name: '#timetableDaysList',
-                empty_message: 'No contributions in this event.',
+                empty_message: 'No contributions in this event',
                 favorites: favorites
             });
 
@@ -292,7 +292,7 @@ var Router = Backbone.Router.extend({
                 favoritesUrl: favoritesUrl,
                 template_name: '#contribution',
                 sessionDay: false,
-                empty_message: 'There is nothing in this day.',
+                empty_message: 'There is nothing in this day',
                 favorites: favorites
             });
         }
@@ -384,7 +384,7 @@ var Router = Backbone.Router.extend({
                 url: url,
                 favoritesUrl: favoritesUrl,
                 template_name: '#contribution',
-                empty_message: 'This speaker is in no contribution.',
+                empty_message: 'This speaker is in no contribution',
                 favorites: favorites
             });
         }

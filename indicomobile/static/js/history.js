@@ -6,7 +6,7 @@ $('#eventHome').live('pageinit', function(){
         favoritesUrl: BASE_URL + 'services/favorites/historyEvents/',
         container: '#eventList',
         template_name: '#eventList',
-        empty_message: 'No history stored yet.'
+        empty_message: 'No history stored yet'
     });
 
 });

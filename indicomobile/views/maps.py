@@ -14,7 +14,7 @@ def get_map(room_name):
 
     return render_template('map.html',
                            map_title="Room: %s"%urllib.unquote(room_name),
-                           not_found_msg="Sorry this room cannot be found.",
+                           not_found_msg="Sorry this room cannot be found",
                            room=urllib.unquote(room_name),
                            latitude=results['latitude'],
                            longitude=results['longitude'])
@@ -24,7 +24,7 @@ def get_map(room_name):
 def search_map(search):
     return render_template('map.html',
                            map_title="Map result for: %s"%search,
-                           not_found_msg="Sorry the location cannot be found.",
+                           not_found_msg="Sorry the location cannot be found",
                            search=search,
                            latitude=None,
                            longitude=None)

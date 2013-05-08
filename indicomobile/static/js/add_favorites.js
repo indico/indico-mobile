@@ -8,9 +8,9 @@ $("[id*=event_]").live('pageinit', function() {
 function handlerError(resp){
     $.mobile.hidePageLoadingMsg();
     if (resp.status == 401){
-        alert("You are not authorized or your authorization has expired, please logout and login again.");
+        alert("You are not authorized or your authorization has expired, please logout and login again");
     } else {
-        alert("An unexpected error has occured.");
+        alert("An unexpected error has occured");
     }
 }
 
@@ -73,7 +73,7 @@ function addRemoveEventAction(button, collection){
         }
     }
     else{
-        alert('Please login first.');
+        alert('Please login first');
         $.mobile.hidePageLoadingMsg();
     }
 }
@@ -112,7 +112,7 @@ function addRemoveSessionAction(button, collection){
         }
     }
     else{
-        alert('Please login first.');
+        alert('Please login first');
         $.mobile.hidePageLoadingMsg();
     }
 
@@ -152,7 +152,7 @@ function addRemoveContributionAction(button, collection){
         }
     }
     else{
-        alert('Please login first.');
+        alert('Please login first');
         $.mobile.hidePageLoadingMsg();
     }
 }

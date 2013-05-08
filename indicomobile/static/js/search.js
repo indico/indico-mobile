@@ -6,7 +6,7 @@ function searchInDB(term){
         container : '#searchResults',
         template_name: '#eventList',
         template_name2: '#simpleEventList',
-        empty_message: 'Nothing found.',
+        empty_message: 'Nothing found',
         term: term
     });
 

@@ -61,7 +61,7 @@ def logout():
     session.pop('indico_mobile_oauthtok', None)
     session.pop('unauthorized', None)
     if request.args.get("expired", False):
-        flash("Your session has expired, you've been logged out.")
+        flash("Your session has expired, you've been logged out")
     return redirect(request.referrer or url_for("routing.index"))
 
 def get_user_info(user_id):
