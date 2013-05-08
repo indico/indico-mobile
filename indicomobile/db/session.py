@@ -32,7 +32,11 @@ def get_full_event_sessions(event_id):
     return sessions
 
 def get_event_same_sessions(event_id, session_id):
-    return db.SessionSlot.find({'conferenceId': event_id, 'sessionId': session_id}).sort([('startDate', 1)])
+    slots = list(db.SessionSlot.find({'conferenceId': event_id, 'sessionId': session_id}).sort([('startDate', 1)]))
+    for slot in slots:
+        slot["event"] = db.dereference(slot["event"])
+    return slots
+
 
 def get_event_day_session(event_id, session_id, start_date, end_date):
     return db.SessionSlot.find({'$and': [{'conferenceId': event_id},

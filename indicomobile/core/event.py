@@ -137,7 +137,7 @@ def get_event_sessions(event_id):
 
 
 def get_event_same_sessions(event_id, session_id):
-    return [session for session in db_session.get_event_same_sessions(event_id, session_id)]
+    return list(db_session.get_event_same_sessions(event_id, session_id))
 
 
 def get_event_speakers(event_id, pageNumber):

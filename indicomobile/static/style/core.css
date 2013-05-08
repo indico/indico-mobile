@@ -32,6 +32,15 @@
     border-radius: 5px !important;
 }
 
+[data-role="button"], [data-role="header"] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .button-icon .ui-btn-inner, .small-button-icon .ui-btn-inner {
     padding: 0 !important;
 }
@@ -174,4 +183,8 @@ div.nav-panel {
 .ui-btn-up-b .ui-icon,
 .ui-btn-hover-b .ui-icon  {
     background-color: #396b9e;
+}
+.ui-header-fixed {
+    top: -1px !important;
+    padding-top: 1px !important;
 }

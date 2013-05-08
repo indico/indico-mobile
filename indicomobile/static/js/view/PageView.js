@@ -51,6 +51,9 @@ var PageView = Backbone.View.extend({
             } else{
                 model.set("event_type", model.get("type"));
             }
+            if(typeof model.get("title") === 'undefined') {
+                model.set("title", model.get("event").title);
+            }
 
             if(this.options.favorites){
                 if (model.get('conferenceId') === undefined){

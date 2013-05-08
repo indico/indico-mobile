@@ -15,9 +15,3 @@ $('#eventHome').live('pageinit', function(){
 
 
 });
-
-$("[id*=event_]").live('pageinit', function() {
-    $("#favorite-toggle").click(function(e) {
-        addRemoveEventAction($(e.currentTarget), null);
-    });
-});

@@ -78,7 +78,7 @@ def get_event_speakers(event_id):
 def get_event_speaker(event_id, speaker_id):
     result = db_event.get_event_speaker(event_id, speaker_id)
     event = db_event.get_event(event_id)
-    result["title"] = event["title"]
+    result["event"] = event
     return Response(json.dumps(result), mimetype='application/json')
 
 
