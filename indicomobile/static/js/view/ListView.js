@@ -34,15 +34,31 @@ var ListView = Backbone.View.extend({
         }
     },
 
+    _convertDate: function(date_in) {
+        var date = moment(date_in.date + " " + date_in.time);
+        var now = moment();
+        if (date < now) {
+            return "Ongoing";
+        } else if (date.diff(now, "days") < 1) {
+            return date.format("HH:mm");
+        } else {
+            return date.format("DD MMM");
+        }
+    },
+
     renderItems: function(collection, template, listView){
-        var self = this;
+        self = this;
         collection.each(function(element){
-            if (self.options.favorites){
-                element.set('conferenceId', 'favorites_'+element.get('conferenceId'));
+            element.set("short_start_date", self._convertDate(element.get("startDate")));
+            element.set("user", userLogged);
+            var month = filterDate(element.get('startDate').date).month +
+                ' ' + filterDate(element.get('startDate').date).year;
+            if (self.options.lastDate === null || self.options.lastDate != month){
+                self.options.lastDate = month;
+                listView.append('<li data-role="list-divider">'+month+'</li>');
             }
             listView.append(template(element.toJSON()));
         });
-
     },
 
     render: function() {
@@ -53,8 +69,6 @@ var ListView = Backbone.View.extend({
         empty_message = this.options.empty_message,
         term = this.options.term,
         listView = $(this.el);
-
-        //listView.empty();
 
         if (collection.size() > 0){
             if (this.collection.at(0).get('error')){
@@ -88,6 +102,18 @@ var ListView = Backbone.View.extend({
         container.parent().find('.loader').hide();
         $.mobile.hidePageLoadingMsg();
         return this;
+    },
+
+    events: {
+        "click #addRemoveEvent": "addRemoveEvent"
+    },
+
+    addRemoveEvent: function(e) {
+        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
+        e.preventDefault();
+        addRemoveEventAction($(e.currentTarget), this.collection);
+        page_id = $.mobile.activePage.attr('id');
+        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 });
 
@@ -182,50 +208,9 @@ var ListByMonthView = InfiniteListView.extend({
         }
     },
 
-    renderItems: function(collection, template, listView){
-
-        self = this;
-        collection.each(function(element){
-            var startDate = moment(element.get("startDate").date + " " + element.get("startDate").time);
-            var now = moment();
-            if (startDate < now) {
-                element.set("short_start_date", "Ongoing");
-            } else if (startDate.diff(now, "days") < 1) {
-                element.set("short_start_date", startDate.format("HH:mm"));
-            } else {
-                element.set("short_start_date", startDate.format("DD MMM"));
-            }
-            element.set('inFavorites', self.options.favorites);
-            element.set("user", userLogged);
-            var month = filterDate(element.get('startDate').date).month +
-                ' ' + filterDate(element.get('startDate').date).year;
-            if (self.options.lastDate === null || self.options.lastDate != month){
-                self.options.lastDate = month;
-                listView.append('<li data-role="list-divider">'+month+'</li>');
-            }
-            var listItem = template(element.toJSON());
-            var isInFavorites = self.favoritesCollection.find(function(event){
-                return event.get('id') == element.get('id');
-            });
-            if (isInFavorites){
-                listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
-            }
-            listView.append(listItem);
-        });
-    },
-
     events: {
         "click #addRemoveEvent": "addRemoveEvent"
-    },
-
-    addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
-        e.preventDefault();
-        addRemoveEventAction($(e.currentTarget), this.collection);
-        page_id = $.mobile.activePage.attr('id');
-        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
-
 });
 
 var SimpleEventsAndContributions = ListView.extend({
@@ -471,14 +456,6 @@ var SearchResultsView = SpeakerListView.extend({
 
     events: {
         "click #addRemoveEvent": "addRemoveEvent"
-    },
-
-    addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
-        e.preventDefault();
-        addRemoveEventAction($(e.currentTarget), null);
-        page_id = $.mobile.activePage.attr('id');
-        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -490,34 +467,18 @@ var HistoryListView = ListView.extend({
         lastTime = null;
         collection.each(function(element){
             element.set("user", userLogged);
-            element.set('inFavorites', false);
             if (lastTime === null || lastTime != element.get('viewed_at')){
                 lastTime = element.get('viewed_at');
                 var date = new Date(lastTime);
                 listView.append('<li data-role="list-divider">'+lastTime.date+', '+lastTime.time+'</li>');
             }
-            var isInFavorites = self.favoritesCollection.find(function(event){
-                return event.get('id') == element.get('id');
-            });
-            var listItem = template(element.toJSON());
-            if (isInFavorites){
-                listItem = listItem.replace('"add"', '"remove"').replace('"c"','"b"');
-            }
-            listView.append(listItem);
+            listView.append(template(element.toJSON()));
         });
 
     },
 
     events: {
         "click #addRemoveEvent": "addRemoveEvent"
-    },
-
-    addRemoveEvent: function(e) {
-        $.mobile.showPageLoadingMsg('c', 'Saving...', true);
-        e.preventDefault();
-        addRemoveEventAction($(e.currentTarget), null);
-        page_id = $.mobile.activePage.attr('id');
-        $('div[data-role="page"][id!="'+page_id+'"]').remove();
     }
 
 });
@@ -545,6 +506,20 @@ var NextEventView = ListView.extend({
 
         container.trigger('create');
         listView.listview('refresh');
-    }
+    },
+
+});
+
+
+var TimetableDaysListView = ListView.extend({
+
+    renderItems: function(collection, template, listView){
+        var self = this;
+        collection.each(function(element){
+            listView.append(template(element.toJSON()));
+        });
+
+    },
+
 
 });

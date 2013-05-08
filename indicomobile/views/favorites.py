@@ -294,46 +294,12 @@ def get_favorites_event_speaker_contributions(event_id, speaker_id):
     return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
-@favorites.route('/services/favorites/searchEvent/<search>/', methods=['GET'])
-def search_favorites_event(search):
-    user_id = flask_session['indico_user']
-    events = event_logic.search_event(search, int(request.args.get('page', 1)))
-    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
-
-
-@favorites.route('/services/favorites/ongoingEvents/', methods=['GET'])
-def get_favorites_ongoing_events():
-    user_id = flask_session['indico_user']
-    events = event_logic.get_ongoing_events(int(request.args.get('page', 1)))
-    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
-
-
-@favorites.route('/services/favorites/futureEvents/', methods=['GET'])
-def get_favorites_future_events():
-    user_id = flask_session['indico_user']
-    events = event_logic.get_future_events(int(request.args.get('page', 1)))
-    return Response(json.dumps(my_favorites.get_favorites_events(events, user_id)), mimetype='application/json')
-
-
 @favorites.route('/services/favorites/ongoingContributions/', methods=['GET'])
 @cache.cached(key_prefix=make_cache_key)
 def get_favorites_ongoing_contributions():
     user_id = flask_session['indico_user']
     contributions = event_logic.get_ongoing_contributions()
     return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
-
-
-@favorites.route('/services/favorites/historyEvents/', methods=['GET'])
-def get_favorites_history():
-    user_id = flask_session['indico_user']
-    events = []
-    event_ids = db_event.get_history(user_id, order=-1)
-    for event in event_ids:
-        eventInHistory = db_event.get_favorites_event(user_id, event['id'])
-        if eventInHistory:
-            events.append(eventInHistory['event'])
-    return Response(json.dumps(events), mimetype='application/json')
-
 
 @favorites.route('/services/favorites/nextEvent/', methods=['GET'])
 def get_favorites_next_event():

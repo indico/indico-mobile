@@ -236,7 +236,7 @@ var Router = Backbone.Router.extend({
                 favorites: favorites
             });
 
-            var timetableDaysListView = new ListView({
+            var timetableDaysListView = new TimetableDaysListView({
                 collection: new Days(),
                 url: url,
                 container: '#timetable_days_' + info,

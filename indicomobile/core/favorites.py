@@ -3,11 +3,9 @@ import indicomobile.db.session as db_session
 import indicomobile.db.contribution as db_contribution
 
 def get_favorites_events(events, user_id):
-    events_in_db = []
     for event in events:
-        if db_event.get_favorites_event(user_id, event["id"]):
-            events_in_db.append(event)
-    return events_in_db
+        event["favorite"] = db_event.is_favorite(event["id"], user_id)
+    return events
 
 def get_favorites_contributions(contributions, user_id):
     contribs_in_db = []

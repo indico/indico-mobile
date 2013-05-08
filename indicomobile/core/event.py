@@ -8,6 +8,7 @@ import indicomobile.db.contribution as db_contribution
 import indicomobile.core.indico_api as api
 from indicomobile.util.date_time import dt_from_indico
 from indicomobile.core.cache import cache, make_cache_key
+import indicomobile.core.favorites as favorites
 
 PAGE_SIZE = 15
 # EVENTS
@@ -73,6 +74,8 @@ def get_ongoing_events(page=1):
             user_id = flask_session['indico_user']
     now = datetime.utcnow()
     events = _get_cached_events(user_id, now, page)
+    if flask_session.get("indico_user", ""):
+        favorites.get_favorites_events(events, flask_session["indico_user"])
     return events
 
 

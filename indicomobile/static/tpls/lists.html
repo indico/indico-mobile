@@ -43,22 +43,18 @@
 
 <script type="text/template" id="eventList">
 <li>
-    <% if (inFavorites){ %>
-        <a href="#event_favorites_<%=id%>" rel="external" style="padding-right: 45px;">
-    <% } else { %>
-        <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
-    <% } %>
-    <% if (hasAnyProtection) {%>
-        <span class="protected icon-protected" aria-hidden="true"></span>
-    <% } %>
-    <% if (typeof short_start_date != 'undefined'){ %>
-    <span style="color: #AAA; margin-right: 4px"><%=short_start_date%></span>
-    <% } %>
-    <%=title%>
+    <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;">
+        <% if (hasAnyProtection) {%>
+            <span class="protected icon-protected" aria-hidden="true"></span>
+        <% } %>
+        <% if (typeof short_start_date != 'undefined'){ %>
+            <span style="color: #AAA; margin-right: 4px"><%=short_start_date%></span>
+        <% } %>
+        <%=title%>
     </a>
     <% if(user != "") { %>
-        <% if (inFavorites){ %>
-            <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+        <% if (favorite){ %>
+            <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
         <% }  else{ %>
             <a data-icon="star" href="" data-theme="c" eventId="<%=id%>" action="add" id="addRemoveEvent" data-iconpos="notext"></a>
         <% } %>
@@ -68,8 +64,14 @@
 
 <script type="text/template" id="eventListInFavorites">
 <li>
-    <a href="#event_<%=id%>" rel="external" style="padding-right: 45px;"><%= title %></a>
-    <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+    <a href="#event_favorites_<%=id%>" rel="external" style="padding-right: 45px;">
+        <% if (hasAnyProtection) {%>
+            <span class="protected icon-protected" aria-hidden="true"></span>
+        <% } %>
+        <span style="color: #AAA; margin-right: 4px"><%=short_start_date%></span>
+        <%= title %>
+    </a>
+    <a data-icon="delete" href="" data-theme="c" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
 </li>
 </script>
 
@@ -164,10 +166,14 @@
 
 <script type="text/template" id="simpleEventListInFavorites">
 <li>
-    <a href="#simpleEvent_<%=id%>" rel="external" style="padding-right: 45px;">
+    <a href="#simpleEvent_favorites_<%=id%>" rel="external" style="padding-right: 45px;">
+        <% if (hasAnyProtection) {%>
+            <span class="protected icon-protected" aria-hidden="true"></span>
+        <% } %>
+        <span style="color: #AAA; margin-right: 4px"><%=short_start_date%></span>
         <%=title%>
     </a>
-    <a data-icon="star" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
+    <a data-icon="delete" href="" data-theme="b" eventId="<%=id%>" action="remove" id="addRemoveEvent" data-iconpos="notext"></a>
 </li>
 </script>
 

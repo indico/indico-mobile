@@ -6,6 +6,7 @@ import indicomobile.db.session as db_session
 import indicomobile.db.event as db_event
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.event as event
+import indicomobile.core.favorites as favorites
 from indicomobile.core.cache import cache, make_cache_key
 
 events = Blueprint('events', __name__, template_folder='templates')
@@ -94,7 +95,9 @@ def get_event(event_id):
 
 @events.route('/services/searchEvent/<search>/', methods=['GET'])
 def search_event(search):
-    return Response(json.dumps(event.search_event(search, int(request.args.get('page', 1)))), mimetype='application/json')
+    events = event.search_event(search, int(request.args.get('page', 1)))
+    favorites.get_favorites_events(events, flask_session["indico_user"])
+    return Response(json.dumps(events), mimetype='application/json')
 
 
 @events.route('/services/ongoingEvents/', methods=['GET'])
@@ -133,4 +136,5 @@ def get_history():
         if flask_session['indico_user']:
             user_id = flask_session['indico_user']
             events_in_history = list(db_event.get_history(user_id, order=-1))
+            favorites.get_favorites_events(events_in_history, flask_session["indico_user"])
     return Response(json.dumps(events_in_history), mimetype='application/json')
