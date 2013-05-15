@@ -4,9 +4,10 @@ function createMap(container, latitude, longitude){
         lat: latitude,
         lng: longitude,
         height: screen.height - 300 +'px',
-        width: 'inherit',
+        width: 'inherit'
     });
 }
+
 
 function addMarker(map, latitude, longitude, title){
     map.addMarker({
@@ -17,51 +18,54 @@ function addMarker(map, latitude, longitude, title){
     });
 }
 
+
 $('#eventHome').live('pageinit', function(){
-            if (latitude == null && longitude == null){
-                GMaps.geolocate({
-                    error: function(error) {
-                        $('.emptyMessage').show();
-                    },
-                    not_supported: function() {
-                        $('.emptyMessage').show();
-                    },
-                    success: function(position) {
-                        latitude = position.coords.latitude;
-                        longitude = position.coords.longitude;
-                        GMaps.geocode({
-                            address: search,
-                            callback: function(results, status) {
-                                if (status == 'OK') {
-                                    map = createMap('#map', latitude, longitude);
-                                    if (results.length > 1){
-                                        map.setZoom(4);
-                                    }
-                                    for (var i = 0; i < results.length; i++){
-                                        var latlng = results[i].geometry.location;
-                                        latitude = latlng.lat();
-                                        longitude = latlng.lng();
-                                        map.setCenter(latitude, longitude);
-                                        addMarker(map, latitude, longitude, results[i].formatted_address);
-                                    }
-                                }
-                                else{
-                                    $('.emptyMessage').show();
-                                }
-                            }
-                        });
-                    }
-                  });
-            } else if (latitude == "1" && longitude == "1"){
+    if (latitude === null && longitude === null){
+        GMaps.geolocate({
+            error: function(error) {
                 $('.emptyMessage').show();
-            } else {
-                latitude = parseFloat(latitude);
-                longitude = parseFloat(longitude);
-                map = createMap('#map', latitude, longitude);
-                map.setCenter(latitude, longitude);
-                addMarker(map, latitude, longitude, room);
+            },
+            not_supported: function() {
+                $('.emptyMessage').show();
+            },
+            success: function(position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                GMaps.geocode({
+                    address: search,
+                    callback: function(results, status) {
+                        if (status == 'OK') {
+                            map = createMap('#map', latitude, longitude);
+                            if (results.length > 1){
+                                map.setZoom(4);
+                            }
+                            for (var i = 0; i < results.length; i++){
+                                var latlng = results[i].geometry.location;
+                                latitude = latlng.lat();
+                                longitude = latlng.lng();
+                                map.setCenter(latitude, longitude);
+                                addMarker(map, latitude, longitude, results[i].formatted_address);
+                            }
+                        }
+                        else{
+                            $('.icon-direction').hide();
+                            $('.emptyMessage').show();
+                        }
+                    }
+                });
             }
-        });
+          });
+    } else if (latitude == "1" && longitude == "1"){
+        $('.icon-direction').hide();
+        $('.emptyMessage').show();
+    } else {
+        latitude = parseFloat(latitude);
+        longitude = parseFloat(longitude);
+        map = createMap('#map', latitude, longitude);
+        map.setCenter(latitude, longitude);
+        addMarker(map, latitude, longitude, room);
+    }
+});
 
 
 $('#route').live('click', function(){
