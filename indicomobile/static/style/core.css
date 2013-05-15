@@ -70,6 +70,10 @@ div.settings-panel {
     right:10px;
 }
 
+.settings-panel .ui-btn-inner {
+    display: none;
+}
+
 div.nav-panel {
     position:absolute;
     top:0;
