@@ -151,18 +151,18 @@
 </script>
 <script type="text/template" id="eventHeader">
     <div data-role="header" data-theme="c" data-position="fixed">
-        <div class="nav-panel">
+        <div class="banner-buttons-left">
             <a data-role="button" href="#nav-panel" rel="external" class="icon-menu panel-button-icon" aria-hidden="true"></a>
-    </div>
-        <h3 role="heading" aria-level="1">Indico Mobile</h3>
-        <div class="settings-panel">
-            <a data-role="button" href="<%=base_url%>search" rel="external" class="icon-search panel-button-icon" aria-hidden="true"></a>
+        </div>
+        <div class="banner-buttons-right">
             <%if (user) { %>
                 <a data-role="button" href="<%=base_url%>logout" rel="external" class="icon-logout panel-button-icon" aria-hidden="true"></a>
             <% } else  { %>
                 <a data-role="button" href="<%=base_url%>login" rel="external" class="icon-login panel-button-icon" aria-hidden="true"></a>
             <% } %>
+            <a data-role="button" href="<%=base_url%>search" rel="external" class="icon-search panel-button-icon" aria-hidden="true"></a>
         </div>
+        <h3 class="banner-title" role="heading" aria-level="1">Indico Mobile</h3>
     </div>
 </script>
 

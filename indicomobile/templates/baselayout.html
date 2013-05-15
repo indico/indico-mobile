@@ -25,18 +25,18 @@
     <body id="allpages">
     <div data-role="page" id="{% block pageId %}{% endblock %}">
         <div data-role="header" data-theme="c" data-position="fixed">
-            <h3 role="heading" aria-level="1">Indico Mobile</h3>
-            <div class="nav-panel">
+            <div class="banner-buttons-left">
                 <a data-role="button" href="#nav-panel" rel="external" class="icon-menu panel-button-icon" aria-hidden="true"></a>
             </div>
-            <div class="settings-panel">
-                <a data-role="button" href="{{url_for('routing.search')}}" rel="external" class="icon-search panel-button-icon" aria-hidden="true"></a>
+            <div class="banner-buttons-right">
                 {% if session['indico_user'] %}
                     <a data-role="button" href="{{url_for('oauth_client.logout')}}" rel="external" class="icon-logout panel-button-icon" aria-hidden="true"></a>
                 {% else %}
                     <a data-role="button" href="{{url_for('oauth_client.login')}}" rel="external" class="icon-login panel-button-icon" aria-hidden="true"></a>
                 {% endif %}
+                <a data-role="button" href="{{url_for('routing.search')}}" rel="external" class="icon-search panel-button-icon" aria-hidden="true"></a>
             </div>
+            <h3 class="banner-title" role="heading" aria-level="1">Indico Mobile</h3>
         </div>
         {% block pageheader %}
             <div class="headerTitle" data-role="header" data-theme="c">
