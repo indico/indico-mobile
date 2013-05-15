@@ -17,10 +17,11 @@
 {% block pageId %}eventHome{% endblock %}
 {% block pageheader%}
     <div class="headerTitle" data-role="header" data-theme="c">
+        <div class="headerOptions">
+            <a id="route" data-role="button" rel="external" class="icon-direction small-button-icon" aria-hidden="true"></a>
+        </div>
         <div class="headerElement">
-            <h3 id="mapTitle">{{map_title}}
-                <a id="route" data-role="button" rel="external" class="icon-direction small-button-icon" aria-hidden="true"></a>
-            </h3>
+            <h3 id="mapTitle" class="mapTitle">{{map_title}}</h3>
             <span id="infoRoute" style="display: none;">Distance: <span id="routeDistance"></span><br>
                 Duration: <span id="routeDuration"></span></span>
         </div>

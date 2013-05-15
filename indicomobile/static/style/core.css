@@ -55,6 +55,12 @@
     padding: 3px 7px 3px 0;
 }
 
+.mapTitle {
+    margin: 0.7em 0 0.4em 0;
+    -webkit-margin-before: 0.7em;
+    -webkit-margin-after: 0.4em;
+}
+
 .button-icon {
     width: 74px;
     height: 74px;
