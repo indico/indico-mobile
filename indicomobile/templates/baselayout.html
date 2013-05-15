@@ -25,10 +25,10 @@
     <body id="allpages">
     <div data-role="page" id="{% block pageId %}{% endblock %}">
         <div data-role="header" data-theme="c" data-position="fixed">
-            <div class="nav-panel">
+            <div class="banner-buttons-left">
                 <a data-role="button" href="#nav-panel" rel="external" class="icon-menu panel-button-icon" aria-hidden="true"></a>
             </div>
-            <div class="settings-panel">
+            <div class="banner-buttons-right">
                 {% if session['indico_user'] %}
                     <a data-role="button" href="{{url_for('oauth_client.logout')}}" rel="external" class="icon-logout panel-button-icon" aria-hidden="true"></a>
                 {% else %}
