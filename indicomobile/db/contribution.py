@@ -24,6 +24,9 @@ def get_contributions(start_date, end_date, extra_args = []):
         results.append(contribution)
     return results
 
+def is_favorite(event_id, contribution_id, user_id):
+    return db.FavoritesContribution.find_one({'contribution.conferenceId': event_id, 'contribution.contributionId': contribution_id, 'user_id': user_id}) is not None
+
 def get_event_contributions(event_id, extra_args = [], include_slot= False, sort = False):
     results = []
     query = {'conferenceId': event_id }
@@ -103,8 +106,9 @@ def get_favorites_event_contributions(user_id, event_id, include_slots = False):
     contributions = db.FavoritesContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id})
     results = []
     for contribution in contributions:
-        if include_slots and contribution['slot']:
-            contribution['slot'] = db.dereference(contribution['slot'])
+        if include_slots and contribution["contribution"]['slot']:
+            pass
+            #contribution["contribution"]['slot'] = db.dereference(contribution["contribution"]['slot'])
         results.append(contribution)
     return results
 

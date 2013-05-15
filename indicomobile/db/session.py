@@ -97,6 +97,9 @@ def get_favorites_session(user_id, event_id, session_id):
                                                     'session_slot.sessionId':session_id,
                                                     'session_slot.conferenceId': event_id})
 
+def is_favorite(event_id, session_id, user_id):
+    return db.FavoritesContribution.find_one({'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id, 'user_id': user_id}) is not None
+
 def get_favorites_sessions(user_id, distinct = False):
     if distinct:
         return db.FavoritesSessionSlot.find({'user_id': user_id}).distinct('session_slot.conferenceId')

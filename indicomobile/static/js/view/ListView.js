@@ -240,15 +240,6 @@ var SimpleEventsAndContributions = ListView.extend({
                 lastTime = element.get('startDate').time;
                 listView.append('<li data-role="list-divider">'+hourToText(element.get('startDate').time)+'</li>');
             }
-            var isInFavorites = self.favoritesCollection.find(function(contrib){
-                if (contrib.get('contributionId') !== undefined){
-                    return contrib.get('contributionId') == element.get('contributionId') &&
-                    contrib.get('conferenceId') == element.get('conferenceId');
-                }
-                else{
-                    return contrib.get('id') == element.get('id');
-                }
-            });
             var listItem;
             if (element.get('contributionId') !== undefined){
                 listItem = template(element.toJSON());
@@ -256,7 +247,7 @@ var SimpleEventsAndContributions = ListView.extend({
             else{
                 listItem = self.template2(element.toJSON());
             }
-            if (isInFavorites){
+            if (element.get("favorite")===true){
                 listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');
             }
             listView.append(listItem);
@@ -316,6 +307,7 @@ var ContributionListView = ListView.extend({
                 var isInFavorites = self.favoritesCollection.find(function(contrib){
                     return contrib.get('contributionId') == element.get('contributionId');
                 });
+
                 listItem = template(element.toJSON());
                 if (isInFavorites){
                     listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');

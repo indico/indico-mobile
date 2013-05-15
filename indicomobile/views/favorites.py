@@ -294,13 +294,6 @@ def get_favorites_event_speaker_contributions(event_id, speaker_id):
     return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
 
 
-@favorites.route('/services/favorites/ongoingContributions/', methods=['GET'])
-@cache.cached(key_prefix=make_cache_key)
-def get_favorites_ongoing_contributions():
-    user_id = flask_session['indico_user']
-    contributions = event_logic.get_ongoing_contributions()
-    return Response(json.dumps(my_favorites.get_favorites_contributions(contributions, user_id)), mimetype='application/json')
-
 @favorites.route('/services/favorites/nextEvent/', methods=['GET'])
 def get_favorites_next_event():
     user_id = flask_session['indico_user']

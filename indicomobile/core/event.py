@@ -97,6 +97,10 @@ def get_ongoing_contributions():
     results = list(db_contribution.get_contributions(now, tomorrow, [{'hasAnyProtection': False},
                                                                              {'_fossil': 'contribSchEntryDisplay'}])) \
             + list(db_event.get_ongoing_lectures(now, tomorrow))
+
+    if flask_session.get("indico_user", ""):
+        for contrib in results:
+            contrib["favorite"] = favorites.is_contribution_favorite(contrib, flask_session["indico_user"])
     return sorted(results, key=lambda x: x['startDate'])
 
 def get_future_contributions():

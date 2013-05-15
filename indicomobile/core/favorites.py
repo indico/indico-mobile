@@ -24,3 +24,19 @@ def get_favorites_contributions(contributions, user_id):
             if db_event.get_favorites_event(user_id, contribution['id']):
                 contribs_in_db.append(contribution)
     return contribs_in_db
+
+def is_contribution_favorite(contribution, user_id):
+    if 'conferenceId' in contribution:
+        if db_event.is_favorite(user_id, contribution['conferenceId']):
+            return True
+        if 'slot' in contribution:
+            if contribution['slot']:
+                session = contribution['slot']
+                if db_session.is_favorite(contribution['conferenceId'], session['sessionId'], user_id):
+                    return True
+        if db_contribution.is_favorite(contribution['conferenceId'], contribution['contributionId'], user_id):
+            return True
+        return False
+    # Lectures
+    else:
+        return db_event.is_favorite(contribution['id'], user_id)

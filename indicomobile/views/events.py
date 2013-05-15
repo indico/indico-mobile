@@ -105,7 +105,7 @@ def get_ongoing_events():
     return Response(json.dumps(event.get_ongoing_events(int(request.args.get('page', 1)))), mimetype='application/json')
 
 @events.route('/services/ongoingContributions/', methods=['GET'])
-@cache.cached(key_prefix=make_cache_key)
+#@cache.cached(key_prefix=make_cache_key)
 def get_ongoing_contributions():
     return Response(json.dumps(event.get_ongoing_contributions()), mimetype='application/json')
 
