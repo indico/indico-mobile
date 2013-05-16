@@ -64,7 +64,6 @@ def store_slot(slot, event):
     convert_dates(slot)
     clean_html_tags(slot)
 
-    session_id = slot['sessionId']
     is_poster = slot['isPoster']
     slot_id = slot['id']
     color = slot['color']
@@ -77,16 +76,17 @@ def store_slot(slot, event):
     db_slot.update(slot)
     db_slot['entries'] = []
 
-    db_slot.save()
+    db_slot=db.SessionSlot.find_and_modify({'conferenceId': db_slot["conferenceId"], 'id': slot_id}, db_slot, upsert=True, new=True)
+
 
     entries = []
 
-    for contribution, block_content in slot.get('entries', {}).iteritems():
+    for _, block_content in slot.get('entries', {}).iteritems():
         if block_content['_type'] == 'ContribSchEntry':
             entries.append(ref(store_contribution(block_content, event, color, is_poster, db_slot)))
     db_slot['entries'] = entries
     if len(db_slot['entries']) > 0:
-        db_slot.save()
+        db_slot=db.SessionSlot.find_and_modify({'conferenceId': db_slot["conferenceId"], 'id': slot_id}, db_slot, upsert=True, new=True)
         store_material(slot)
     return db_slot
 
@@ -112,7 +112,7 @@ def get_favorites_event_sessions(user_id, event_id):
 def add_session_to_favorites(user_id, session_slot):
     favorites_session = db.FavoritesSessionSlot()
     favorites_session.update({'user_id': user_id, 'session_slot': session_slot})
-    favorites_session.save()
+    db.FavoritesSessionSlot.find_and_modify({'user_id': user_id, 'session_slot.conferenceId': session_slot["conferenceId"], 'session_slot.id': session_slot["id"]}, favorites_session, upsert=True)
 
 def remove_session_from_favorites(user_id, event_id, session_id):
     db.favorites_session_slots.remove({'user_id': user_id, 'session_slot.conferenceId': event_id, 'session_slot.sessionId': session_id})

@@ -61,7 +61,7 @@ def store_presenters(contribution):
             presenter['conferenceId'] = contribution['conferenceId']
             presenter_db = db.Presenter()
             presenter_db.update(presenter)
-            presenter_db.save()
+            presenter_db=db.Presenter.find_and_modify({'id': presenter_id, 'conferenceId': contribution['conferenceId']}, presenter_db, upsert=True, new=True)
         presenters.append(presenter_db)
     contribution['presenters'] = presenters
 
@@ -86,8 +86,7 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
     store_presenters(contribution)
     db_contribution = db.Contribution()
     db_contribution.update(contribution)
-    db_contribution.save()
-    return db_contribution
+    return db.Contribution.find_and_modify({'conferenceId': db_contribution["conferenceId"], 'contributionId': db_contribution["contributionId"]}, db_contribution, upsert=True, new=True)
 
 # AGENDA
 
@@ -119,7 +118,7 @@ def get_num_favorites_event_contributions(user_id, event_id):
 def add_contribution_to_favorites(user_id, contribution):
     new_contribution = db.FavoritesContribution()
     new_contribution.update({'user_id': user_id, 'contribution': contribution})
-    new_contribution.save()
+    db.FavoritesContribution.find_and_modify({'user_id': user_id, 'contribution.conferenceId': contribution["conferenceId"], 'contribution.contributionId': contribution["contributionId"]}, new_contribution, upsert=True)
 
 def remove_contribution_from_favorites(user_id, event_id, contrib_id):
     db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id, 'contribution.contributionId': contrib_id})

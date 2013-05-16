@@ -53,8 +53,8 @@ def store_chairs(event):
         chair_dict['conferenceId'] = event.get('id')
         chair.update(chair_dict)
         chair.pop('_type')
+        chair = db.Chair.find_and_modify({'conferenceId': event.get('id'), 'id': chair['id']}, chair, upsert=True, new=True)
         chairs.append(chair)
-        chair.save()
     event['chairs'] = chairs
 
 def store_event(event_http, event_tt):
@@ -69,16 +69,16 @@ def store_event(event_http, event_tt):
     event_db.update(event_http)
     event_db.pop('_type')
     event_db.pop('visibility')
-    event_db.save()
+    saved_event = db.Event.find_and_modify({'id': event_id},event_db, upsert=True, new=True)
 
     for day, day_content in event_tt.get(event_id, {}).iteritems():
         entries = []
 
         for _, block_content in day_content.iteritems():
             if block_content['_type'] == 'LinkedTimeSchEntry':
-                entry = store_slot(block_content, event_db)
+                entry = store_slot(block_content, saved_event)
             else:
-                entry = store_contribution(block_content, event_db)
+                entry = store_contribution(block_content, saved_event)
             entries.append(ref(entry))
         if len(day_content.keys()) > 0:
             date = datetime.strptime(day, '%Y%M%d').strftime('%Y-%M-%d').decode('utf-8')
@@ -86,13 +86,13 @@ def store_event(event_http, event_tt):
             day['date'] = date
             day['conferenceId'] = event_id
             day['entries'] = entries
-            day.save()
+            db.Day.find_and_modify({'conferenceId': event_id, 'date':date}, day, upsert=True)
 
 def store_cached_event(user_id, date, event):
     clean_html_tags(event)
     new_cached_events = db.CachedLatestEvent()
     new_cached_events.update({'user_id': user_id, 'event_id': event['id'], 'event_start_date': dt_from_indico(event["startDate"]), 'timestamp': date, 'event': event})
-    new_cached_events.save()
+    db.CachedLatestEvent.find_and_modify({'user_id': user_id, 'event_id': event['id'], 'timestamp': date}, new_cached_events, upsert=True)
 
 def remove_cached_events(user_id, timestamp):
     db.cached_latest_events.remove({'user_id': user_id, 'timestamp': {"$lt": timestamp}})
@@ -119,7 +119,7 @@ def get_favorites_events(user_id):
 def add_event_to_favorites(user_id, event):
     favorites_event = db.FavoritesEvent()
     favorites_event.update({'user_id': user_id, 'event': event})
-    favorites_event.save()
+    db.FavoritesEvent.find_and_modify({'user_id': user_id, 'event.id': event["id"]}, favorites_event, upsert=True)
 
 def remove_full_event_from_favorites(user_id, event_id):
     db.FavoritesEvent.cleanup(user_id, event_id)
@@ -142,7 +142,7 @@ def add_event_to_history(user_id, date, event, event_id):
     new_event = db.HistoryEvent()
     new_event.update({'user_id': user_id, 'viewed_at': date, 'title': event['title'],
                     'id': event_id, 'hasAnyProtection': event['hasAnyProtection']})
-    new_event.save()
+    db.HistoryEvent.find_and_modify({'user_id': user_id, 'id': event_id}, new_event, upsert=True)
 
 def remove_event_from_history(user_id, event_id):
     db.history_events.remove({'user_id': user_id, 'id': event_id})
