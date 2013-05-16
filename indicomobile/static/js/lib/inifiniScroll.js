@@ -1,6 +1,6 @@
 // Created by Jonathan Eatherly, (https://github.com/joneath)
 // MIT license
-// Version 0.1
+// Version 0.3
 
 (function() {
   Backbone.InfiniScroll = function(collection, options) {
@@ -22,10 +22,12 @@
       onFetch: function(){ },
       target: $(window),
       param: "until",
+      extraParams: {},
+      pageSizeParam: "page_size",
       untilAttr: "id",
       pageSize: pageSize,
       scrollOffset: 100,
-      add: true,
+      remove: false,
       strict: false,
       includePage: false
     });
@@ -41,11 +43,6 @@
     self.destroy = function() {
       $target.off("scroll", self.watchScroll);
     };
-
-    self.reset = function() {
-      self.destroy();
-      initialize();
-    }
 
     self.enableFetch = function() {
       fetchOn = true;
@@ -93,24 +90,22 @@
         self.collection.fetch({
           success: self.fetchSuccess,
           error: self.fetchError,
-          add: self.options.add,
-          data: buildQueryParams(lastModel)
+          remove: self.options.remove,
+          data: $.extend(buildQueryParams(lastModel), self.options.extraParams)
         });
       }
       prevScrollY = scrollY;
     };
 
     function buildQueryParams(model) {
-      self.collection.options || (self.collection.options = {});
-      var params = (self.collection.options.data || {});
+      var params = { };
 
       params[self.options.param] = typeof(model[self.options.untilAttr]) === "function" ? model[self.options.untilAttr]() : model.get(self.options.untilAttr);
+      params[self.options.pageSizeParam] = self.options.pageSize;
 
       if (self.options.includePage) {
         params["page"] = page + 1;
       }
-
-      params["offset"] = Math.floor(screen.height/50);
 
       return params;
     }

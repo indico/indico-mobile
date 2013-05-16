@@ -127,7 +127,6 @@ var InfiniteListView = ListView.extend({
               collection.trigger('hasChanged', [changed]);
           },
           includePage : true});
-        this.infiniScroll.enableFetch();
     }
 
 });
