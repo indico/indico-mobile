@@ -3364,3 +3364,17 @@ div.ui-slider-switch.ui-mini {
         display: none;
     }
 }
+
+/* Reveal menu shadow on top of the list items */
+.ui-panel-display-reveal {
+       -webkit-box-shadow: none;
+       -moz-box-shadow: none;
+       box-shadow: none;
+}
+
+.ui-panel-content-fixed-toolbar-position-left.ui-panel-content-fixed-toolbar-open,
+.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open {
+       -webkit-box-shadow: -5px 0 5px rgba(0,0,0,.10);
+       -moz-box-shadow: -5px 0 5px rgba(0,0,0,.10);
+       box-shadow: -5px 0 5px rgba(0,0,0,.10);
+}
