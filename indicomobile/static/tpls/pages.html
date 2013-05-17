@@ -130,7 +130,7 @@
         <ul data-role="listview" data-theme="c" class="nav-search">
             <li data-icon="false"><a href="<%=base_url%>" rel="external"><span class="icon-home small-icon right" aria-hidden="true"></span>Home</a></li>
             <% if (event_type != "simple_event") { %>
-                <li data-role="list-divider"><%=title%></li>
+                <li data-role="list-divider"><%=event_title%></li>
                 <li data-icon="false"><a id ="desktopTab" rel="external" href="#event_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-happening small-icon right" aria-hidden="true"></span>Desktop</a></li>
                 <li data-icon="false"><a id ="sessionsTab" rel="external" href="#sessions_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-sessions small-icon right" aria-hidden="true"></span>Sessions</a></li>
                 <li data-icon="false"><a id ="timetableTab" rel="external" href="#timetable_<% if (typeof conferenceId === 'undefined'){print(id)}else{print(conferenceId)}%>"><span class="icon-timetable small-icon right" aria-hidden="true"></span>Timetable</a></li>

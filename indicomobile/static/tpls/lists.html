@@ -77,12 +77,7 @@
 
 <script type="text/template" id="nextEvent">
 <li>
-
-    <% if (type == 'simple_event') { %>
         <a href="#event_favorites_<%=id%>" rel="external">
-    <% } else if (contributionId != null){ %>
-        <a href="#contribution_favorites_<%=conferenceId%>_<%=contributionId%>" rel="external">
-    <% } %>
         <h3><%=title%></h3>
         <p>
         <% var month = ["January", "February", "March", "April",

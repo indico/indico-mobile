@@ -43,8 +43,10 @@ var PageView = Backbone.View.extend({
             }
             if(typeof model.get("type") === 'undefined') {
                 model.set("event_type", model.get("event").type);
+                model.set("event_title", model.get("event").title);
             } else{
                 model.set("event_type", model.get("type"));
+                model.set("event_title", model.get("title"));
             }
             if(typeof model.get("title") === 'undefined') {
                 model.set("title", model.get("event").title);
@@ -170,6 +172,7 @@ var ContributionsPageView = PageView.extend({
             context.set("indico_desktop", INDICO_DESKTOP);
             context.set("user", userLogged);
             context.set("event_type", context.get("type"));
+            context.set("event_title", context.get("title"));
             pageView.append(this.headerTemplate(context.toJSON()));
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.panelsTemplate(context.toJSON()));

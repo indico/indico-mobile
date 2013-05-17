@@ -310,7 +310,7 @@ def get_favorites_next_event():
         else:
             contributions = db_contribution.get_event_contributions(current_event['id'], {'startDate': {'$gte': now}}, False, True)
             if contributions:
-                events.append(contributions[0])
+                events.append(current_event)
     for session in favorites_sessions:
         current_session = session['session_slot']
         session_slots = db_session.get_event_session_slots(current_session['conferenceId'], current_session['sessionId'], True)
@@ -318,17 +318,17 @@ def get_favorites_next_event():
             contributions = []
             for contribution in session_slot['entries']:
                 if contribution['startDate'] > now:
-                    contributions.append(contribution)
+                    contributions.append(contribution["event"])
             if len(contributions) > 0:
                 events.append(sorted(contributions, key=lambda x:x['startDate'])[0])
     contributions = []
     for contribution in favorites_contributions:
         current_contribution = contribution['contribution']
         if current_contribution['startDate'] > now:
-            contributions.append(current_contribution)
+            contributions.append(current_contribution["event"])
     if len(contributions) > 0:
         contributions = sorted(contributions, key=lambda x:x['startDate'])
-        events.append(contributions[0])
+        events.append(contributions[0]["event"])
     nextEvent = []
     if len(events) > 0:
         nextEvent = sorted(events, key=lambda x:x['startDate'])[0]
