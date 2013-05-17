@@ -90,17 +90,18 @@ var Router = Backbone.Router.extend({
                 link: 'sessions_' + info,
                 template_name: '#sessionsPage',
                 selectedTab: '#sessionsTab',
-                favorites: favorites
-            });
-
-            var sessionsListView = new SessionsList({
-                collection: new Slots(),
-                url: url,
-                favoritesUrl: favoritesUrl,
-                container: '#sessionsList_' + info,
-                template_name: '#sessionsList',
-                empty_message: 'No sessions in this event',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function () {
+                    var sessionsListView = new SessionsList({
+                        collection: new Slots(),
+                        url: url,
+                        favoritesUrl: favoritesUrl,
+                        container: '#sessionsList_' + info,
+                        template_name: '#sessionsList',
+                        empty_message: 'No sessions in this event',
+                        favorites: favorites
+                    });
+                }
             });
 
         }
@@ -136,16 +137,17 @@ var Router = Backbone.Router.extend({
                 link: 'session_' + info,
                 template_name: '#sessionPage',
                 selectedTab: null,
-                favorites: favorites
-            });
-
-            var sessionDaysView = new SessionDaysList({
-                collection: new Slots(),
-                url: url,
-                container: '#sessionDays_' + info,
-                template_name: '#sessionDaysList',
-                empty_message: 'There is nothing in this session',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function () {
+                    var sessionDaysView = new SessionDaysList({
+                        collection: new Slots(),
+                        url: url,
+                        container: '#sessionDays_' + info,
+                        template_name: '#sessionDaysList',
+                        empty_message: 'There is nothing in this session',
+                        favorites: favorites
+                    });
+                }
             });
 
         }
@@ -189,20 +191,20 @@ var Router = Backbone.Router.extend({
                 template_name: '#sessionDay',
                 link: 'sessionDay_' + info,
                 selectedTab: null,
-                favorites: favorites
+                favorites: favorites,
+                renderList: function() {
+                    var contributionsView = new ContributionListView({
+                        collection: new Contributions(),
+                        url: url,
+                        favoritesUrl: favoritesUrl,
+                        container: '#sessionDay_list_' + info,
+                        template_name: '#contribution',
+                        sessionDay: true,
+                        empty_message: 'There is nothing in this day',
+                        favorites: favorites
+                    });
+                }
             });
-
-            var contributionsView = new ContributionListView({
-                collection: new Contributions(),
-                url: url,
-                favoritesUrl: favoritesUrl,
-                container: '#sessionDay_list_' + info,
-                template_name: '#contribution',
-                sessionDay: true,
-                empty_message: 'There is nothing in this day',
-                favorites: favorites
-            });
-
         }
         else{
             $.mobile.changePage('#sessionDay_' + info);
@@ -233,16 +235,17 @@ var Router = Backbone.Router.extend({
                 template_name: '#timetableDays',
                 link: 'timetable_' + info,
                 selectedTab: '#timetableTab',
-                favorites: favorites
-            });
-
-            var timetableDaysListView = new TimetableDaysListView({
-                collection: new Days(),
-                url: url,
-                container: '#timetable_days_' + info,
-                template_name: '#timetableDaysList',
-                empty_message: 'No contributions in this event',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function(){
+                    var timetableDaysListView = new TimetableDaysListView({
+                        collection: new Days(),
+                        url: url,
+                        container: '#timetable_days_' + info,
+                        template_name: '#timetableDaysList',
+                        empty_message: 'No contributions in this event',
+                        favorites: favorites
+                    });
+                }
             });
 
         }
@@ -282,18 +285,19 @@ var Router = Backbone.Router.extend({
                 template_name: '#dayPage',
                 link: 'timetableDay_' + info,
                 selectedTab: null,
-                favorites: favorites
-            });
-
-            var timetableDayContributionsView = new ContributionListView({
-                container: '#day_list_' + info,
-                collection: new Contributions(),
-                url: url,
-                favoritesUrl: favoritesUrl,
-                template_name: '#contribution',
-                sessionDay: false,
-                empty_message: 'There is nothing in this day',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function() {
+                    var timetableDayContributionsView = new ContributionListView({
+                        container: '#day_list_' + info,
+                        collection: new Contributions(),
+                        url: url,
+                        favoritesUrl: favoritesUrl,
+                        template_name: '#contribution',
+                        sessionDay: false,
+                        empty_message: 'There is nothing in this day',
+                        favorites: favorites
+                    });
+                }
             });
         }
         else {
@@ -327,16 +331,17 @@ var Router = Backbone.Router.extend({
                 template_name: '#speakersPage',
                 link: 'speakers_' + info,
                 selectedTab: '#speakersTab',
-                favorites: favorites
-            });
-
-            var speakersListView = new SpeakerListView({
-                collection: new Speakers(),
-                url: url,
-                container: '#speakersContent_' + info,
-                lastIndex: null,
-                template_name: '#speakersList',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function() {
+                    var speakersListView = new SpeakerListView({
+                        collection: new Speakers(),
+                        url: url,
+                        container: '#speakersContent_' + info,
+                        lastIndex: null,
+                        template_name: '#speakersList',
+                        favorites: favorites
+                    });
+                }
             });
         }
         else{
@@ -375,17 +380,18 @@ var Router = Backbone.Router.extend({
                 template_name: '#speakerPage',
                 link: 'speaker_' + info,
                 selectedTab: null,
-                favorites: favorites
-            });
-
-            var speakerContributionsView = new SimpleEventsAndContributions({
-                container: 'div[id="speaker_contribs_' + info +'"]',
-                collection: new Contributions(),
-                url: url,
-                favoritesUrl: favoritesUrl,
-                template_name: '#contribution',
-                empty_message: 'This speaker is in no contribution',
-                favorites: favorites
+                favorites: favorites,
+                renderList: function() {
+                    var speakerContributionsView = new SimpleEventsAndContributions({
+                        container: 'div[id="speaker_contribs_' + info +'"]',
+                        collection: new Contributions(),
+                        url: url,
+                        favoritesUrl: favoritesUrl,
+                        template_name: '#contribution',
+                        empty_message: 'This speaker is in no contribution',
+                        favorites: favorites
+                    });
+                }
             });
         }
         else{

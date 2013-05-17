@@ -31,9 +31,9 @@ var PageView = Backbone.View.extend({
 
     render: function() {
         var model = this.model;
-        container = $(this.options.container);
-        pageView = $(this.el);
-        link = this.options.link;
+        var container = $(this.options.container);
+        var pageView = $(this.el);
+        var link = this.options.link;
         pageView.trigger('create');
         if (pageView.html() === ''){
             pageView.attr('id', link);
@@ -75,6 +75,9 @@ var PageView = Backbone.View.extend({
             pageView.append(this.panelsTemplate(model.toJSON()));
 
             $('body').append(pageView);
+            if(this.options.renderList !== undefined) {
+                this.options.renderList();
+            }
 
             $.mobile.changePage($('div[id="'+link+'"]'));
         }
@@ -86,6 +89,7 @@ var PageView = Backbone.View.extend({
 var ContributionsPageView = PageView.extend({
 
     initialize: function(){
+        var self = this;
         this.template_file = getHTMLTemplate('pages.html');
         this.template = _.template($(this.template_file).siblings(this.options.template_name).html());
         this.headerTemplate = _.template($(this.template_file).siblings('#eventHeader').html());
@@ -93,20 +97,22 @@ var ContributionsPageView = PageView.extend({
         this.collection.url = this.options.url;
         this.context = new Event();
         this.context.url = this.options.contextUrl;
-        this.context.fetch();
-        this.collection.on('reset', this.render, this);
-        this.collection.fetch();
+        $.when( this.context.fetch(), this.collection.fetch()).done(function() {
+            self.render();
+        });
+        //this.collection.on('reset', this.render, this);
+        ;
     },
 
     render: function() {
         var collection = this.collection;
         var context = this.context;
-        container = $(this.options.container);
-        pageView = $(this.el);
-        thisDay = null;
-        prevDay = null;
-        nextDay = null;
-        link = this.options.link;
+        var container = $(this.options.container);
+        var pageView = $(this.el);
+        var thisDay = null;
+        var prevDay = null;
+        var nextDay = null;
+        var link = this.options.link;
         if (pageView.html() === ''){
             pageView.attr('id', link);
             if (collection.at(0).get('sessionId') === undefined){
@@ -168,6 +174,9 @@ var ContributionsPageView = PageView.extend({
             pageView.append(this.template(thisDay.toJSON()));
             pageView.append(this.panelsTemplate(context.toJSON()));
             $('body').append(pageView);
+            if(this.options.renderList !== undefined) {
+                this.options.renderList();
+            }
             $.mobile.changePage($('div[id="'+link+'"]'));
         }
         return this;
