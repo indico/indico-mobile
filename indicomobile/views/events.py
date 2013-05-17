@@ -96,7 +96,8 @@ def get_event(event_id):
 @events.route('/services/searchEvent/<search>/', methods=['GET'])
 def search_event(search):
     events = event.search_event(search, int(request.args.get('page', 1)))
-    favorites.get_favorites_events(events, flask_session["indico_user"])
+    if flask_session.get("indico_user", ""):
+        favorites.get_favorites_events(events, flask_session["indico_user"])
     return Response(json.dumps(events), mimetype='application/json')
 
 
