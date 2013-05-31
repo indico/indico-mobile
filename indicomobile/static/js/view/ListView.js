@@ -34,22 +34,29 @@ var ListView = Backbone.View.extend({
         }
     },
 
-    _convertDate: function(date_in) {
-        var date = moment(date_in.date + " " + date_in.time);
+    _convertDate: function(start_date, end_date) {
+        start_date = moment(start_date.date + " " + start_date.time);
+        end_date = moment(end_date.date + " " + end_date.time);
         var now = moment();
-        if (date < now) {
+        if (end_date < now) {
+            if(now.diff(end_date, "days") < 1) {
+                return start_date.format("HH:mm");
+            } else {
+                return start_date.format("DD MMM");
+            }
+        } else if (start_date < now) {
             return "Ongoing";
-        } else if (date.diff(now, "days") < 1) {
-            return date.format("HH:mm");
+        } else if (start_date.diff(now, "days") < 1) {
+            return start_date.format("HH:mm");
         } else {
-            return date.format("DD MMM");
+            return start_date.format("DD MMM");
         }
     },
 
     renderItems: function(collection, template, listView){
         self = this;
         collection.each(function(element){
-            element.set("short_start_date", self._convertDate(element.get("startDate")));
+            element.set("short_start_date", self._convertDate(element.get("startDate"), element.get("endDate")));
             element.set("user", userLogged);
             var month = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).year;
