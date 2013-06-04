@@ -46,7 +46,7 @@ oauth_indico_mobile = oauth.remote_app('indico_mobile',
 
 @oauth_indico_mobile.tokengetter
 def get_token():
-    return session.get('indico_mobile_token')
+    return session.get('indico_mobile_oauthtok')
 
 
 @oauth_client.route('/login/', methods=['GET'])
