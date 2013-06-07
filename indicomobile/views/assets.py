@@ -31,6 +31,8 @@ def register_assets(app):
                           filters='rjsmin', output='history_%(version)s.js'),
         'search_js': Bundle('js/search.js',
                           filters='rjsmin', output='search_%(version)s.js'),
+        'statistics_js': Bundle('js/statistics.js',
+                          filters='rjsmin', output='statistics_%(version)s.js'),
         'maps_js': Bundle('js/lib/gmaps.js',
                           'js/maps.js',
                           filters='rjsmin', output='maps_%(version)s.js'),

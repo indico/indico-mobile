@@ -65,3 +65,12 @@ ACCESS_TOKEN_URL='http://yourindicoserver/path/to/indico/oauth.py/access_token'
 AUTHORIZE_URL='http://yourindicoserver/path/to/indico/oauth.py/authorize'
 CONSUMER_KEY=''
 CONSUMER_SECRET=''
+
+
+#------------------------------------------------------------------------------
+# Statistics
+#
+# We specified the Piwik statistics configuration
+#------------------------------------------------------------------------------
+STATISTICS_SERVER='statisticsserver.domain'
+STATISTICS_SITE='XXX'

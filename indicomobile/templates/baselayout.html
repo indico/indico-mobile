@@ -3,22 +3,27 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Indico Mobile - {% block pagetitle %}{% endblock %}</title>
+        {% include "vars.html" %}
         {% assets "style_css" %}
             <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"/>
         {% endassets %}
-        <script type="text/javascript">
-              var TPL_DIR = "{{ url_for('static', filename='tpls/') }}";
-              var IMAGE_DIR = "{{ url_for('static', filename='style/images/') }}";
-              var BASE_URL = "{{ url_for('routing.index', _external=True ) }}";
-              if(location.protocol === "https:" && BASE_URL.indexOf("https://") != 0) {
-                  BASE_URL = BASE_URL.replace("http", "https");
-              }
-              var INDICO_DESKTOP = "{{config.get('INDICO_URL')}}";
-              var userLogged = "{{session['indico_user_name']}}";
-        </script>
         {% assets "core_js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
+
+
+        {% if config.get('STATISTICS_SERVER') != "" and config.get('STATISTICS_SITE') %}
+            <script type="text/javascript">
+                 var STATISTICS_SERVER = "{{config.get('STATISTICS_SERVER')}}";
+                 var STATISTICS_SITE = "{{config.get('STATISTICS_SITE')}}";
+                 if(location.protocol === "https:" && STATISTICS_SITE.indexOf("https://") != 0) {
+                     STATISTICS_SITE = STATISTICS_SITE.replace("http", "https");
+                 }
+            </script>
+            {% assets "statistics_js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+            {% endassets %}
+        {% endif %}
         {% block head %}
         {% endblock %}
     </head>
