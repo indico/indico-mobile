@@ -12,10 +12,14 @@ def get_contribution(event_id, contrib_id):
         contribution['slot'] = db.dereference(contribution['slot'])
     return contribution
 
-def get_contributions(start_date, end_date, extra_args = []):
+
+def get_contributions(start_date, end_date, extra_args=[]):
     results = []
-    query = [{'startDate': {'$gte': start_date}},
-              {'startDate': {'$lt': end_date}}]
+    query = [{"$or":
+              [{"$and": [{'startDate': {'$gte': start_date}},
+                         {'startDate': {'$lt': end_date}}]},
+              {"$and": [{'endDate': {'$gte': start_date}},
+                        {'endDate': {'$lt': end_date}}]}]}]
     query.extend(extra_args)
     contributions = db.Contribution.find({'$and': query}).sort([('startDate', 1)])
     for contribution in contributions:
@@ -24,12 +28,14 @@ def get_contributions(start_date, end_date, extra_args = []):
         results.append(contribution)
     return results
 
+
 def is_favorite(event_id, contribution_id, user_id):
     return db.FavoritesContribution.find_one({'contribution.conferenceId': event_id, 'contribution.contributionId': contribution_id, 'user_id': user_id}) is not None
 
-def get_event_contributions(event_id, extra_args = [], include_slot= False, sort = False):
+
+def get_event_contributions(event_id, extra_args=[], include_slot=False, sort=False):
     results = []
-    query = {'conferenceId': event_id }
+    query = {'conferenceId': event_id}
     query.update(extra_args)
     contributions = db.Contribution.find(query)
     if sort:
@@ -40,6 +46,7 @@ def get_event_contributions(event_id, extra_args = [], include_slot= False, sort
         results.append(contribution)
     return results
 
+
 def get_speaker_contributions(event_id, speaker):
     contributions = []
     contribs = db.Contribution.find({'$and': [{'presenters': {'$elemMatch': speaker}},
@@ -49,6 +56,7 @@ def get_speaker_contributions(event_id, speaker):
             contrib['slot'] = db.dereference(contrib['slot'])
         contributions.append(contrib)
     return contributions
+
 
 def store_presenters(contribution):
     presenters = []
@@ -61,7 +69,7 @@ def store_presenters(contribution):
             presenter['conferenceId'] = contribution['conferenceId']
             presenter_db = db.Presenter()
             presenter_db.update(presenter)
-            presenter_db=db.Presenter.find_and_modify({'id': presenter_id, 'conferenceId': contribution['conferenceId']}, presenter_db, upsert=True, new=True)
+            presenter_db = db.Presenter.find_and_modify({'id': presenter_id, 'conferenceId': contribution['conferenceId']}, presenter_db, upsert=True, new=True)
         presenters.append(presenter_db)
     contribution['presenters'] = presenters
 
@@ -70,10 +78,9 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
     convert_dates(contribution)
     clean_html_tags(contribution)
 
-    contribution.update({
-            'isPoster': is_poster,
-            'slot': ref(slot) if slot else None,
-            'color': color})
+    contribution.update({'isPoster': is_poster,
+                         'slot': ref(slot) if slot else None,
+                         'color': color})
 
     contribution.pop('id')
     contribution.pop('_type')
@@ -88,20 +95,21 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
     db_contribution.update(contribution)
     return db.Contribution.find_and_modify({'conferenceId': db_contribution["conferenceId"], 'contributionId': db_contribution["contributionId"]}, db_contribution, upsert=True, new=True)
 
-# AGENDA
 
+# AGENDA
 def get_favorites_contribution(user_id, event_id, contrib_id):
     return db.FavoritesContribution.find_one({'user_id': user_id,
-                                                'contribution.contributionId': contrib_id,
-                                                'contribution.conferenceId': event_id})
+                                              'contribution.contributionId': contrib_id,
+                                              'contribution.conferenceId': event_id})
 
-def get_favorites_contributions(user_id, distinct = False):
+
+def get_favorites_contributions(user_id, distinct=False):
     if distinct:
         return db.FavoritesContribution.find({'user_id': user_id}).distinct('contribution.conferenceId')
     return db.FavoritesContribution.find({'user_id': user_id})
 
 
-def get_favorites_event_contributions(user_id, event_id, include_slots = False):
+def get_favorites_event_contributions(user_id, event_id, include_slots=False):
     contributions = db.FavoritesContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id})
     results = []
     for contribution in contributions:
@@ -115,10 +123,12 @@ def get_favorites_event_contributions(user_id, event_id, include_slots = False):
 def get_num_favorites_event_contributions(user_id, event_id):
     return db.FavoritesContribution.find({'user_id': user_id, 'contribution.conferenceId': event_id}).count()
 
+
 def add_contribution_to_favorites(user_id, contribution):
     new_contribution = db.FavoritesContribution()
     new_contribution.update({'user_id': user_id, 'contribution': contribution})
     db.FavoritesContribution.find_and_modify({'user_id': user_id, 'contribution.conferenceId': contribution["conferenceId"], 'contribution.contributionId': contribution["contributionId"]}, new_contribution, upsert=True)
+
 
 def remove_contribution_from_favorites(user_id, event_id, contrib_id):
     db.favorites_contributions.remove({'user_id': user_id, 'contribution.conferenceId': event_id, 'contribution.contributionId': contrib_id})
