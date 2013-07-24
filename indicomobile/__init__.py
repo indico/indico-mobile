@@ -1,9 +1,11 @@
 import os
 from flask import Flask
 from indicomobile.core.cache import setup_caching
+from indicomobile.core.session_interface import register_session_interface
 from indicomobile.views.assets import register_assets
 from indicomobile.views.errors import register_errors
 from indicomobile.util.json import patch_json
+
 
 def setup_blueprints(app):
     from indicomobile.views.routing import routing
@@ -28,3 +30,4 @@ setup_caching(app)
 setup_blueprints(app)
 register_assets(app)
 register_errors(app)
+register_session_interface(app)

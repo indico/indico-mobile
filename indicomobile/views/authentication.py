@@ -36,13 +36,13 @@ from indicomobile.views.errors import generic_error_handler
 oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
 oauth = OAuth()
 oauth_indico_mobile = oauth.remote_app('indico_mobile',
-    base_url=app.config['INDICO_URL'],
-    request_token_url=app.config['REQUEST_TOKEN_URL'],
-    access_token_url=app.config['ACCESS_TOKEN_URL'],
-    authorize_url=app.config['AUTHORIZE_URL'],
-    consumer_key=app.config['CONSUMER_KEY'],
-    consumer_secret=app.config['CONSUMER_SECRET']
-)
+                                       base_url=app.config['INDICO_URL'],
+                                       request_token_url=app.config['REQUEST_TOKEN_URL'],
+                                       access_token_url=app.config['ACCESS_TOKEN_URL'],
+                                       authorize_url=app.config['AUTHORIZE_URL'],
+                                       consumer_key=app.config['CONSUMER_KEY'],
+                                       consumer_secret=app.config['CONSUMER_SECRET'])
+
 
 @oauth_indico_mobile.tokengetter
 def get_token():
@@ -52,21 +52,21 @@ def get_token():
 @oauth_client.route('/login/', methods=['GET'])
 def login():
     return oauth_indico_mobile.authorize(callback=urllib2.unquote(url_for('.oauth_authorized',
-        next=request.args.get('next') or request.referrer or None, _external=True)))
+                                         next=request.args.get('next') or request.referrer or None, _external=True)))
+
 
 @oauth_client.route('/logout/', methods=['GET'])
 def logout():
-    session.pop('indico_user', None)
-    session.pop('indico_user_name', None)
-    session.pop('indico_mobile_oauthtok', None)
-    session.pop('unauthorized', None)
+    session.clear()
     if request.args.get("expired", False):
         flash("Your session has expired, you've been logged out")
     return redirect(request.referrer or url_for("routing.index"))
 
+
 def get_user_info(user_id):
     from indicomobile.core.indico_api import get_user_info
     return get_user_info(user_id)
+
 
 @oauth_client.route('/oauth_authorized/', methods=['GET'])
 @oauth_indico_mobile.authorized_handler
@@ -76,16 +76,22 @@ def oauth_authorized(resp):
         session['unauthorized'] = True
         return redirect(url_for("routing.index"))
 
+    session.permanent = True
     session["indico_mobile_oauthtok"] = (resp['oauth_token'], resp['oauth_token_secret'])
     session['unauthorized'] = False
     session['indico_user'] = resp['user_id']
+    session['oauth_token_expiration_timestamp'] = resp['oauth_token_expiration_timestamp']
+    session['oauth_token_ttl'] = int(resp['oauth_token_ttl'])
     user_info = get_user_info(resp['user_id'])
-    session['indico_user_name'] = "%s %s %s"%(user_info.get('title'), user_info.get('firstName'), user_info.get('familyName'))
+    session['indico_user_name'] = "%s %s %s" % (user_info.get('title'), user_info.get('firstName'),
+                                                user_info.get('familyName'))
     return redirect(next_url)
+
 
 @oauth_client.route('/user/', methods=['GET'])
 def user():
-    return Response(json.dumps({"username":session.get('indico_user_name', "")}), mimetype='application/json')
+    return Response(json.dumps({"username": session.get('indico_user_name', "")}), mimetype='application/json')
+
 
 @oauth_client.errorhandler(OAuthException)
 def error(error):
@@ -95,5 +101,3 @@ def error(error):
     else:
         exception = BadRequest(error.data["message"])
     return generic_error_handler(exception)
-
-
