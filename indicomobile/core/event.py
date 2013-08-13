@@ -62,6 +62,8 @@ def _get_cached_events(user_id, now, page):
         cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
     while len(cached_events) < PAGE_SIZE:
         last_event = db_event.get_last_event_cached(user_id)
+        if not last_event:
+            break
         _get_future_events(user_id, now, last_event["event_start_date"])
         cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
 

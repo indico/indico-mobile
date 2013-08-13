@@ -74,3 +74,15 @@ CONSUMER_SECRET=''
 #------------------------------------------------------------------------------
 STATISTICS_SERVER='statisticsserver.domain'
 STATISTICS_SITE='XXX'
+
+#------------------------------------------------------------------------------
+# Sessions Management
+#
+# We specified the SessionInterface to use
+#------------------------------------------------------------------------------
+
+
+# SESSION_INTERFACE can be redis, otherwise will be Flask default
+SESSION_INTERFACE = ""
+REDIS_SERVER_HOSTNAME = 'localhost'
+REDIS_SERVER_PASSWORD = ''
