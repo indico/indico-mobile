@@ -9,3 +9,5 @@ lxml
 uwsgi
 jsmin
 cssmin
+redis
+python-dateutil

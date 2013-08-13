@@ -20,8 +20,8 @@ var PageView = Backbone.View.extend({
 
     showError: function(model, error) {
         $.mobile.hidePageLoadingMsg();
-        if(error.status == 401){
-            window.location.href = BASE_URL + 'login/';
+        if(error.status == 401 || error.status==200  && error.responseText == "Not logged in"){
+            $.mobile.changePage( "#dialog_login", { role: "dialog" , changeHash : false} );
         } else if (error.status == 404) {
             alert('The event does not exist');
         } else{
