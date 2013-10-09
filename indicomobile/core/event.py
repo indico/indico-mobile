@@ -43,30 +43,38 @@ def _filter_future_events(user_id, now, events):
             db_event.store_cached_event(user_id, now, event)
     return cached
 
+def _get_today_events(user_id, now):
+    todayEvents, existMoreFutureEvents = api.get_today_events(user_id)
+    _filter_events(user_id, now, todayEvents)
+    return existMoreFutureEvents
+
 def _get_future_events(user_id, now, last_start_date):
     days = 1
     date = (last_start_date + timedelta(days=days)).strftime("%Y-%m-%d")
-    while not _filter_future_events(user_id, now, api.get_future_events(user_id, date, date)):
+    futureEvents, existMoreFutureEvents = api.get_future_events(user_id, date, date)
+    while not _filter_future_events(user_id, now, futureEvents) and existMoreFutureEvents:
         days += 1
         date = (last_start_date + timedelta(days=days)).strftime("%Y-%m-%d")
+        futureEvents, existMoreFutureEvents = api.get_future_events(user_id, date, date)
+    return existMoreFutureEvents
+
 
 def _get_cached_events(user_id, now, page):
     db_event.remove_cached_events(user_id, now - timedelta(hours=2))
     cached_events = list(db_event.get_cached_events(user_id, page, PAGE_SIZE))
+    existMoreFutureEvents = True
     if not cached_events:
         last_event = db_event.get_last_event_cached(user_id)
         if not last_event:
-            _filter_events(user_id, now, api.get_today_events(user_id))
+            existMoreFutureEvents =_get_today_events(user_id, now)
+            cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
         else:
-            _get_future_events(user_id, now, last_event["event_start_date"])
+            existMoreFutureEvents =_get_future_events(user_id, now, last_event["event_start_date"])
         cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
-    while len(cached_events) < PAGE_SIZE:
+    while len(cached_events) < PAGE_SIZE and existMoreFutureEvents:
         last_event = db_event.get_last_event_cached(user_id)
-        if not last_event:
-            break
-        _get_future_events(user_id, now, last_event["event_start_date"])
+        existMoreFutureEvents = _get_future_events(user_id, now, last_event["event_start_date"] if last_event else now)
         cached_events = list(db_event.get_cached_events(user_id, page,  PAGE_SIZE))
-
     return [event["event"] for event in cached_events]
 
 def get_ongoing_events(page=1):

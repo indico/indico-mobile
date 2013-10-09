@@ -89,7 +89,8 @@ def get_today_events(user_id):
     else:
         params["ak"] = app.config['API_KEY']
         result = perform_public_request(construct_url(path, attach_params(params)))
-    return json.loads(result.decode('utf-8'))["results"]
+    result = json.loads(result.decode('utf-8'))
+    return result["results"], result["additionalInfo"]["moreFutureEvents"]
 
 def get_future_events(user_id, startDate, endDate):
     path = '/export/categ/0.json'
@@ -103,7 +104,8 @@ def get_future_events(user_id, startDate, endDate):
     else:
         params["ak"] = app.config['API_KEY']
         result = perform_public_request(construct_url(path, attach_params(params)))
-    return json.loads(result.decode('utf-8'))["results"]
+    result = json.loads(result.decode('utf-8'))
+    return result["results"], result["additionalInfo"]["moreFutureEvents"]
 
 def get_user_info(user_id):
     return oauth_indico_mobile.get(construct_url("/export/user/%s.json"%user_id, {})).data["results"][0]
