@@ -1,0 +1,6 @@
+DEST=$1
+NOW=$(date +"%Y-%m-%d-%H-%M-%S")
+
+mongodump --db indicomobile --out /tmp/backup
+tar czPf /tmp/indicomobile-$NOW.tar.gz /tmp/backup/indicomobile/
+mv /tmp/indicomobile-$NOW.tar.gz $DEST
