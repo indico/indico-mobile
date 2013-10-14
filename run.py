@@ -3,9 +3,9 @@ import sys
 from indicomobile import app
 
 if __name__ == '__main__':
-    if len(sys.argv) == 0:
+    try:
+        config_dir = sys.argv[1]
+    except IndexError:
         config_dir = os.getcwd()
-    else:
-        config_dir = sys.argv[0]
 
     app.run(debug=app.config['DEBUG'], host=app.config['SERVER'], port=app.config['SERVER_PORT'])
