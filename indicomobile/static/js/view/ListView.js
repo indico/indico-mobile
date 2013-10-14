@@ -130,9 +130,6 @@ var InfiniteListView = ListView.extend({
     initialize: function () {
         InfiniteListView.__super__.initialize.call(this);
         this.infiniScroll = new Backbone.InfiniScroll(this.collection, {
-          success: function(collection, changed) {
-              collection.trigger('hasChanged', [changed]);
-          },
           includePage : true});
     }
 
