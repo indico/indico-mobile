@@ -1,11 +1,15 @@
 import os
-import sys
-from indicomobile import app
+import inspect
+from indicomobile import make_app, main
 
-if __name__ == '__main__':
-    try:
-        config_dir = sys.argv[1]
-    except IndexError:
-        config_dir = os.getcwd()
 
-    app.run(debug=app.config['DEBUG'], host=app.config['SERVER'], port=app.config['SERVER_PORT'])
+if 'INDICOMOBILE_CONFIG' in os.environ:
+    config = os.environ['INDICOMOBILE_CONFIG']
+else:
+    current_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    config = os.path.join(current_folder, 'settings.conf')
+    if not os.path.isfile(config):
+        raise Exception("Couldn't find config file")
+
+app = make_app(config)
+main(app)

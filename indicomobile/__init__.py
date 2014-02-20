@@ -6,6 +6,9 @@ from indicomobile.views.assets import register_assets
 from indicomobile.views.errors import register_errors
 from indicomobile.util.json import patch_json
 
+patch_json()
+app = Flask(__name__)
+
 
 def setup_blueprints(app):
     from indicomobile.views.routing import routing
@@ -20,14 +23,18 @@ def setup_blueprints(app):
     app.register_blueprint(oauth_client)
     app.register_blueprint(maps)
 
-patch_json()
 
-app = Flask(__name__, instance_path=os.getcwd(),
-            instance_relative_config=True)
+def make_app(config_file):
+    app.config.from_pyfile(os.path.join(os.getcwd(), config_file))
+    app.debug = app.config.get('DEBUG', False)
+    setup_caching(app)
+    setup_blueprints(app)
+    register_assets(app)
+    register_errors(app)
+    register_session_interface(app)
+    return app
 
-app.config.from_pyfile('settings.conf')
-setup_caching(app)
-setup_blueprints(app)
-register_assets(app)
-register_errors(app)
-register_session_interface(app)
+
+def main(application):
+    application.run(host=app.config.get('SERVER_HOST', 'localhost'),
+                    port=int(app.config.get('SERVER_PORT', 5000)))
