@@ -84,5 +84,4 @@ STATISTICS_SITE='XXX'
 
 # SESSION_INTERFACE can be redis, otherwise will be Flask default
 SESSION_INTERFACE = ""
-REDIS_SERVER_HOSTNAME = 'localhost'
-REDIS_SERVER_PASSWORD = ''
+REDIS_SERVER_URL = "redis://unused:password@localhost:6379/1"

@@ -93,8 +93,8 @@ class IndicoMobileSessionInterface(IndicoMobileSessionInterfaceBasic):
     serializer = pickle
     session_class = IndicoMobileSession
 
-    def __init__(self, redis_server, redis_password, prefix='session:'):
-        self._redis_client = StrictRedis(host=redis_server, password=redis_password)
+    def __init__(self, redis_url, prefix='session:'):
+        self._redis_client = StrictRedis.from_url(redis_url)
         self._redis_client.connection_pool.connection_kwargs['socket_timeout'] = 5
         self._prefix = prefix
 
@@ -113,6 +113,5 @@ class IndicoMobileSessionInterface(IndicoMobileSessionInterfaceBasic):
 
 
 def register_session_interface(app):
-    if app.config.get("SESSION_INTERFACE") == "redis" and app.config.get("REDIS_SERVER_HOSTNAME"):
-        app.session_interface = IndicoMobileSessionInterface(app.config.get("REDIS_SERVER_HOSTNAME"),
-                                                             app.config.get("REDIS_SERVER_PASSWORD"))
+    if app.config.get("SESSION_INTERFACE") == "redis" and app.config.get("REDIS_SERVER_URL"):
+        app.session_interface = IndicoMobileSessionInterface(app.config.get("REDIS_SERVER_URL"))
