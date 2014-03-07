@@ -14,7 +14,6 @@ function addMarker(map, latitude, longitude, title){
         lat: latitude,
         lng: longitude,
         title: title,
-        icon: IMAGE_DIR + 'dest.png'
     });
 }
 
@@ -112,7 +111,11 @@ $('#route').live('click', function(){
                     lat: myposition[0],
                     lng: myposition[1],
                     title: 'You are here',
-                    icon: IMAGE_DIR + 'orig.png'
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 6,
+                        strokeWeight: 2
+                    }
                 });
             }
         },
