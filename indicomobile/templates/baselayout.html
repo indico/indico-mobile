@@ -31,6 +31,8 @@
     <div data-role="page" id="{% block pageId %}{% endblock %}">
         <div data-role="header" data-theme="c" data-position="fixed">
             <div class="banner-buttons-left">
+                {% block icons_header %}
+                {% endblock %}
                 <a data-role="button" href="#nav-panel" rel="external" class="icon-menu panel-button-icon" aria-hidden="true"></a>
             </div>
             <div class="banner-buttons-right">
