@@ -4,8 +4,9 @@ setup(
     version = "0.1",
     packages = find_packages(),
 
-    install_requires = ['flask', 'Flask-mongoalchemy', 'Flask-assets', 'flask-mongokit', 'Flask-Cache', 'Flask-OAuth',
-                        'pytz', 'lxml', 'uwsgi', 'jsmin', 'cssmin', 'redis', 'python-dateutil'],
+    install_requires = ['Flask==0.10.1', 'Flask-MongoAlchemy==0.5.4', 'Flask-Assets==0.8',
+                        'Flask-MongoKit==0.6', 'Flask-Cache==0.12', 'Flask-OAuth==0.12', 'pytz==2013.9',
+                        'lxml==3.3.1', 'jsmin==2.0.9', 'cssmin==0.2.0', 'redis==2.9.1', 'python-dateutil==2.2'],
 
     package_data = {
         '': ['*.txt', '*.rst', '*.html']
