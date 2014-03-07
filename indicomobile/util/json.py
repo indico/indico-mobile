@@ -1,7 +1,7 @@
 import datetime
 from pytz import utc, timezone
 from flask import json, current_app
-from mongoalchemy.document import Document
+from flask.ext.mongokit import Document
 from bson import ObjectId, DBRef
 
 
