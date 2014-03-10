@@ -4,6 +4,11 @@
     <% if (color){ %>
         <span  style="background: <%=color%>;" class="sessionColor"></span>
     <% } %>
+
+    <span class="timeContribution">
+        <%= start_time %> - <%= end_time %>
+    </span>
+
     <%= title %></a>
 
     <% if(user != "") { %>
@@ -27,6 +32,9 @@
     <% if (hasAnyProtection) {%>
         <span class="icon-protected protected" aria-hidden="true"></span>
     <% } %>
+        <span class="timeContribution">
+        <%= start_time %> - <%= end_time %>
+    </span>
     <%= title %>
     </a>
     <% if(user != "") { %>

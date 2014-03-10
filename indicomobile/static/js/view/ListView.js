@@ -231,6 +231,8 @@ var SimpleEventsAndContributions = ListView.extend({
         collection.each(function(element){
             element.set("user", userLogged);
             element.set('inFavorites', self.options.favorites);
+            element.set('start_time', moment(element.get('startDate').date + " " + element.get('startDate').time).format("HH:mm"));
+            element.set('end_time', moment(element.get('endDate').date + " " + element.get('endDate').time).format("HH:mm"));
             var day = filterDate(element.get('startDate').date).month +
                 ' ' + filterDate(element.get('startDate').date).day +
                 ', ' + filterDate(element.get('startDate').date).year;
@@ -310,7 +312,8 @@ var ContributionListView = ListView.extend({
                 var isInFavorites = self.favoritesCollection.find(function(contrib){
                     return contrib.get('contributionId') == element.get('contributionId');
                 });
-
+                element.set('start_time', moment(element.get('startDate').date + " " + element.get('startDate').time).format("HH:mm"));
+                element.set('end_time', moment(element.get('endDate').date + " " + element.get('endDate').time).format("HH:mm"));
                 listItem = template(element.toJSON());
                 if (isInFavorites){
                     listItem = listItem.replace('"add"', '"remove"').replace('"c"', '"b"');

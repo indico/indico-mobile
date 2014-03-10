@@ -168,6 +168,12 @@
     padding-right: 5px;
 }
 
+.timeContribution  {
+    color: #AAA;
+    float: right;
+    padding-right: 5px;
+}
+
 .ui-panel {
     -moz-box-shadow: 0px -1px 8px #aaa;
     -webkit-box-shadow: 0px -1px 8px #aaa;
