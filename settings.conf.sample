@@ -60,11 +60,11 @@ API_KEY = 'your_api_key'
 # We specified the OAUTH configuration
 #------------------------------------------------------------------------------
 
-REQUEST_TOKEN_URL='http://yourindicoserver/path/to/indico/oauth.py/request_token'
-ACCESS_TOKEN_URL='http://yourindicoserver/path/to/indico/oauth.py/access_token'
-AUTHORIZE_URL='http://yourindicoserver/path/to/indico/oauth.py/authorize'
-CONSUMER_KEY=''
-CONSUMER_SECRET=''
+REQUEST_TOKEN_URL='http://yourindicoserver/oauth/request_token'
+ACCESS_TOKEN_URL='http://yourindicoserver/oauth/access_token'
+AUTHORIZE_URL='http://yourindicoserver/oauth/authorize'
+CONSUMER_KEY=''  # set whatever Indico generates
+CONSUMER_SECRET=''  # set whatever Indico generates
 
 
 #------------------------------------------------------------------------------
