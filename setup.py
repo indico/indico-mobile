@@ -14,9 +14,10 @@ setup(
 
     author = "Indico Team",
     author_email = "indico-team@cern.ch",
-    description = "Indico Mobil Interface",
+    description = "Indico Mobile Interface",
     license = "GPL3",
     keywords = "indico mobile interface",
     url = "http://indico-software.org/",
-    include_package_data = True
+    include_package_data = True,
+    zip_safe=False
 )
