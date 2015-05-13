@@ -65,7 +65,7 @@ ACCESS_TOKEN_URL='http://yourindicoserver/oauth/access_token'
 AUTHORIZE_URL='http://yourindicoserver/oauth/authorize'
 CONSUMER_KEY=''  # set whatever Indico generates
 CONSUMER_SECRET=''  # set whatever Indico generates
-
+CERT_FILE='/path/to/cert/file'  # cert used to verify Indico's certificate
 
 #------------------------------------------------------------------------------
 # Statistics
