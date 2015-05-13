@@ -33,29 +33,29 @@ from flask_oauth import OAuth, OAuthException
 from indicomobile import app
 from indicomobile.views.errors import generic_error_handler
 
-oauth_client = Blueprint('oauth_client', __name__, template_folder='templates')
+oauth_blueprint = _bp = Blueprint('oauth_blueprint', __name__, template_folder='templates')
 oauth = OAuth()
-oauth_indico_mobile = oauth.remote_app('indico_mobile',
-                                       base_url=app.config['INDICO_URL'],
-                                       request_token_url=app.config['REQUEST_TOKEN_URL'],
-                                       access_token_url=app.config['ACCESS_TOKEN_URL'],
-                                       authorize_url=app.config['AUTHORIZE_URL'],
-                                       consumer_key=app.config['CONSUMER_KEY'],
-                                       consumer_secret=app.config['CONSUMER_SECRET'])
+indico = oauth.remote_app('indico_mobile',
+                          base_url=app.config['INDICO_URL'],
+                          request_token_url=app.config['REQUEST_TOKEN_URL'],
+                          access_token_url=app.config['ACCESS_TOKEN_URL'],
+                          authorize_url=app.config['AUTHORIZE_URL'],
+                          consumer_key=app.config['CONSUMER_KEY'],
+                          consumer_secret=app.config['CONSUMER_SECRET'])
 
 
-@oauth_indico_mobile.tokengetter
+@indico.tokengetter
 def get_token():
     return session.get('indico_mobile_oauthtok')
 
 
-@oauth_client.route('/login/', methods=['GET'])
+@_bp.route('/login/', methods=['GET'])
 def login():
-    return oauth_indico_mobile.authorize(callback=urllib2.unquote(url_for('.oauth_authorized',
-                                         next=request.args.get('next') or request.referrer or None, _external=True)))
+    return indico.authorize(callback=urllib2.unquote(url_for('.oauth_authorized', _external=True,
+                                                     next=request.args.get('next') or request.referrer or None)))
 
 
-@oauth_client.route('/logout/', methods=['GET'])
+@_bp.route('/logout/', methods=['GET'])
 def logout():
     session.clear()
     if request.args.get("expired", False):
@@ -68,8 +68,8 @@ def get_user_info(user_id):
     return get_user_info(user_id)
 
 
-@oauth_client.route('/oauth_authorized/', methods=['GET'])
-@oauth_indico_mobile.authorized_handler
+@_bp.route('/oauth_authorized/', methods=['GET'])
+@indico.authorized_handler
 def oauth_authorized(resp):
     next_url = request.args.get('next') or url_for('routing.index')
     if not resp:
@@ -88,12 +88,12 @@ def oauth_authorized(resp):
     return redirect(next_url)
 
 
-@oauth_client.route('/user/', methods=['GET'])
+@_bp.route('/user/', methods=['GET'])
 def user():
     return Response(json.dumps({"username": session.get('indico_user_name', "")}), mimetype='application/json')
 
 
-@oauth_client.errorhandler(OAuthException)
+@_bp.errorhandler(OAuthException)
 def error(error):
     code = error.data["code"]
     if code == 401:
