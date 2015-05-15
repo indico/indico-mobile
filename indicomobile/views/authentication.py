@@ -1,96 +1,79 @@
-"""
-The MIT License
-
-Copyright (c) 2007 Leah Culver
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-Example consumer. This is not recommended for production.
-Instead, you'll want to create your own subclass of OAuthClient
-or find one that works with your web framework.
-"""
-
-import urllib2
-from flask import Blueprint, request, Response, redirect, session, url_for, flash, json
+from flask import Blueprint, flash, json, redirect, request, Response, session, url_for
+from flask.ext.oauthlib.contrib.client import OAuth, OAuth1Application
+from flask.ext.oauthlib.contrib.client.exceptions import OAuthException
+from flask.ext.oauthlib.contrib.client.structure import OAuth1Response
 from werkzeug.exceptions import BadRequest, Unauthorized
-from flask_oauth import OAuth, OAuthException
+
 from indicomobile import app
 from indicomobile.views.errors import generic_error_handler
 
+
+class CertOAuth1Application(OAuth1Application):
+    def make_oauth_session(self, **kwargs):
+        oauth = super(CertOAuth1Application, self).make_oauth_session(**kwargs)
+        oauth.verify = app.config.get('CERT_FILE', True)
+        return oauth
+
+
 oauth_blueprint = _bp = Blueprint('oauth_blueprint', __name__, template_folder='templates')
-oauth = OAuth()
-indico = oauth.remote_app('indico_mobile',
-                          base_url=app.config['INDICO_URL'],
-                          request_token_url=app.config['REQUEST_TOKEN_URL'],
-                          access_token_url=app.config['ACCESS_TOKEN_URL'],
-                          authorize_url=app.config['AUTHORIZE_URL'],
-                          consumer_key=app.config['CONSUMER_KEY'],
-                          consumer_secret=app.config['CONSUMER_SECRET'])
+
+oauth = OAuth(app)
+indico = oauth.add_remote_app(CertOAuth1Application('indico'),
+                              name='indico',
+                              version='1',
+                              endpoint_url=app.config['INDICO_URL'],
+                              request_token_url=app.config['REQUEST_TOKEN_URL'],
+                              access_token_url=app.config['ACCESS_TOKEN_URL'],
+                              authorization_url=app.config['AUTHORIZE_URL'],
+                              consumer_key=app.config['CONSUMER_KEY'],
+                              consumer_secret=app.config['CONSUMER_SECRET'])
 
 
 @indico.tokengetter
-def get_token():
+def oauth_indico_token():
     return session.get('indico_mobile_oauthtok')
 
 
 @_bp.route('/login/', methods=['GET'])
 def login():
-    return indico.authorize(callback=urllib2.unquote(url_for('.oauth_authorized', _external=True,
-                                                     next=request.args.get('next') or request.referrer or None)))
+    callback_uri = url_for('.oauth_authorized', next=request.args.get('next') or request.referrer or None,
+                           _external=True)
+    return indico.authorize(callback_uri)
+
+
+@_bp.route('/oauth_authorized/', methods=['GET'])
+def oauth_authorized():
+    from indicomobile.core.indico_api import get_user_info  # is this necessary
+    next_url = request.args.get('next') or url_for('routing.index')
+
+    response = indico.authorized_response()
+    if not response:
+        session['unauthorized'] = True
+        return redirect(url_for("routing.index"))
+
+    session.permanent = True
+    session["indico_mobile_oauthtok"] = (response.token, response.token_secret)
+    session['unauthorized'] = False
+    session['indico_user'] = response['user_id']
+    session['oauth_token_expiration_timestamp'] = response['oauth_token_expiration_timestamp']
+    session['oauth_token_ttl'] = int(response['oauth_token_ttl'])
+    user_info = get_user_info(response['user_id'])
+    session['indico_user_name'] = '{} {} {}'.format(user_info.get('title'), user_info.get('firstName'),
+                                                    user_info.get('familyName'))
+    return redirect(next_url)
 
 
 @_bp.route('/logout/', methods=['GET'])
 def logout():
     session.clear()
-    if request.args.get("expired", False):
+    if request.args.get('expired', False):
         flash("Your session has expired, you've been logged out")
     return redirect(request.referrer or url_for("routing.index"))
 
 
-def get_user_info(user_id):
-    from indicomobile.core.indico_api import get_user_info
-    return get_user_info(user_id)
-
-
-@_bp.route('/oauth_authorized/', methods=['GET'])
-@indico.authorized_handler
-def oauth_authorized(resp):
-    next_url = request.args.get('next') or url_for('routing.index')
-    if not resp:
-        session['unauthorized'] = True
-        return redirect(url_for("routing.index"))
-
-    session.permanent = True
-    session["indico_mobile_oauthtok"] = (resp['oauth_token'], resp['oauth_token_secret'])
-    session['unauthorized'] = False
-    session['indico_user'] = resp['user_id']
-    session['oauth_token_expiration_timestamp'] = resp['oauth_token_expiration_timestamp']
-    session['oauth_token_ttl'] = int(resp['oauth_token_ttl'])
-    user_info = get_user_info(resp['user_id'])
-    session['indico_user_name'] = "%s %s %s" % (user_info.get('title'), user_info.get('firstName'),
-                                                user_info.get('familyName'))
-    return redirect(next_url)
-
-
 @_bp.route('/user/', methods=['GET'])
 def user():
-    return Response(json.dumps({"username": session.get('indico_user_name', "")}), mimetype='application/json')
+    return Response(json.dumps({'username': session.get('indico_user_name', '')}), mimetype='application/json')
 
 
 @_bp.errorhandler(OAuthException)

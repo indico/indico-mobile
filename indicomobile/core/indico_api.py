@@ -2,6 +2,8 @@ import urllib2
 import urllib
 from urlparse import urlparse, urlunparse
 
+import requests
+
 from flask import json, session as flask_session, abort
 from indicomobile.views.authentication import indico
 from indicomobile import app
@@ -25,9 +27,9 @@ def attach_params(params):
 
 def perform_signed_request(url):
     response = indico.get(url)
-    if response.status != 200:
+    if response.status_code != requests.codes.ok:
         abort(response.status)
-    return response.raw_data
+    return response.raw
 
 
 def perform_public_request(url):
