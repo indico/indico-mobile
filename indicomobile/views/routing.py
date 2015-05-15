@@ -30,7 +30,7 @@ def events():
 @routing.route('/event/<event_id>')
 def event(event_id):
     if request.args.get('pr', "no") == "yes" and "indico_mobile_oauthtok" not in session:
-        return redirect(url_for("oauth_client.login", next=request.url))
+        return redirect(url_for('oauth_blueprint.login', next=request.url))
     return redirect(url_for("routing.events") + "#event_" + event_id)
 
 
