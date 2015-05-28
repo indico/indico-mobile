@@ -1,21 +1,12 @@
 import urllib2
 import urllib
-from urlparse import urlparse, urlunparse
 
 import requests
 
 from flask import json, session as flask_session, abort
-from indicomobile.views.authentication import indico
 from indicomobile import app
-
-
-def construct_url(path, params):
-    url_fragments = urlparse(app.config['INDICO_URL'])
-    url_path = url_fragments.path
-    if url_path and url_path[-1] == '/':
-        url_path = url_path[:-1]
-    url_path += path
-    return urlunparse((url_fragments.scheme, url_fragments.netloc, url_path, '', params, ''))
+from indicomobile.util.tools import construct_url
+from indicomobile.views.authentication import indico
 
 
 def attach_params(params):
@@ -107,12 +98,6 @@ def get_future_events(user_id, startDate, endDate):
         result = perform_public_request(construct_url(path, attach_params(params)))
     result = json.loads(result.decode('utf-8'))
     return result['results'], result['additionalInfo']['moreFutureEvents']
-
-
-def get_user_info(user_id):
-    response = indico.get(construct_url('/export/user/{}.json'.format(user_id), {}))
-    json_response = response.json()
-    return json_response['results'][0]
 
 
 def get_room(room_name):

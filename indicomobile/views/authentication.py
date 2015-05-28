@@ -57,7 +57,7 @@ def oauth_authorized():
     session['indico_user'] = response['user_id']
     session['oauth_token_expiration_timestamp'] = response['oauth_token_expiration_timestamp']
     session['oauth_token_ttl'] = int(response['oauth_token_ttl'])
-    user_info = get_user_info(response['user_id'])
+    user_info = _get_user_info()
     session['indico_user_name'] = '{} {} {}'.format(user_info.get('title'), user_info.get('firstName'),
                                                     user_info.get('familyName'))
     return redirect(next_url)
@@ -84,3 +84,8 @@ def error(error):
     else:
         exception = BadRequest(error.data["message"])
     return generic_error_handler(exception)
+
+
+def _get_user_info():
+    response = indico.get('/api/user')
+    return response.json()
