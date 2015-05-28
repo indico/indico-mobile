@@ -1,16 +1,17 @@
+from datetime import datetime, timedelta
+
 from flask import Blueprint, flash, json, redirect, request, Response, session, url_for
-from flask.ext.oauthlib.contrib.client import OAuth, OAuth1Application
-from flask.ext.oauthlib.contrib.client.exceptions import OAuthException
-from flask.ext.oauthlib.contrib.client.structure import OAuth1Response
+from flask_oauthlib.contrib.client import OAuth, OAuth2Application
+from flask_oauthlib.contrib.client.exceptions import OAuthException
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from indicomobile import app
 from indicomobile.views.errors import generic_error_handler
 
 
-class CertOAuth1Application(OAuth1Application):
+class CertOAuth2Application(OAuth2Application):
     def make_oauth_session(self, **kwargs):
-        oauth = super(CertOAuth1Application, self).make_oauth_session(**kwargs)
+        oauth = super(CertOAuth2Application, self).make_oauth_session(**kwargs)
         oauth.verify = app.config.get('CERT_FILE', True)
         return oauth
 
@@ -18,33 +19,37 @@ class CertOAuth1Application(OAuth1Application):
 oauth_blueprint = _bp = Blueprint('oauth_blueprint', __name__, template_folder='templates')
 
 oauth = OAuth(app)
-indico = oauth.add_remote_app(CertOAuth1Application('indico'),
+indico = oauth.add_remote_app(CertOAuth2Application('indico'),
                               name='indico',
-                              version='1',
+                              version='2',
                               endpoint_url=app.config['INDICO_URL'],
-                              request_token_url=app.config['REQUEST_TOKEN_URL'],
                               access_token_url=app.config['ACCESS_TOKEN_URL'],
                               authorization_url=app.config['AUTHORIZE_URL'],
-                              consumer_key=app.config['CONSUMER_KEY'],
-                              consumer_secret=app.config['CONSUMER_SECRET'])
+                              client_id=app.config['CLIENT_ID'],
+                              client_secret=app.config['CLIENT_SECRET'],
+                              scope=['read:user read:legacy_api'])
+
+
+@indico.tokensaver
+def store_oauth_indico_token(token):
+    session['indico_mobile_oauthtok'] = token
 
 
 @indico.tokengetter
-def oauth_indico_token():
+def obtain_oauth_indico_token():
     return session.get('indico_mobile_oauthtok')
 
 
 @_bp.route('/login/', methods=['GET'])
 def login():
-    callback_uri = url_for('.oauth_authorized', next=request.args.get('next') or request.referrer or None,
-                           _external=True)
-    return indico.authorize(callback_uri)
+    callback_uri = url_for('.oauth_authorized', _external=True)
+    return indico.authorize(callback_uri, state=request.args.get('next') or request.referrer or None)
 
 
 @_bp.route('/oauth_authorized/', methods=['GET'])
 def oauth_authorized():
-    from indicomobile.core.indico_api import get_user_info  # is this necessary
-    next_url = request.args.get('next') or url_for('routing.index')
+    default_expiry = timedelta(days=30)
+    next_url = request.args.get('state') or url_for('routing.index')
 
     response = indico.authorized_response()
     if not response:
@@ -52,14 +57,13 @@ def oauth_authorized():
         return redirect(url_for("routing.index"))
 
     session.permanent = True
-    session["indico_mobile_oauthtok"] = (response.token, response.token_secret)
+    store_oauth_indico_token(response)
     session['unauthorized'] = False
-    session['indico_user'] = response['user_id']
-    session['oauth_token_expiration_timestamp'] = response['oauth_token_expiration_timestamp']
-    session['oauth_token_ttl'] = int(response['oauth_token_ttl'])
+    session['oauth_token_expiration_timestamp'] = response.get('expires_at', str(datetime.utcnow() + default_expiry))
+    session['oauth_token_ttl'] = int(response.get('expires_in', default_expiry.total_seconds()))
     user_info = _get_user_info()
-    session['indico_user_name'] = '{} {} {}'.format(user_info.get('title'), user_info.get('firstName'),
-                                                    user_info.get('familyName'))
+    session['indico_user'] = user_info['id']
+    session['indico_user_name'] = '{0[first_name]} {0[last_name]}'.format(user_info)
     return redirect(next_url)
 
 

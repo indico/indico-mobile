@@ -3,6 +3,7 @@ Flask-Assets==0.8
 Flask-MongoKit==0.6
 Flask-Cache==0.12
 Flask-OAuth==0.12
+https://github.com/lepture/flask-oauthlib/archive/master.zip#egg=Flask-OAuthlib-dev
 pytz==2013.9
 lxml==3.3.1
 jsmin==2.0.9
