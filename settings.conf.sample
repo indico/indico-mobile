@@ -57,15 +57,14 @@ API_KEY = 'your_api_key'
 #------------------------------------------------------------------------------
 # OAUTH CONFIGURATION
 #
-# We specified the OAUTH configuration
+# We specified the OAUTH2 configuration
 #------------------------------------------------------------------------------
 
-REQUEST_TOKEN_URL='http://yourindicoserver/oauth/request_token'
-ACCESS_TOKEN_URL='http://yourindicoserver/oauth/access_token'
-AUTHORIZE_URL='http://yourindicoserver/oauth/authorize'
-CONSUMER_KEY=''  # set whatever Indico generates
-CONSUMER_SECRET=''  # set whatever Indico generates
-CERT_FILE='/path/to/cert/file'  # cert used to verify Indico's certificate
+ACCESS_TOKEN_URL='https://yourindicoserver/oauth/token'
+AUTHORIZE_URL='https://yourindicoserver/oauth/authorize'
+CLIENT_ID=''                                             # set whatever Indico generates
+CLIENT_SECRET=''                                         # set whatever Indico generates
+#CERT_FILE='/path/to/cert/file'                           # cert to verify Indico's certificate (optional)
 
 #------------------------------------------------------------------------------
 # Statistics
