@@ -1,15 +1,14 @@
 from datetime import timedelta, datetime
 from flask import json, Blueprint, Response, abort, session as flask_session, request
 
-from indicomobile import app
 import indicomobile.db.session as db_session
 import indicomobile.db.event as db_event
 import indicomobile.db.contribution as db_contribution
 import indicomobile.core.event as event
 import indicomobile.core.favorites as favorites
-from indicomobile.core.cache import cache, make_cache_key
 
 events = Blueprint('events', __name__, template_folder='templates')
+
 
 @events.before_request
 def with_event(event_id=None):
@@ -18,6 +17,7 @@ def with_event(event_id=None):
     """
     event_id = request.view_args.get('event_id')
     event.update_event_info(event_id)
+
 
 @events.route('/services/event/<event_id>/days/', methods=['GET'])
 def get_event_days(event_id):
@@ -33,16 +33,19 @@ def get_event_day(event_id, day_date):
 def get_event_same_sessions(event_id, session_id):
     return Response(json.dumps(event.get_event_same_sessions(event_id, session_id)), mimetype='application/json')
 
+
 @events.route('/services/event/<event_id>/session/<session_id>/', methods=['GET'])
 def get_event_same_session(event_id, session_id):
-    return Response(json.dumps(db_session.get_event_same_sessions(event_id, session_id)[0]), mimetype='application/json')
+    return Response(json.dumps(db_session.get_event_same_sessions(event_id, session_id)[0]),
+                    mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/day/<day_date>/session/<session_id>/', methods=['GET'])
 def get_event_day_sessions(event_id, session_id, day_date):
     start_date = datetime.strptime(day_date, '%Y-%m-%d')
     end_date = start_date + timedelta(days=1)
-    return Response(json.dumps(db_session.get_event_day_session(event_id, session_id, start_date, end_date)[0]), mimetype='application/json')
+    return Response(json.dumps(db_session.get_event_day_session(event_id, session_id, start_date, end_date)[0]),
+                    mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/contrib/<contrib_id>/', methods=['GET'])
@@ -62,17 +65,20 @@ def get_event_sessions(event_id):
 
 @events.route('/services/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
 def get_session_day_contributions(event_id, session_id, day):
-    return Response(json.dumps(event.get_session_day_contributions(event_id, session_id, day)), mimetype='application/json')
+    return Response(json.dumps(event.get_session_day_contributions(event_id, session_id, day)),
+                    mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def get_speaker_contributions(event_id, speaker_id):
-    return Response(json.dumps(sorted(event.get_speaker_contributions(event_id, speaker_id))), mimetype='application/json')
+    return Response(json.dumps(sorted(event.get_speaker_contributions(event_id, speaker_id))),
+                    mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speakers/', methods=['GET'])
 def get_event_speakers(event_id):
-    return Response(json.dumps(event.get_event_speakers(event_id, int(request.args.get('page', 1)))), mimetype='application/json')
+    return Response(json.dumps(event.get_event_speakers(event_id, int(request.args.get('page', 1)))),
+                    mimetype='application/json')
 
 
 @events.route('/services/event/<event_id>/speaker/<speaker_id>/', methods=['GET'])
@@ -108,8 +114,8 @@ def search_event(search):
 def get_ongoing_events():
     return Response(json.dumps(event.get_ongoing_events(int(request.args.get('page', 1)))), mimetype='application/json')
 
+
 @events.route('/services/ongoingContributions/', methods=['GET'])
-#@cache.cached(key_prefix=make_cache_key)
 def get_ongoing_contributions():
     return Response(json.dumps(event.get_ongoing_contributions()), mimetype='application/json')
 
