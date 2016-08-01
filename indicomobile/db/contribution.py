@@ -66,7 +66,6 @@ def store_presenters(contribution):
         presenter_id = presenter['name'] + presenter['email']
         presenter_db = db.Presenter.find_one({'id': presenter_id, 'conferenceId': contribution['conferenceId']})
         if not presenter_db:
-            presenter.pop('_type')
             presenter['id'] = presenter_id
             presenter['conferenceId'] = contribution['conferenceId']
             presenter_db = db.Presenter()
@@ -85,7 +84,6 @@ def store_contribution(contribution, event, color=None, is_poster=False, slot=No
                          'color': color})
 
     contribution.pop('id')
-    contribution.pop('_type')
     contribution.pop('sessionId')
     contribution.pop('sessionSlotId')
     contribution.pop('sessionCode')
