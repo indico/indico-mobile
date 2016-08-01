@@ -41,7 +41,7 @@ def perform_request(path, params=None, signed=None):
     try:
         response.raise_for_status()
     except HTTPError as err:
-        abort(err.response.status)
+        abort(err.response.status_code)
     return response.json()
 
 
