@@ -18,8 +18,8 @@ def get_contributions(start_date, end_date, extra_args=[]):
     query = [{"$or":
               [{"$and": [{'startDate': {'$gte': start_date}},
                          {'startDate': {'$lt': end_date}}]},
-              {"$and": [{'endDate': {'$gte': start_date}},
-                        {'endDate': {'$lt': end_date}}]}]}]
+               {"$and": [{'endDate': {'$gte': start_date}},
+                         {'endDate': {'$lt': end_date}}]}]}]
     query.extend(extra_args)
     contributions = db.Contribution.find({'$and': query}).sort([('startDate', 1)])
     for contribution in contributions:
@@ -30,7 +30,9 @@ def get_contributions(start_date, end_date, extra_args=[]):
 
 
 def is_favorite(event_id, contribution_id, user_id):
-    return db.FavoritesContribution.find_one({'contribution.conferenceId': event_id, 'contribution.contributionId': contribution_id, 'user_id': user_id}) is not None
+    return db.FavoritesContribution.find_one({'contribution.conferenceId': event_id,
+                                              'contribution.contributionId': contribution_id,
+                                              'user_id': user_id}) is not None
 
 
 def get_event_contributions(event_id, extra_args=[], include_slot=False, sort=False):
