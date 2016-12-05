@@ -48,12 +48,12 @@ def get_event_day_sessions(event_id, session_id, day_date):
                     mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/contrib/<contrib_id>/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/contrib/<int:contrib_id>/', methods=['GET'])
 def get_event_contribution(event_id, contrib_id):
     return Response(json.dumps(db_contribution.get_contribution(event_id, contrib_id)), mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/day/<day_date>/contributions/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/day/<day_date>/contributions/', methods=['GET'])
 def get_event_day_contributions(event_id, day_date):
     return Response(json.dumps(event.get_event_day_contributions(event_id, day_date)), mimetype='application/json')
 
@@ -63,25 +63,25 @@ def get_event_sessions(event_id):
     return Response(json.dumps(event.get_event_sessions(event_id)), mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/session/<session_id>/day/<day>/contribs/', methods=['GET'])
 def get_session_day_contributions(event_id, session_id, day):
     return Response(json.dumps(event.get_session_day_contributions(event_id, session_id, day)),
                     mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/speaker/<speaker_id>/contributions/', methods=['GET'])
 def get_speaker_contributions(event_id, speaker_id):
     return Response(json.dumps(sorted(event.get_speaker_contributions(event_id, speaker_id))),
                     mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/speakers/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/speakers/', methods=['GET'])
 def get_event_speakers(event_id):
     return Response(json.dumps(event.get_event_speakers(event_id, int(request.args.get('page', 1)))),
                     mimetype='application/json')
 
 
-@events.route('/services/event/<event_id>/speaker/<speaker_id>/', methods=['GET'])
+@events.route('/services/event/<int:event_id>/speaker/<speaker_id>/', methods=['GET'])
 def get_event_speaker(event_id, speaker_id):
     result = db_event.get_event_speaker(event_id, speaker_id)
     event = db_event.get_event(event_id)

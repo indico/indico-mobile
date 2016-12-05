@@ -6,7 +6,7 @@ from indicomobile.util.tools import clean_html_tags
 
 
 def get_contribution(event_id, contrib_id):
-    contribution = db.Contribution.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
+    contribution = db.contributions.find_one({'conferenceId': event_id, 'contributionId': contrib_id})
     contribution["event"] = db.dereference(contribution["event"])
     if contribution['slot']:
         contribution['slot'] = db.dereference(contribution['slot'])
@@ -21,7 +21,7 @@ def get_contributions(start_date, end_date, extra_args=[]):
                {"$and": [{'endDate': {'$gte': start_date}},
                          {'endDate': {'$lt': end_date}}]}]}]
     query.extend(extra_args)
-    contributions = db.Contribution.find({'$and': query}).sort([('startDate', 1)])
+    contributions = db.contributions.find({'$and': query}).sort([('startDate', 1)])
     for contribution in contributions:
         if contribution['slot']:
             contribution['slot'] = db.dereference(contribution['slot'])
@@ -39,7 +39,7 @@ def get_event_contributions(event_id, extra_args=[], include_slot=False, sort=Fa
     results = []
     query = {'conferenceId': event_id}
     query.update(extra_args)
-    contributions = db.Contribution.find(query)
+    contributions = db.contributions.find(query)
     if sort:
         contributions = contributions.sort([('startDate', 1)])
     for contribution in contributions:
@@ -51,7 +51,7 @@ def get_event_contributions(event_id, extra_args=[], include_slot=False, sort=Fa
 
 def get_speaker_contributions(event_id, speaker):
     contributions = []
-    contribs = db.Contribution.find({'$and': [{'presenters': {'$elemMatch': speaker}},
+    contribs = db.contributions.find({'$and': [{'presenters': {'$elemMatch': speaker}},
                                     {'conferenceId': event_id}]}).sort([('startDate', 1)])
     for contrib in contribs:
         if contrib['slot']:
